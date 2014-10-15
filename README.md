@@ -113,7 +113,7 @@ This function is called when the tool initializes to retrieve the existing plate
 ```
 `attribute_id_x` cooresponds to the id of the attribute as it is defined in the configuration options.
 
-Example API.
+##Example API.
 
 First lets go for very basic actions we will be doing with this plug in. thats definitely CRUD actions. Create, Read, Update, Destroy. We have a very good ajax library in jquery and we could employ it for the porpose of API calling
 
@@ -134,13 +134,13 @@ getAllPlates = function(optinalaApiCall) {
 			type: 'GET'
 		})
 };
-
+```
 So this wrapper method can take optional api call if the user provide else it will use the original call.
 
-Callbacks.
+##Callbacks.
 
 We should be able to provide users the option to write there own callback functions once something has happend. For example imagine the user want to display no of plates returned form server.
-
+```
 callBack = function(data) {
 	console.log(data.length);
 };
@@ -152,10 +152,10 @@ getAllPlates = function(optinalaApiCall, callBack) {
 			type: 'GET'
 		}).done(callBack);
 };
-
+```
 So this way we can provide an added functionality of call back dupport.
 
-Events.
+##Events.
 
 All those nice plugin should be able to trigger some ovents once something important happend. So that the user can hook there action with it. Some events we can generate are.
 
