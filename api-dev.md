@@ -12,6 +12,7 @@ var plateLayOutConf = {
 		};
 
 var plateLayOut = new ChaiBioTech.plateLayOut(plateLayOutConf); 
+
 // This should initialize a new plate lay out screen
 
 ```
@@ -146,7 +147,7 @@ newPlate.on("change:temperature", function(plate) {
 
 ```
 
-Again to be a cool we should give programmer opportunity to fire coustom events
+Again to be a cool plug in we should give programmer opportunity to fire coustom events
 
 ```
 var plateData = {
@@ -162,6 +163,7 @@ var someData = {
 	"ssdfsd": "bingo"
 
 }
+
 newPlate.fire("someRandomEvent", someData);
 
 // Now we bind this event
@@ -173,4 +175,65 @@ newPlate.on("someRandomnEvent", function(data) {
 });
 
 ```
+
+Now write a simple program which does some basic program which initiate a new plateLayout , change something fire an event and we grab it finally we save it back to server.
+
+```
+(function(){
+
+	var plateLayOutConf = {
+				embedId:          'my-plate-layout'
+				numRows:          '8',
+				numCols:          '12',
+				incrementalSave:  'true',
+				attributes:       attributes
+			};
+
+	var plateLayOut = new ChaiBioTech.plateLayOut(plateLayOutConf);
+
+	var newPlate = new plateLayOut.plate({
+		
+		"color": "red",
+		"temperature": 70
+
+	});
+
+	newPlate.on("change:temperature", plateTemperatureChanged);
+
+	var plateTemperatureChanged = function(plate) {
+		// Do something here
+	};
+
+	newPlate.set("temperature", 90);
+
+	newPlate.set("color", "red");
+
+	newPlate.fire("someEvent", someEventHandler, optionalData);
+
+	var someEventHandler = function(optionalData) {
+		// Do something here
+	}
+
+	newPlate.delete();
+
+	plateLayOut.sync();
+
+})() // use this if we want to inject some dependancy like jquey, underscore
+
+```
+
+This would be nice addition if we bring chainability , just like jquery
+for example
+
+```
+new ChaiBioTech.plateLayOut(plateLayOutConf).getPlates().getPlate(3).delete();
+
+// or
+
+plate.set("color", "blue").get("temperature");
+
+```
+Plase note that I am greatly inspired by jquery and backbone, besides , using some of the best features in those frameworks, we will be able to use underscore js or lodash to manipulate array, collection, Object.
+
+
 
