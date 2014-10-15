@@ -175,6 +175,7 @@ newPlate.on("someRandomnEvent", function(data) {
 });
 
 ```
+### A Simple program
 
 Now write a simple program which does some basic program which initiate a new plateLayout , change something fire an event and we grab it finally we save it back to server.
 
