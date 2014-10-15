@@ -159,9 +159,10 @@ So this way we can provide an added functionality of call back dupport.
 
 All those nice plugin should be able to trigger some ovents once something important happend. So that the user can hook there action with it. Some events we can generate are.
 
-allPlatesLoaded :- when all the plates are loaded from server.
-plateDeleted :- when a specific plate is deleted
-plateAdded :- when a plate is added
-plateEdited :- when a plate is edited/updated. 
-We can definitely add more events
-Generating events have one more benefit. We will be having an undo/redo feature. If we look close each events opposite if it exist will give us undo functionality. So basically keeping those events and the difference to the object will give us undo/redo functionality.
+* allPlatesLoaded :- when all the plates are loaded from server.
+* plateDeleted :- when a specific plate is deleted
+* plateAdded :- when a plate is added
+* plateEdited :- when a plate is edited/updated. 
+We can definitely add more events.
+
+Generating events have one more benefit. We will be having an undo/redo feature. If we look close, each events opposites, if it exists will give us undo functionality. So basically keeping those events and the difference to the object with previous will give us undo/redo functionality.
