@@ -90,5 +90,58 @@ var plateData = {
 var newPlate = new plateLayOut.plate(plateData);
 
 plateLayOut.sync();
+
+// this should essentially saves the new plate to the server.
+
+```
+Or may be we should be able to save all the changes in the stack 
+
+```
+plateLayOut.updateWell();
+
+```
+### Redo/undo
+
+Redo undo feature should be accissible with simple function call
+
+```
+plateLayOut.undo();
+
+plateLayOut.redo();
+
 ```
 
+### Events
+
+lets fire events for different things
+
+may be when we create a new plate, delete a plate , and when well is updated.
+
+```
+// imagine there is an event when a plate is created
+
+plateLayOut.on("plate:created", function(plate) {
+
+	var plateTemp = plate.get("temperature");
+
+});
+
+```
+
+Like wise above, we may employ evets to see if any property changed for plate
+
+```
+var plateData = {
+
+	"color": "red",
+	"temperature": 70
+}
+
+var newPlate = new plateLayOut.plate(plateData);
+
+newPlate.on("change:temperature", function(plate) {
+	
+	console.log(plate.get("temperature"));
+})
+
+```
