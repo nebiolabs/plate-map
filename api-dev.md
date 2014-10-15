@@ -145,3 +145,32 @@ newPlate.on("change:temperature", function(plate) {
 })
 
 ```
+
+Again to be a cool we should give programmer opportunity to fire coustom events
+
+```
+var plateData = {
+
+	"color": "red",
+	"temperature": 70
+}
+
+var newPlate = new plateLayOut.plate(plateData);
+
+var someData = {
+
+	"ssdfsd": "bingo"
+
+}
+newPlate.fire("someRandomEvent", someData);
+
+// Now we bind this event
+
+newPlate.on("someRandomnEvent", function(data) {
+
+	console.log("here s the data", data);
+
+});
+
+```
+
