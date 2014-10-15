@@ -43,5 +43,25 @@ thirdPlate.set("temperature", 100);
 
 var temp = thirdPlate.get("temperature");
 ```
-// 
+Now we may want to delete a plate so it could be like
+```
+allPlates.delete(3);
+
+// or
+
+plateLayOut.getPlates(3).delete();
+
+// or
+
+thirdPlate.delete();
+
+```
+
+Now we may want to save a plate after edit
+
+```
+thirdPlate.set("temperature", 80);
+
+thirdPlate.save();
+```
 
