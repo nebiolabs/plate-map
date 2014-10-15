@@ -112,3 +112,56 @@ This function is called when the tool initializes to retrieve the existing plate
 ]
 ```
 `attribute_id_x` cooresponds to the id of the attribute as it is defined in the configuration options.
+
+Example API.
+
+First lets go for very basic actions we will be doing with this plug in. thats definitely CRUD actions. Create, Read, Update, Destroy. We have a very good ajax library in jquery and we could employ it for the porpose of API calling
+
+GET all plates 					/plates					GET
+GET individual plate			/plates/:id				GET
+CREATE a plate					/plate					POST
+UPDATE a plate					/plate/:id				PUT
+DESTROY a plate					/plate/:id				DELETE
+
+This will give us basic funtionalities. Now in plugin perspective, we could write nice wrappers around this api calls so that the end user just need to call the respective methods if they dont have to change any settings as there own. Anyway we can never be sure about having the same api calls for different server settings. The best thing about wrappng this api calls with methods is that , if the user has different api calls for his/her own server , still they can use it passing some value to the method we wrap original api intended for ChaiBio. There is a lot more api calls specific to each and every action we can work upon those plates but a large part would go to UPDATE or PUT section of it.
+
+lets say we we provide getAllPlates method.
+```
+getAllPlates = function(optinalaApiCall) {
+	$.ajax({
+			url: optinalaApiCall || "/plates",
+			contentType: 'application/json',
+			type: 'GET'
+		})
+};
+
+So this wrapper method can take optional api call if the user provide else it will use the original call.
+
+Callbacks.
+
+We should be able to provide users the option to write there own callback functions once something has happend. For example imagine the user want to display no of plates returned form server.
+
+callBack = function(data) {
+	console.log(data.length);
+};
+
+getAllPlates = function(optinalaApiCall, callBack) {
+	$.ajax({
+			url: optinalaApiCall || "/plates",
+			contentType: 'application/json',
+			type: 'GET'
+		}).done(callBack);
+};
+
+So this way we can provide an added functionality of call back dupport.
+
+Events.
+
+All those nice plugin should be able to trigger some ovents once something important happend. So that the user can hook there action with it. Some events we can generate are.
+
+allPlatesLoaded :- when all the plates are loaded from server.
+plateDeleted :- when a specific plate is deleted
+plateAdded :- when a plate is added
+plateEdited :- when a plate is edited/updated. 
+We can definitely add more events
+Generating events have one more benefit. We will be having an undo/redo feature. If we look close each events opposite if it exist will give us undo functionality. So basically keeping those events and the difference to the object will give us undo/redo functionality.
