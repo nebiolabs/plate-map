@@ -115,13 +115,13 @@ This function is called when the tool initializes to retrieve the existing plate
 
 ##Example API.
 
-First lets go for very basic actions we will be doing with this plug in. thats definitely CRUD actions. Create, Read, Update, Destroy. We have a very good ajax library in jquery and we could employ it for the porpose of API calling
+First lets go for very basic actions we will be doing with this plug in. thats definitely CRUD actions. Create, Read, Update, Destroy. We have a very good ajax library in jquery and we could employ it for the porpose of API calling.
 
-GET all plates 					/plates					GET
-GET individual plate			/plates/:id				GET
-CREATE a plate					/plate					POST
-UPDATE a plate					/plate/:id				PUT
-DESTROY a plate					/plate/:id				DELETE
+* GET all plates 					/plates					GET
+* GET individual plate			/plates/:id				GET
+* CREATE a plate					/plate					POST
+* UPDATE a plate					/plate/:id				PUT
+* DESTROY a plate					/plate/:id				DELETE
 
 This will give us basic funtionalities. Now in plugin perspective, we could write nice wrappers around this api calls so that the end user just need to call the respective methods if they dont have to change any settings as there own. Anyway we can never be sure about having the same api calls for different server settings. The best thing about wrappng this api calls with methods is that , if the user has different api calls for his/her own server , still they can use it passing some value to the method we wrap original api intended for ChaiBio. There is a lot more api calls specific to each and every action we can work upon those plates but a large part would go to UPDATE or PUT section of it.
 
