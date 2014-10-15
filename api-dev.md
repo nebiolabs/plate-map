@@ -15,19 +15,19 @@ var plateLayOut = new ChaiBioTech.plateLayOut(plateConf);
 // This should initialize a new plate lay out screen
 
 ```
-// Now I am going to fetch all the plates in the well, sorry if I am wrong with name and concept
+Now I am going to fetch all the plates in the well, sorry if I am wrong with name and concept
 ```
 var allPlates = plateLayOut.getPlates(); 
 // Conviniently this should get me all the plates
 ```
-//Here its better if we can specify number and limit of plates it returns
+Here its better if we can specify number and limit of plates it returns
 ```
 var allPlates = plateLayOut.getPlates(1, 10); // Should return 1-10 , what if we have pagination
 
 var thirdPlate = plateLayOut.getPlate(3); // Ofcourse it fetches 3rd plate
 ```
-// its better we implement getter and setter method to well and plate; this could be done like , imgine we have a 
-// color property
+its better we implement getter and setter method to well and plate; this could be done like , imgine we have a 
+color property
 ```
 thirdPlate.color = "red";
 thirdPlate.set("color", red");
@@ -37,7 +37,7 @@ thirdPlate.set("color", red");
 var color = thirdPlate.color;
 var color = thirdPlate.get("color");
 ```
-// And it could be any property
+And it could be any property
 ```
 thirdPlate.set("temperature", 100);
 
