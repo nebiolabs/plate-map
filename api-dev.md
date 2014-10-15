@@ -12,9 +12,9 @@ var plateConf = {
 		};
 
 var plateLayOut = new ChaiBioTech.plateLayOut(plateConf); // This should initialize a new plate lay out screen
-
+```
 // Now I am going to fetch all the plates in the well, sorry if I am wrong with name and concept
-
+```
 var allPlates = plateLayOut.getPlates(); // Conviniently this should get me all the plates
 
 //Here its better if we can specify number and limit of plates it returns
@@ -39,4 +39,6 @@ var color = thirdPlate.get("color");
 thirdPlate.set("temperature", 100);
 
 var temp = thirdPlate.get("temperature");
+
+// 
 
