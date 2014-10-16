@@ -236,5 +236,46 @@ plate.set("color", "blue").get("temperature");
 ```
 Plase note that I am greatly inspired by jquery and backbone, besides , using some of the best features in those frameworks, we will be able to use underscore js or lodash to manipulate array, collection, Object.
 
+<================================================================================================>
 
+The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin
 
+```
+	plateLayout.init({
+
+		embedId:          'my-plate-layout'
+
+		numRows:          '8',
+
+		numCols:          '12',
+
+		incrementalSave:  'true',
+
+		attributes:       attributes,
+
+		url: "/someServer/plates", // Optional if we want to configure with some other server
+
+		getPlateSuccessful: function(plates) {
+			// This function will be invoked when getPlates() function successfully gets data drom server
+			console.log(plates);
+		},
+
+		getPlateFailed: function(err) {
+			// This is invoked when getPlate returns an erroe
+ 			console.log(err.text);
+		},
+
+		updateWellsSuccessful: function(well) {
+			// invoked when a particular well is updated, and returns the updated well
+			console.log(well.temperature);
+		},
+
+		updateWellsFailure: function(err) {
+			// Invoked when well update fails
+			console.log(err.text);
+		}
+		
+	});
+
+```
+I guess this could be a nice starting point we definitely dont expose more than required. More over I think updatewell() and getPlates are the things we internally do and doesn't have to expose it to developers now. 

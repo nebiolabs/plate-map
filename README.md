@@ -166,3 +166,25 @@ All those nice plugin should be able to trigger some ovents once something impor
 We can definitely add more events.
 
 Generating events have one more benefit. We will be having an undo/redo feature. If we look close, each events opposites, if it exists will give us undo functionality. So basically keeping those events and the difference to the object with previous will give us undo/redo functionality.
+
+<================================================================================================>
+
+The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin
+
+```
+	plateLayout.init({
+		embedId:          'my-plate-layout'
+
+		numRows:          '8',
+
+		numCols:          '12',
+
+		incrementalSave:  'true',
+
+		attributes:       attributes,
+		
+
+
+	});
+
+```
