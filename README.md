@@ -171,7 +171,7 @@ Generating events have one more benefit. We will be having an undo/redo feature.
 
 The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin. So we implement a simple interface for the plugin, up on calling those interface methods plugin would pass required data to the method. And those methods will be executed once specigic things are happening, Like plateData is retrived successfully, or erroe happend, or wells saved ...!. 
 
-So as we write this code, it should successfully place the plate data into the page and we should be able manipulate and change things. Besides those helper funcions should be executed when particular things are happening, So that the developer can do his/her own things with the data.    
+So as we write this code, it should successfully place the plate data into the page as the design suggests and we should be able manipulate and change things. Besides, those helper funcions should be executed when particular things are happening, So that the developer can do his/her own things with the data.    
 
 ```
 	plateLayout.init({
