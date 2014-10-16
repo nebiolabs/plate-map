@@ -66,12 +66,25 @@ Embed code similar to the below to add the plate layout tool to your application
 		];
 
 		plateLayout.init({
+
 			embedId:          'my-plate-layout'
 			numRows:          '8',
 			numCols:          '12',
-			incrementalSave:  'true',
-			attributes:       attributes
+			attributes:       attributes,
+
+			getPlate: function() {
+				//this function should retrieve the plate from the server
+				//and call either getPlateSuccessful() or getPlateFailed()
+				//on completion
+			},
+			
+			updateWells: function(wells) {
+				//this function should save the provided wells to the server
+				//and call either updateWellsSuccessful() or updateWellsFailed()
+				//on completion
+			}		
 		});
+
 	</script>
 </head>
 
@@ -80,24 +93,18 @@ Embed code similar to the below to add the plate layout tool to your application
 </body>
 ```
 
-## Configuration Options
+## Attribute Specification
+More detailed explanation of the example attribute definition provided above to come.
 
-## JavaScript Callbacks
-To enable the JavaScript Plate Layout tool to save the plate to a server, you should implement the following two funcitons.
+## JavaScript API
+### User-Provided Callback Functions
+The following two callback functions must be implemented by the user and provided to the init function.
 
-### updateWells
-```javascript
-function updateWells(wellChangeArray) {
-}
-```
+#### updateWells(wellChangeArray)
 As the user makes changes, the plate layout tool tracks what changes need to be saved to the server. It serializes these changes into batches, and calls this function once per batch. The
 function is passed a list of wells that have changes, and should make an AJAX request to save these changes to the server. Upon completion you should call either `plateLayout.updateWellsSuccessful()` or `plateLayout.updateWellsFailure()`. If successful, updateWells() will be called again once there are further changes. If a failure occurs, an error will be displayed to the user, and the plate will be re-loaded.
 
-### getPlate
-```
-function getPlate() {
-}
-```
+#### getPlate()
 This function is called when the tool initializes to retrieve the existing plate layout. Once retrieved, you should call either `plateLayout.getPlateSuccessful(wells)` or `plateLayout.getPlateFailed()`. If successful, well data should be passed in the following form:
 
 ```
@@ -113,103 +120,18 @@ This function is called when the tool initializes to retrieve the existing plate
 ```
 `attribute_id_x` cooresponds to the id of the attribute as it is defined in the configuration options.
 
-##Example API.
+###Plate Layout Callback Functions
 
-First lets go for very basic actions we will be doing with this plug in. thats definitely CRUD actions. Create, Read, Update, Destroy. We have a very good ajax library in jquery and we could employ it for the porpose of API calling.
+The plate layout tool exposes the following callback functions intended to be called by the user.
 
-* GET all plates 					/plates					GET
-* GET individual plate			/plates/:id				GET
-* CREATE a plate					/plate					POST
-* UPDATE a plate					/plate/:id				PUT
-* DESTROY a plate					/plate/:id				DELETE
+#### getPlateSuccessful(wells)
+Called back in response to getPlate(). Used to initialize the plate layout tool with the well array data if getPlate() succeeded.
 
-This will give us basic funtionalities. Now in plugin perspective, we could write nice wrappers around this api calls so that the end user just need to call the respective methods if they dont have to change any settings as there own. Anyway we can never be sure about having the same api calls for different server settings. The best thing about wrappng this api calls with methods is that , if the user has different api calls for his/her own server , still they can use it passing some value to the method we wrap original api intended for ChaiBio. There is a lot more api calls specific to each and every action we can work upon those plates but a large part would go to UPDATE or PUT section of it.
+#### getPlateFailed()
+Called back in response to a failed getPlate() call.
 
-lets say we we provide getAllPlates method.
-```
-getAllPlates = function(optinalaApiCall) {
-	$.ajax({
-			url: optinalaApiCall || "/plates",
-			contentType: 'application/json',
-			type: 'GET'
-		})
-};
-```
-So this wrapper method can take optional api call if the user provide else it will use the original call.
+#### updateWellsSuccessful()
+Called back when updateWells() successfully updates all wells it was provided to the server.
 
-##Callbacks.
-
-We should be able to provide users the option to write there own callback functions once something has happend. For example imagine the user want to display no of plates returned form server.
-```
-callBack = function(data) {
-	console.log(data.length);
-};
-
-getAllPlates = function(optinalaApiCall, callBack) {
-	$.ajax({
-			url: optinalaApiCall || "/plates",
-			contentType: 'application/json',
-			type: 'GET'
-		}).done(callBack);
-};
-```
-So this way we can provide an added functionality of call back dupport.
-
-##Events.
-
-All those nice plugin should be able to trigger some ovents once something important happend. So that the user can hook there action with it. Some events we can generate are.
-
-* allPlatesLoaded :- when all the plates are loaded from server.
-* plateDeleted :- when a specific plate is deleted
-* plateAdded :- when a plate is added
-* plateEdited :- when a plate is edited/updated. 
-We can definitely add more events.
-
-Generating events have one more benefit. We will be having an undo/redo feature. If we look close, each events opposites, if it exists will give us undo functionality. So basically keeping those events and the difference to the object with previous will give us undo/redo functionality.
-
-<====================================================================>
-
-The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin. So we implement a simple interface for the plugin, up on calling those interface methods plugin would pass required data to the method. And those methods will be executed once specigic things are happening, Like plateData is retrived successfully, or erroe happend, or wells saved ...!. 
-
-So as we write this code, it should successfully place the plate data into the page as the design suggests and we should be able manipulate and change things. Besides, those helper funcions should be executed when particular things are happening, So that the developer can do his/her own things with the data.    
-
-```
-	plateLayout.init({
-
-		embedId:          'my-plate-layout'
-
-		numRows:          '8',
-
-		numCols:          '12',
-
-		incrementalSave:  'true',
-
-		attributes:       attributes,
-
-		url:			  "/someServer/plates", // Optional, if we want to configure with some other server
-
-		getPlateSuccessful: function(plates) {
-			// This function will be invoked when getPlates() function 
-			// successfully gets data drom server
-			console.log(plates);
-		},
-
-		getPlateFailed: function(err) {
-			// This is invoked when getPlate returns an error
- 			console.log(err.text);
-		},
-
-		updateWellsSuccessful: function(well) {
-			// invoked when a particular well is updated, 
-			// and returns the updated well
-			console.log(well.temperature);
-		},
-
-		updateWellsFailure: function(err) {
-			// Invoked when well update fails
-			console.log(err.text);
-		}
-		
-	});
-
-```
+#### updateWellsFailed()
+Called back when updateWells() was unsuccessful in updating all wells to the server.
