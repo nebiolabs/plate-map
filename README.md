@@ -167,12 +167,15 @@ We can definitely add more events.
 
 Generating events have one more benefit. We will be having an undo/redo feature. If we look close, each events opposites, if it exists will give us undo functionality. So basically keeping those events and the difference to the object with previous will give us undo/redo functionality.
 
-<================================================================================================>
+<====================================================================>
 
-The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin
+The API should be providing basic functionality to initialize and manipulate some of the data available from the plugin. So we implement a simple interface for the plugin, up on calling those interface methods plugin would pass required data to the method. And those methods will be executed once specigic things are happening, Like plateData is retrived successfully, or erroe happend, or wells saved ...!. 
+
+So as we write this code, it should successfully place the plate data into the page and we should be able manipulate and change things. Besides those helper funcions should be executed when particular things are happening, So that the developer can do his/her own things with the data.    
 
 ```
 	plateLayout.init({
+
 		embedId:          'my-plate-layout'
 
 		numRows:          '8',
@@ -182,9 +185,31 @@ The API should be providing basic functionality to initialize and manipulate som
 		incrementalSave:  'true',
 
 		attributes:       attributes,
+
+		url:			  "/someServer/plates", // Optional, if we want to configure with some other server
+
+		getPlateSuccessful: function(plates) {
+			// This function will be invoked when getPlates() function 
+			// successfully gets data drom server
+			console.log(plates);
+		},
+
+		getPlateFailed: function(err) {
+			// This is invoked when getPlate returns an error
+ 			console.log(err.text);
+		},
+
+		updateWellsSuccessful: function(well) {
+			// invoked when a particular well is updated, 
+			// and returns the updated well
+			console.log(well.temperature);
+		},
+
+		updateWellsFailure: function(err) {
+			// Invoked when well update fails
+			console.log(err.text);
+		}
 		
-
-
 	});
 
 ```
