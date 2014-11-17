@@ -64,24 +64,25 @@
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+  position: relative;
 }
 
 /* line 56, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-overlay-radio-container {
   width: 32px;
   height: 32px;
-  float: left;
 }
 
 /* line 62, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-overlay-text-container {
   width: 380px;
   height: 32px;
-  float: left;
+  left: 32px;
+  top: 6px;
   color: white;
   font-size: 12px;
   font-family: 'Roboto', sans-serif;
-  padding-top: 7px;
+  position: absolute;
 }
 
 /* line 72, ../../app/assets/stylesheets/plate-layout.css.scss */
@@ -89,7 +90,9 @@
   width: 220px;
   height: 32px;
   float: left;
-  padding-top: 4px;
+  left: 412px;
+  top: 4px;
+  position: absolute;
 }
 
 /* line 79, ../../app/assets/stylesheets/plate-layout.css.scss */

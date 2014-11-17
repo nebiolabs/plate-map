@@ -8,8 +8,8 @@
     },
 
     _create: function() {
+      
       this._createInterface();
-      console.log(this.options);
     },
 
     _init: function() {
