@@ -49,7 +49,7 @@
   width: 60px;
   height: 32px;
   float: left;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 12px;
   padding-top: 8px;
   cursor: pointer;
@@ -80,7 +80,7 @@
   float: left;
   color: white;
   font-size: 12px;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   padding-top: 7px;
 }
 
@@ -96,7 +96,7 @@
 .plate-setup-button {
   width: 103px;
   height: 23px;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 10px;
   border: none;
   background-color: white;
@@ -146,7 +146,7 @@
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   cursor: pointer;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 10px;
   text-align: -webkit-center;
   text-align: center;
@@ -164,7 +164,7 @@
   -webkit-box-shadow: 0px -2px 3px 0px #d9d9d9;
   -moz-box-shadow: 0px -2px 3px 0px #d9d9d9;
   box-shadow: 0px -2px 3px 0px #d9d9d9;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 10px;
   text-align: -webkit-center;
   text-align: center;
@@ -178,6 +178,7 @@
   height: 432px;
   border-bottom: solid 1px #e1e1e1;
   position: absolute;
+  font-family: 'Roboto', sans-serif;
 }
 
 /* line 159, ../../app/assets/stylesheets/plate-layout.css.scss */
@@ -199,7 +200,7 @@
   position: absolute;
   top: 486px;
   font-size: 10px;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   padding-top: 6px;
 }
 
@@ -215,31 +216,33 @@
 /* line 188, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-prest-tab {
   width: 66px;
-  height: 22px;
+  height: 20px;
   float: left;
   background-color: white;
   border: solid 1px #e1e1e1;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   cursor: pointer;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 10px;
   text-align: -webkit-center;
   text-align: center;
-  padding-top: 2px;
 }
 
 /* line 204, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-prest-tab-selected {
   width: 66px;
-  height: 22px;
+  height: 20px;
   float: left;
   background-color: #e1e1e1;
   cursor: pointer;
-  font-family: "roboto";
+  font-family: 'Roboto', sans-serif;
   font-size: 11px;
   text-align: -webkit-center;
   text-align: center;
-  padding-top: 2px;
   color: #00506e;
+}
+
+.plate-setup-prest-tab-div {
+  padding-top: 3px;
 }

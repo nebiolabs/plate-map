@@ -9,6 +9,7 @@
 
     _create: function() {
       this._createInterface();
+      console.log(this.options);
     },
 
     _init: function() {
@@ -136,23 +137,7 @@
       this.tabHead = this._createElement("<div></div>").addClass("plate-setup-tab-head");
       $(this.tabContainer).append(this.tabHead);
 
-      var tabData = {
-        "Tab 1": {
-
-        },
-
-        "Tab 2": {
-
-        },
-
-        "Tab 3": {
-
-        },
-
-        "Tab 4": {
-
-        }
-      };
+      var tabData = this.options.attributes;
 
       this.allTabs = [];
       var tabIndex = 0;
@@ -244,7 +229,8 @@
       var presetArray = [];
       var counter = 0;
       for(var preset in wellAttrData) {
-        var divText = this._createElement("<div></div>").html(preset);
+        var divText = this._createElement("<div></div>").html(preset)
+        .addClass("plate-setup-prest-tab-div");
         presetArray[counter ++] = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
         .append(divText);
         $(this.presetTabContainer).append(presetArray[counter - 1]);

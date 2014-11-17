@@ -15,9 +15,51 @@
 <script type="text/javascript">
 
   $(function() {
-    //console.log("hello jossie");
+    var attributes = {
+      "tab 1": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      },
+
+      "tab 2": {
+        id: 'pol',
+        name: 'Polymerase',
+        type: 'multiselect',
+
+        options: {
+            'Taq 1':  {
+                  id:   '234',
+                  name: 'Taq 1'
+              },
+            'Taq 2':  {
+                  id:   '123',
+                  name: 'Taq 2'
+              }
+        }
+      },
+
+      "tab 3": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      },
+
+      "tab 4": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      }
+    };
+
+    
     $("#plate-layout").plateLayOut({
-      value: 10
+      numRows:          '8',
+      numCols:          '12',
+      attributes:       attributes
     });
   });
 
