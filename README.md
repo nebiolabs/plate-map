@@ -65,9 +65,8 @@ Embed code similar to the below to add the plate layout tool to your application
 			]; //etc, up to 4 tabs
 		];
 
-		plateLayout.init({
+		$("#my-plate-layout").plateLayout({
 
-			embedId:          'my-plate-layout'
 			numRows:          '8',
 			numCols:          '12',
 			attributes:       attributes,
@@ -82,9 +81,8 @@ Embed code similar to the below to add the plate layout tool to your application
 				//this function should save the provided wells to the server
 				//and call either updateWellsSuccessful() or updateWellsFailed()
 				//on completion
-			}		
+			}	
 		});
-
 	</script>
 </head>
 
