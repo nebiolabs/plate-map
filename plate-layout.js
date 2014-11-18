@@ -8,7 +8,7 @@
     },
 
     _create: function() {
-      
+
       this._createInterface();
     },
 
@@ -60,6 +60,9 @@
 
       this._placeWellAttr();
       this._placeWellAttrTabs();
+      // Bottom of the screen
+      this._bottomScreen();
+
     },
 
     _createCanvas: function() {
@@ -243,17 +246,24 @@
       }
     },
 
-      _presetClickHandler: function(clickedPreset) {
+    _presetClickHandler: function(clickedPreset) {
 
-        if(this.previouslyClickedPreset) {
-          $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
-          .addClass("plate-setup-prest-tab");
-        }
+      if(this.previouslyClickedPreset) {
+        $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+        .addClass("plate-setup-prest-tab");
+      }
 
-        $(clickedPreset).addClass("plate-setup-prest-tab-selected");
-        this.previouslyClickedPreset = clickedPreset;
-        // What does preset tabs do ??
+      $(clickedPreset).addClass("plate-setup-prest-tab-selected");
+      this.previouslyClickedPreset = clickedPreset;
+      // What does preset tabs do ??
+    },
+
+    _bottomScreen: function() {
+
+      this.bottomContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-container");
+      $(this.container).append(this.bottomContainer);
     }
+
 
   });
 })(jQuery, fabric);

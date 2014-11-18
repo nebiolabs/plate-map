@@ -249,3 +249,9 @@
 .plate-setup-prest-tab-div {
   padding-top: 3px;
 }
+
+.plate-setup-bottom-container {
+  width: 1024px;
+  height: 208px;
+  background-color: #e1e1e1;
+}
