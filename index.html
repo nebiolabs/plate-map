@@ -1,0 +1,66 @@
+<html>
+<link href="/css/plate-layout.css" media="all" rel="stylesheet">
+<script src="/libs/jquery-1.10.1.min.js"></script>
+<script src="/libs/jquery-ui.min.js"></script>
+<script src="/libs/fabric.js"></script>
+<script src="/plate-layout.js"></script>
+
+  <body>
+    <div id="plate-layout">
+      cool
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+
+  $(function() {
+    var attributes = {
+      "tab 1": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      },
+
+      "tab 2": {
+        id: 'pol',
+        name: 'Polymerase',
+        type: 'multiselect',
+
+        options: {
+            'Taq 1':  {
+                  id:   '234',
+                  name: 'Taq 1'
+              },
+            'Taq 2':  {
+                  id:   '123',
+                  name: 'Taq 2'
+              }
+        }
+      },
+
+      "tab 3": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      },
+
+      "tab 4": {
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        units:    'volume_units' //optional
+      }
+    };
+
+    
+    $("#plate-layout").plateLayOut({
+      numRows:          '8',
+      numCols:          '12',
+      attributes:       attributes
+    });
+  });
+
+</script>

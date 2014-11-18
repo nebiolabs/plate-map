@@ -8,6 +8,7 @@
     },
 
     _create: function() {
+      
       this._createInterface();
     },
 
@@ -56,6 +57,9 @@
 
       this._createTabAtRight();
       this._createTabs();
+
+      this._placeWellAttr();
+      this._placeWellAttrTabs();
     },
 
     _createCanvas: function() {
@@ -110,7 +114,7 @@
 
       var menuContent = null;
 
-      for(menuItem in menuItems) {
+      for(var menuItem in menuItems) {
         menuContent = this._createElement("<div></div>")
         .html(menuItem)
         .addClass("plate-setup-menu-item");
@@ -133,23 +137,7 @@
       this.tabHead = this._createElement("<div></div>").addClass("plate-setup-tab-head");
       $(this.tabContainer).append(this.tabHead);
 
-      var tabData = {
-        "Tab 1": {
-
-        },
-
-        "Tab 2": {
-
-        },
-
-        "Tab 3": {
-
-        },
-
-        "Tab 4": {
-
-        }
-      };
+      var tabData = this.options.attributes;
 
       this.allTabs = [];
       var tabIndex = 0;
@@ -200,12 +188,71 @@
       this.allDataTabs = []; // To hold all the tab contents
       var tabIndex = 0;
 
-      for(tabData in tabs) {
+      for(var tabData in tabs) {
         this.allDataTabs[tabIndex ++] = this._createElement("<div></div>").addClass("plate-setup-data-div")
         .css("z-index", 0)
         .html(tabData);
         $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
       }
+    },
+
+    _placeWellAttr: function() {
+
+      this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container")
+      .html("Well Attribute Tabs");
+      $(this.tabContainer).append(this.wellAttrContainer);
+    },
+
+    _placeWellAttrTabs: function() {
+
+      this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
+      $(this.tabContainer).append(this.presetTabContainer);
+      // From where I am going to get this data ??
+      var wellAttrData = {
+        "Preset 1": {
+
+        },
+
+        "Preset 2": {
+
+        },
+
+        "Preset 3": {
+
+        },
+
+        "Preset 4": {
+
+        }
+      }
+
+      var presetArray = [];
+      var counter = 0;
+      for(var preset in wellAttrData) {
+        var divText = this._createElement("<div></div>").html(preset)
+        .addClass("plate-setup-prest-tab-div");
+        presetArray[counter ++] = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
+        .append(divText);
+        $(this.presetTabContainer).append(presetArray[counter - 1]);
+
+        var that = this;
+
+        $(presetArray[counter - 1]).click(function() {
+          that._presetClickHandler(this);
+        });
+      }
+    },
+
+      _presetClickHandler: function(clickedPreset) {
+
+        if(this.previouslyClickedPreset) {
+          $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+          .addClass("plate-setup-prest-tab");
+        }
+
+        $(clickedPreset).addClass("plate-setup-prest-tab-selected");
+        this.previouslyClickedPreset = clickedPreset;
+        // What does preset tabs do ??
     }
 
   });
