@@ -78,10 +78,10 @@
 
     _createOverLay: function() {
 
-      this.radioContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-radio-container");
-      $(this.overLayContainer).append(this.radioContainer);
+      //this.radioContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-radio-container");
+      //$(this.overLayContainer).append(this.radioContainer);
       this.overLayTextContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-text-container");
-      $(this.overLayTextContainer).html("Overlay % Complete");
+      $(this.overLayTextContainer).html("Completion Percentage:");
       $(this.overLayContainer).append(this.overLayTextContainer);
       this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
       $(this.overLayContainer).append(this.overLayButtonContainer);
@@ -109,10 +109,9 @@
     _createMenu: function() {
 
       var menuItems = {
-        "File..": {},
-        "Undo": {},
+        "Templates": {},
         "Redo": {},
-        "Templates": {}
+        "Undo": {}
       };
 
       var menuContent = null;
