@@ -1,12 +1,12 @@
 # JavaScript Plate Layout
-JavaScript Plate Layout is an open source tool developed collaboratively by [Chai Biotechnologies](www.chaibio.com) and [New England BioLabs](www.neb.com) for visualizing and editing the layout of scientific assay plates.
+JavaScript Plate Layout is an open source tool developed collaboratively by [Chai Biotechnologies](www.chaibio.com) and [New England Biolabs](www.neb.com) for visualizing and editing the layout of scientific assay plates.
 
-Many scientific instruments such as PCR thermocyclers, DNA sequencers, and microplate readers use plates ranging from 24 to 384 wells, with 96 well plates being particularly common. It is usually necessary to set data attributes for each of the wells, both so that the instrument can properly configure itself, and so that results can be properly analyzed. Correctness of the layout is critical for the integrity of results, but not always easy to obtain given the number of wells and data attributes to be assigned.
+Many scientific instruments such as PCR thermocyclers, DNA sequencers, and microplate readers use plates ranging from 8 to 1536 wells, with 96 well plates being particularly common. It is usually necessary to set data attributes for each of the wells, both so that the instrument can properly configure itself, and so that results can be properly analyzed. Correctness of the layout is critical for the integrity of results, but not always easy to obtain given the number of wells and data attributes to be assigned.
 
 JavaScript Plate Layout provides a tool for visualizing the plate layout using a few dimensions at a time, to better comprehend the layout they have created. It provides extensive plate editing capabilities and is designed to be easily utilized in the context of a larger scientific software application.
 
 ## Features
-* Assign and edit up to roughly 25 data attributes to plates ranging from 16 to 96 wells
+* Assign and edit up to roughly 25 data attributes to plates ranging from 8 to 96 wells
 * Incrementially save plate layouts to server via JavaScript callback interface
 * Colorfully visualize the layout using user-selected data dimensions
 * Assign attributes to multiple wells at once
