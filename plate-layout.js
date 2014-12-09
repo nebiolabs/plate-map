@@ -1,4 +1,4 @@
-// Plete Layout source code.
+// Plate Layout source code.
 (function($, fabric){
 
   $.widget("DNA.plateLayOut", {
@@ -6,6 +6,10 @@
     options: {
       value: 0
     },
+
+    columnCount: 12,
+
+    rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
 
     _create: function() {
 
@@ -62,6 +66,10 @@
       this._placeWellAttrTabs();
       // Bottom of the screen
       this._bottomScreen();
+
+      // Canvas
+
+      this._canvas();
 
     },
 
@@ -261,8 +269,80 @@
 
       this.bottomContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-container");
       $(this.container).append(this.bottomContainer);
+    },
+
+    _canvas: function() {
+
+      this._fixRowAndColumn();
+      this._putCircles();
+
+    },
+
+    _fixRowAndColumn: function() {
+
+      // For column
+      for(var i = 1; i<= this.columnCount; i++) {
+        var tempFabricText = new fabric.IText(i.toString(), {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          top : 10,
+          left: 48 + ((i - 1) * 48),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+      }
+
+      // for row
+      var i = 0;
+      while(this.rowIndex[i]) {
+        var tempFabricText = new fabric.IText(this.rowIndex[i], {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          left: 5,
+          top: 48 + (i * 48),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+        i ++;
+      }
+    },
+
+    _putCircles: function() {
+
+      var rowCount = this.rowIndex.length;
+      for( var i = 0; i < rowCount; i++) {
+
+        for(var j = 0; j < 12; j++) {
+          var tempCircle = new fabric.Circle({
+            radius: 14,
+            strokeWidth: 17,
+            stroke: 'purple',
+            originX:'center',
+            originY: 'center',
+            left: 48 + (j * 48),
+            top: 48 + (i * 48),
+            hasBorders: false,
+            fill: 'white',
+            selectable: true,
+            hasBorders: false,
+            hasControls: false,
+            hasRotatingPoint: false,
+            name: "circle"
+          });
+
+          this.mainFabricCanvas.add(tempCircle);
+        }
+      }
     }
-
-
   });
 })(jQuery, fabric);
