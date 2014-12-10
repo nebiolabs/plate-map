@@ -42,15 +42,29 @@
                       name: 'Taq 2'
                   }
             }
+          },
+
+          Amplicons: {
+            id:       'volume',
+            name:     'Amplicons',
+            type:     'numeric',
+            units:    'volume_units' //optional
+          },
+
+          Buffer: {
+            id:       'volume',
+            name:     'Buffer',
+            type:     'numeric',
+            units:    'volume_units' //optional
           }
         }
       },
 
       "tab 2": {
         fields: {
-          Jossie : {
+          dNTPs : {
             id: 'pol',
-            name: 'Jossie',
+            name: 'dNTPs',
             type: 'multiselect',
 
             options: {
@@ -96,10 +110,32 @@
       },
 
       "tab 4": {
-        id:       'volume',
-        name:     'Volume',
-        type:     'numeric',
-        units:    'volume_units' //optional
+
+        fields: {
+          Volume: {
+            id:       'volume',
+            name:     'Volume',
+            type:     'numeric',
+            units:    'volume_units' //optional
+          },
+
+          dNTPs : {
+            id: 'pol',
+            name: 'dNTPs',
+            type: 'multiselect',
+
+            options: {
+                'Taq 1':  {
+                      id:   '234',
+                      name: 'Taq 1'
+                  },
+                'Taq 2':  {
+                      id:   '123',
+                      name: 'Taq 2'
+                  }
+            }
+          }
+        }
       }
     };
 

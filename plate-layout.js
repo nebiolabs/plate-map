@@ -366,10 +366,11 @@
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(field);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
             // now we are adding the text field.
-            var input = this._createElement("<input>");
-            console.log(input);
+            var input = this._createElement("<input>").addClass("plate-setup-tab-input");
+            //console.log(input);
+            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
           }
-
+          console.log(fieldArrayIndex);
           this.allDataTabs[tabPointer]["fields"] = fieldArray;
         } else {
           console.log("unknown format in field initialization");
