@@ -367,10 +367,9 @@
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
             // now we are adding the text field.
             var input = this._createElement("<input>").addClass("plate-setup-tab-input");
-            //console.log(input);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
           }
-          console.log(fieldArrayIndex);
+
           this.allDataTabs[tabPointer]["fields"] = fieldArray;
         } else {
           console.log("unknown format in field initialization");
@@ -380,7 +379,7 @@
     },
 
     _createDefaultFieldForTabs: function() {
-      // this method creates an out line and structure for a default field.
+      // this method creates an outline and structure for a default field.
       var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
       var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
       var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
