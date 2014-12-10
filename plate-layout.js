@@ -193,7 +193,7 @@
       $(clickedTab).addClass("plate-setup-tab-selected");
 
       this.selectedTab = clickedTab;
-
+      //console.log(this.allDataTabs[$(this.selectedTab).data("index")]);
       var clickedTabIndex = $(clickedTab).data("index");
       $(this.allDataTabs[clickedTabIndex]).css("z-index", 1000);
     },
@@ -365,6 +365,9 @@
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(field);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
+            // now we are adding the text field.
+            var input = this._createElement("<input>");
+            console.log(input);
           }
 
           this.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -373,15 +376,10 @@
         }
         tabPointer ++;
       }
-      $(".plate-setup-tab-name").click(function() {
-        alert($(this).html());
-        console.log(this);
-      })
-      console.log(this.allDataTabs);
     },
 
     _createDefaultFieldForTabs: function() {
-
+      // this method creates an out line and structure for a default field.
       var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
       var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
       var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");

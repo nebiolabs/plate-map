@@ -259,7 +259,6 @@
 .plate-setup-tab-default-field {
   width: 303px;
   height: 50px;
-  background-color: pink;
   margin-left: 16px;
   margin-top: 16px;
 }
@@ -268,19 +267,19 @@
   width: 32px;
   height: 50px;
   float: left;
-  background-color: black;
 }
 
 .plate-setup-tab-field-right-side {
   width: 271px;
   height: 50px;
   float: left;
-  background-color: green;
 }
 
 .plate-setup-tab-name {
   width: 271px;
   height: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
 }
 
 .plate-setup-tab-field-container {
