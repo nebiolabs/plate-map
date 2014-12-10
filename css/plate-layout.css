@@ -255,3 +255,40 @@
   height: 208px;
   background-color: #e1e1e1;
 }
+
+.plate-setup-tab-default-field {
+  width: 303px;
+  height: 50px;
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.plate-setup-tab-field-left-side {
+  width: 32px;
+  height: 50px;
+  float: left;
+}
+
+.plate-setup-tab-field-right-side {
+  width: 271px;
+  height: 50px;
+  float: left;
+}
+
+.plate-setup-tab-name {
+  width: 271px;
+  height: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+}
+
+.plate-setup-tab-field-container {
+  width: 271px;
+  height: 30px;
+}
+
+.plate-setup-tab-input {
+  width: 272px;
+  height: 31px;
+  border: solid 1px #e1e1e1;
+}
