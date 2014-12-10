@@ -362,8 +362,10 @@
           var fieldArrayIndex = 0;
 
           for(field in tabData[currentTab]["fields"]) {
+            var data = tabData[currentTab]["fields"][field];
+            console.log(data)
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
-            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(field);
+            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
             // now we are adding the text field.
             var input = this._createElement("<input>").addClass("plate-setup-tab-input");
