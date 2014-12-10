@@ -173,6 +173,8 @@
       this._addDataTabs(tabData);
 
       $(this.allTabs[0]).click();
+
+      this._addTabData();
     },
 
     _tabClickHandler: function(clickedTab) {
@@ -342,6 +344,17 @@
 
           this.mainFabricCanvas.add(tempCircle);
         }
+      }
+    },
+
+    // We have tabs content in options , and her we put it in those tabs which are already placed
+    _addTabData: function() {
+
+      console.log("okay placed", this.options["attributes"]);
+      // Here we may need more changes becuse attributes format likely to change
+      var tabData = this.options["attributes"];
+      for(currentTab in tabData) {
+        console.log(tabData[currentTab]);
       }
     }
   });
