@@ -70,9 +70,7 @@
       this._placeWellAttrTabs();
       // Bottom of the screen
       this._bottomScreen();
-
       // Canvas
-
       this._canvas();
 
     },
@@ -363,7 +361,6 @@
 
           for(field in tabData[currentTab]["fields"]) {
             var data = tabData[currentTab]["fields"][field];
-            console.log(data)
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
@@ -392,7 +389,6 @@
       $(wrapperDivRightSide).append(fieldContainer);
       $(wrapperDiv).append(wrapperDivLeftSide);
       $(wrapperDiv).append(wrapperDivRightSide);
-
 
       return wrapperDiv;
     }
