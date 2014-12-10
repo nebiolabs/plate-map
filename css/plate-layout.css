@@ -255,3 +255,35 @@
   height: 208px;
   background-color: #e1e1e1;
 }
+
+.plate-setup-tab-default-field {
+  width: 303px;
+  height: 50px;
+  background-color: pink;
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.plate-setup-tab-field-left-side {
+  width: 32px;
+  height: 50px;
+  float: left;
+  background-color: black;
+}
+
+.plate-setup-tab-field-right-side {
+  width: 271px;
+  height: 50px;
+  float: left;
+  background-color: green;
+}
+
+.plate-setup-tab-name {
+  width: 271px;
+  height: 20px;
+}
+
+.plate-setup-tab-field-container {
+  width: 271px;
+  height: 30px;
+}

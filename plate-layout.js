@@ -11,6 +11,10 @@
 
     rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
 
+    allTabs: [],
+
+    allDataTabs: [], // To hold all the tab contents
+
     _create: function() {
 
       this._createInterface();
@@ -149,7 +153,6 @@
 
       var tabData = this.options.attributes;
 
-      this.allTabs = [];
       var tabIndex = 0;
 
       for(var tab in tabData) {
@@ -197,13 +200,11 @@
 
     _addDataTabs: function(tabs) {
 
-      this.allDataTabs = []; // To hold all the tab contents
       var tabIndex = 0;
 
       for(var tabData in tabs) {
         this.allDataTabs[tabIndex ++] = this._createElement("<div></div>").addClass("plate-setup-data-div")
-        .css("z-index", 0)
-        .html(tabData);
+        .css("z-index", 0);
         $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
       }
     },
@@ -353,9 +354,48 @@
       console.log("okay placed", this.options["attributes"]);
       // Here we may need more changes becuse attributes format likely to change
       var tabData = this.options["attributes"];
+      var tabPointer = 0;
+
       for(currentTab in tabData) {
-        console.log(tabData[currentTab]);
+        if(tabData[currentTab]["fields"]) {
+          var fieldArray = [];
+          var fieldArrayIndex = 0;
+
+          for(field in tabData[currentTab]["fields"]) {
+            fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
+            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(field);
+            $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
+          }
+
+          this.allDataTabs[tabPointer]["fields"] = fieldArray;
+        } else {
+          console.log("unknown format in field initialization");
+        }
+        tabPointer ++;
       }
+      $(".plate-setup-tab-name").click(function() {
+        alert($(this).html());
+        console.log(this);
+      })
+      console.log(this.allDataTabs);
+    },
+
+    _createDefaultFieldForTabs: function() {
+
+      var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+      var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+      var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
+      var nameContainer = this._createElement("<div></div>").addClass("plate-setup-tab-name");
+      var fieldContainer = this._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+
+      $(wrapperDivRightSide).append(nameContainer);
+      $(wrapperDivRightSide).append(fieldContainer);
+      $(wrapperDiv).append(wrapperDivLeftSide);
+      $(wrapperDiv).append(wrapperDivRightSide);
+
+
+      return wrapperDiv;
     }
+
   });
 })(jQuery, fabric);

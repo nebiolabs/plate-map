@@ -19,34 +19,80 @@
   $(function() {
     var attributes = {
       "tab 1": {
-        id:       'volume',
-        name:     'Volume',
-        type:     'numeric',
-        units:    'volume_units' //optional
+        fields: {
+          Volume: {
+            id:       'volume',
+            name:     'Volume',
+            type:     'numeric',
+            units:    'volume_units' //optional
+          },
+
+          Polymerase: {
+            id: 'pol',
+            name: 'Polymerase',
+            type: 'multiselect',
+
+            options: {
+                'Taq 1':  {
+                      id:   '234',
+                      name: 'Taq 1'
+                  },
+                'Taq 2':  {
+                      id:   '123',
+                      name: 'Taq 2'
+                  }
+            }
+          }
+        }
       },
 
       "tab 2": {
-        id: 'pol',
-        name: 'Polymerase',
-        type: 'multiselect',
+        fields: {
+          Jossie : {
+            id: 'pol',
+            name: 'Jossie',
+            type: 'multiselect',
 
-        options: {
-            'Taq 1':  {
-                  id:   '234',
-                  name: 'Taq 1'
-              },
-            'Taq 2':  {
-                  id:   '123',
-                  name: 'Taq 2'
-              }
+            options: {
+                'Taq 1':  {
+                      id:   '234',
+                      name: 'Taq 1'
+                  },
+                'Taq 2':  {
+                      id:   '123',
+                      name: 'Taq 2'
+                  }
+            }
+          }
         }
       },
 
       "tab 3": {
-        id:       'volume',
-        name:     'Volume',
-        type:     'numeric',
-        units:    'volume_units' //optional
+        fields: {
+          Volume: {
+            id:       'volume',
+            name:     'Volume',
+            type:     'numeric',
+            units:    'volume_units' //optional
+          },
+
+          Polymerase: {
+            id: 'pol',
+            name: 'Polymerase',
+            type: 'multiselect',
+
+            options: {
+                'Taq 1':  {
+                      id:   '234',
+                      name: 'Taq 1'
+                  },
+                'Taq 2':  {
+                      id:   '123',
+                      name: 'Taq 2'
+                  }
+            }
+          }
+        }
       },
 
       "tab 4": {
