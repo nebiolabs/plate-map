@@ -292,3 +292,8 @@
   height: 31px;
   border: solid 1px #e1e1e1;
 }
+
+.plate-setup-tab-select-field {
+  width: 272px;
+  height: 31px;
+}

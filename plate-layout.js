@@ -361,12 +361,39 @@
 
           for(field in tabData[currentTab]["fields"]) {
             var data = tabData[currentTab]["fields"][field];
+            var input = "";
+
+            switch(data.type) {
+              case "text":
+                input = this._createTextField();
+                break;
+
+              case "numeric":
+                console.log("numeric found");
+                break;
+
+              case "multiselect":
+                input = this._createMultiSelectField(data);
+                break;
+
+              case "boolean":
+                break;
+            }
+
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
             // now we are adding the text field.
-            var input = this._createElement("<input>").addClass("plate-setup-tab-input");
+            //var input = this._createElement("<input>").addClass("plate-setup-tab-input");
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
+
+            if(data.type == "multiselect") {
+              $("#" + data.id).select2({
+                placeholder: "cool",
+                allowClear: true
+              });
+            }
+            
           }
 
           this.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -375,6 +402,25 @@
         }
         tabPointer ++;
       }
+
+    },
+
+    _createTextField: function() {
+
+      return this._createElement("<input>").addClass("plate-setup-tab-input");
+    },
+
+    _createMultiSelectField: function(selectData) {
+      var selectField = this._createElement("<select></select>").attr("id", selectData.id)
+        .addClass("plate-setup-tab-select-field");
+      for(options in selectData.options) {
+        var optionData = selectData.options[options];
+        var optionField = this._createElement("<option></option>").attr("value", optionData.name)
+        .html(optionData.name);
+        $(selectField).append(optionField);
+      }
+
+      return selectField;
     },
 
     _createDefaultFieldForTabs: function() {
