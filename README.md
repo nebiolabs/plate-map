@@ -32,7 +32,7 @@ Embed code similar to the below to add the plate layout tool to your application
 				name: 'mL'
 			}
 		];
-		
+
 		var attributes = [
 			//tab 1
 			[
@@ -44,7 +44,7 @@ Embed code similar to the below to add the plate layout tool to your application
 				},
 				//etc
 			],
-	
+
 			//tab 2
 			[
 				{
@@ -76,17 +76,17 @@ Embed code similar to the below to add the plate layout tool to your application
 				//and call either getPlateSuccessful() or getPlateFailed()
 				//on completion
 			},
-			
+
 			updateWells: function(wells) {
 				//this function should save the provided wells to the server
 				//and call either updateWellsSuccessful() or updateWellsFailed()
 				//on completion
-			}	
+			}
 		});
 	</script>
 </head>
 
-<body>    
+<body>
     <div id="my-plate-layout"></div>
 </body>
 ```
@@ -112,7 +112,7 @@ This function is called when the tool initializes to retrieve the existing plate
 		attribute_id_1: 'attribute_value_1',
 		attribute_id_2: 'attribute_value_2
 	},
-	
+
 	//well 1, etc
 ]
 ```
@@ -133,3 +133,7 @@ Called back when updateWells() successfully updates all wells it was provided to
 
 #### updateWellsFailed()
 Called back when updateWells() was unsuccessful in updating all wells to the server.
+
+###Data Types.
+
+We have four data types which can be used to initialize tabs in the right hand side. They are text, numeric, boolean and multichoice.

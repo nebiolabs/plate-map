@@ -24,7 +24,13 @@
             id:       'volume',
             name:     'Volume',
             type:     'numeric',
-            units:    'volume_units' //optional
+            //units:    'volume_units', //optional
+            placeholder: "Volume",
+
+            units: {
+              1: "m/s",
+              2: "Nm"
+            }
           },
 
           Polymerase: {
