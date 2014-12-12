@@ -377,6 +377,7 @@
                 break;
 
               case "boolean":
+                input = this._createBooleanField(data);
                 break;
             }
 
@@ -397,6 +398,11 @@
               $(input).keydown(function(evt) {
                 var charCode = (evt.which) ? evt.which : evt.keyCode
                 return !(charCode > 31 && (charCode < 48 || charCode > 57));
+              });
+            } else if(data.type == "boolean") {
+              // Applying select 2 to true/false drop down
+              $("#" + data.id + data.name).select2({
+                
               });
             }
 
@@ -439,6 +445,18 @@
       .attr("placeholder", numericFieldData.placeholder || "");
 
       return numericField;
+    },
+
+    _createBooleanField: function(boolData) {
+
+      var boolField = this._createElement("<select></select>").attr("id", boolData.id + boolData.name)
+      .addClass("plate-setup-tab-select-field");
+      var trueBool = this._createElement("<option></option>").attr("value", true).html("true");
+      var falseBool = this._createElement("<option></option>").attr("value", false).html("false");
+
+      $(boolField).append(trueBool).append(falseBool);
+
+      return boolField;
     },
 
     _createDefaultFieldForTabs: function() {
