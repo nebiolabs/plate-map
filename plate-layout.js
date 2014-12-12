@@ -13,7 +13,9 @@
 
     allTabs: [],
 
-    allDataTabs: [], // To hold all the tab contents
+    allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
+    // Settings as a whole. its very usefull, when we have units for a specific field.
+    // it goes like tabs-> individual field-> units and checkbox
 
     _create: function() {
 
@@ -349,7 +351,6 @@
     // We have tabs content in options , and her we put it in those tabs which are already placed
     _addTabData: function() {
 
-      console.log("okay placed", this.options["attributes"]);
       // Here we may need more changes becuse attributes format likely to change
       var tabData = this.options["attributes"];
       var tabPointer = 0;
@@ -381,11 +382,19 @@
                 break;
             }
 
+            // Adding data to the main array so that programatically we can access later
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
             // now we are adding the field which was collected in the switch case.
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
+
+            // Adding checkbox
+            var checkImage = $("<img>").attr("src", "css/do.png").addClass("plate-setup-tab-check-box")
+            .data("clicked", true);
+            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
+            this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
+            fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
 
             if(data.type == "multiselect") {
               // Adding select2
@@ -394,7 +403,7 @@
                 allowClear: true
               });
             } else if(data.type == "numeric") {
-              // Adding prevention for non numeric keys, its basic needs to improve.
+              // Adding prevention for non numeric keys, its basic. need to improve.
               $(input).keydown(function(evt) {
                 var charCode = (evt.which) ? evt.which : evt.keyCode
                 return !(charCode > 31 && (charCode < 48 || charCode > 57));
@@ -402,10 +411,15 @@
               // Now add the label which shows unit.
               var unitDropDown = this._addUnitDropDown(data);
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
+
               $("#" + data.id + data.name).select2({
 
               });
-              //console.log($(input).position())
+
+              fieldArray[fieldArrayIndex - 1].unit = unitDropDown;
+              // Remember fieldArray has all the nodes from tab -> individual tab -> an Item in the tab -> and Its unit.
+              // May be take it as a linked list
+
             } else if(data.type == "boolean") {
               // Applying select 2 to true/false drop down
               $("#" + data.id + data.name).select2({
@@ -421,7 +435,6 @@
         }
         tabPointer ++;
       }
-
     },
 
     _createTextField: function() {
@@ -446,6 +459,10 @@
       return selectField;
     },
 
+    /*
+      Numeric field is one which we enter number besides
+      it has a unit.
+    */
     _createNumericField: function(numericFieldData) {
 
       var numericField = this._createElement("<input>").addClass("plate-setup-tab-input")
@@ -454,6 +471,9 @@
       return numericField;
     },
 
+    /*
+      To have true of false field
+    */
     _createBooleanField: function(boolData) {
 
       var boolField = this._createElement("<select></select>").attr("id", boolData.id + boolData.name)
@@ -466,13 +486,18 @@
       return boolField;
     },
 
+    /*
+      Dynamically making the dropdown and returning it.
+      select2 can be applyed only after dropdown has been added jto DOM.
+    */
     _addUnitDropDown: function(unitData) {
 
       if(unitData.units) {
+
         var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + unitData.name)
         .addClass("plate-setup-tab-label-select-field");
         for(unit in unitData.units) {
-          console.log(unitData.units[unit], "bingo");
+
           var unitOption = this._createElement("<option></option>").attr("value", unitData.units[unit]).html(unitData.units[unit]);
           $(unitSelect).append(unitOption);
         }
@@ -481,8 +506,29 @@
       }
     },
 
+    /*
+      We cant implement check box in the default way. So we use images
+      and control the behavious , Look at the click handler.
+    */
+    _applyCheckboxHandler: function(checkBoxImage) {
+
+      $(checkBoxImage).click(function(evt) {
+        if($(this).data("clicked")) {
+          $(this).attr("src", "css/dont.png");
+        } else {
+          $(this).attr("src", "css/do.png");
+        }
+
+        $(this).data("clicked", !$(this).data("clicked"));
+      });
+    },
+
+    /*
+      This method creates an outline and structure for a default field in the tab at the right side.
+      it creates few divs and arrange it so that checkbox, caption and field can be put in them.
+    */
     _createDefaultFieldForTabs: function() {
-      // this method creates an outline and structure for a default field.
+
       var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
       var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
       var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");

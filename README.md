@@ -137,3 +137,28 @@ Called back when updateWells() was unsuccessful in updating all wells to the ser
 ###Data Types.
 
 We have four data types which can be used to initialize tabs in the right hand side. They are text, numeric, boolean and multichoice.
+
+#### Text
+
+Text field are the normal and basic text field they are just take some text value inside. Nothing specific.
+
+#### Numeric
+
+When we have numeric data which has some unit we use numeric data type. Sometime we should be using volume like quantities, So we provide an extra field to hand over units too.
+
+```
+Speed: {
+	id:       'SpeedData',
+	name:     'Speed',
+	type:     'numeric',
+	placeholder: "Speed",
+
+	units: {
+		1: "m/s",
+		2: "km/hr"
+	}
+}
+
+```
+
+see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter kspeed data.
