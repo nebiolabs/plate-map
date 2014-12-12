@@ -161,4 +161,12 @@ Speed: {
 
 ```
 
-see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter kspeed data.
+see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter speed data.
+
+#### Boolean Field
+
+Name says it all, Just brought the select2 to show it.
+
+#### Multiselect
+
+Normal select box but we bring select2 to modify it.
