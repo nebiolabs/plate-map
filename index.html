@@ -68,10 +68,22 @@
           Buffer: {
             id:       'volume',
             name:     'Buffer',
+            type:     'numeric'
+          },
+
+          Volume2: {
+            id:       'volume2',
+            name:     'Volume2',
             type:     'numeric',
-            units:    'volume_units' //optional
+            //units:    'volume_units', //optional
+            placeholder: "Volume",
+
+            units: {
+              1: "m/s",
+              2: "Nm"
+            }
           }
-        }
+        },
       },
 
       "tab 2": {
@@ -97,11 +109,15 @@
 
       "tab 3": {
         fields: {
-          Volume: {
-            id:       'volume',
-            name:     'Volume',
+          Volume3: {
+            id:       'volume3',
+            name:     'Volume3',
             type:     'numeric',
-            units:    'volume_units' //optional
+
+            units: {
+              1: "m/s",
+              2: "Nm"
+            }
           },
 
           Polymerase: {
@@ -129,8 +145,7 @@
           Volume: {
             id:       'volume',
             name:     'Volume',
-            type:     'numeric',
-            units:    'volume_units' //optional
+            type:     'numeric'
           },
 
           dNTPs : {

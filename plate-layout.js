@@ -399,10 +399,17 @@
                 var charCode = (evt.which) ? evt.which : evt.keyCode
                 return !(charCode > 31 && (charCode < 48 || charCode > 57));
               });
+              // Now add the label which shows unit.
+              var unitDropDown = this._addUnitDropDown(data);
+              $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
+              $("#" + data.id + data.name).select2({
+
+              });
+              //console.log($(input).position())
             } else if(data.type == "boolean") {
               // Applying select 2 to true/false drop down
               $("#" + data.id + data.name).select2({
-                
+
               });
             }
 
@@ -457,6 +464,21 @@
       $(boolField).append(trueBool).append(falseBool);
 
       return boolField;
+    },
+
+    _addUnitDropDown: function(unitData) {
+
+      if(unitData.units) {
+        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + unitData.name)
+        .addClass("plate-setup-tab-label-select-field");
+        for(unit in unitData.units) {
+          console.log(unitData.units[unit], "bingo");
+          var unitOption = this._createElement("<option></option>").attr("value", unitData.units[unit]).html(unitData.units[unit]);
+          $(unitSelect).append(unitOption);
+        }
+
+        return unitSelect;
+      }
     },
 
     _createDefaultFieldForTabs: function() {
