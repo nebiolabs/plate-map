@@ -169,4 +169,27 @@ Name says it all, Just brought the select2 to show it.
 
 #### Multiselect
 
-Normal select box but we bring select2 to modify it.
+Normal select box but we bring select2 to modify it. Look at the example object here.
+
+```
+Polymerase: {
+	id: 'pol',
+	name: 'Polymerase',
+	type: 'multiselect',
+	placeHolder: "Polymerase",
+
+	options: {
+			'Taq 1':  {
+						id:   '234',
+						name: 'Taq 1'
+				},
+			'Taq 2':  {
+						id:   '123',
+						name: 'Taq 2'
+				}
+	}
+}
+
+```
+
+Here options are going to be the values in the dropdown.

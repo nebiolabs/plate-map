@@ -275,8 +275,10 @@
     },
 
     _canvas: function() {
-
+      // Those 1,2,3 s and A,B,C s
       this._fixRowAndColumn();
+
+      // All those circles in the canvas.
       this._putCircles();
 
     },
@@ -437,11 +439,18 @@
       }
     },
 
+    /*
+      Poor method just returns an input field.
+    */
     _createTextField: function() {
 
       return this._createElement("<input>").addClass("plate-setup-tab-input");
     },
 
+    /*
+      creating a multiselect field. Nothibg serious, this method returns a select box
+      which is having all the required fields in the options hash.
+    */
     _createMultiSelectField: function(selectData) {
 
       // we create select field and add options to it later
