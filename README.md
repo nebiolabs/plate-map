@@ -32,7 +32,7 @@ Embed code similar to the below to add the plate layout tool to your application
 				name: 'mL'
 			}
 		];
-		
+
 		var attributes = [
 			//tab 1
 			[
@@ -44,7 +44,7 @@ Embed code similar to the below to add the plate layout tool to your application
 				},
 				//etc
 			],
-	
+
 			//tab 2
 			[
 				{
@@ -76,17 +76,17 @@ Embed code similar to the below to add the plate layout tool to your application
 				//and call either getPlateSuccessful() or getPlateFailed()
 				//on completion
 			},
-			
+
 			updateWells: function(wells) {
 				//this function should save the provided wells to the server
 				//and call either updateWellsSuccessful() or updateWellsFailed()
 				//on completion
-			}	
+			}
 		});
 	</script>
 </head>
 
-<body>    
+<body>
     <div id="my-plate-layout"></div>
 </body>
 ```
@@ -112,7 +112,7 @@ This function is called when the tool initializes to retrieve the existing plate
 		attribute_id_1: 'attribute_value_1',
 		attribute_id_2: 'attribute_value_2
 	},
-	
+
 	//well 1, etc
 ]
 ```
@@ -133,4 +133,64 @@ Called back when updateWells() successfully updates all wells it was provided to
 
 #### updateWellsFailed()
 Called back when updateWells() was unsuccessful in updating all wells to the server.
+
+###Data Types.
+
+We have four data types which can be used to initialize tabs in the right hand side. They are text, numeric, boolean and multichoice.
+
+#### Text
+
+Text field are the normal and basic text field they are just take some text value inside. Nothing specific.
+
+#### Numeric
+
+When we have numeric data which has some unit we use numeric data type. Sometime we should be using volume like quantities, So we provide an extra field to hand over units too.
+
+```
+Speed: {
+	id:       'SpeedData',
+	name:     'Speed',
+	type:     'numeric',
+	placeholder: "Speed",
+
+	units: {
+		1: "m/s",
+		2: "km/hr"
+	}
+}
+
+```
+
+see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter speed data.
+
+#### Boolean Field
+
+Name says it all, Just brought the select2 to show it.
+
+#### Multiselect
+
+Normal select box but we bring select2 to modify it. Look at the example object here.
+
+```
+Polymerase: {
+	id: 'pol',
+	name: 'Polymerase',
+	type: 'multiselect',
+	placeHolder: "Polymerase",
+
+	options: {
+			'Taq 1':  {
+						id:   '234',
+						name: 'Taq 1'
+				},
+			'Taq 2':  {
+						id:   '123',
+						name: 'Taq 2'
+				}
+	}
+}
+
+```
+
+Here options are going to be the values in the dropdown.
 

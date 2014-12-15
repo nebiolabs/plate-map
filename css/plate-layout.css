@@ -290,5 +290,20 @@
 .plate-setup-tab-input {
   width: 272px;
   height: 31px;
-  border: solid 1px #e1e1e1;
+}
+
+.plate-setup-tab-select-field {
+  width: 272px;
+  height: 31px;
+}
+
+.plate-setup-tab-label-select-field {
+  width: 90px;
+  height: 22px;
+  top: -30px;
+  left: 180px;
+}
+
+.plate-setup-tab-check-box {
+  margin-top: 26px;
 }

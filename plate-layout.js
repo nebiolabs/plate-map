@@ -13,7 +13,9 @@
 
     allTabs: [],
 
-    allDataTabs: [], // To hold all the tab contents
+    allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
+    // Settings as a whole. its very usefull, when we have units for a specific field.
+    // it goes like tabs-> individual field-> units and checkbox
 
     _create: function() {
 
@@ -273,8 +275,10 @@
     },
 
     _canvas: function() {
-
+      // Those 1,2,3 s and A,B,C s
       this._fixRowAndColumn();
+
+      // All those circles in the canvas.
       this._putCircles();
 
     },
@@ -349,7 +353,6 @@
     // We have tabs content in options , and her we put it in those tabs which are already placed
     _addTabData: function() {
 
-      console.log("okay placed", this.options["attributes"]);
       // Here we may need more changes becuse attributes format likely to change
       var tabData = this.options["attributes"];
       var tabPointer = 0;
@@ -358,15 +361,74 @@
         if(tabData[currentTab]["fields"]) {
           var fieldArray = [];
           var fieldArrayIndex = 0;
-
+          // Now we look for fields in the json
           for(field in tabData[currentTab]["fields"]) {
             var data = tabData[currentTab]["fields"][field];
+            var input = "";
+            // Switch case the data type and we have for of them
+            switch(data.type) {
+              case "text":
+                input = this._createTextField();
+                break;
+
+              case "numeric":
+                input = this._createNumericField(data);
+                break;
+
+              case "multiselect":
+                input = this._createMultiSelectField(data);
+                break;
+
+              case "boolean":
+                input = this._createBooleanField(data);
+                break;
+            }
+
+            // Adding data to the main array so that programatically we can access later
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
             $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
-            // now we are adding the text field.
-            var input = this._createElement("<input>").addClass("plate-setup-tab-input");
+            // now we are adding the field which was collected in the switch case.
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
+
+            // Adding checkbox
+            var checkImage = $("<img>").attr("src", "css/do.png").addClass("plate-setup-tab-check-box")
+            .data("clicked", true);
+            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
+            this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
+            fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
+
+            if(data.type == "multiselect") {
+              // Adding select2
+              $("#" + data.id).select2({
+                placeholder: "cool",
+                allowClear: true
+              });
+            } else if(data.type == "numeric") {
+              // Adding prevention for non numeric keys, its basic. need to improve.
+              $(input).keydown(function(evt) {
+                var charCode = (evt.which) ? evt.which : evt.keyCode
+                return !(charCode > 31 && (charCode < 48 || charCode > 57));
+              });
+              // Now add the label which shows unit.
+              var unitDropDown = this._addUnitDropDown(data);
+              $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
+
+              $("#" + data.id + data.name).select2({
+
+              });
+
+              fieldArray[fieldArrayIndex - 1].unit = unitDropDown;
+              // Remember fieldArray has all the nodes from tab -> individual tab -> an Item in the tab -> and Its unit.
+              // May be take it as a linked list
+
+            } else if(data.type == "boolean") {
+              // Applying select 2 to true/false drop down
+              $("#" + data.id + data.name).select2({
+
+              });
+            }
+
           }
 
           this.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -377,8 +439,105 @@
       }
     },
 
+    /*
+      Poor method just returns an input field.
+    */
+    _createTextField: function() {
+
+      return this._createElement("<input>").addClass("plate-setup-tab-input");
+    },
+
+    /*
+      creating a multiselect field. Nothibg serious, this method returns a select box
+      which is having all the required fields in the options hash.
+    */
+    _createMultiSelectField: function(selectData) {
+
+      // we create select field and add options to it later
+      var selectField = this._createElement("<select></select>").attr("id", selectData.id)
+        .addClass("plate-setup-tab-select-field");
+      // Look for all options in the json
+      for(options in selectData.options) {
+        var optionData = selectData.options[options];
+        var optionField = this._createElement("<option></option>").attr("value", optionData.name)
+        .html(optionData.name);
+        // Adding options here.
+        $(selectField).append(optionField);
+      }
+
+      return selectField;
+    },
+
+    /*
+      Numeric field is one which we enter number besides
+      it has a unit.
+    */
+    _createNumericField: function(numericFieldData) {
+
+      var numericField = this._createElement("<input>").addClass("plate-setup-tab-input")
+      .attr("placeholder", numericFieldData.placeholder || "");
+
+      return numericField;
+    },
+
+    /*
+      To have true of false field
+    */
+    _createBooleanField: function(boolData) {
+
+      var boolField = this._createElement("<select></select>").attr("id", boolData.id + boolData.name)
+      .addClass("plate-setup-tab-select-field");
+      var trueBool = this._createElement("<option></option>").attr("value", true).html("true");
+      var falseBool = this._createElement("<option></option>").attr("value", false).html("false");
+
+      $(boolField).append(trueBool).append(falseBool);
+
+      return boolField;
+    },
+
+    /*
+      Dynamically making the dropdown and returning it.
+      select2 can be applyed only after dropdown has been added jto DOM.
+    */
+    _addUnitDropDown: function(unitData) {
+
+      if(unitData.units) {
+
+        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + unitData.name)
+        .addClass("plate-setup-tab-label-select-field");
+        for(unit in unitData.units) {
+
+          var unitOption = this._createElement("<option></option>").attr("value", unitData.units[unit]).html(unitData.units[unit]);
+          $(unitSelect).append(unitOption);
+        }
+
+        return unitSelect;
+      }
+    },
+
+    /*
+      We cant implement check box in the default way. So we use images
+      and control the behavious , Look at the click handler.
+    */
+    _applyCheckboxHandler: function(checkBoxImage) {
+
+      $(checkBoxImage).click(function(evt) {
+        if($(this).data("clicked")) {
+          $(this).attr("src", "css/dont.png");
+        } else {
+          $(this).attr("src", "css/do.png");
+        }
+
+        $(this).data("clicked", !$(this).data("clicked"));
+      });
+    },
+
+    /*
+      This method creates an outline and structure for a default field in the tab at the right side.
+      it creates few divs and arrange it so that checkbox, caption and field can be put in them.
+    */
     _createDefaultFieldForTabs: function() {
-      // this method creates an outline and structure for a default field.
+
       var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
       var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
       var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
