@@ -19,6 +19,8 @@
 
     _create: function() {
 
+      console.log(this.options.imgSrc);
+      this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
     },
 
@@ -392,7 +394,7 @@
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
 
             // Adding checkbox
-            var checkImage = $("<img>").attr("src", "css/do.png").addClass("plate-setup-tab-check-box")
+            var checkImage = $("<img>").attr("src", this.imgSrc + "/do.png").addClass("plate-setup-tab-check-box")
             .data("clicked", true);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
@@ -521,11 +523,12 @@
     */
     _applyCheckboxHandler: function(checkBoxImage) {
 
+      var that = this;
       $(checkBoxImage).click(function(evt) {
         if($(this).data("clicked")) {
-          $(this).attr("src", "css/dont.png");
+          $(this).attr("src", that.imgSrc + "/dont.png");
         } else {
-          $(this).attr("src", "css/do.png");
+          $(this).attr("src", that.imgSrc + "/do.png");
         }
 
         $(this).data("clicked", !$(this).data("clicked"));
@@ -552,5 +555,25 @@
       return wrapperDiv;
     }
 
+
+    /*****************************************************************************
+            Canvas manipulations
+            1) May be use rectangles as base object in canvas.
+            2) Add Circle into the rectangle.
+            3) when clicked show the circle turn off the background image.
+            4) Look out for dragging.
+            5) add all the elements under dragged to an array/object.
+            6) Remember properties of the well/circle are all those things in the tabs.
+              So go over the tabs and add that to all the wells.
+            7) click it so that tabs come into action.
+            8) Anything changed in the tab is reflected to the object/circle/well.
+            9) Ultimately wells having the same values have same color.
+            10) Now when a particular well is selected all the selected values are showed up
+              in the table at the bottom.
+            11) This is going to be done yay...!
+
+    *****************************************************************************/
+
   });
+
 })(jQuery, fabric);
