@@ -499,6 +499,10 @@
             11) This is going to be done yay...!
 
     *****************************************************************************/
+    allSelectedObjects: {}, // Contains all the selected objets, when click and drag.
+
+    allPreviouslySelectedObjects: {},
+
     _canvas: function() {
       // Those 1,2,3 s and A,B,C s
       this._fixRowAndColumn();
@@ -562,7 +566,11 @@
             fill: '#f5f5f5',
             originX:'center',
             originY: 'center',
-            name: "tile-" + i +"X"+ j
+            name: "tile-" + i +"X"+ j,
+            type: "tile",
+            hasControls: false,
+            hasBorders: false,
+            selectable: false
           });
 
           this.allTiles.push(tempCircle);
@@ -588,10 +596,40 @@
           imaging.parent = currentTile; // Pointing to tile
           imaging.originX = 'center';
           imaging.originY = 'center';
+          imaging.hasControls = false;
+          imaging.hasBorders = false;
+          imaging.lockMovementX = true;
+          imaging.lockMovementY = true;
+          imaging.type = "image";
           that.allTiles[runner].notSelected = imaging; // Pointing to img
           that.mainFabricCanvas.add(imaging);
         }
-      })
+      });
+
+      this._fabricEvents();
+    },
+
+    _fabricEvents: function() {
+
+      var that = this;
+      this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
+        that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
+        that.allSelectedObjects = selectedObjects.target._objects;
+
+        for(selectedObject in that.allSelectedObjects) {
+          var currentObj = that.allSelectedObjects[selectedObject];
+          if(currentObj.type == 'tile') {
+            currentObj.setFill("#cceffc");
+            console.log("obj", currentObj);
+          } else if(currentObj.type == "image"){
+            currentObj.setVisible(false);
+            currentObj.parent.setFill("#cceffc");
+          }
+        }
+        that.mainFabricCanvas.renderAll();
+      });
+
+
     }
   });
 
