@@ -11,6 +11,8 @@
 
     rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
 
+    allTiles: [], // All tiles containes all thise circles in the canvas
+
     allTabs: [],
 
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
@@ -276,82 +278,6 @@
       $(this.container).append(this.bottomContainer);
     },
 
-    _canvas: function() {
-      // Those 1,2,3 s and A,B,C s
-      this._fixRowAndColumn();
-
-      // All those circles in the canvas.
-      this._putCircles();
-
-    },
-
-    _fixRowAndColumn: function() {
-
-      // For column
-      for(var i = 1; i<= this.columnCount; i++) {
-        var tempFabricText = new fabric.IText(i.toString(), {
-          fill: 'black',
-          originX:'center',
-          originY: 'center',
-          fontSize: 12,
-          top : 10,
-          left: 48 + ((i - 1) * 48),
-          fontFamily: "Roboto",
-          selectable: false,
-          fontWeight: "400"
-        });
-
-        this.mainFabricCanvas.add(tempFabricText);
-      }
-
-      // for row
-      var i = 0;
-      while(this.rowIndex[i]) {
-        var tempFabricText = new fabric.IText(this.rowIndex[i], {
-          fill: 'black',
-          originX:'center',
-          originY: 'center',
-          fontSize: 12,
-          left: 5,
-          top: 48 + (i * 48),
-          fontFamily: "Roboto",
-          selectable: false,
-          fontWeight: "400"
-        });
-
-        this.mainFabricCanvas.add(tempFabricText);
-        i ++;
-      }
-    },
-
-    _putCircles: function() {
-
-      var rowCount = this.rowIndex.length;
-      for( var i = 0; i < rowCount; i++) {
-
-        for(var j = 0; j < 12; j++) {
-          var tempCircle = new fabric.Circle({
-            radius: 14,
-            strokeWidth: 17,
-            stroke: 'purple',
-            originX:'center',
-            originY: 'center',
-            left: 48 + (j * 48),
-            top: 48 + (i * 48),
-            hasBorders: false,
-            fill: 'white',
-            selectable: true,
-            hasBorders: false,
-            hasControls: false,
-            hasRotatingPoint: false,
-            name: "circle"
-          });
-
-          this.mainFabricCanvas.add(tempCircle);
-        }
-      }
-    },
-
     // We have tabs content in options , and her we put it in those tabs which are already placed
     _addTabData: function() {
 
@@ -553,7 +479,7 @@
       $(wrapperDiv).append(wrapperDivRightSide);
 
       return wrapperDiv;
-    }
+    },
 
 
     /*****************************************************************************
@@ -573,7 +499,100 @@
             11) This is going to be done yay...!
 
     *****************************************************************************/
+    _canvas: function() {
+      // Those 1,2,3 s and A,B,C s
+      this._fixRowAndColumn();
 
+      // All those circles in the canvas.
+      this._putCircles();
+
+    },
+
+    _fixRowAndColumn: function() {
+
+      // For column
+      for(var i = 1; i<= this.columnCount; i++) {
+        var tempFabricText = new fabric.IText(i.toString(), {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          top : 10,
+          left: 48 + ((i - 1) * 48),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+      }
+
+      // for row
+      var i = 0;
+      while(this.rowIndex[i]) {
+        var tempFabricText = new fabric.IText(this.rowIndex[i], {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          left: 5,
+          top: 48 + (i * 48),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+        i ++;
+      }
+    },
+
+    _putCircles: function() {
+      // Indeed we are using rectangles as basic tile. Over the tile we are putting
+      // not selected image and later the circle [When we select it].
+      var rowCount = this.rowIndex.length;
+      for( var i = 0; i < rowCount; i++) {
+
+        for(var j = 0; j < 12; j++) {
+          var tempCircle = new fabric.Rect({
+            width: 48,
+            height: 48,
+            left: 48 + (j * 48),
+            top: 48 + (i * 48),
+            fill: '#f5f5f5',
+            originX:'center',
+            originY: 'center',
+            name: "tile-" + i +"X"+ j
+          });
+
+          this.allTiles.push(tempCircle);
+          this.mainFabricCanvas.add(tempCircle);
+        }
+      }
+      //console.log(this.allTiles);
+      this._addNotYetSelectedImage();
+    },
+
+    _addNotYetSelectedImage: function() {
+      // We load the image for once and then make copies of it
+      // and add it to the tile we made in allTiles[]
+      var that = this;
+      var finishing = this.allTiles.length;
+      fabric.Image.fromURL(this.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
+
+        for(var runner = 0; runner < finishing; runner ++) {
+          var imaging = $.extend({}, img);
+          var currentTile = that.allTiles[runner];
+          imaging.top = currentTile.top;
+          imaging.left = currentTile.left;
+          imaging.parent = currentTile; // Pointing to tile
+          imaging.originX = 'center';
+          imaging.originY = 'center';
+          that.allTiles[runner].notSelected = imaging; // Pointing to img
+          that.mainFabricCanvas.add(imaging);
+        }
+      })
+    }
   });
 
 })(jQuery, fabric);
