@@ -522,7 +522,7 @@
           originY: 'center',
           fontSize: 12,
           top : 10,
-          left: 48 + ((i - 1) * 48),
+          left: 50 + ((i - 1) * 50),
           fontFamily: "Roboto",
           selectable: false,
           fontWeight: "400"
@@ -540,7 +540,7 @@
           originY: 'center',
           fontSize: 12,
           left: 5,
-          top: 48 + (i * 48),
+          top: 50 + (i * 50),
           fontFamily: "Roboto",
           selectable: false,
           fontWeight: "400"
@@ -561,8 +561,8 @@
           var tempCircle = new fabric.Rect({
             width: 48,
             height: 48,
-            left: 48 + (j * 48),
-            top: 48 + (i * 48),
+            left: 50 + (j * 50),
+            top: 50 + (i * 50),
             fill: '#f5f5f5',
             originX:'center',
             originY: 'center',
@@ -570,7 +570,9 @@
             type: "tile",
             hasControls: false,
             hasBorders: false,
-            selectable: false
+            lockMovementX: true,
+            lockMovementY: true
+            //selectable: false
           });
 
           this.allTiles.push(tempCircle);
@@ -600,6 +602,7 @@
           imaging.hasBorders = false;
           imaging.lockMovementX = true;
           imaging.lockMovementY = true;
+          imaging.evented = false;
           imaging.type = "image";
           that.allTiles[runner].notSelected = imaging; // Pointing to img
           that.mainFabricCanvas.add(imaging);
@@ -615,7 +618,7 @@
       this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
         that.allSelectedObjects = selectedObjects.target._objects;
-
+        console.log(that.allSelectedObjects);
         for(selectedObject in that.allSelectedObjects) {
           var currentObj = that.allSelectedObjects[selectedObject];
           if(currentObj.type == 'tile') {
