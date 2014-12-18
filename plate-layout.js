@@ -509,7 +509,7 @@
 
     allPreviouslySelectedObjects: null,
 
-    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink"],
+    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink", "purple"],
 
     colorPointer: 0,
 
@@ -627,50 +627,63 @@
     _fabricEvents: function() {
 
       var that = this;
+      // When we ckick and drag
       this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
-        console.log("okay", selectedObjects);
-        // Putting back fill of previously selected group
-        if(that.allSelectedObjects) {
-          for(var selectedObject in that.allSelectedObjects) {
-            var currentObj = that.allSelectedObjects[selectedObject];
-            if(currentObj.circle) {
-              if(currentObj.type == "tile") {
-                currentObj.setFill("#f5f5f5");
-                currentObj.notSelected.setVisible(false);
-              }
-            } else {
-              /*var changeObj = currentObj.parent || currentObj;
-              changeObj.setFill("#f5f5f5");
-              changeObj.notSelected.setVisible(true);*/
-              if(currentObj.type == "tile") {
-                currentObj.setFill("#f5f5f5");
-                currentObj.notSelected.setVisible(true);
-              }
+        //Deselect already selected tiles
+        that._deselectSelected();
+        // Adding newly selected group
+        that.allSelectedObjects = selectedObjects.target._objects;
+        // Select tile/s
+        that._selectTiles();
+        that.mainFabricCanvas.renderAll();
+      });
+
+      // When we click
+      this.mainFabricCanvas.on('mouse:down', function(click) {
+        console.log("alright", click.target);
+      });
+
+    },
+
+    _deselectSelected: function() {
+      // Putting back fill of previously selected group
+      if(this.allSelectedObjects) {
+        for(var selectedObject in this.allSelectedObjects) {
+          var currentObj = this.allSelectedObjects[selectedObject];
+          if(currentObj.circle) {
+            if(currentObj.type == "tile") {
+              currentObj.setFill("#f5f5f5");
+              currentObj.notSelected.setVisible(false);
+            }
+          } else {
+
+            if(currentObj.type == "tile") {
+              currentObj.setFill("#f5f5f5");
+              currentObj.notSelected.setVisible(true);
             }
           }
         }
-        that.mainFabricCanvas.renderAll();
-        // Adding newly selected group
-        that.allSelectedObjects = selectedObjects.target._objects;
+      }
+    },
 
-        for(var selectedObject in that.allSelectedObjects) {
-          var currentObj = that.allSelectedObjects[selectedObject];
-          if(currentObj.type == "image"){
-            currentObj.setVisible(false);
-            currentObj.parent.setFill("#cceffc");
-          } else if(currentObj.type == "tile") {
-            currentObj.notSelected.setVisible(false);
-            currentObj.setFill("#cceffc");
-          }
+    _selectTiles: function() {
+      // Here we select tile/s from the selection or click
+      for(var selectedObject in this.allSelectedObjects) {
+        var currentObj = this.allSelectedObjects[selectedObject];
+        if(currentObj.type == "image"){
+          currentObj.setVisible(false);
+          currentObj.parent.setFill("#cceffc");
+        } else if(currentObj.type == "tile") {
+          currentObj.notSelected.setVisible(false);
+          currentObj.setFill("#cceffc");
         }
+      }
 
-        that.mainFabricCanvas.renderAll();
-      });
     },
 
     _addColorCircle: function() {
-    // This method checks if given selection has
+    // This method checks if given selection has circle.
       if(this.allSelectedObjects) {
         console.log(this.allSelectedObjects.length)
         for(var selectedObject in this.allSelectedObjects) {
