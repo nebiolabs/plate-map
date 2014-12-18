@@ -284,7 +284,7 @@
       // Here we may need more changes becuse attributes format likely to change
       var tabData = this.options["attributes"];
       var tabPointer = 0;
-
+      var that = this;
       for(currentTab in tabData) {
         if(tabData[currentTab]["fields"]) {
           var fieldArray = [];
@@ -320,8 +320,8 @@
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
 
             // Adding checkbox
-            var checkImage = $("<img>").attr("src", this.imgSrc + "/do.png").addClass("plate-setup-tab-check-box")
-            .data("clicked", true);
+            var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
+            .data("clicked", false);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
             fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
@@ -332,6 +332,12 @@
                 placeholder: "cool",
                 allowClear: true
               });
+
+              $("#" + data.id).on("change", function(e) {
+                //console.log("okay cool", e);
+                that._addColorCircle();
+              });
+
             } else if(data.type == "numeric") {
               // Adding prevention for non numeric keys, its basic. need to improve.
               $(input).keydown(function(evt) {
@@ -499,9 +505,13 @@
             11) This is going to be done yay...!
 
     *****************************************************************************/
-    allSelectedObjects: {}, // Contains all the selected objets, when click and drag.
+    allSelectedObjects: null, // Contains all the selected objets, when click and drag.
 
-    allPreviouslySelectedObjects: {},
+    allPreviouslySelectedObjects: null,
+
+    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink"],
+
+    colorPointer: 0,
 
     _canvas: function() {
       // Those 1,2,3 s and A,B,C s
@@ -555,6 +565,7 @@
       // Indeed we are using rectangles as basic tile. Over the tile we are putting
       // not selected image and later the circle [When we select it].
       var rowCount = this.rowIndex.length;
+      var tileCounter = 0;
       for( var i = 0; i < rowCount; i++) {
 
         for(var j = 0; j < 12; j++) {
@@ -571,7 +582,8 @@
             hasControls: false,
             hasBorders: false,
             lockMovementX: true,
-            lockMovementY: true
+            lockMovementY: true,
+            index: tileCounter ++
             //selectable: false
           });
 
@@ -617,22 +629,79 @@
       var that = this;
       this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
-        that.allSelectedObjects = selectedObjects.target._objects;
-        console.log(that.allSelectedObjects);
-        for(selectedObject in that.allSelectedObjects) {
-          var currentObj = that.allSelectedObjects[selectedObject];
-          if(currentObj.type == 'tile') {
-            currentObj.setFill("#cceffc");
-            console.log("obj", currentObj);
-          } else if(currentObj.type == "image"){
-            currentObj.setVisible(false);
-            currentObj.parent.setFill("#cceffc");
+        console.log("okay", selectedObjects);
+        // Putting back fill of previously selected group
+        if(that.allSelectedObjects) {
+          for(var selectedObject in that.allSelectedObjects) {
+            var currentObj = that.allSelectedObjects[selectedObject];
+            if(currentObj.circle) {
+              if(currentObj.type == "tile") {
+                currentObj.setFill("#f5f5f5");
+                currentObj.notSelected.setVisible(false);
+              }
+            } else {
+              /*var changeObj = currentObj.parent || currentObj;
+              changeObj.setFill("#f5f5f5");
+              changeObj.notSelected.setVisible(true);*/
+              if(currentObj.type == "tile") {
+                currentObj.setFill("#f5f5f5");
+                currentObj.notSelected.setVisible(true);
+              }
+            }
           }
         }
         that.mainFabricCanvas.renderAll();
+        // Adding newly selected group
+        that.allSelectedObjects = selectedObjects.target._objects;
+
+        for(var selectedObject in that.allSelectedObjects) {
+          var currentObj = that.allSelectedObjects[selectedObject];
+          if(currentObj.type == "image"){
+            currentObj.setVisible(false);
+            currentObj.parent.setFill("#cceffc");
+          } else if(currentObj.type == "tile") {
+            currentObj.notSelected.setVisible(false);
+            currentObj.setFill("#cceffc");
+          }
+        }
+
+        that.mainFabricCanvas.renderAll();
+      });
+    },
+
+    _addColorCircle: function() {
+    // This method checks if given selection has
+      if(this.allSelectedObjects) {
+        console.log(this.allSelectedObjects.length)
+        for(var selectedObject in this.allSelectedObjects) {
+          if(this.allSelectedObjects[selectedObject].type == "tile") {
+            var tile = this.allSelectedObjects[selectedObject];
+            if(! tile.circle) {
+              this._addCircleToCanvas(tile);
+            }
+          }
+        }
+        this.colorPointer ++;
+      }
+    },
+
+    _addCircleToCanvas: function(tileToAdd) {
+      // Adding circle to particular tile
+      var circle = new fabric.Circle({
+        radius: 20,
+        fill: "white",
+        originX:'center',
+        originY: 'center',
+        top: tileToAdd.top,
+        left: tileToAdd.left,
+        strokeWidth: 8,
+        stroke: this.colours[this.colorPointer],
+        evented: false
       });
 
-
+      circle.parent = tileToAdd; // Linkin the objects;
+      tileToAdd.circle = circle;
+      this.mainFabricCanvas.add(circle);
     }
   });
 
