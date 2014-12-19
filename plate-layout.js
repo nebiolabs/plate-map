@@ -513,6 +513,10 @@
 
     colorPointer: 0,
 
+    hue: 0,
+
+    goldenRatio: 0.618033988749895,
+
     _canvas: function() {
       // Those 1,2,3 s and A,B,C s
       this._fixRowAndColumn();
@@ -697,6 +701,15 @@
 
     _addCircleToCanvas: function(tileToAdd) {
       // Adding circle to particular tile
+
+      PHI = (1 + Math.sqrt(5))/2;
+      id = Math.random();
+      n = id * PHI - Math.floor(id * PHI);
+
+      var rgb = this.HSVtoRGB(n, 1, 1);
+
+      var col = this.rgbToHex(rgb[0], rgb[1], rgb[2]);
+      //console.log(hueVal, col);
       var circle = new fabric.Circle({
         radius: 20,
         fill: "white",
@@ -705,13 +718,14 @@
         top: tileToAdd.top,
         left: tileToAdd.left,
         strokeWidth: 8,
-        stroke: this.colours[this.colorPointer],
+        stroke: col,//this.colours[this.colorPointer],
         evented: false
       });
 
       circle.parent = tileToAdd; // Linking the objects;
       tileToAdd.circle = circle;
       this.mainFabricCanvas.add(circle);
+
     },
 
     getRandomColor: function() {
@@ -722,7 +736,31 @@
           color += letters[Math.floor(Math.random() * 16)];
       }
       return color;
+    },
+
+    HSVtoRGB: function(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return [Math.floor(r * 255),Math.floor(g * 255),Math.floor(b * 255)];
+    },
+
+    rgbToHex: function(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
+
+
   });
 
 })(jQuery, fabric);
