@@ -591,7 +591,7 @@
           this.mainFabricCanvas.add(tempCircle);
         }
       }
-      //console.log(this.allTiles);
+
       this._addNotYetSelectedImage();
     },
 
@@ -625,23 +625,18 @@
     },
 
     _fabricEvents: function() {
-
+      // Probably we can simplify this by introducing object:selected event for all.
       var that = this;
       // When we ckick and drag
-      this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
+      this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
         //Deselect already selected tiles
         that._deselectSelected();
         // Adding newly selected group
-        that.allSelectedObjects = selectedObjects.target._objects;
+        that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
         // Select tile/s
         that._selectTiles();
         that.mainFabricCanvas.renderAll();
-      });
-
-      // When we click
-      this.mainFabricCanvas.on('mouse:down', function(click) {
-        console.log("alright", click.target);
       });
 
     },
@@ -649,8 +644,9 @@
     _deselectSelected: function() {
       // Putting back fill of previously selected group
       if(this.allSelectedObjects) {
-        for(var selectedObject in this.allSelectedObjects) {
-          var currentObj = this.allSelectedObjects[selectedObject];
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          var currentObj = this.allSelectedObjects[objectIndex];
           if(currentObj.circle) {
             if(currentObj.type == "tile") {
               currentObj.setFill("#f5f5f5");
@@ -669,8 +665,9 @@
 
     _selectTiles: function() {
       // Here we select tile/s from the selection or click
-      for(var selectedObject in this.allSelectedObjects) {
-        var currentObj = this.allSelectedObjects[selectedObject];
+      var noOfSelectedObjects = this.allSelectedObjects.length;
+      for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+        var currentObj = this.allSelectedObjects[objectIndex];
         if(currentObj.type == "image"){
           currentObj.setVisible(false);
           currentObj.parent.setFill("#cceffc");
@@ -685,10 +682,10 @@
     _addColorCircle: function() {
     // This method checks if given selection has circle.
       if(this.allSelectedObjects) {
-        console.log(this.allSelectedObjects.length)
-        for(var selectedObject in this.allSelectedObjects) {
-          if(this.allSelectedObjects[selectedObject].type == "tile") {
-            var tile = this.allSelectedObjects[selectedObject];
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var tile = this.allSelectedObjects[objectIndex];
             if(! tile.circle) {
               this._addCircleToCanvas(tile);
             }
@@ -712,9 +709,19 @@
         evented: false
       });
 
-      circle.parent = tileToAdd; // Linkin the objects;
+      circle.parent = tileToAdd; // Linking the objects;
       tileToAdd.circle = circle;
       this.mainFabricCanvas.add(circle);
+    },
+
+    getRandomColor: function() {
+
+      var letters = '0123456789ABCDEF'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++ ) {
+          color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     }
   });
 
