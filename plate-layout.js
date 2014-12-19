@@ -15,6 +15,71 @@
 
     allTabs: [],
 
+    distinctColors: [
+    '#00FF00',
+    '#0000FF',
+    '#FF0000',
+    '#01FFFE',
+    '#FFA6FE',
+    '#FFDB66',
+    '#006401',
+    '#010067',
+    '#95003A',
+    '#007DB5',
+    '#FF00F6',
+    '#FFEEE8',
+    '#774D00',
+    '#90FB92',
+    '#0076FF',
+    '#D5FF00',
+    '#FF937E',
+    '#6A826C',
+    '#FF029D',
+    '#FE8900',
+    '#7A4782',
+    '#7E2DD2',
+    '#85A900',
+    '#FF0056',
+    '#A42400',
+    '#00AE7E',
+    '#683D3B',
+    '#BDC6FF',
+    '#263400',
+    '#BDD393',
+    '#00B917',
+    '#9E008E',
+    '#001544',
+    '#C28C9F',
+    '#FF74A3',
+    '#01D0FF',
+    '#004754',
+    '#E56FFE',
+    '#788231',
+    '#0E4CA1',
+    '#91D0CB',
+    '#BE9970',
+    '#968AE8',
+    '#BB8800',
+    '#43002C',
+    '#DEFF74',
+    '#00FFC6',
+    '#FFE502',
+    '#620E00',
+    '#008F9C',
+    '#98FF52',
+    '#7544B1',
+    '#B500FF',
+    '#00FF78',
+    '#FF6E41',
+    '#005F39',
+    '#6B6882',
+    '#5FAD4E',
+    '#A75740',
+    '#A5FFD2',
+    '#FFB167',
+    '#009BFF',
+    '#E85EBE'],
+
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
     // Settings as a whole. its very usefull, when we have units for a specific field.
     // it goes like tabs-> individual field-> units and checkbox
@@ -509,11 +574,7 @@
 
     allPreviouslySelectedObjects: null,
 
-    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink", "purple"],
-
     colorPointer: 0,
-
-    hue: 0,
 
     goldenRatio: 0.618033988749895,
 
@@ -701,15 +762,10 @@
 
     _addCircleToCanvas: function(tileToAdd) {
       // Adding circle to particular tile
-
-      PHI = (1 + Math.sqrt(5))/2;
-      id = Math.random();
-      n = id * PHI - Math.floor(id * PHI);
-
-      var rgb = this.HSVtoRGB(n, 1, 1);
-
-      var col = this.rgbToHex(rgb[0], rgb[1], rgb[2]);
-      //console.log(hueVal, col);
+      if(this.colorPointer >= this.distinctColors.length) {
+        var newColor = this.getRandomColor();
+        this.distinctColors.push(newColor);
+      }
       var circle = new fabric.Circle({
         radius: 20,
         fill: "white",
@@ -718,7 +774,7 @@
         top: tileToAdd.top,
         left: tileToAdd.left,
         strokeWidth: 8,
-        stroke: col,//this.colours[this.colorPointer],
+        stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
         evented: false
       });
 
@@ -735,32 +791,17 @@
       for (var i = 0; i < 6; i++ ) {
           color += letters[Math.floor(Math.random() * 16)];
       }
-      return color;
-    },
-
-    HSVtoRGB: function(h, s, v) {
-        var r, g, b, i, f, p, q, t;
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        switch (i % 6) {
-            case 0: r = v, g = t, b = p; break;
-            case 1: r = q, g = v, b = p; break;
-            case 2: r = p, g = v, b = t; break;
-            case 3: r = p, g = q, b = v; break;
-            case 4: r = t, g = p, b = v; break;
-            case 5: r = v, g = p, b = q; break;
+      var colorCount = this.distinctColors.length;
+      var colorIndex = 0;
+      // Check if the generated color is already in the list
+      while(colorIndex < colorCount) {
+        if(this.distinctColors[colorIndex] === (color).toUpperCase()) {
+          this.getRandomColor();
         }
-        return [Math.floor(r * 255),Math.floor(g * 255),Math.floor(b * 255)];
-    },
-
-    rgbToHex: function(r, g, b) {
-        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        colorIndex ++;
+      }
+      return (color).toUpperCase();
     }
 
-
   });
-
 })(jQuery, fabric);
