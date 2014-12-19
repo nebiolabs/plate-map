@@ -11,6 +11,8 @@
 
     rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
 
+    allTiles: [], // All tiles containes all thise circles in the canvas
+
     allTabs: [],
 
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
@@ -19,6 +21,8 @@
 
     _create: function() {
 
+      console.log(this.options.imgSrc);
+      this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
     },
 
@@ -274,89 +278,13 @@
       $(this.container).append(this.bottomContainer);
     },
 
-    _canvas: function() {
-      // Those 1,2,3 s and A,B,C s
-      this._fixRowAndColumn();
-
-      // All those circles in the canvas.
-      this._putCircles();
-
-    },
-
-    _fixRowAndColumn: function() {
-
-      // For column
-      for(var i = 1; i<= this.columnCount; i++) {
-        var tempFabricText = new fabric.IText(i.toString(), {
-          fill: 'black',
-          originX:'center',
-          originY: 'center',
-          fontSize: 12,
-          top : 10,
-          left: 48 + ((i - 1) * 48),
-          fontFamily: "Roboto",
-          selectable: false,
-          fontWeight: "400"
-        });
-
-        this.mainFabricCanvas.add(tempFabricText);
-      }
-
-      // for row
-      var i = 0;
-      while(this.rowIndex[i]) {
-        var tempFabricText = new fabric.IText(this.rowIndex[i], {
-          fill: 'black',
-          originX:'center',
-          originY: 'center',
-          fontSize: 12,
-          left: 5,
-          top: 48 + (i * 48),
-          fontFamily: "Roboto",
-          selectable: false,
-          fontWeight: "400"
-        });
-
-        this.mainFabricCanvas.add(tempFabricText);
-        i ++;
-      }
-    },
-
-    _putCircles: function() {
-
-      var rowCount = this.rowIndex.length;
-      for( var i = 0; i < rowCount; i++) {
-
-        for(var j = 0; j < 12; j++) {
-          var tempCircle = new fabric.Circle({
-            radius: 14,
-            strokeWidth: 17,
-            stroke: 'purple',
-            originX:'center',
-            originY: 'center',
-            left: 48 + (j * 48),
-            top: 48 + (i * 48),
-            hasBorders: false,
-            fill: 'white',
-            selectable: true,
-            hasBorders: false,
-            hasControls: false,
-            hasRotatingPoint: false,
-            name: "circle"
-          });
-
-          this.mainFabricCanvas.add(tempCircle);
-        }
-      }
-    },
-
     // We have tabs content in options , and her we put it in those tabs which are already placed
     _addTabData: function() {
 
       // Here we may need more changes becuse attributes format likely to change
       var tabData = this.options["attributes"];
       var tabPointer = 0;
-
+      var that = this;
       for(currentTab in tabData) {
         if(tabData[currentTab]["fields"]) {
           var fieldArray = [];
@@ -392,8 +320,8 @@
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
 
             // Adding checkbox
-            var checkImage = $("<img>").attr("src", "css/do.png").addClass("plate-setup-tab-check-box")
-            .data("clicked", true);
+            var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
+            .data("clicked", false);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
             fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
@@ -404,6 +332,12 @@
                 placeholder: "cool",
                 allowClear: true
               });
+
+              $("#" + data.id).on("change", function(e) {
+                //console.log("okay cool", e);
+                that._addColorCircle();
+              });
+
             } else if(data.type == "numeric") {
               // Adding prevention for non numeric keys, its basic. need to improve.
               $(input).keydown(function(evt) {
@@ -521,11 +455,12 @@
     */
     _applyCheckboxHandler: function(checkBoxImage) {
 
+      var that = this;
       $(checkBoxImage).click(function(evt) {
         if($(this).data("clicked")) {
-          $(this).attr("src", "css/dont.png");
+          $(this).attr("src", that.imgSrc + "/dont.png");
         } else {
-          $(this).attr("src", "css/do.png");
+          $(this).attr("src", that.imgSrc + "/do.png");
         }
 
         $(this).data("clicked", !$(this).data("clicked"));
@@ -550,7 +485,237 @@
       $(wrapperDiv).append(wrapperDivRightSide);
 
       return wrapperDiv;
-    }
+    },
 
+
+    /*****************************************************************************
+            Canvas manipulations
+            1) May be use rectangles as base object in canvas.
+            2) Add Circle into the rectangle.
+            3) when clicked show the circle turn off the background image.
+            4) Look out for dragging.
+            5) add all the elements under dragged to an array/object.
+            6) Remember properties of the well/circle are all those things in the tabs.
+              So go over the tabs and add that to all the wells.
+            7) click it so that tabs come into action.
+            8) Anything changed in the tab is reflected to the object/circle/well.
+            9) Ultimately wells having the same values have same color.
+            10) Now when a particular well is selected all the selected values are showed up
+              in the table at the bottom.
+            11) This is going to be done yay...!
+
+    *****************************************************************************/
+    allSelectedObjects: null, // Contains all the selected objets, when click and drag.
+
+    allPreviouslySelectedObjects: null,
+
+    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink", "purple"],
+
+    colorPointer: 0,
+
+    _canvas: function() {
+      // Those 1,2,3 s and A,B,C s
+      this._fixRowAndColumn();
+
+      // All those circles in the canvas.
+      this._putCircles();
+
+    },
+
+    _fixRowAndColumn: function() {
+
+      // For column
+      for(var i = 1; i<= this.columnCount; i++) {
+        var tempFabricText = new fabric.IText(i.toString(), {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          top : 10,
+          left: 50 + ((i - 1) * 50),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+      }
+
+      // for row
+      var i = 0;
+      while(this.rowIndex[i]) {
+        var tempFabricText = new fabric.IText(this.rowIndex[i], {
+          fill: 'black',
+          originX:'center',
+          originY: 'center',
+          fontSize: 12,
+          left: 5,
+          top: 50 + (i * 50),
+          fontFamily: "Roboto",
+          selectable: false,
+          fontWeight: "400"
+        });
+
+        this.mainFabricCanvas.add(tempFabricText);
+        i ++;
+      }
+    },
+
+    _putCircles: function() {
+      // Indeed we are using rectangles as basic tile. Over the tile we are putting
+      // not selected image and later the circle [When we select it].
+      var rowCount = this.rowIndex.length;
+      var tileCounter = 0;
+      for( var i = 0; i < rowCount; i++) {
+
+        for(var j = 0; j < 12; j++) {
+          var tempCircle = new fabric.Rect({
+            width: 48,
+            height: 48,
+            left: 50 + (j * 50),
+            top: 50 + (i * 50),
+            fill: '#f5f5f5',
+            originX:'center',
+            originY: 'center',
+            name: "tile-" + i +"X"+ j,
+            type: "tile",
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            index: tileCounter ++
+            //selectable: false
+          });
+
+          this.allTiles.push(tempCircle);
+          this.mainFabricCanvas.add(tempCircle);
+        }
+      }
+      //console.log(this.allTiles);
+      this._addNotYetSelectedImage();
+    },
+
+    _addNotYetSelectedImage: function() {
+      // We load the image for once and then make copies of it
+      // and add it to the tile we made in allTiles[]
+      var that = this;
+      var finishing = this.allTiles.length;
+      fabric.Image.fromURL(this.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
+
+        for(var runner = 0; runner < finishing; runner ++) {
+          var imaging = $.extend({}, img);
+          var currentTile = that.allTiles[runner];
+          imaging.top = currentTile.top;
+          imaging.left = currentTile.left;
+          imaging.parent = currentTile; // Pointing to tile
+          imaging.originX = 'center';
+          imaging.originY = 'center';
+          imaging.hasControls = false;
+          imaging.hasBorders = false;
+          imaging.lockMovementX = true;
+          imaging.lockMovementY = true;
+          imaging.evented = false;
+          imaging.type = "image";
+          that.allTiles[runner].notSelected = imaging; // Pointing to img
+          that.mainFabricCanvas.add(imaging);
+        }
+      });
+
+      this._fabricEvents();
+    },
+
+    _fabricEvents: function() {
+
+      var that = this;
+      // When we ckick and drag
+      this.mainFabricCanvas.on("selection:created", function(selectedObjects) {
+        that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
+        //Deselect already selected tiles
+        that._deselectSelected();
+        // Adding newly selected group
+        that.allSelectedObjects = selectedObjects.target._objects;
+        // Select tile/s
+        that._selectTiles();
+        that.mainFabricCanvas.renderAll();
+      });
+
+      // When we click
+      this.mainFabricCanvas.on('mouse:down', function(click) {
+        console.log("alright", click.target);
+      });
+
+    },
+
+    _deselectSelected: function() {
+      // Putting back fill of previously selected group
+      if(this.allSelectedObjects) {
+        for(var selectedObject in this.allSelectedObjects) {
+          var currentObj = this.allSelectedObjects[selectedObject];
+          if(currentObj.circle) {
+            if(currentObj.type == "tile") {
+              currentObj.setFill("#f5f5f5");
+              currentObj.notSelected.setVisible(false);
+            }
+          } else {
+
+            if(currentObj.type == "tile") {
+              currentObj.setFill("#f5f5f5");
+              currentObj.notSelected.setVisible(true);
+            }
+          }
+        }
+      }
+    },
+
+    _selectTiles: function() {
+      // Here we select tile/s from the selection or click
+      for(var selectedObject in this.allSelectedObjects) {
+        var currentObj = this.allSelectedObjects[selectedObject];
+        if(currentObj.type == "image"){
+          currentObj.setVisible(false);
+          currentObj.parent.setFill("#cceffc");
+        } else if(currentObj.type == "tile") {
+          currentObj.notSelected.setVisible(false);
+          currentObj.setFill("#cceffc");
+        }
+      }
+
+    },
+
+    _addColorCircle: function() {
+    // This method checks if given selection has circle.
+      if(this.allSelectedObjects) {
+        console.log(this.allSelectedObjects.length)
+        for(var selectedObject in this.allSelectedObjects) {
+          if(this.allSelectedObjects[selectedObject].type == "tile") {
+            var tile = this.allSelectedObjects[selectedObject];
+            if(! tile.circle) {
+              this._addCircleToCanvas(tile);
+            }
+          }
+        }
+        this.colorPointer ++;
+      }
+    },
+
+    _addCircleToCanvas: function(tileToAdd) {
+      // Adding circle to particular tile
+      var circle = new fabric.Circle({
+        radius: 20,
+        fill: "white",
+        originX:'center',
+        originY: 'center',
+        top: tileToAdd.top,
+        left: tileToAdd.left,
+        strokeWidth: 8,
+        stroke: this.colours[this.colorPointer],
+        evented: false
+      });
+
+      circle.parent = tileToAdd; // Linkin the objects;
+      tileToAdd.circle = circle;
+      this.mainFabricCanvas.add(circle);
+    }
   });
+
 })(jQuery, fabric);
