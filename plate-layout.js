@@ -401,6 +401,7 @@
               $("#" + data.id).on("change", function(e) {
                 //console.log("okay cool", e);
                 that._addColorCircle();
+                that._addData(e);
               });
 
             } else if(data.type == "numeric") {
@@ -496,7 +497,7 @@
 
     /*
       Dynamically making the dropdown and returning it.
-      select2 can be applyed only after dropdown has been added jto DOM.
+      select2 can be applyed only after dropdown has been added to DOM.
     */
     _addUnitDropDown: function(unitData) {
 
@@ -690,7 +691,7 @@
     },
 
     _fabricEvents: function() {
-      // Probably we can simplify this by introducing object:selected event for all.
+
       var that = this;
       // When we ckick and drag
       this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
@@ -785,7 +786,9 @@
     },
 
     getRandomColor: function() {
-
+      // This method generate a random color incase we run out of predefined color.
+      // Again it checks if randomly generated color already ecist in the array and if it is
+      // generate some other color.
       var letters = '0123456789ABCDEF'.split('');
       var color = '#';
       for (var i = 0; i < 6; i++ ) {
@@ -801,6 +804,18 @@
         colorIndex ++;
       }
       return (color).toUpperCase();
+    },
+
+    _addData: function(e) {
+      // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var currentSelection = 0; currentSelection < noOfSelectedObjects; currentSelection ++) {
+          if(this.allSelectedObjects[currentSelection].type == "tile") {
+            console.log(e);
+          }
+        }
+      }
     }
 
   });
