@@ -14,6 +14,10 @@
     allTiles: [], // All tiles containes all thise circles in the canvas
 
     allTabs: [],
+    // Why we are pre-setting these colours ?. we can generally create randomn colours but there is high chance that
+    // Colours having slight difference show up and we can hardly distinguish. Again we can go for
+    // Hue Saturation Method but still there is a high chance that closer colors [in thr RGB] are likely to show up.
+    // So we use some predefined 65 colors and if we need further we generate it randomnly.
 
     distinctColors: [
     '#00FF00',
@@ -394,7 +398,7 @@
 
             // Adding checkbox
             var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
-            .data("clicked", false);
+            .data("clicked", false).data("linkedFieldId", data.id);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
             fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
@@ -448,7 +452,7 @@
     },
 
     /*
-      Poor method just returns an input field.
+      Poor method just returns an input field. -:)
     */
     _createTextField: function() {
 
@@ -528,7 +532,8 @@
       and control the behavious , Look at the click handler.
     */
     _applyCheckboxHandler: function(checkBoxImage) {
-
+      // We add checkbox handler here, thing is it s not checkbox , its an image and we change
+      // source
       var that = this;
       $(checkBoxImage).click(function(evt) {
         if($(this).data("clicked")) {
@@ -538,7 +543,10 @@
         }
 
         $(this).data("clicked", !$(this).data("clicked"));
+        // when we un/select values it should reflect to the tiles selected at the moment
+        that._addRemoveSelection($(this));
       });
+
     },
 
     /*
@@ -829,10 +837,31 @@
       // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
-        for(var currentSelection = 0; currentSelection < noOfSelectedObjects; currentSelection ++) {
-          if(this.allSelectedObjects[currentSelection].type == "tile") {
-            var wellData = this.allSelectedObjects[currentSelection]["wellData"];
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
+          }
+        }
+      }
+    },
+
+    _addRemoveSelection: function(clickedCheckBox) {
+      // This method is invoked when any of the checkbox is un/checked. And it also add the id of the
+      // corresponding field to the tile. So now a well/tile knows if particular checkbox is checkd and
+      // if checked whats the value in it. because we use the value id of the element,
+      // which in turn passed through attribute.
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var selectionData = this.allSelectedObjects[objectIndex]["selectedWellattributes"];
+            if(clickedCheckBox.data("clicked")) {
+              selectionData[clickedCheckBox.data("linkedFieldId")] = true;
+            } else {
+              delete selectionData[clickedCheckBox.data("linkedFieldId")];
+            }
+
           }
         }
       }
