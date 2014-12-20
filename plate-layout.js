@@ -80,6 +80,8 @@
     '#009BFF',
     '#E85EBE'],
 
+    allWellData: {}, // We create this array so that it contains all the field ids and value
+    //of everything in tabs
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
     // Settings as a whole. its very usefull, when we have units for a specific field.
     // it goes like tabs-> individual field-> units and checkbox
@@ -377,6 +379,12 @@
                 break;
             }
 
+            if(data.id) {
+              this.allWellData[data.id] = "";
+            } else {
+              console.log("Plz check the format of attributes provided");
+            }
+
             // Adding data to the main array so that programatically we can access later
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
@@ -649,7 +657,9 @@
             hasBorders: false,
             lockMovementX: true,
             lockMovementY: true,
-            index: tileCounter ++
+            index: tileCounter ++,
+            wellData: {},
+            selectedWellattributes: {}
             //selectable: false
           });
 
@@ -686,8 +696,16 @@
           that.mainFabricCanvas.add(imaging);
         }
       });
-
+      this._addWellDataToAll();
       this._fabricEvents();
+    },
+
+    _addWellDataToAll: function() {
+      // Here we are adding an object containing all the id s of fields in the right to tiles
+      var noOfTiles = this.allTiles.length;
+      for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
+        this.allTiles[tileRunner]["wellData"] = $.extend({}, this.allWellData);
+      }
     },
 
     _fabricEvents: function() {
@@ -695,6 +713,7 @@
       var that = this;
       // When we ckick and drag
       this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
+        console.log(selectedObjects.target)
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
         //Deselect already selected tiles
         that._deselectSelected();
@@ -812,7 +831,8 @@
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var currentSelection = 0; currentSelection < noOfSelectedObjects; currentSelection ++) {
           if(this.allSelectedObjects[currentSelection].type == "tile") {
-            console.log(e);
+            var wellData = this.allSelectedObjects[currentSelection]["wellData"];
+            wellData[e.target.id] = e.target.value;
           }
         }
       }
