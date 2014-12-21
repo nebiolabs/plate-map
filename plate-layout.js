@@ -411,8 +411,7 @@
               });
 
               $("#" + data.id).on("change", function(e) {
-                console.log("okay cool", e);
-                that._addColorCircle();
+                //console.log("okay cool", e);
                 that._addData(e);
               });
 
@@ -774,7 +773,7 @@
           currentObj.setFill("#cceffc");
         }
       }
-
+      this._addColorCircle();
     },
 
     _addColorCircle: function() {
@@ -789,16 +788,18 @@
             }
           }
         }
-        this.colorPointer ++;
       }
     },
 
     _addCircleToCanvas: function(tileToAdd) {
       // Adding circle to particular tile
-      if(this.colorPointer >= this.distinctColors.length) {
+      if(this.colorPointer > this.distinctColors.length - 1) {
+        console.log("things gotten wrong here", this.distinctColors, this.distinctColors.length, this.colorPointer);
         var newColor = this.getRandomColor();
         this.distinctColors.push(newColor);
+        console.log(this.distinctColors[this.colorPointer]);
       }
+      console.log(this.colorPointer);
       var circle = new fabric.Circle({
         radius: 20,
         fill: "white",
@@ -807,7 +808,7 @@
         top: tileToAdd.top,
         left: tileToAdd.left,
         strokeWidth: 8,
-        stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
+        stroke: this.distinctColors[this.colorPointer ++],//this.colours[this.colorPointer],
         evented: false
       });
 
