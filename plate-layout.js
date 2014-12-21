@@ -410,9 +410,12 @@
                 allowClear: true
               });
 
-              $("#" + data.id).on("change", function(e) {
-                //console.log("okay cool", e);
-                that._addData(e);
+              $("#" + data.id).on("change", function(e, generated) {
+                // we check if its user generated event or system generated , automatic is system generated
+                if(generated != "Automatic") {
+                  that._addData(e);
+                }
+
               });
 
             } else if(data.type == "numeric") {
@@ -859,9 +862,6 @@
             wellData[e.target.id] = e.target.value;
           }
         }
-        if(noOfSelectedObjects === 1) {
-          console.log("one dude");
-        }
         this._addColorCircle();
       }
     },
@@ -897,7 +897,8 @@
           switch($("#" + id).data("type")) {
 
             case "multiselect":
-              $("#" + id).val(values[id]).trigger("change");
+              $("#" + id).val(values[id]).trigger("change", "Automatic");
+              // Automatic means its system generated.
             break;
 
           case "text":
