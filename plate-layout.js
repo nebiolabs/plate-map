@@ -794,10 +794,8 @@
     _addCircleToCanvas: function(tileToAdd) {
       // Adding circle to particular tile
       if(this.colorPointer > this.distinctColors.length - 1) {
-        console.log("things gotten wrong here", this.distinctColors, this.distinctColors.length, this.colorPointer);
         var newColor = this.getRandomColor();
         this.distinctColors.push(newColor);
-        console.log(this.distinctColors[this.colorPointer]);
       }
       console.log(this.colorPointer);
       var circle = new fabric.Circle({
