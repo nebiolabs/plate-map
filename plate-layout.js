@@ -438,6 +438,14 @@
               $("#" + data.id).select2({
 
               });
+            } else if(data.type == "text") {
+              // text handler
+              $("#" + data.id).keyup(function(e) {
+                //we use keyup instead of blur. Blur fires event but canvas fire event even faster
+                // so most likely our targeted tile changed, and value added to wrong tile.
+                that._addData(e);
+              });
+
             }
 
           }
@@ -724,7 +732,7 @@
       var that = this;
       // When we ckick and drag
       this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
-        console.log(selectedObjects.target)
+
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
         //Deselect already selected tiles
         that._deselectSelected();
@@ -742,7 +750,7 @@
       // Putting back fill of previously selected group
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
-        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
           var currentObj = this.allSelectedObjects[objectIndex];
           if(currentObj.circle) {
             if(currentObj.type == "tile") {
@@ -773,20 +781,24 @@
           currentObj.setFill("#cceffc");
         }
       }
-      this._addColorCircle();
+      //this._addColorCircle();
     },
 
     _addColorCircle: function() {
     // This method checks if given selection has circle.
+      var colorAdded = false;
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           if(this.allSelectedObjects[objectIndex].type == "tile") {
             var tile = this.allSelectedObjects[objectIndex];
             if(! tile.circle) {
-              this._addCircleToCanvas(tile);
+              colorAdded = this._addCircleToCanvas(tile);
             }
           }
+        }
+        if(colorAdded) {
+          this.colorPointer ++;
         }
       }
     },
@@ -797,7 +809,7 @@
         var newColor = this.getRandomColor();
         this.distinctColors.push(newColor);
       }
-      console.log(this.colorPointer);
+
       var circle = new fabric.Circle({
         radius: 20,
         fill: "white",
@@ -806,14 +818,14 @@
         top: tileToAdd.top,
         left: tileToAdd.left,
         strokeWidth: 8,
-        stroke: this.distinctColors[this.colorPointer ++],//this.colours[this.colorPointer],
+        stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
         evented: false
       });
 
       circle.parent = tileToAdd; // Linking the objects;
       tileToAdd.circle = circle;
       this.mainFabricCanvas.add(circle);
-
+      return true;
     },
 
     getRandomColor: function() {
@@ -847,6 +859,10 @@
             wellData[e.target.id] = e.target.value;
           }
         }
+        if(noOfSelectedObjects === 1) {
+          console.log("one dude");
+        }
+        this._addColorCircle();
       }
     },
 
@@ -883,9 +899,16 @@
             case "multiselect":
               $("#" + id).val(values[id]).trigger("change");
             break;
+
+          case "text":
+            $("#" + id).val(values[id]);
+          break;
           }
         }
       } else {
+        // Here we check if all the values are same
+        // if yes apply those values to tabs
+        // else show empty value in tabs
         console.log("group");
       }
     }
