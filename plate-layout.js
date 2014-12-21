@@ -367,7 +367,7 @@
             // Switch case the data type and we have for of them
             switch(data.type) {
               case "text":
-                input = this._createTextField();
+                input = this._createTextField(data);
                 break;
 
               case "numeric":
@@ -388,7 +388,8 @@
             } else {
               console.log("Plz check the format of attributes provided");
             }
-
+            // we save type so that it can be used when we update data on selecting a tile
+            $(input).data("type", data.type);
             // Adding data to the main array so that programatically we can access later
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
@@ -406,12 +407,11 @@
             if(data.type == "multiselect") {
               // Adding select2
               $("#" + data.id).select2({
-                placeholder: "cool",
                 allowClear: true
               });
 
               $("#" + data.id).on("change", function(e) {
-                //console.log("okay cool", e);
+                console.log("okay cool", e);
                 that._addColorCircle();
                 that._addData(e);
               });
@@ -436,7 +436,7 @@
 
             } else if(data.type == "boolean") {
               // Applying select 2 to true/false drop down
-              $("#" + data.id + data.name).select2({
+              $("#" + data.id).select2({
 
               });
             }
@@ -454,9 +454,9 @@
     /*
       Poor method just returns an input field. -:)
     */
-    _createTextField: function() {
+    _createTextField: function(textData) {
 
-      return this._createElement("<input>").addClass("plate-setup-tab-input");
+      return this._createElement("<input>").addClass("plate-setup-tab-input").attr("id", textData.id);
     },
 
     /*
@@ -468,6 +468,10 @@
       // we create select field and add options to it later
       var selectField = this._createElement("<select></select>").attr("id", selectData.id)
         .addClass("plate-setup-tab-select-field");
+      // Adding an empty option at the first
+      var emptySelection = this._createElement("<option></option>").attr("value", "")
+        .html("");
+      $(selectField).append(emptySelection);
       // Look for all options in the json
       for(options in selectData.options) {
         var optionData = selectData.options[options];
@@ -487,7 +491,7 @@
     _createNumericField: function(numericFieldData) {
 
       var numericField = this._createElement("<input>").addClass("plate-setup-tab-input")
-      .attr("placeholder", numericFieldData.placeholder || "");
+      .attr("placeholder", numericFieldData.placeholder || "").attr("id", numericFieldData.id);
 
       return numericField;
     },
@@ -497,7 +501,7 @@
     */
     _createBooleanField: function(boolData) {
 
-      var boolField = this._createElement("<select></select>").attr("id", boolData.id + boolData.name)
+      var boolField = this._createElement("<select></select>").attr("id", boolData.id)
       .addClass("plate-setup-tab-select-field");
       var trueBool = this._createElement("<option></option>").attr("value", true).html("true");
       var falseBool = this._createElement("<option></option>").attr("value", false).html("false");
@@ -666,7 +670,7 @@
             lockMovementX: true,
             lockMovementY: true,
             index: tileCounter ++,
-            wellData: {},
+            wellData: {}, // now we use this to show the data in the tabs when selected
             selectedWellattributes: {}
             //selectable: false
           });
@@ -729,6 +733,7 @@
         that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
         // Select tile/s
         that._selectTiles();
+        that._applyValuesToTabs();
         that.mainFabricCanvas.renderAll();
       });
 
@@ -864,6 +869,25 @@
 
           }
         }
+      }
+    },
+    // Next thing is to show correct data when a tile or a group of tiles are selected.
+    // use wellData in the tile to do that... :)
+    _applyValuesToTabs: function() {
+      // Here we look for the values on the well and apply it to tabs.
+      if(this.allSelectedObjects.length === 1) {
+        // Incase there is only one well selected.
+        var values = this.allSelectedObjects[0]["wellData"];
+        for(var id in values) {
+          switch($("#" + id).data("type")) {
+
+            case "multiselect":
+              $("#" + id).val(values[id]).trigger("change");
+            break;
+          }
+        }
+      } else {
+        console.log("group");
       }
     }
 
