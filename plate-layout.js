@@ -14,11 +14,82 @@
     allTiles: [], // All tiles containes all thise circles in the canvas
 
     allTabs: [],
+    // Why we are pre-setting these colours ?. we can generally create randomn colours but there is high chance that
+    // Colours having slight difference show up and we can hardly distinguish. Again we can go for
+    // Hue Saturation Method but still there is a high chance that closer colors [in thr RGB] are likely to show up.
+    // So we use some predefined 65 colors and if we need further we generate it randomnly.
 
+    distinctColors: [
+    '#00FF00',
+    '#0000FF',
+    '#FF0000',
+    '#01FFFE',
+    '#FFA6FE',
+    '#FFDB66',
+    '#006401',
+    '#010067',
+    '#95003A',
+    '#007DB5',
+    '#FF00F6',
+    '#FFEEE8',
+    '#774D00',
+    '#90FB92',
+    '#0076FF',
+    '#D5FF00',
+    '#FF937E',
+    '#6A826C',
+    '#FF029D',
+    '#FE8900',
+    '#7A4782',
+    '#7E2DD2',
+    '#85A900',
+    '#FF0056',
+    '#A42400',
+    '#00AE7E',
+    '#683D3B',
+    '#BDC6FF',
+    '#263400',
+    '#BDD393',
+    '#00B917',
+    '#9E008E',
+    '#001544',
+    '#C28C9F',
+    '#FF74A3',
+    '#01D0FF',
+    '#004754',
+    '#E56FFE',
+    '#788231',
+    '#0E4CA1',
+    '#91D0CB',
+    '#BE9970',
+    '#968AE8',
+    '#BB8800',
+    '#43002C',
+    '#DEFF74',
+    '#00FFC6',
+    '#FFE502',
+    '#620E00',
+    '#008F9C',
+    '#98FF52',
+    '#7544B1',
+    '#B500FF',
+    '#00FF78',
+    '#FF6E41',
+    '#005F39',
+    '#6B6882',
+    '#5FAD4E',
+    '#A75740',
+    '#A5FFD2',
+    '#FFB167',
+    '#009BFF',
+    '#E85EBE'],
+
+    allWellData: {}, // We create this array so that it contains all the field ids and value
+    //of everything in tabs
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
     // Settings as a whole. its very usefull, when we have units for a specific field.
     // it goes like tabs-> individual field-> units and checkbox
-
+    allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
     _create: function() {
 
       console.log(this.options.imgSrc);
@@ -296,7 +367,7 @@
             // Switch case the data type and we have for of them
             switch(data.type) {
               case "text":
-                input = this._createTextField();
+                input = this._createTextField(data);
                 break;
 
               case "numeric":
@@ -312,6 +383,13 @@
                 break;
             }
 
+            if(data.id && data.type) {
+              this.allWellData[data.id] = (data.type == "boolean") ? true : "";
+            } else {
+              console.log("Plz check the format of attributes provided");
+            }
+            // we save type so that it can be used when we update data on selecting a tile
+            $(input).data("type", data.type);
             // Adding data to the main array so that programatically we can access later
             fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
@@ -321,7 +399,7 @@
 
             // Adding checkbox
             var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
-            .data("clicked", false);
+            .data("clicked", false).data("linkedFieldId", data.id);
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
             fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
@@ -329,27 +407,47 @@
             if(data.type == "multiselect") {
               // Adding select2
               $("#" + data.id).select2({
-                placeholder: "cool",
                 allowClear: true
               });
 
-              $("#" + data.id).on("change", function(e) {
-                //console.log("okay cool", e);
-                that._addColorCircle();
+              $("#" + data.id).on("change", function(e, generated) {
+                // we check if its user generated event or system generated , automatic is system generated
+                if(generated != "Automatic") {
+                  that._addData(e);
+                }
+
               });
 
             } else if(data.type == "numeric") {
               // Adding prevention for non numeric keys, its basic. need to improve.
+              // We use keyup and keydown combination to get only numbers saved in the object
               $(input).keydown(function(evt) {
                 var charCode = (evt.which) ? evt.which : evt.keyCode
-                return !(charCode > 31 && (charCode < 48 || charCode > 57));
+                if (charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
+                  return false;
+                }
+              });
+
+              $(input).keyup(function(evt) {
+                var charCode = (evt.which) ? evt.which : evt.keyCode
+                if (!(charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
+                  that._addData(evt)
+                }
               });
               // Now add the label which shows unit.
               var unitDropDown = this._addUnitDropDown(data);
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
 
-              $("#" + data.id + data.name).select2({
+              $("#" + data.id + "unit").select2({
 
+              });
+              // Now add data to allUnitData
+              this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
+              // Now handler for change in the unit.
+              $("#" + data.id + "unit").on("change", function(evt, generated) {
+                if(generated != "Automatic") {
+                  that._addUnitData(evt);
+                }
               });
 
               fieldArray[fieldArrayIndex - 1].unit = unitDropDown;
@@ -358,9 +456,23 @@
 
             } else if(data.type == "boolean") {
               // Applying select 2 to true/false drop down
-              $("#" + data.id + data.name).select2({
+              $("#" + data.id).select2({
 
               });
+
+              $("#" + data.id).on("change", function(evt, generated) {
+                if(generated != "Automatic") {
+                  that._addData(evt);
+                }
+              });
+
+            } else if(data.type == "text") {
+              // we use keyup instead of blur. Blur fires event but canvas fire event even faster
+              // so most likely our targeted tile changed, and value added to wrong tile.
+              $("#" + data.id).keyup(function(evt) {
+                that._addData(evt);
+              });
+
             }
 
           }
@@ -374,11 +486,11 @@
     },
 
     /*
-      Poor method just returns an input field.
+      Poor method just returns an input field. -:)
     */
-    _createTextField: function() {
+    _createTextField: function(textData) {
 
-      return this._createElement("<input>").addClass("plate-setup-tab-input");
+      return this._createElement("<input>").addClass("plate-setup-tab-input").attr("id", textData.id);
     },
 
     /*
@@ -390,6 +502,10 @@
       // we create select field and add options to it later
       var selectField = this._createElement("<select></select>").attr("id", selectData.id)
         .addClass("plate-setup-tab-select-field");
+      // Adding an empty option at the first
+      var emptySelection = this._createElement("<option></option>").attr("value", "")
+        .html("");
+      $(selectField).append(emptySelection);
       // Look for all options in the json
       for(options in selectData.options) {
         var optionData = selectData.options[options];
@@ -409,7 +525,7 @@
     _createNumericField: function(numericFieldData) {
 
       var numericField = this._createElement("<input>").addClass("plate-setup-tab-input")
-      .attr("placeholder", numericFieldData.placeholder || "");
+      .attr("placeholder", numericFieldData.placeholder || "").attr("id", numericFieldData.id);
 
       return numericField;
     },
@@ -419,7 +535,7 @@
     */
     _createBooleanField: function(boolData) {
 
-      var boolField = this._createElement("<select></select>").attr("id", boolData.id + boolData.name)
+      var boolField = this._createElement("<select></select>").attr("id", boolData.id)
       .addClass("plate-setup-tab-select-field");
       var trueBool = this._createElement("<option></option>").attr("value", true).html("true");
       var falseBool = this._createElement("<option></option>").attr("value", false).html("false");
@@ -431,13 +547,13 @@
 
     /*
       Dynamically making the dropdown and returning it.
-      select2 can be applyed only after dropdown has been added jto DOM.
+      select2 can be applyed only after dropdown has been added to DOM.
     */
     _addUnitDropDown: function(unitData) {
 
       if(unitData.units) {
 
-        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + unitData.name)
+        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
         .addClass("plate-setup-tab-label-select-field");
         for(unit in unitData.units) {
 
@@ -454,7 +570,8 @@
       and control the behavious , Look at the click handler.
     */
     _applyCheckboxHandler: function(checkBoxImage) {
-
+      // We add checkbox handler here, thing is it s not checkbox , its an image and we change
+      // source
       var that = this;
       $(checkBoxImage).click(function(evt) {
         if($(this).data("clicked")) {
@@ -464,7 +581,10 @@
         }
 
         $(this).data("clicked", !$(this).data("clicked"));
+        // when we un/select values it should reflect to the tiles selected at the moment
+        that._addRemoveSelection($(this));
       });
+
     },
 
     /*
@@ -509,9 +629,9 @@
 
     allPreviouslySelectedObjects: null,
 
-    colours: ["blue", "green", "red", "yellow", "orange", "violet", "indigo", "pink", "purple"],
-
     colorPointer: 0,
+
+    goldenRatio: 0.618033988749895,
 
     _canvas: function() {
       // Those 1,2,3 s and A,B,C s
@@ -583,7 +703,9 @@
             hasBorders: false,
             lockMovementX: true,
             lockMovementY: true,
-            index: tileCounter ++
+            index: tileCounter ++,
+            wellData: {}, // now we use this to show the data in the tabs when selected
+            selectedWellattributes: {}
             //selectable: false
           });
 
@@ -620,22 +742,42 @@
           that.mainFabricCanvas.add(imaging);
         }
       });
-
+      this._addWellDataToAll();
+      this._addUnitDataToAll();
       this._fabricEvents();
     },
 
+    _addWellDataToAll: function() {
+      // Here we are adding an object containing all the id s of fields in the right to tiles
+      var noOfTiles = this.allTiles.length;
+      for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
+        this.allTiles[tileRunner]["wellData"] = $.extend({}, this.allWellData);
+      }
+    },
+
+    _addUnitDataToAll: function() {
+      // Here we are adding an object containing all the id s of units in the right to tiles
+      var noOfTiles = this.allTiles.length;
+      for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
+        this.allTiles[tileRunner]["unitData"] = $.extend({}, this.allUnitData);
+      }
+    },
+
     _fabricEvents: function() {
-      // Probably we can simplify this by introducing object:selected event for all.
+
       var that = this;
       // When we ckick and drag
       this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
+
         that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
         //Deselect already selected tiles
         that._deselectSelected();
         // Adding newly selected group
         that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
+        console.log(that.allSelectedObjects);
         // Select tile/s
         that._selectTiles();
+        that._applyValuesToTabs();
         that.mainFabricCanvas.renderAll();
       });
 
@@ -645,7 +787,7 @@
       // Putting back fill of previously selected group
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
-        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
           var currentObj = this.allSelectedObjects[objectIndex];
           if(currentObj.circle) {
             if(currentObj.type == "tile") {
@@ -676,27 +818,36 @@
           currentObj.setFill("#cceffc");
         }
       }
-
     },
 
     _addColorCircle: function() {
     // This method checks if given selection has circle.
+      var colorAdded = false;
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           if(this.allSelectedObjects[objectIndex].type == "tile") {
             var tile = this.allSelectedObjects[objectIndex];
             if(! tile.circle) {
-              this._addCircleToCanvas(tile);
+              colorAdded = this._addCircleToCanvas(tile);
             }
           }
         }
-        this.colorPointer ++;
+        // incrementing color pointer should be out of for loop, only then the whole selected
+        // tiles have one color.
+        if(colorAdded) {
+          this.colorPointer ++;
+        }
       }
     },
 
     _addCircleToCanvas: function(tileToAdd) {
       // Adding circle to particular tile
+      if(this.colorPointer > this.distinctColors.length - 1) {
+        var newColor = this.getRandomColor();
+        this.distinctColors.push(newColor);
+      }
+
       var circle = new fabric.Circle({
         radius: 20,
         fill: "white",
@@ -705,24 +856,144 @@
         top: tileToAdd.top,
         left: tileToAdd.left,
         strokeWidth: 8,
-        stroke: this.colours[this.colorPointer],
+        stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
         evented: false
       });
 
       circle.parent = tileToAdd; // Linking the objects;
       tileToAdd.circle = circle;
       this.mainFabricCanvas.add(circle);
+      return true;
     },
 
     getRandomColor: function() {
-
+      // This method generate a random color incase we run out of predefined color.
+      // Again it checks if randomly generated color already ecist in the array and if it is
+      // generate some other color.
       var letters = '0123456789ABCDEF'.split('');
       var color = '#';
       for (var i = 0; i < 6; i++ ) {
           color += letters[Math.floor(Math.random() * 16)];
       }
-      return color;
-    }
-  });
+      var colorCount = this.distinctColors.length;
+      var colorIndex = 0;
+      // Check if the generated color is already in the list
+      while(colorIndex < colorCount) {
+        if(this.distinctColors[colorIndex] === (color).toUpperCase()) {
+          this.getRandomColor();
+        }
+        colorIndex ++;
+      }
+      return (color).toUpperCase();
+    },
 
+    _addData: function(e) {
+      // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var wellData = this.allSelectedObjects[objectIndex]["wellData"];
+            wellData[e.target.id] = e.target.value;
+          }
+        }
+        this._addColorCircle();
+      }
+    },
+
+    _addUnitData: function(e) {
+      // This method add/change data when unit of some numeric field is changed
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var unitData = this.allSelectedObjects[objectIndex]["unitData"];
+            unitData[e.target.id] = e.target.value;
+          }
+        }
+      }
+    },
+
+    _addRemoveSelection: function(clickedCheckBox) {
+      // This method is invoked when any of the checkbox is un/checked. And it also add the id of the
+      // corresponding field to the tile. So now a well/tile knows if particular checkbox is checkd and
+      // if checked whats the value in it. because we use the value id of the element,
+      // which in turn passed through attribute.
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var selectionData = this.allSelectedObjects[objectIndex]["selectedWellattributes"];
+            if(clickedCheckBox.data("clicked")) {
+              selectionData[clickedCheckBox.data("linkedFieldId")] = true;
+            } else {
+              delete selectionData[clickedCheckBox.data("linkedFieldId")];
+            }
+
+          }
+        }
+      }
+    },
+    // Next thing is to show correct data when a tile or a group of tiles are selected.
+    // use wellData in the tile to do that... :)
+    _applyValuesToTabs: function() {
+      // Here we look for the values on the well and apply it to tabs.
+      if(this.allSelectedObjects.length === 1) {
+        // Incase there is only one well selected.
+        var values = this.allSelectedObjects[0]["wellData"];
+        for(var id in values) {
+          this._applyFieldData(id, values);
+        }
+        // Now changing the unit values
+        var units = this.allSelectedObjects[0]["unitData"];
+        for(var unitId in units) {
+          this._applyUnitData(unitId, units);
+        }
+      } else {
+        // Here we check if all the values are same
+        // if yes apply those values to tabs
+        // else show empty value in tabs
+        console.log("group");
+      }
+    },
+
+    _applyFieldData: function(id, values) {
+      // This method directly add a value to corresponding field in the tab
+      switch($("#" + id).data("type")) {
+
+        case "multiselect":
+          $("#" + id).val(values[id]).trigger("change", "Automatic");
+          // Automatic means its system generated.
+        break;
+
+        case "text":
+          $("#" + id).val(values[id]);
+        break;
+
+        case "numeric":
+          $("#" + id).val(values[id]);
+        break;
+
+        case "boolean":
+          // select box provide bool value as text,
+          // so we need a minor tweek to admit "true" and "false"
+          var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
+          $("#" + id).val(boolText).trigger("change", "Automatic");
+        break;
+      }
+    },
+
+    _applyUnitData: function(unitId, units) {
+      // Method to add unit data to the tabs.
+      $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
+    }
+
+    // Things to do
+    // Extend showing tab data to multiselect
+    // save and show if the field is savad
+    // refactor code
+    // have an eye on selected field and change colours and group for having same value and same select boxes
+    // add field as soon as select box is clicked , at the bottom of the screen
+    // redo undo -: refactor should make it easy.
+  });
 })(jQuery, fabric);

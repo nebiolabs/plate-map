@@ -52,21 +52,21 @@
           },
 
           master_mix: {
-            id:       'volume',
+            id:       'volume-master',
             name:     'master mix concentration factor',
             type:     'text',
             units:    'volume_units' //optional
           },
 
           Amplicons: {
-            id:       'volume',
+            id:       'volume-ampli',
             name:     'Amplicons',
             type:     'boolean',
             units:    'volume_units' //optional
           },
 
           Buffer: {
-            id:       'volume',
+            id:       'volume-buff',
             name:     'Buffer',
             type:     'numeric',
 
@@ -148,9 +148,9 @@
 
         fields: {
           Volume: {
-            id:       'volume',
+            id:       'volume-f4',
             name:     'Volume',
-            type:     'numeric'
+            type:     'text'
           },
 
           dNTPs : {
@@ -161,11 +161,11 @@
             options: {
                 'Taq 1':  {
                       id:   '234',
-                      name: 'Taq 1'
+                      name: 'cola'
                   },
                 'Taq 2':  {
                       id:   '123',
-                      name: 'Taq 2'
+                      name: 'pepsi'
                   }
             }
           }
