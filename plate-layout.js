@@ -89,7 +89,7 @@
     allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
     // Settings as a whole. its very usefull, when we have units for a specific field.
     // it goes like tabs-> individual field-> units and checkbox
-
+    allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
     _create: function() {
 
       console.log(this.options.imgSrc);
@@ -438,8 +438,16 @@
               var unitDropDown = this._addUnitDropDown(data);
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
 
-              $("#" + data.id + data.name).select2({
+              $("#" + data.id + "unit").select2({
 
+              });
+              // Now add data to allUnitData
+              this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
+              // Now handler for change in the unit.
+              $("#" + data.id + "unit").on("change", function(evt, generated) {
+                if(generated != "Automatic") {
+                  that._addUnitData(evt);
+                }
               });
 
               fieldArray[fieldArrayIndex - 1].unit = unitDropDown;
@@ -454,7 +462,6 @@
 
               $("#" + data.id).on("change", function(evt, generated) {
                 if(generated != "Automatic") {
-                  console.log(evt);
                   that._addData(evt);
                 }
               });
@@ -546,7 +553,7 @@
 
       if(unitData.units) {
 
-        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + unitData.name)
+        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
         .addClass("plate-setup-tab-label-select-field");
         for(unit in unitData.units) {
 
@@ -736,6 +743,7 @@
         }
       });
       this._addWellDataToAll();
+      this._addUnitDataToAll();
       this._fabricEvents();
     },
 
@@ -744,6 +752,14 @@
       var noOfTiles = this.allTiles.length;
       for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
         this.allTiles[tileRunner]["wellData"] = $.extend({}, this.allWellData);
+      }
+    },
+
+    _addUnitDataToAll: function() {
+      // Here we are adding an object containing all the id s of units in the right to tiles
+      var noOfTiles = this.allTiles.length;
+      for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
+        this.allTiles[tileRunner]["unitData"] = $.extend({}, this.allUnitData);
       }
     },
 
@@ -802,7 +818,6 @@
           currentObj.setFill("#cceffc");
         }
       }
-      //this._addColorCircle();
     },
 
     _addColorCircle: function() {
@@ -818,6 +833,8 @@
             }
           }
         }
+        // incrementing color pointer should be out of for loop, only then the whole selected
+        // tiles have one color.
         if(colorAdded) {
           this.colorPointer ++;
         }
@@ -884,6 +901,19 @@
       }
     },
 
+    _addUnitData: function(e) {
+      // This method add/change data when unit of some numeric field is changed
+      if(this.allSelectedObjects) {
+        var noOfSelectedObjects = this.allSelectedObjects.length;
+        for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          if(this.allSelectedObjects[objectIndex].type == "tile") {
+            var unitData = this.allSelectedObjects[objectIndex]["unitData"];
+            unitData[e.target.id] = e.target.value;
+          }
+        }
+      }
+    },
+
     _addRemoveSelection: function(clickedCheckBox) {
       // This method is invoked when any of the checkbox is un/checked. And it also add the id of the
       // corresponding field to the tile. So now a well/tile knows if particular checkbox is checkd and
@@ -912,28 +942,12 @@
         // Incase there is only one well selected.
         var values = this.allSelectedObjects[0]["wellData"];
         for(var id in values) {
-          switch($("#" + id).data("type")) {
-
-            case "multiselect":
-              $("#" + id).val(values[id]).trigger("change", "Automatic");
-              // Automatic means its system generated.
-            break;
-
-            case "text":
-              $("#" + id).val(values[id]);
-            break;
-
-            case "numeric":
-              $("#" + id).val(values[id]);
-            break;
-
-            case "boolean":
-              // select box provide bool value as text,
-              // so we need a minor tweek to admit "true" and "false"
-              var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
-              $("#" + id).val(boolText).trigger("change", "Automatic");
-            break;
-          }
+          this._applyFieldData(id, values);
+        }
+        // Now changing the unit values
+        var units = this.allSelectedObjects[0]["unitData"];
+        for(var unitId in units) {
+          this._applyUnitData(unitId, units);
         }
       } else {
         // Here we check if all the values are same
@@ -941,7 +955,45 @@
         // else show empty value in tabs
         console.log("group");
       }
+    },
+
+    _applyFieldData: function(id, values) {
+      // This method directly add a value to corresponding field in the tab
+      switch($("#" + id).data("type")) {
+
+        case "multiselect":
+          $("#" + id).val(values[id]).trigger("change", "Automatic");
+          // Automatic means its system generated.
+        break;
+
+        case "text":
+          $("#" + id).val(values[id]);
+        break;
+
+        case "numeric":
+          $("#" + id).val(values[id]);
+        break;
+
+        case "boolean":
+          // select box provide bool value as text,
+          // so we need a minor tweek to admit "true" and "false"
+          var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
+          $("#" + id).val(boolText).trigger("change", "Automatic");
+        break;
+      }
+    },
+
+    _applyUnitData: function(unitId, units) {
+      // Method to add unit data to the tabs.
+      $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
     }
 
+    // Things to do
+    // Extend showing tab data to multiselect
+    // save and show if the field is savad
+    // refactor code
+    // have an eye on selected field and change colours and group for having same value and same select boxes
+    // add field as soon as select box is clicked , at the bottom of the screen
+    // redo undo -: refactor should make it easy.
   });
 })(jQuery, fabric);
