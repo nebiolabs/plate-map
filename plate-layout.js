@@ -383,8 +383,8 @@
                 break;
             }
 
-            if(data.id) {
-              this.allWellData[data.id] = "";
+            if(data.id && data.type) {
+              this.allWellData[data.id] = (data.type == "boolean") ? true : "";
             } else {
               console.log("Plz check the format of attributes provided");
             }
@@ -451,12 +451,19 @@
               $("#" + data.id).select2({
 
               });
+
+              $("#" + data.id).on("change", function(evt, generated) {
+                if(generated != "Automatic") {
+                  console.log(evt);
+                  that._addData(evt);
+                }
+              });
+
             } else if(data.type == "text") {
-              // text handler
-              $("#" + data.id).keyup(function(e) {
-                //we use keyup instead of blur. Blur fires event but canvas fire event even faster
-                // so most likely our targeted tile changed, and value added to wrong tile.
-                that._addData(e);
+              // we use keyup instead of blur. Blur fires event but canvas fire event even faster
+              // so most likely our targeted tile changed, and value added to wrong tile.
+              $("#" + data.id).keyup(function(evt) {
+                that._addData(evt);
               });
 
             }
@@ -918,6 +925,13 @@
 
             case "numeric":
               $("#" + id).val(values[id]);
+            break;
+
+            case "boolean":
+              // select box provide bool value as text,
+              // so we need a minor tweek to admit "true" and "false"
+              var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
+              $("#" + id).val(boolText).trigger("change", "Automatic");
             break;
           }
         }
