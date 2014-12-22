@@ -420,9 +420,19 @@
 
             } else if(data.type == "numeric") {
               // Adding prevention for non numeric keys, its basic. need to improve.
+              // We use keyup and keydown combination to get only numbers saved in the object
               $(input).keydown(function(evt) {
                 var charCode = (evt.which) ? evt.which : evt.keyCode
-                return !(charCode > 31 && (charCode < 48 || charCode > 57));
+                if (charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
+                  return false;
+                }
+              });
+
+              $(input).keyup(function(evt) {
+                var charCode = (evt.which) ? evt.which : evt.keyCode
+                if (!(charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
+                  that._addData(evt)
+                }
               });
               // Now add the label which shows unit.
               var unitDropDown = this._addUnitDropDown(data);
@@ -741,6 +751,7 @@
         that._deselectSelected();
         // Adding newly selected group
         that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
+        console.log(that.allSelectedObjects);
         // Select tile/s
         that._selectTiles();
         that._applyValuesToTabs();
@@ -901,9 +912,13 @@
               // Automatic means its system generated.
             break;
 
-          case "text":
-            $("#" + id).val(values[id]);
-          break;
+            case "text":
+              $("#" + id).val(values[id]);
+            break;
+
+            case "numeric":
+              $("#" + id).val(values[id]);
+            break;
           }
         }
       } else {
