@@ -889,13 +889,17 @@
       return (color).toUpperCase();
     },
 
-    _addData: function(e) {
+    _addData: function(e, boolean) {
       // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
       if(this.allSelectedObjects) {
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           if(this.allSelectedObjects[objectIndex].type == "tile") {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
+            if(boolean) {
+              var boolVal = (e.target.value == "true" || e.target.value == true) ? true : false;
+              wellData[e.target.id]
+            }
             wellData[e.target.id] = e.target.value;
           }
         }
@@ -942,26 +946,56 @@
       // Here we look for the values on the well and apply it to tabs.
       if(this.allSelectedObjects.length === 1) {
         // Incase there is only one well selected.
-        var values = this.allSelectedObjects[0]["wellData"];
-        for(var id in values) {
-          this._applyFieldData(id, values);
-        }
-        // Now changing the unit values
-        var units = this.allSelectedObjects[0]["unitData"];
-        for(var unitId in units) {
-          this._applyUnitData(unitId, units);
-        }
-        // Now put back selected fields
-        var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
-        for(var selectedFieldId in selectedFields) {
-          checkBoxImage = $("#" + selectedFieldId).data("checkBox");
-          $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
-        }
+        this._addDataToTabFields();
       } else {
         // Here we check if all the values are same
         // if yes apply those values to tabs
         // else show empty value in tabs
-        console.log("group");
+        // we take first tile as reference object
+        var referenceTile =  this.allSelectedObjects[0];
+        var referenceFields = referenceTile["wellData"];
+        var referenceUnits = referenceTile["unitData"];
+        var referenceSelectedFields = referenceTile["selectedWellattributes"];
+        var equalWellData = true;
+        var equalUnitData = true;
+        var equalSelectData = true;
+        // Looking for same well data
+        for(var i = 0; i < this.allSelectedObjects.length; i++) {
+          if(this.allSelectedObjects[i]["type"] == "tile") {
+            equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
+            equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
+            equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellattributes"], referenceSelectedFields);
+            console.log("looking for selectData", equalSelectData, referenceSelectedFields);
+            if(!equalWellData || !equalUnitData || !equalSelectData) {
+
+              this._clearAllFields(referenceFields);
+              return true;
+            }
+          }
+        }
+
+        //if(equalWellData || equalUnitData || equalSelectData) {
+          this._addDataToTabFields();
+        //}
+      }
+    },
+
+    _addDataToTabFields: function() {
+      // Configure how data is added to tab fields
+      var values = this.allSelectedObjects[0]["wellData"];
+      for(var id in values) {
+        this._applyFieldData(id, values);
+      }
+      // Now changing the unit values
+      var units = this.allSelectedObjects[0]["unitData"];
+      for(var unitId in units) {
+        this._applyUnitData(unitId, units);
+      }
+      // Now put back selected fields
+      var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
+      for(var selectedFieldId in selectedFields) {
+        checkBoxImage = $("#" + selectedFieldId).data("checkBox");
+        $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
       }
     },
 
@@ -999,11 +1033,35 @@
       $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
     },
 
+    compareObjects:function(object, reference) {
+      // Compare 2 objects
+      if(object.length !== reference.length) {
+        return false;
+      }
 
+      for(var ref in reference) {
+        if(reference[ref] !== object[ref]) {
+          return false;
+        }
+      }
 
+      return true;
+    },
+
+    _clearAllFields: function(allFields) {
+      // Clear all the fields
+      var fakeAllFields = $.extend({}, allFields);
+      for(var field in fakeAllFields) {
+        if($("#" + field).data("type") == "boolean") {
+          fakeAllFields[field] = true;
+        } else {
+          fakeAllFields[field] = "";
+        }
+
+        this._applyFieldData(field, fakeAllFields);
+      }
+    }
     // Things to do
-    // Extend showing tab data to multiselect
-    // save and show if the field is savad
     // refactor code
     // have an eye on selected field and change colours and group for having same value and same select boxes
     // add field as soon as select box is clicked , at the bottom of the screen
