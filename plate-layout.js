@@ -403,6 +403,8 @@
             $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
             this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
             fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
+            // Here we add the checkImage reference to input so now Input knows which is its checkbox..!!
+            $(input).data("checkBox", checkImage);
 
             if(data.type == "multiselect") {
               // Adding select2
@@ -949,6 +951,12 @@
         for(var unitId in units) {
           this._applyUnitData(unitId, units);
         }
+        // Now put back selected fields
+        var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
+        for(var selectedFieldId in selectedFields) {
+          checkBoxImage = $("#" + selectedFieldId).data("checkBox");
+          $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
+        }
       } else {
         // Here we check if all the values are same
         // if yes apply those values to tabs
@@ -981,12 +989,17 @@
           $("#" + id).val(boolText).trigger("change", "Automatic");
         break;
       }
+      // Clear previously selected checkboxes
+      checkBoxImage = $("#" + id).data("checkBox");
+      $(checkBoxImage).attr("src", this.imgSrc + "/dont.png").data("clicked", false);
     },
 
     _applyUnitData: function(unitId, units) {
       // Method to add unit data to the tabs.
       $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
-    }
+    },
+
+
 
     // Things to do
     // Extend showing tab data to multiselect
@@ -996,4 +1009,5 @@
     // add field as soon as select box is clicked , at the bottom of the screen
     // redo undo -: refactor should make it easy.
   });
+
 })(jQuery, fabric);
