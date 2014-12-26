@@ -92,14 +92,14 @@
     allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
     _create: function() {
 
-      console.log(this.options.imgSrc);
+      console.log(this.options);
       this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
     },
 
     _init: function() {
 
-      // This is invoked when the user use the plugin after _create is callsed.
+      // This is invoked when the user use the plugin after _create is called.
       // The point is _create is invoked for the very first time and for all other
       // times _init is used.
     },
@@ -904,6 +904,11 @@
           }
         }
         this._addColorCircle();
+        var data = {
+          "value": this.allTiles
+        };
+        // here we triggergetPlates , so that when ever something change with any of the well, it is fired
+        this._trigger("getPlates", null, data);
       }
     },
 
@@ -965,7 +970,7 @@
             equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
             equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
             equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellattributes"], referenceSelectedFields);
-            console.log("looking for selectData", equalSelectData, referenceSelectedFields, this.allSelectedObjects[i]["selectedWellattributes"]);
+
             if(!equalWellData || !equalUnitData || !equalSelectData) {
 
               this._clearAllFields(referenceFields);
@@ -1062,6 +1067,10 @@
 
         this._applyFieldData(field, fakeAllFields);
       }
+    },
+
+    plateLayOutgetPlates: function() {
+      console.log("okay m doing great");
     }
     // Things to do
     // refactor code

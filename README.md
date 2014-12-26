@@ -7,7 +7,7 @@ JavaScript Plate Layout provides a tool for visualizing the plate layout using a
 
 ## Features
 * Assign and edit up to roughly 25 data attributes to plates ranging from 16 to 96 wells
-* Incrementially save plate layouts to server via JavaScript callback interface
+* Incrementally save plate layouts to server via JavaScript callback interface
 * Colorfully visualize the layout using user-selected data dimensions
 * Assign attributes to multiple wells at once
 * Supports multiple units of measure for numeric attributes
