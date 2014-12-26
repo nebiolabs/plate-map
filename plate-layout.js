@@ -965,7 +965,7 @@
             equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
             equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
             equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellattributes"], referenceSelectedFields);
-            console.log("looking for selectData", equalSelectData, referenceSelectedFields);
+            console.log("looking for selectData", equalSelectData, referenceSelectedFields, this.allSelectedObjects[i]["selectedWellattributes"]);
             if(!equalWellData || !equalUnitData || !equalSelectData) {
 
               this._clearAllFields(referenceFields);
@@ -1035,12 +1035,14 @@
 
     compareObjects:function(object, reference) {
       // Compare 2 objects
-      if(object.length !== reference.length) {
-        return false;
+      for(var ref in reference) {
+        if(reference[ref] !== object[ref] ) {
+          return false;
+        }
       }
 
-      for(var ref in reference) {
-        if(reference[ref] !== object[ref]) {
+      for(var ref in object) {
+        if(object[ref] !== reference[ref]) {
           return false;
         }
       }
