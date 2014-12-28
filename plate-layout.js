@@ -92,7 +92,12 @@
     allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
     _create: function() {
 
-      console.log(this.options);
+      // Import helper methodes form other files.. Here we import it using extend and add it to this
+      // object. internally we add to widget.DNA.getPlates.prototype.
+      // Helpers are methodes which return other methods and objects
+      $.extend(this, widget.helper());
+      //console.log(this);
+
       this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
     },
