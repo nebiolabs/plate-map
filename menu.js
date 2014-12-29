@@ -28,10 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           $(this.menuContainer).append(menuContent);
         }
-
       },
-
     };
   }
-
 })(jQuery, fabric)

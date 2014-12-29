@@ -3,6 +3,8 @@
 
   $.widget("DNA.plateLayOut", {
 
+    plateLayOutWidget: {},
+
     options: {
       value: 0
     },
@@ -13,7 +15,7 @@
 
     allTiles: [], // All tiles containes all thise circles in the canvas
 
-    allTabs: [],
+
     // Why we are pre-setting these colours ?. we can generally create randomn colours but there is high chance that
     // Colours having slight difference show up and we can hardly distinguish. Again we can go for
     // Hue Saturation Method but still there is a high chance that closer colors [in thr RGB] are likely to show up.
@@ -84,20 +86,20 @@
     '#009BFF',
     '#E85EBE'],
 
-    allWellData: {}, // We create this array so that it contains all the field ids and value
-    //of everything in tabs
-    allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
-    // Settings as a whole. its very usefull, when we have units for a specific field.
-    // it goes like tabs-> individual field-> units and checkbox
-    allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
 
     _create: function() {
-
-      // Import helper methodes form other files.. Here we import it using extend and add it to this
+      // Import helper methodes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
       // Helpers are methods which return other methods and objects
-      $.extend(this, new plateLayOutWidget.interface());
-      $.extend(this, new plateLayOutWidget.menu());
+      $.extend(this,
+        new plateLayOutWidget.interface(),
+        new plateLayOutWidget.menu(),
+        new plateLayOutWidget.overlay(),
+        new plateLayOutWidget.tabs(),
+        new plateLayOutWidget.preset(),
+        new plateLayOutWidget.canvas(),
+        new plateLayOutWidget.addTabData()
+      );
 
       this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
@@ -110,155 +112,10 @@
       // times _init is used.
     },
 
-
-
-
-
-
-
-
     _bottomScreen: function() {
 
       this.bottomContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-container");
       $(this.container).append(this.bottomContainer);
-    },
-
-    // We have tabs content in options , and her we put it in those tabs which are already placed
-    _addTabData: function() {
-
-      // Here we may need more changes becuse attributes format likely to change
-      var tabData = this.options["attributes"];
-      var tabPointer = 0;
-      var that = this;
-      for(currentTab in tabData) {
-        if(tabData[currentTab]["fields"]) {
-          var fieldArray = [];
-          var fieldArrayIndex = 0;
-          // Now we look for fields in the json
-          for(field in tabData[currentTab]["fields"]) {
-            var data = tabData[currentTab]["fields"][field];
-            var input = "";
-            // Switch case the data type and we have for of them
-            switch(data.type) {
-              case "text":
-                input = this._createTextField(data);
-                break;
-
-              case "numeric":
-                input = this._createNumericField(data);
-                break;
-
-              case "multiselect":
-                input = this._createMultiSelectField(data);
-                break;
-
-              case "boolean":
-                input = this._createBooleanField(data);
-                break;
-            }
-
-            if(data.id && data.type) {
-              this.allWellData[data.id] = (data.type == "boolean") ? true : "";
-            } else {
-              console.log("Plz check the format of attributes provided");
-            }
-            // we save type so that it can be used when we update data on selecting a tile
-            $(input).data("type", data.type);
-            // Adding data to the main array so that programatically we can access later
-            fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
-            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
-            $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
-            // now we are adding the field which was collected in the switch case.
-            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
-
-            // Adding checkbox
-            var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
-            .data("clicked", false).data("linkedFieldId", data.id);
-            $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
-            this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
-            fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
-            // Here we add the checkImage reference to input so now Input knows which is its checkbox..!!
-            $(input).data("checkBox", checkImage);
-
-            if(data.type == "multiselect") {
-              // Adding select2
-              $("#" + data.id).select2({
-                allowClear: true
-              });
-
-              $("#" + data.id).on("change", function(e, generated) {
-                // we check if its user generated event or system generated , automatic is system generated
-                if(generated != "Automatic") {
-                  that._addData(e);
-                }
-
-              });
-
-            } else if(data.type == "numeric") {
-              // Adding prevention for non numeric keys, its basic. need to improve.
-              // We use keyup and keydown combination to get only numbers saved in the object
-              $(input).keydown(function(evt) {
-                var charCode = (evt.which) ? evt.which : evt.keyCode
-                if (charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
-                  return false;
-                }
-              });
-
-              $(input).keyup(function(evt) {
-                var charCode = (evt.which) ? evt.which : evt.keyCode
-                if (!(charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
-                  that._addData(evt)
-                }
-              });
-              // Now add the label which shows unit.
-              var unitDropDown = this._addUnitDropDown(data);
-              $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
-
-              $("#" + data.id + "unit").select2({
-
-              });
-              // Now add data to allUnitData
-              this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
-              // Now handler for change in the unit.
-              $("#" + data.id + "unit").on("change", function(evt, generated) {
-                if(generated != "Automatic") {
-                  that._addUnitData(evt);
-                }
-              });
-
-              fieldArray[fieldArrayIndex - 1].unit = unitDropDown;
-              // Remember fieldArray has all the nodes from tab -> individual tab -> an Item in the tab -> and Its unit.
-              // May be take it as a linked list
-
-            } else if(data.type == "boolean") {
-              // Applying select 2 to true/false drop down
-              $("#" + data.id).select2({
-
-              });
-
-              $("#" + data.id).on("change", function(evt, generated) {
-                if(generated != "Automatic") {
-                  that._addData(evt);
-                }
-              });
-
-            } else if(data.type == "text") {
-              // we use keyup instead of blur. Blur fires event but canvas fire event even faster
-              // so most likely our targeted tile changed, and value added to wrong tile.
-              $("#" + data.id).keyup(function(evt) {
-                that._addData(evt);
-              });
-
-            }
-
-          }
-
-          this.allDataTabs[tabPointer]["fields"] = fieldArray;
-        } else {
-          console.log("unknown format in field initialization");
-        }
-        tabPointer ++;
-      }
     },
 
     /*
