@@ -70,7 +70,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(clickedTab).addClass("plate-setup-tab-selected");
 
         this.selectedTab = clickedTab;
-        //console.log(this.allDataTabs[$(this.selectedTab).data("index")]);
+        
         var clickedTabIndex = $(clickedTab).data("index");
         $(this.allDataTabs[clickedTabIndex]).css("z-index", 1000);
       },
@@ -93,6 +93,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.tabContainer).append(this.wellAttrContainer);
       },
 
+      _createDefaultFieldForTabs: function() {
+        // Creates html outline for a new field
+        var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
+        var nameContainer = this._createElement("<div></div>").addClass("plate-setup-tab-name");
+        var fieldContainer = this._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+
+        $(wrapperDivRightSide).append(nameContainer);
+        $(wrapperDivRightSide).append(fieldContainer);
+        $(wrapperDiv).append(wrapperDivLeftSide);
+        $(wrapperDiv).append(wrapperDivRightSide);
+
+        return wrapperDiv;
+      }
     };
   }
 })(jQuery, fabric);

@@ -69,16 +69,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _addCheckBox: function(fieldArray, fieldArrayIndex, data) {
-
-        var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
-        .data("clicked", false).data("linkedFieldId", data.id);
-        $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
-        this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
-        fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
-        return checkImage;
-      },
-
       _addTabFieldEventHandlers: function(fieldArray, fieldArrayIndex, data, input) {
 
         var that = this;
@@ -136,27 +126,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
             break;
         }
-      },
-
-      _addUnitDataField: function(fieldArray, fieldArrayIndex, data) {
-
-        var that = this;
-        var unitDropDown = this._addUnitDropDown(data);
-        $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
-
-        $("#" + data.id + "unit").select2({
-
-        });
-        // Now add data to allUnitData
-        this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
-        // Now handler for change in the unit.
-        $("#" + data.id + "unit").on("change", function(evt, generated) {
-          if(generated != "Automatic") {
-            that._addUnitData(evt);
-          }
-        });
-
-        return unitDropDown;
       },
 
     };

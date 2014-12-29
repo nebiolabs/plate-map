@@ -6,6 +6,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
     //
     return {
 
+      allSelectedObjects: null, // Contains all the selected objets, when click and drag.
+
+      allPreviouslySelectedObjects: null,
+
+      colorPointer: 0,
+
+      goldenRatio: 0.618033988749895,
+      
       _createCanvas: function() {
 
         this.normalCanvas = this._createElement("<canvas>").attr("id", "DNAcanvas");
@@ -24,7 +32,5 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
     };
-
   }
-
 })(jQuery, fabric);
