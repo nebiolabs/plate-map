@@ -28,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.tabHead = this._createElement("<div></div>").addClass("plate-setup-tab-head");
         $(this.tabContainer).append(this.tabHead);
 
-        var tabData = this.options.attributes;
+        var tabData = this.options.attributes.tabs;
 
         var tabIndex = 0;
 
@@ -70,7 +70,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(clickedTab).addClass("plate-setup-tab-selected");
 
         this.selectedTab = clickedTab;
-        
+
         var clickedTabIndex = $(clickedTab).data("index");
         $(this.allDataTabs[clickedTabIndex]).css("z-index", 1000);
       },

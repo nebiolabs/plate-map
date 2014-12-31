@@ -15,155 +15,162 @@ window.onload = function() {
 
   $(function() {
     var attributes = {
-      "tab 1": {
-        fields: {
-          Volume: {
-            id:       'volume',
-            name:     'Volume',
-            type:     'numeric',
-            //units:    'volume_units', //optional
-            placeholder: "Volume",
 
-            units: {
-              1: "m/s",
-              2: "Nm"
+      presets: {
+        
+      },
+
+      tabs: {
+        "tab 1": {
+          fields: {
+            Volume: {
+              id:       'volume',
+              name:     'Volume',
+              type:     'numeric',
+              //units:    'volume_units', //optional
+              placeholder: "Volume",
+
+              units: {
+                1: "m/s",
+                2: "Nm"
+              }
+            },
+
+            Polymerase: {
+              id: 'pol',
+              name: 'Polymerase',
+              type: 'multiselect',
+              placeHolder: "Polymerase",
+
+              options: {
+                  'Taq 1':  {
+                        id:   '234',
+                        name: 'Taq 1'
+                    },
+                  'Taq 2':  {
+                        id:   '123',
+                        name: 'Taq 2'
+                    }
+              }
+            },
+
+            master_mix: {
+              id:       'volume-master',
+              name:     'master mix concentration factor',
+              type:     'text',
+              units:    'volume_units' //optional
+            },
+
+            Amplicons: {
+              id:       'volume-ampli',
+              name:     'Amplicons',
+              type:     'boolean',
+              units:    'volume_units' //optional
+            },
+
+            Buffer: {
+              id:       'volume-buff',
+              name:     'Buffer',
+              type:     'numeric',
+
+              units: {
+                1: "m/s",
+                2: "Nm"
+              }
+            },
+
+            Volume2: {
+              id:       'volume2',
+              name:     'Volume2',
+              type:     'numeric',
+              //units:    'volume_units', //optional
+              placeholder: "Volume",
+
+              units: {
+                1: "m/s",
+                2: "Nm"
+              }
             }
           },
+        },
 
-          Polymerase: {
-            id: 'pol',
-            name: 'Polymerase',
-            type: 'multiselect',
-            placeHolder: "Polymerase",
+        "tab 2": {
+          fields: {
+            dNTPs : {
+              id: 'poly',
+              name: 'dNTPs',
+              type: 'multiselect',
 
-            options: {
-                'Taq 1':  {
-                      id:   '234',
-                      name: 'Taq 1'
-                  },
-                'Taq 2':  {
-                      id:   '123',
-                      name: 'Taq 2'
-                  }
-            }
-          },
-
-          master_mix: {
-            id:       'volume-master',
-            name:     'master mix concentration factor',
-            type:     'text',
-            units:    'volume_units' //optional
-          },
-
-          Amplicons: {
-            id:       'volume-ampli',
-            name:     'Amplicons',
-            type:     'boolean',
-            units:    'volume_units' //optional
-          },
-
-          Buffer: {
-            id:       'volume-buff',
-            name:     'Buffer',
-            type:     'numeric',
-
-            units: {
-              1: "m/s",
-              2: "Nm"
-            }
-          },
-
-          Volume2: {
-            id:       'volume2',
-            name:     'Volume2',
-            type:     'numeric',
-            //units:    'volume_units', //optional
-            placeholder: "Volume",
-
-            units: {
-              1: "m/s",
-              2: "Nm"
+              options: {
+                  'Taq 1':  {
+                        id:   '234',
+                        name: 'Taq 1'
+                    },
+                  'Taq 2':  {
+                        id:   '123',
+                        name: 'Taq 2'
+                    }
+              }
             }
           }
         },
-      },
 
-      "tab 2": {
-        fields: {
-          dNTPs : {
-            id: 'poly',
-            name: 'dNTPs',
-            type: 'multiselect',
+        "tab 3": {
+          fields: {
+            Volume3: {
+              id:       'volume3',
+              name:     'Volume3',
+              type:     'numeric',
 
-            options: {
-                'Taq 1':  {
-                      id:   '234',
-                      name: 'Taq 1'
-                  },
-                'Taq 2':  {
-                      id:   '123',
-                      name: 'Taq 2'
-                  }
+              units: {
+                1: "m/s",
+                2: "Nm"
+              }
+            },
+
+            Polymerase: {
+              id: 'polo',
+              name: 'Polymerase',
+              type: 'multiselect',
+
+              options: {
+                  'Taq 1':  {
+                        id:   '234',
+                        name: 'Taq 1'
+                    },
+                  'Taq 2':  {
+                        id:   '123',
+                        name: 'Taq 2'
+                    }
+              }
             }
           }
-        }
-      },
+        },
 
-      "tab 3": {
-        fields: {
-          Volume3: {
-            id:       'volume3',
-            name:     'Volume3',
-            type:     'numeric',
+        "tab 4": {
 
-            units: {
-              1: "m/s",
-              2: "Nm"
-            }
-          },
+          fields: {
+            Volume: {
+              id:       'volume-f4',
+              name:     'Volume',
+              type:     'text'
+            },
 
-          Polymerase: {
-            id: 'polo',
-            name: 'Polymerase',
-            type: 'multiselect',
+            dNTPs : {
+              id: 'poloo',
+              name: 'dNTPs',
+              type: 'multiselect',
 
-            options: {
-                'Taq 1':  {
-                      id:   '234',
-                      name: 'Taq 1'
-                  },
-                'Taq 2':  {
-                      id:   '123',
-                      name: 'Taq 2'
-                  }
-            }
-          }
-        }
-      },
-
-      "tab 4": {
-
-        fields: {
-          Volume: {
-            id:       'volume-f4',
-            name:     'Volume',
-            type:     'text'
-          },
-
-          dNTPs : {
-            id: 'poloo',
-            name: 'dNTPs',
-            type: 'multiselect',
-
-            options: {
-                'Taq 1':  {
-                      id:   '234',
-                      name: 'cola'
-                  },
-                'Taq 2':  {
-                      id:   '123',
-                      name: 'pepsi'
-                  }
+              options: {
+                  'Taq 1':  {
+                        id:   '234',
+                        name: 'cola'
+                    },
+                  'Taq 2':  {
+                        id:   '123',
+                        name: 'pepsi'
+                    }
+              }
             }
           }
         }
