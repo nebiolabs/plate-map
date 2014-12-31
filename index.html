@@ -1,28 +1,7 @@
 <html>
 <link href="/css/plate-layout.css" media="all" rel="stylesheet">
 <link href="/css/select2.css" media="all" rel="stylesheet">
-<script src="/libs/jquery-1.11.2.min.js"></script>
-<script src="/libs/jquery-ui.min.js"></script>
-<script src="/libs/fabric.js"></script>
-<script src="/libs/select2.js"></script>
-<script src="/plate-layout.js"></script>
-<script src="/interface.js"></script>
-<script src="/menu.js"></script>
-<script src="/overlay.js"></script>
-<script src="/tabs.js"></script>
-<script src="/preset.js"></script>
-<script src="/canvas.js"></script>
-<script src="/add-tab-data.js"></script>
-<script src="/create-field.js"></script>
-<script src="/unit-data-field.js"></script>
-<script src="/bottom-table.js"></script>
-<script src="/check-box.js"></script>
-<script src="/create-canvas-elements.js"></script>
-<script src="/apply-well-data.js"></script>
-<script src="/fabric-events.js"></script>
-<script src="/canvas-circles.js"></script>
-<script src="/add-data-to-tabs.js"></script>
-<script src="/add-data-on-change.js"></script>
+<script src="/loader.js"></script>
 
   <body>
     <div id="plate-layout">
@@ -32,6 +11,8 @@
 </html>
 
 <script type="text/javascript">
+// Wait for all the script load from the loader.js and fire up
+window.onload = function() {
 
   $(function() {
     var attributes = {
@@ -202,5 +183,5 @@
       }
     });
   });
-
+}
 </script>
