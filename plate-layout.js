@@ -123,7 +123,9 @@
       // Helpers are methods which return other methods and objects.
       // add Objects to plateLayOutWidget and it will be added to this object.
       for(var component in plateLayOutWidget) {
-        $.extend(this, new plateLayOutWidget[component]());
+        // Incase some properties has to initialize with data from options hash,
+        // we provide it sending this object.
+        $.extend(this, new plateLayOutWidget[component](this));
       }
 
       this.imgSrc = this.options.imgSrc || "assets",

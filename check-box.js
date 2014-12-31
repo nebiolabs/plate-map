@@ -21,6 +21,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // source
         var that = this;
         $(checkBoxImage).click(function(evt) {
+          
           if($(this).data("clicked")) {
             $(this).attr("src", that.imgSrc + "/dont.png");
           } else {
@@ -53,7 +54,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
       },
-      
+
     };
   }
 })(jQuery, fabric);

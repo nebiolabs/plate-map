@@ -20,7 +20,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Now put back selected fields
         var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
         for(var selectedFieldId in selectedFields) {
-          checkBoxImage = $("#" + selectedFieldId).data("checkBox");
+          var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
           $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
         }
       },
@@ -50,7 +50,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           break;
         }
         // Clear previously selected checkboxes
-        checkBoxImage = $("#" + id).data("checkBox");
+        var checkBoxImage = $("#" + id).data("checkBox");
         $(checkBoxImage).attr("src", this.imgSrc + "/dont.png").data("clicked", false);
       },
 

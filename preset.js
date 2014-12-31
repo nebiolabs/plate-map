@@ -2,9 +2,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 (function($, fabric) {
 
-  plateLayOutWidget.preset = function() {
+  plateLayOutWidget.preset = function(me) {
     // All the preset action goes here
     return {
+
+      presetSettings: me.options.attributes.presets || {},
 
       _placePresetTabs: function() {
 
@@ -35,7 +37,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var divText = this._createElement("<div></div>").html(preset)
           .addClass("plate-setup-prest-tab-div");
           presetArray[counter ++] = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
-          .append(divText);
+          .data("preset", preset).append(divText);
           $(this.presetTabContainer).append(presetArray[counter - 1]);
 
           var that = this;
@@ -55,7 +57,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         $(clickedPreset).addClass("plate-setup-prest-tab-selected");
         this.previouslyClickedPreset = clickedPreset;
-        // What does preset tabs do ??
+        // Fill the checkboxes as prest array says.
+        if(this.allSelectedObjects) {
+          var currentPrestTab = $(clickedPreset).data("preset").toLowerCase();
+          var currentPresetItems = this.presetSettings[currentPrestTab];
+          var presetCount = this.presetSettings[currentPrestTab].length;
+          var checkBoxImage;
+          for(var i = 0; i < presetCount; i++) {
+            // here we trigger the event which was defined in the check-box.js
+            checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
+            $(checkBoxImage).data("clicked", false).trigger("click");
+          }
+        } else {
+          // Incase no well is selected
+          console.log("No WELL is selected, Please select atleast a WELL");
+        }
       },
 
     };
