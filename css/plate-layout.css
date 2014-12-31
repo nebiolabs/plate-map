@@ -75,7 +75,7 @@
 
 /* line 62, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-overlay-text-container {
-  width: 380px;
+  width: 280px;
   height: 32px;
   left: 11px;
   top: 6px;
@@ -87,10 +87,10 @@
 
 /* line 72, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-overlay-button-container {
-  width: 220px;
+  width: 340;
   height: 32px;
   float: left;
-  left: 412px;
+  left: 300px;
   top: 4px;
   position: absolute;
 }

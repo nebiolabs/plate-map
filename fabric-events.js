@@ -16,7 +16,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           //Deselect already selected tiles
           that._deselectSelected();
           // Adding newly selected group
-          that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
+          if(selectedObjects.target) {
+            that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
+          } else {
+            that.allSelectedObjects = selectedObjects;
+          }
+
           console.log(that.allSelectedObjects);
           // Select tile/s
           that._selectTiles();
