@@ -49,16 +49,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _presetClickHandler: function(clickedPreset) {
-
-        if(this.previouslyClickedPreset) {
-          $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
-          .addClass("plate-setup-prest-tab");
-        }
-
-        $(clickedPreset).addClass("plate-setup-prest-tab-selected");
-        this.previouslyClickedPreset = clickedPreset;
-        // Fill the checkboxes as prest array says.
         if(this.allSelectedObjects) {
+          if(this.previouslyClickedPreset) {
+            $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+            .addClass("plate-setup-prest-tab");
+          }
+
+          $(clickedPreset).addClass("plate-setup-prest-tab-selected");
+          this.previouslyClickedPreset = clickedPreset;
+        // Fill the checkboxes as prest array says.
+
           var currentPrestTab = $(clickedPreset).data("preset").toLowerCase();
           var currentPresetItems = this.presetSettings[currentPrestTab];
           var presetCount = this.presetSettings[currentPrestTab].length;
