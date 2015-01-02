@@ -8,6 +8,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       presetSettings: me.options.attributes.presets || {},
 
+      previousPreset: "",
+
       _placePresetTabs: function() {
 
         this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
@@ -29,7 +31,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "Preset 4": {
 
           }
-        }
+        };
 
         var presetArray = [];
         var counter = 0;
@@ -57,22 +59,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           $(clickedPreset).addClass("plate-setup-prest-tab-selected");
           this.previouslyClickedPreset = clickedPreset;
-        // Fill the checkboxes as prest array says.
+          // clear already set preset if any.
+          if(this.previousPreset) {
+            this.onOffCheckBox(true, this.previousPreset);
 
-          var currentPrestTab = $(clickedPreset).data("preset").toLowerCase();
-          var currentPresetItems = this.presetSettings[currentPrestTab];
-          var presetCount = this.presetSettings[currentPrestTab].length;
-          var checkBoxImage;
-          for(var i = 0; i < presetCount; i++) {
-            // here we trigger the event which was defined in the check-box.js
-            checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
-            $(checkBoxImage).data("clicked", false).trigger("click");
           }
+          // Fill the checkboxes as prest array says ...!!
+          var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
+          this.onOffCheckBox(false, currentPrestTab);
         } else {
           // Incase no well is selected
           console.log("No WELL is selected, Please select atleast a WELL");
         }
       },
+
+      onOffCheckBox: function(click, preset) {
+        var currentPresetItems = this.presetSettings[preset];
+        var presetCount = this.presetSettings[preset].length;
+        var checkBoxImage;
+        for(var i = 0; i < presetCount; i++) {
+          // here we trigger the event which was defined in the check-box.js
+          checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
+          console.log(i, currentPresetItems[i], checkBoxImage);
+          $(checkBoxImage).data("clicked", click).trigger("click");
+        }
+      }
 
     };
   }
