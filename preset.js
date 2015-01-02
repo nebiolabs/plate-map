@@ -51,7 +51,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _presetClickHandler: function(clickedPreset) {
-        if(this.allSelectedObjects) {
+
           if(this.previouslyClickedPreset) {
             $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
             .addClass("plate-setup-prest-tab");
@@ -62,14 +62,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // clear already set preset if any.
           if(this.previousPreset) {
             this.onOffCheckBox(true, this.previousPreset);
-
           }
           // Fill the checkboxes as prest array says ...!!
           var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
           this.onOffCheckBox(false, currentPrestTab);
-        } else {
-          // Incase no well is selected
-          console.log("No WELL is selected, Please select atleast a WELL");
         }
       },
 
