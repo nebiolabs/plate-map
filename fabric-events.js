@@ -25,19 +25,42 @@ var plateLayOutWidget = plateLayOutWidget || {};
           console.log(that.allSelectedObjects, that.previousPreset);
           // Select tile/s
           that._selectTiles();
+          that._addPreset();
           that._applyValuesToTabs();
           that.mainFabricCanvas.renderAll();
         });
 
       },
 
+      _addPreset: function() {
+
+        if(this.allSelectedObjects && this.previousPreset) {
+          var noOfSelectedObjects = this.allSelectedObjects.length;
+
+          for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
+            var currentObj = this.allSelectedObjects[objectIndex];
+            if(currentObj.type == "tile" && $.isEmptyObject(currentObj["selectedWellattributes"])) {
+              // It says we haven't added any manual selection yet
+              var currentSelected = this.allSelectedObjects[objectIndex]["selectedWellattributes"];
+              var presetCount = this.presetSettings[this.previousPreset].length;
+              for(var i = 0; i < presetCount; i++) {
+                currentSelected[this.presetSettings[this.previousPreset][i]] = true;
+              }
+            }
+          }
+        }
+      },
+
       _deselectSelected: function() {
         // Putting back fill of previously selected group
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
+
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
             var currentObj = this.allSelectedObjects[objectIndex];
+
             if(currentObj.circle) {
+
               if(currentObj.type == "tile") {
                 currentObj.setFill("#f5f5f5");
                 currentObj.notSelected.setVisible(false);
@@ -58,6 +81,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
+
           if(currentObj.type == "image"){
             currentObj.setVisible(false);
             currentObj.parent.setFill("#cceffc");
@@ -87,6 +111,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var equalSelectData = true;
           // Looking for same well data
           for(var i = 0; i < this.allSelectedObjects.length; i++) {
+
             if(this.allSelectedObjects[i]["type"] == "tile") {
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);

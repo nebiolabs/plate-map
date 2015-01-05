@@ -20,9 +20,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Now put back selected fields
         var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
 
+        if(this.previousPreset && $.isEmptyObject(selectedFields)) {
+          // in case a preset is selected and object is empty - means we haven't changed anything manually
+          // now we may set values in the current preset to true;
+          console.log(this.presetSettings[this.previousPreset]);
+          var presetCount = this.presetSettings[this.previousPreset].length;
+          for(var i = 0; i < presetCount; i++) {
+
+          }
+        }
+
         for(var selectedFieldId in selectedFields) {
-          var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
-          $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
+          if(selectedFields[selectedFieldId] == true) {
+            var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
+            $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
+          }
         }
       },
 

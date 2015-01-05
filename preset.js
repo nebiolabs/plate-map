@@ -10,6 +10,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       previousPreset: "",
 
+      currentPrestTab: "",
+      
       _placePresetTabs: function() {
 
         this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
@@ -51,8 +53,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _presetClickHandler: function(clickedPreset) {
-        // Work under progress....!
+          // Work under progress....!
           if(this.previousPreset == $(clickedPreset).children().html().toLowerCase()) {
+            // if we are clicking on the same preset again..!
             $(clickedPreset).removeClass("plate-setup-prest-tab-selected")
             .addClass("plate-setup-prest-tab");
             this.previouslyClickedPreset = null;
@@ -62,20 +65,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(this.previouslyClickedPreset) {
               $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
               .addClass("plate-setup-prest-tab");
+              // clear already set preset if any...!!
               this.onOffCheckBox(true, this.previousPreset);
             }
             $(clickedPreset).addClass("plate-setup-prest-tab-selected");
             this.previouslyClickedPreset = clickedPreset;
 
             var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
+            // Fill the checkboxes as preset array says ...!!
             this.onOffCheckBox(false, currentPrestTab);
           }
-          // clear already set preset if any...!!
-          if(this.previousPreset) {
-
-          }
-          // Fill the checkboxes as preset array says ...!!
-
       },
 
       onOffCheckBox: function(click, preset) {
