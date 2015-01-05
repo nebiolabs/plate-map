@@ -51,32 +51,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _presetClickHandler: function(clickedPreset) {
-
-          if(this.previouslyClickedPreset) {
-            $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+        // Work under progress....!
+          if(this.previousPreset == $(clickedPreset).children().html().toLowerCase()) {
+            $(clickedPreset).removeClass("plate-setup-prest-tab-selected")
             .addClass("plate-setup-prest-tab");
-          }
+            this.previouslyClickedPreset = null;
+            this.previousPreset = "";
+          } else {
 
-          $(clickedPreset).addClass("plate-setup-prest-tab-selected");
-          this.previouslyClickedPreset = clickedPreset;
-          // clear already set preset if any.
-          if(this.previousPreset) {
-            this.onOffCheckBox(true, this.previousPreset);
+            if(this.previouslyClickedPreset) {
+              $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+              .addClass("plate-setup-prest-tab");
+              this.onOffCheckBox(true, this.previousPreset);
+            }
+            $(clickedPreset).addClass("plate-setup-prest-tab-selected");
+            this.previouslyClickedPreset = clickedPreset;
+
+            var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
+            this.onOffCheckBox(false, currentPrestTab);
           }
-          // Fill the checkboxes as prest array says ...!!
-          var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
-          this.onOffCheckBox(false, currentPrestTab);
-        }
+          // clear already set preset if any...!!
+          if(this.previousPreset) {
+
+          }
+          // Fill the checkboxes as preset array says ...!!
+
       },
 
       onOffCheckBox: function(click, preset) {
+
         var currentPresetItems = this.presetSettings[preset];
         var presetCount = this.presetSettings[preset].length;
         var checkBoxImage;
         for(var i = 0; i < presetCount; i++) {
-          // here we trigger the event which was defined in the check-box.js
+          // Here we trigger the event which was defined in the check-box.js
           checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
-          console.log(i, currentPresetItems[i], checkBoxImage);
           $(checkBoxImage).data("clicked", click).trigger("click");
         }
       }
@@ -84,3 +93,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
     };
   }
 })(jQuery, fabric);
+/*if(this.previousPreset && $.isEmptyObject(selectedFields)) {
+  //Incase preset is already selected and objects are selected later.
+  var presetItens = this.presetSettings[this.previousPreset];
+  var presetItemCount = presetItens.length;
+  for(var i = 0; i < presetItemCount; i++) {
+    selectedFields[presetItens[i]] = true;
+  }
+}*/

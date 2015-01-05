@@ -22,7 +22,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             that.allSelectedObjects = selectedObjects;
           }
 
-          console.log(that.allSelectedObjects);
+          console.log(that.allSelectedObjects, that.previousPreset);
           // Select tile/s
           that._selectTiles();
           that._applyValuesToTabs();

@@ -19,6 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         // Now put back selected fields
         var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
+
         for(var selectedFieldId in selectedFields) {
           var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
           $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);

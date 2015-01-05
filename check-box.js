@@ -21,7 +21,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // source
         var that = this;
         $(checkBoxImage).click(function(evt) {
-          
+
           if($(this).data("clicked")) {
             $(this).attr("src", that.imgSrc + "/dont.png");
           } else {
@@ -47,7 +47,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if(clickedCheckBox.data("clicked")) {
                 selectionData[clickedCheckBox.data("linkedFieldId")] = true;
               } else {
-                delete selectionData[clickedCheckBox.data("linkedFieldId")];
+                //delete selectionData[clickedCheckBox.data("linkedFieldId")];
+                selectionData[clickedCheckBox.data("linkedFieldId")] = false;
               }
 
             }
