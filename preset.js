@@ -10,8 +10,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       previousPreset: "",
 
-      currentPrestTab: "",
-      
       _placePresetTabs: function() {
 
         this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
@@ -53,7 +51,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _presetClickHandler: function(clickedPreset) {
-          // Work under progress....!
+
           if(this.previousPreset == $(clickedPreset).children().html().toLowerCase()) {
             // if we are clicking on the same preset again..!
             $(clickedPreset).removeClass("plate-setup-prest-tab-selected")
@@ -71,9 +69,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             $(clickedPreset).addClass("plate-setup-prest-tab-selected");
             this.previouslyClickedPreset = clickedPreset;
 
-            var currentPrestTab = this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
+            this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
             // Fill the checkboxes as preset array says ...!!
-            this.onOffCheckBox(false, currentPrestTab);
+            this.onOffCheckBox(false, this.previousPreset);
           }
       },
 
@@ -85,18 +83,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for(var i = 0; i < presetCount; i++) {
           // Here we trigger the event which was defined in the check-box.js
           checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
-          $(checkBoxImage).data("clicked", click).trigger("click");
+          // triggeres second arguement tells if its a machine generated or user generated
+          $(checkBoxImage).data("clicked", click).trigger("click", true);
         }
       }
 
     };
   }
 })(jQuery, fabric);
-/*if(this.previousPreset && $.isEmptyObject(selectedFields)) {
-  //Incase preset is already selected and objects are selected later.
-  var presetItens = this.presetSettings[this.previousPreset];
-  var presetItemCount = presetItens.length;
-  for(var i = 0; i < presetItemCount; i++) {
-    selectedFields[presetItens[i]] = true;
-  }
-}*/
