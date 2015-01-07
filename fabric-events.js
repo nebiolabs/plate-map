@@ -10,7 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         // When we ckick and drag
-        this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
+        /*this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
 
           that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
           //Deselect already selected tiles
@@ -27,9 +27,103 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that._selectTiles();
           that._addPreset();
           that._applyValuesToTabs();
+          that.mainFabricCanvas.bringToFront(that.overLay);
           that.mainFabricCanvas.renderAll();
         });
+        */
 
+        /*
+          Limit scroll movement;
+          correct dynamic rectangles placing
+          find tiles beneth the dynamic rectangle
+          pass those tiles to all those functions already written
+          consider undo redo .. It should be easy now as I have only one place to control everything
+        */
+        var xDiff = 25;
+        var yDiff = 74;
+        var limitX = 632 + xDiff;
+        var limitY = 482 + xDiff;
+
+        that.mainFabricCanvas.on("mouse:down", function(evt) {
+
+          that.mouseDown = true;
+          that.mainFabricCanvas.remove(that.dynamicRect);
+          that.mainFabricCanvas.remove(that.dynamicSingleRect);
+          that.dynamicRect = false;
+          that.startX = evt.e.clientX - xDiff;
+          that.startY = evt.e.clientY - yDiff;
+        });
+
+        that.mainFabricCanvas.on("mouse:move", function(evt) {
+
+          if(! that.dynamicRect && that.mouseDown) {
+            that.mouseMove = true;
+            that._createDynamicRect(evt);
+          }
+
+          var x = evt.e.x;
+          var y = evt.e.y;
+
+          if(that.mouseDown && x <= limitX && y <= limitY && x > xDiff && y > yDiff) {
+            console.log(evt.e)
+            // Need a change in logic according to u drag left of right / top bottom
+            that.dynamicRect.setWidth(evt.e.clientX - that.startX - xDiff);
+            that.dynamicRect.setHeight(evt.e.clientY - that.startY - yDiff);
+            that.mainFabricCanvas.renderAll();
+          }
+
+        });
+
+        that.mainFabricCanvas.on("mouse:up", function(evt) {
+
+          that.mouseDown = false;
+
+          if(! that.mouseMove) {
+            // if its just a click
+            that._createDynamicSingleRect(evt);
+          }
+
+          that.mouseMove = false;
+
+        });
+      },
+
+      _createDynamicRect: function(evt) {
+
+          this.dynamicRect = new fabric.Rect({
+            width: 1,
+            height: 2,
+            left: this.startX,
+            top: this.startY,
+            originX:'left',
+            originY: 'top',
+            fill: "#cceffc",
+            opacity: .5,
+            strokeWidth: 2,
+            stroke: "#00506e",
+            //rx: 5,
+            //ry: 5
+          });
+          this.mainFabricCanvas.add(this.dynamicRect);
+      },
+
+      _createDynamicSingleRect: function(evt) {
+
+        this.dynamicSingleRect = new fabric.Rect({
+          width: 50,
+          height: 50,
+          left: this.startX,
+          top: this.startY,
+          originX:'left',
+          originY: 'top',
+          fill: "#cceffc",
+          opacity: .5,
+          strokeWidth: 2,
+          stroke: "#00506e",
+          //rx: 5,
+          //ry: 5
+        });
+        this.mainFabricCanvas.add(this.dynamicSingleRect);
       },
 
       _addPreset: function() {

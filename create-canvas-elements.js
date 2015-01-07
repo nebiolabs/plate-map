@@ -113,12 +113,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
             that.allTiles[runner].notSelected = imaging; // Pointing to img
             that.mainFabricCanvas.add(imaging);
           }
+          that._addLargeRectangleOverlay();
         });
+
         this._addWellDataToAll();
         this._addUnitDataToAll();
         this._fabricEvents();
       },
 
+      _addLargeRectangleOverlay: function() {
+
+        this.overLay = new fabric.Rect({
+          width: 632,
+          height: 482,
+          left: 0,
+          top: 0,
+          opacity: 0.0,
+          originX:'left',
+          originY: 'top',
+          lockMovementY: true,
+          lockMovementX: true,
+          selectable: false
+        });
+
+        this.mainFabricCanvas.add(this.overLay);
+      }
     };
   }
 })(jQuery, fabric);

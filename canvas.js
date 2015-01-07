@@ -13,7 +13,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       colorPointer: 0,
 
       goldenRatio: 0.618033988749895,
-      
+
       _createCanvas: function() {
 
         this.normalCanvas = this._createElement("<canvas>").attr("id", "DNAcanvas");
@@ -25,7 +25,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.mainFabricCanvas = new fabric.Canvas('DNAcanvas', {
           backgroundColor: '#f5f5f5',
           selection: true,
-          stateful: true
+          stateful: true,
+          hoverCursor: "pointer"
         })
         .setWidth(632)
         .setHeight(482);
