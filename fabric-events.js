@@ -33,9 +33,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         */
 
         /*
-          Limit scroll movement;
+
           correct dynamic rectangles placing
-          find tiles beneth the dynamic rectangle
+          correct drag in the opposite direction
           pass those tiles to all those functions already written
           consider undo redo .. It should be easy now as I have only one place to control everything
         */
@@ -65,10 +65,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var y = evt.e.y;
 
           if(that.mouseDown && x <= limitX && y <= limitY && x > xDiff && y > yDiff) {
-            console.log(evt.e)
             // Need a change in logic according to u drag left of right / top bottom
-            that.dynamicRect.setWidth(evt.e.clientX - that.startX - xDiff);
-            that.dynamicRect.setHeight(evt.e.clientY - that.startY - yDiff);
+
+            that.dynamicRect.setWidth(x - that.startX - xDiff);
+            that.dynamicRect.setHeight(y - that.startY - yDiff);
             that.mainFabricCanvas.renderAll();
           }
 
@@ -81,13 +81,68 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if(! that.mouseMove) {
             // if its just a click
             that._createDynamicSingleRect(evt);
+            that._decideSelectedFields(that.dynamicSingleRect, true);
+            that._alignRectangle(that.dynamicSingleRect);
+          } else {
+            that._decideSelectedFields(that.dynamicRect);
+            that._alignRectangle(that.dynamicRect);
           }
 
           that.mouseMove = false;
-
+          that.mainFabricCanvas.renderAll();
         });
       },
 
+      _alignRectangle: function(rect) {
+
+          console.log("move the rectangle");
+      },
+
+      _decideSelectedFields: function(rect, click) {
+
+          var top = rect.top;
+          var left = rect.left;
+          var width = rect.width;
+          var height = rect.height;
+          var right = left + width;
+          var bottom = top + height;
+
+          var startingTileIndex = (Math.round(left / 50) - 1) + (12 * (Math.round(top / 50) - 1));
+          var endingTileIndex = (Math.round(right / 50) - 1) + (12 * (Math.round(bottom / 50) - 1));
+          var rowCount = Math.round(bottom / 50) - Math.round(top / 50);
+          var columnCount = Math.round(right / 50) - Math.round(left / 50);
+
+          //console.log(Math.round(left / 50) - 1, left);
+          //console.log(12 * (Math.round(top / 50) - 1), top);
+          //console.log(Math.round(right / 50) , right);
+          //console.log(Math.round(bottom / 50) , bottom);
+          this._deselectSelected();
+          console.log(startingTileIndex, rowCount, columnCount);
+          if(startingTileIndex >= 0 && startingTileIndex <= 95) {
+            this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, rowCount, columnCount, click);
+            this._selectTiles();
+          }
+      },
+
+      _selectTilesFromRectangle: function(start, row, column, click) {
+
+        var tileObjects = [];
+        if(click) {
+          // If its a single click event.
+          tileObjects.push(this.allTiles[start])
+        } else {
+          var i = 0;
+          for(var i = 0; i <= row; i ++) {
+
+            for(var j = 0; j <= column; j++) {
+              tileObjects.push(this.allTiles[start + j]);
+            }
+            start = start + 12;
+          }
+        }
+
+        return tileObjects;
+      },
       _createDynamicRect: function(evt) {
 
           this.dynamicRect = new fabric.Rect({
