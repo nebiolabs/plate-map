@@ -56,17 +56,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         that.mainFabricCanvas.on("mouse:move", function(evt) {
 
-          if(! that.dynamicRect && that.mouseDown) {
+          var x = evt.e.x;
+          var y = evt.e.y;
+
+          if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > 50) && (y > 50)) {
+
+            //console.log("boom .... ", x , y , limitX);
+            // Create rectangle .. !
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
 
-          var x = evt.e.x;
-          var y = evt.e.y;
-
-          if(that.mouseDown && x <= limitX && y <= limitY && x > xDiff && y > yDiff) {
+          if(that.dynamicRect && that.mouseDown && x < limitX && y < limitY && x > 50 && y > 50) {
             // Need a change in logic according to u drag left of right / top bottom
-
+            //console.log(x, y, xDiff, yDiff);
             that.dynamicRect.setWidth(x - that.startX - xDiff);
             that.dynamicRect.setHeight(y - that.startY - yDiff);
             that.mainFabricCanvas.renderAll();
@@ -95,11 +98,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _alignRectangle: function(rect) {
 
-          console.log("move the rectangle");
+          var firstRect = this.allSelectedObjects[0];
+          var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
+          console.log(this.allSelectedObjects)
+          rect.left = firstRect.left - 25;
+          rect.top = firstRect.top - 25;
+
+          if(this.allSelectedObjects.length === 1) {
+            //Incase its a click on a tile ...!
+            rect.setWidth(this.columnCount * 50);
+            rect.setHeight(this.rowCount * 50);
+          } else {
+            // If its a multiselect ...!
+            rect.setWidth((this.columnCount * 50) + 50);
+            rect.setHeight((this.rowCount * 50) + 50);
+
+            rect.rx = 5;
+            rect.ry = 5;
+          }
       },
 
       _decideSelectedFields: function(rect, click) {
 
+          var tileWidth = 50;
           var top = rect.top;
           var left = rect.left;
           var width = rect.width;
@@ -107,21 +128,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var right = left + width;
           var bottom = top + height;
 
-          var startingTileIndex = (Math.round(left / 50) - 1) + (12 * (Math.round(top / 50) - 1));
-          var endingTileIndex = (Math.round(right / 50) - 1) + (12 * (Math.round(bottom / 50) - 1));
-          var rowCount = Math.round(bottom / 50) - Math.round(top / 50);
-          var columnCount = Math.round(right / 50) - Math.round(left / 50);
-
-          //console.log(Math.round(left / 50) - 1, left);
-          //console.log(12 * (Math.round(top / 50) - 1), top);
-          //console.log(Math.round(right / 50) , right);
-          //console.log(Math.round(bottom / 50) , bottom);
-          this._deselectSelected();
-          console.log(startingTileIndex, rowCount, columnCount);
-          if(startingTileIndex >= 0 && startingTileIndex <= 95) {
-            this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, rowCount, columnCount, click);
-            this._selectTiles();
+          if(rect.left < 25) {
+              left = 25;
+              right = right - (25 - rect.left);
           }
+
+          if(rect.top < 25) {
+            top = 25;
+            bottom = bottom - (25 - rect.top);
+          }
+
+          var xDiff = 25;
+          var yDiff = 74;
+          //if(left >= xDiff && top >= yDiff) {
+            console.log(left, top)
+            var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
+            var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
+            this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
+            this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
+
+            this._deselectSelected();
+
+            if(startingTileIndex >= 0 && startingTileIndex <= 95) {
+              this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
+              this._selectTiles();
+            }
+          //}
       },
 
       _selectTilesFromRectangle: function(start, row, column, click) {
@@ -143,6 +175,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         return tileObjects;
       },
+
       _createDynamicRect: function(evt) {
 
           this.dynamicRect = new fabric.Rect({
