@@ -100,21 +100,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var firstRect = this.allSelectedObjects[0];
           var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
-          console.log(this.allSelectedObjects)
-          rect.left = firstRect.left - 25;
-          rect.top = firstRect.top - 25;
 
-          if(this.allSelectedObjects.length === 1) {
-            //Incase its a click on a tile ...!
-            rect.setWidth(this.columnCount * 50);
-            rect.setHeight(this.rowCount * 50);
-          } else {
-            // If its a multiselect ...!
-            rect.setWidth((this.columnCount * 50) + 50);
-            rect.setHeight((this.rowCount * 50) + 50);
+          if(firstRect) {
+            
+            rect.left = firstRect.left - 25;
+            rect.top = firstRect.top - 25;
+
+            if(this.allSelectedObjects.length === 1) {
+              //Incase its a click on a tile ...!
+              rect.setWidth(50);
+              rect.setHeight(50);
+            } else {
+              // If its a multiselect ...!
+              rect.setWidth((this.columnCount * 50) + 50);
+              rect.setHeight((this.rowCount * 50) + 50);
+            }
 
             rect.rx = 5;
             rect.ry = 5;
+
+          } else {
+            rect.setVisible(false);
           }
       },
 
