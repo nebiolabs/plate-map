@@ -165,20 +165,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if(bottom >= 424) {
             bottom = 424;
           }
-          
-          var xDiff = 25;
-          var yDiff = 74;
 
           var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
           var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-          this._deselectSelected();
+          //this._deselectSelected();
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
-            this._selectTiles();
+            //this._selectTiles();
           }
 
       },
