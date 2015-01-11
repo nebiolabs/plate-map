@@ -126,6 +126,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _decideSelectedFields: function(rect, click) {
 
+          if(rect.width < 0) {
+            // If we scroll from right to left.
+            rect.left = rect.left + rect.width;
+            rect.width = rect.width * -1;
+          }
+
+          if(rect.height < 0) {
+            // if we scroll from bottom to top
+            rect.top = rect.top + rect.height;
+            rect.height = rect.height * -1;
+          }
+
           var tileWidth = 50;
           var top = rect.top;
           var left = rect.left;
@@ -152,7 +164,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
-
+          console.log(startingTileIndex, endingTileIndex);
           this._deselectSelected();
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
