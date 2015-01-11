@@ -102,7 +102,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
 
           if(firstRect) {
-            
+
             rect.left = firstRect.left - 25;
             rect.top = firstRect.top - 25;
 
@@ -133,7 +133,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var height = rect.height;
           var right = left + width;
           var bottom = top + height;
-
+          // When we multiselect from top and left,
+          // We may need to start from the first tile we encounter.
           if(rect.left < 25) {
               left = 25;
               right = right - (25 - rect.left);
@@ -146,20 +147,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var xDiff = 25;
           var yDiff = 74;
-          //if(left >= xDiff && top >= yDiff) {
-            console.log(left, top)
-            var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
-            var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
-            this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
-            this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-            this._deselectSelected();
+          var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
+          var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
+          this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
+          this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-            if(startingTileIndex >= 0 && startingTileIndex <= 95) {
-              this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
-              this._selectTiles();
-            }
-          //}
+          this._deselectSelected();
+
+          if(startingTileIndex >= 0 && startingTileIndex <= 95) {
+            this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
+            this._selectTiles();
+          }
+
       },
 
       _selectTilesFromRectangle: function(start, row, column, click) {
@@ -194,9 +194,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fill: "#cceffc",
             opacity: .5,
             strokeWidth: 2,
-            stroke: "#00506e",
-            //rx: 5,
-            //ry: 5
+            stroke: "#00506e"
           });
           this.mainFabricCanvas.add(this.dynamicRect);
       },
@@ -213,9 +211,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           fill: "#cceffc",
           opacity: .5,
           strokeWidth: 2,
-          stroke: "#00506e",
-          //rx: 5,
-          //ry: 5
+          stroke: "#00506e"
         });
         this.mainFabricCanvas.add(this.dynamicSingleRect);
       },
