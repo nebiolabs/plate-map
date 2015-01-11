@@ -47,6 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         that.mainFabricCanvas.on("mouse:down", function(evt) {
 
           that.mouseDown = true;
+          that._deselectSelected();
           that.mainFabricCanvas.remove(that.dynamicRect);
           that.mainFabricCanvas.remove(that.dynamicSingleRect);
           that.dynamicRect = false;
@@ -167,7 +168,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-          this._deselectSelected();
+
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
