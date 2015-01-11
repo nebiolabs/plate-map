@@ -60,8 +60,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var y = evt.e.y;
 
           if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > 50) && (y > 50)) {
-
-            //console.log("boom .... ", x , y , limitX);
             // Create rectangle .. !
             that.mouseMove = true;
             that._createDynamicRect(evt);
@@ -69,7 +67,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(that.dynamicRect && that.mouseDown && x < limitX && y < limitY && x > 50 && y > 50) {
             // Need a change in logic according to u drag left of right / top bottom
-            //console.log(x, y, xDiff, yDiff);
             that.dynamicRect.setWidth(x - that.startX - xDiff);
             that.dynamicRect.setHeight(y - that.startY - yDiff);
             that.mainFabricCanvas.renderAll();
@@ -128,13 +125,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(rect.width < 0) {
             // If we scroll from right to left.
-            console.log("this place too")
             rect.left = rect.left + rect.width;
             rect.width = rect.width * -1;
           }
 
           if(rect.height < 0) {
-            // if we scroll from bottom to top
+            // If we scroll from bottom to top
             rect.top = rect.top + rect.height;
             rect.height = rect.height * -1;
           }
@@ -171,11 +167,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-          //this._deselectSelected();
+          this._deselectSelected();
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
-            //this._selectTiles();
+            this._selectTiles();
+            this._addPreset();
+            this._applyValuesToTabs();
+            this.mainFabricCanvas.bringToFront(this.overLay);
           }
 
       },
@@ -280,6 +279,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _selectTiles: function() {
         // Here we select tile/s from the selection or click
+        console.log(this.allSelectedObjects);
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
@@ -289,7 +289,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             currentObj.parent.setFill("#cceffc");
           } else if(currentObj.type == "tile") {
             currentObj.notSelected.setVisible(false);
-            currentObj.setFill("#cceffc");
+            //currentObj.setFill("#cceffc");
           }
         }
       },
