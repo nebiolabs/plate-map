@@ -33,7 +33,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         */
 
         /*
-
           correct dynamic rectangles placing
           correct drag in the opposite direction
           pass those tiles to all those functions already written
