@@ -44,10 +44,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var limitX = 624 + xDiff;
         var limitY = 474 + xDiff;
 
+        $(window).scroll(function(evt){
+          // Look for a solution to this problem ... !!!
+          // May be implement a way to handle offset, Look for calcOffset Source code.
+          that.mainFabricCanvas.calcOffset();
+        });
+
         that.mainFabricCanvas.on("mouse:down", function(evt) {
 
           that.mouseDown = true;
-          that._deselectSelected();
+          that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
           that.mainFabricCanvas.remove(that.dynamicSingleRect);
           that.dynamicRect = false;
