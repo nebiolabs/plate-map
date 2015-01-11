@@ -162,6 +162,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             right = 624;
           }
 
+          if(bottom >= 424) {
+            bottom = 424;
+          }
+          
           var xDiff = 25;
           var yDiff = 74;
 
