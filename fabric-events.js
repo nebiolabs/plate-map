@@ -41,8 +41,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         */
         var xDiff = 25;
         var yDiff = 74;
-        var limitX = 632 + xDiff;
-        var limitY = 482 + xDiff;
+        var limitX = 624 + xDiff;
+        var limitY = 474 + xDiff;
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
 
@@ -128,6 +128,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(rect.width < 0) {
             // If we scroll from right to left.
+            console.log("this place too")
             rect.left = rect.left + rect.width;
             rect.width = rect.width * -1;
           }
@@ -157,6 +158,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             bottom = bottom - (25 - rect.top);
           }
 
+          if(right >= 624) {
+            right = 624;
+          }
+
           var xDiff = 25;
           var yDiff = 74;
 
@@ -164,7 +169,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
-          console.log(startingTileIndex, endingTileIndex);
+
           this._deselectSelected();
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
