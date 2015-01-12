@@ -180,6 +180,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._selectTiles();
             this._addPreset();
             this._applyValuesToTabs();
+            this._addBottomTableData();
             this.mainFabricCanvas.bringToFront(this.overLay);
           }
 

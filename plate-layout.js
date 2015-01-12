@@ -130,13 +130,6 @@
 
       this.imgSrc = this.options.imgSrc || "assets",
       this._createInterface();
-
-      $("body").click(function(){
-        console.log("good");
-        //that.mainFabricCanvas.calcOffset();
-      });
-      var that = this;
-
     },
 
     _init: function() {

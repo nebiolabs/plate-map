@@ -27,6 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               // we save type so that it can be used when we update data on selecting a tile
               $(input).data("type", data.type);
+              // We save the caption so that we can use it for bottom table.
+              $(input).data("caption", field);
               // Adding data to the main array so that programatically we can access later
               fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
