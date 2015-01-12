@@ -42,16 +42,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
           $(".plate-setup-bottom-container").html("");
           //Creates a row
           this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
+          var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                            .html("Plate ID");
+          $(this.bottomRow).append(singleField);
+          // Now we append all the captions at the palce.
+          $(this.bottomContainer).append(this.bottomRow);
 
           for(var attr in selectedWellattributes) {
-            captions.push($("#" + attr).data("caption"));
-            var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                              .html($("#" + attr).data("caption"));
-            $(this.bottomRow).append(singleField);
-            //$(".plate-setup-bottom-container").append($("#" + attr).data("caption"));
+              if(selectedWellattributes[attr]) {
+                captions.push($("#" + attr).data("caption"));
+                var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                                .html($("#" + attr).data("caption"));
+                $(this.bottomRow).append(singleField);
+            }
           }
-          $(this.bottomContainer).append(this.bottomRow);
-          //console.log(captions);
+
+          if((captions.length) * 150 > 1024) {
+            $(this.bottomRow).css("width", (captions.length) * 150 + "px");
+          }
+          console.log($(this.bottomRow).width(), (captions.length - 1) * 150)
         }
       }
       // Implement bottom table here .. !!

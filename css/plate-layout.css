@@ -254,6 +254,8 @@
   width: 1024px;
   height: 208px;
   background-color: #e1e1e1;
+  overflow: scroll;
+  font-family: 'Roboto', sans-serif;
 }
 
 .plate-setup-tab-default-field {
@@ -318,4 +320,6 @@
   width: 150px;
   height: 33px;
   float: left;
+  font-weight: bold;
+  font-size: 12px;
 }
