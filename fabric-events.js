@@ -247,9 +247,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
             var currentObj = this.allSelectedObjects[objectIndex];
-            if(currentObj.type == "tile" && $.isEmptyObject(currentObj["selectedWellattributes"])) {
+            if(currentObj.type == "tile" && $.isEmptyObject(currentObj["selectedWellAttributes"])) {
               // It says we haven't added any manual selection yet
-              var currentSelected = this.allSelectedObjects[objectIndex]["selectedWellattributes"];
+              var currentSelected = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
               var presetCount = this.presetSettings[this.previousPreset].length;
               for(var i = 0; i < presetCount; i++) {
                 currentSelected[this.presetSettings[this.previousPreset][i]] = true;
@@ -314,7 +314,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var referenceTile =  this.allSelectedObjects[0];
           var referenceFields = referenceTile["wellData"];
           var referenceUnits = referenceTile["unitData"];
-          var referenceSelectedFields = referenceTile["selectedWellattributes"];
+          var referenceSelectedFields = referenceTile["selectedWellAttributes"];
           var equalWellData = true;
           var equalUnitData = true;
           var equalSelectData = true;
@@ -324,7 +324,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(this.allSelectedObjects[i]["type"] == "tile") {
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-              equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellattributes"], referenceSelectedFields);
+              equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
 
               if(!equalWellData || !equalUnitData || !equalSelectData) {
 

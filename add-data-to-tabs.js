@@ -18,7 +18,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._applyUnitData(unitId, units);
         }
         // Now put back selected fields
-        var selectedFields = this.allSelectedObjects[0]["selectedWellattributes"];
+        var selectedFields = this.allSelectedObjects[0]["selectedWellAttributes"];
 
         for(var selectedFieldId in selectedFields) {
           if(selectedFields[selectedFieldId] == true) {

@@ -51,7 +51,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var selectionData = this.allSelectedObjects[objectIndex]["selectedWellattributes"];
+              var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
               if(clickedCheckBox.data("clicked")) {
                 selectionData[clickedCheckBox.data("linkedFieldId")] = true;
               } else {

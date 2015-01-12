@@ -313,13 +313,18 @@
 .plate-setup-bottom-row {
   width: 100%;
   height: 33px;
-  background-color: green;
 }
 
 .plate-setup-bottom-single-field {
   width: 150px;
   height: 33px;
   float: left;
+  border-right: solid #c2c2c2 1px;
+}
+
+.plate-setup-bottom-single-field div {
+  margin-top: 5px;
+  margin-left: 10px;
   font-weight: bold;
   font-size: 12px;
 }

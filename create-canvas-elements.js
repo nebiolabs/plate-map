@@ -78,7 +78,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               lockMovementY: true,
               index: tileCounter ++,
               wellData: {}, // now we use this to show the data in the tabs when selected
-              selectedWellattributes: {}
+              selectedWellAttributes: {}
               //selectable: false
             });
 
@@ -89,7 +89,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this._addNotYetSelectedImage();
       },
-      
+
       _addNotYetSelectedImage: function() {
         // We load the image for once and then make copies of it
         // and add it to the tile we made in allTiles[]
