@@ -30,7 +30,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var fieldCaption = $("#" + fieldId).data("caption");
       },
       */
-      
+      /*
+      now add data below the caption .. !!
+
+      when multiple tiles are selected hroup them ...!!, Still have no idea how to group them.
+
+
+      */
       _addBottomTableData: function() {
 
         if(this.allSelectedObjects.length == 1) {
