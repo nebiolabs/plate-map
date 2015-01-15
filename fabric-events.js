@@ -64,10 +64,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var x = evt.e.x || evt.e.clientX;
           var y = evt.e.y || evt.e.clientY;
-          console.log(x, y, evt);
+
           if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > 50) && (y > 50)) {
             // Create rectangle .. !
-            console.log("boom", that.mouseDown);
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
@@ -216,8 +215,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             top: this.startY,
             originX:'left',
             originY: 'top',
-            fill: "#cceffc",
-            opacity: .5,
+            fill: null,
             strokeWidth: 2,
             stroke: "#00506e"
           });
@@ -233,8 +231,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: this.startY,
           originX:'left',
           originY: 'top',
-          fill: "#cceffc",
-          opacity: .5,
+          fill: null,
           strokeWidth: 2,
           stroke: "#00506e"
         });
@@ -296,8 +293,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             currentObj.setVisible(false);
             currentObj.parent.setFill("#cceffc");
           } else if(currentObj.type == "tile") {
-            currentObj.notSelected.setVisible(false);
-            //currentObj.setFill("#cceffc");
+            //currentObj.notSelected.setVisible(false);
+            currentObj.setFill("#cceffc");
           }
         }
       },
