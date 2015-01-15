@@ -35,7 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         var circle = new fabric.Circle({
-          radius: 20,
+          radius: 18,
           fill: "white",
           originX:'center',
           originY: 'center',

@@ -65,13 +65,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var x = evt.e.x || evt.e.clientX;
           var y = evt.e.y || evt.e.clientY;
 
-          if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > 50) && (y > 50)) {
+          if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > that.spacing) && (y > that.spacing)) {
             // Create rectangle .. !
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
 
-          if(that.dynamicRect && that.mouseDown && x < limitX && y < limitY && x > 50 && y > 50) {
+          if(that.dynamicRect && that.mouseDown && x < limitX && y < limitY && x > that.spacing && y > that.spacing) {
             // Need a change in logic according to u drag left of right / top bottom
             that.dynamicRect.setWidth(x - that.startX - xDiff);
             that.dynamicRect.setHeight(y - that.startY - yDiff);
@@ -111,12 +111,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             if(this.allSelectedObjects.length === 1) {
               //Incase its a click on a tile ...!
-              rect.setWidth(50);
-              rect.setHeight(50);
+              rect.setWidth(this.spacing);
+              rect.setHeight(this.spacing);
             } else {
               // If its a multiselect ...!
-              rect.setWidth((this.columnCount * 50) + 50);
-              rect.setHeight((this.rowCount * 50) + 50);
+              rect.setWidth((this.columnCount * this.spacing) + this.spacing);
+              rect.setHeight((this.rowCount * this.spacing) + this.spacing);
             }
 
             rect.rx = 5;
@@ -141,7 +141,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             rect.height = rect.height * -1;
           }
 
-          var tileWidth = 50;
+          var tileWidth = this.spacing;
           var top = rect.top;
           var left = rect.left;
           var width = rect.width;
@@ -160,12 +160,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             bottom = bottom - (25 - rect.top);
           }
 
-          if(right >= 624) {
-            right = 624;
+          if(right >= 580) {
+            right = 580;
           }
 
-          if(bottom >= 424) {
-            bottom = 424;
+          if(bottom >= 400) {
+            bottom = 400;
           }
 
           var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
@@ -181,7 +181,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._addPreset();
             this._applyValuesToTabs();
             this._addBottomTableData();
-            this.mainFabricCanvas.bringToFront(this.overLay);
+            //this.mainFabricCanvas.bringToFront(this.overLay);
           }
 
       },
@@ -225,8 +225,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createDynamicSingleRect: function(evt) {
 
         this.dynamicSingleRect = new fabric.Rect({
-          width: 50,
-          height: 50,
+          width: this.spacing,
+          height: this.spacing,
           left: this.startX,
           top: this.startY,
           originX:'left',
@@ -288,7 +288,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
-
           if(currentObj.type == "image"){
             currentObj.setVisible(false);
             currentObj.parent.setFill("#cceffc");
