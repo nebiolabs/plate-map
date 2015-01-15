@@ -62,11 +62,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         that.mainFabricCanvas.on("mouse:move", function(evt) {
 
-          var x = evt.e.x;
-          var y = evt.e.y;
-
+          var x = evt.e.x || evt.e.clientX;
+          var y = evt.e.y || evt.e.clientY;
+          console.log(x, y, evt);
           if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > 50) && (y > 50)) {
             // Create rectangle .. !
+            console.log("boom", that.mouseDown);
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
