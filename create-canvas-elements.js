@@ -6,6 +6,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // this class manages creating all the elements within canvas
     return {
 
+      spacing: 48,
+
       _canvas: function() {
         // Those 1,2,3 s and A,B,C s
         this._fixRowAndColumn();
@@ -25,7 +27,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originY: 'center',
             fontSize: 12,
             top : 10,
-            left: 50 + ((i - 1) * 50),
+            left: this.spacing + ((i - 1) * this.spacing),
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -43,7 +45,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originY: 'center',
             fontSize: 12,
             left: 5,
-            top: 50 + (i * 50),
+            top: this.spacing + (i * this.spacing),
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -65,8 +67,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var tempCircle = new fabric.Rect({
               width: 48,
               height: 48,
-              left: 50 + (j * 50),
-              top: 50 + (i * 50),
+              left: this.spacing + (j * this.spacing),
+              top: this.spacing + (i * this.spacing),
               fill: '#f5f5f5',
               originX:'center',
               originY: 'center',
