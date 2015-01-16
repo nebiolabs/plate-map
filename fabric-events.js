@@ -10,27 +10,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         // When we ckick and drag
-        /*this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
-
-          that.mainFabricCanvas.deactivateAllWithDispatch(); // We clear the default selection by canvas
+        this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
+          // Once we used this handler when we clicked and dragged , not anymore.
+          // Now only purpose is when we click on clear fields.
           //Deselect already selected tiles
           that._deselectSelected();
-          // Adding newly selected group
+          // Adding newly selected group -: here it is tiles whose values are cleared..!
           if(selectedObjects.target) {
             that.allSelectedObjects = selectedObjects.target._objects || [selectedObjects.target];
           } else {
             that.allSelectedObjects = selectedObjects;
           }
-
-          console.log(that.allSelectedObjects, that.previousPreset);
           // Select tile/s
           that._selectTiles();
           that._addPreset();
           that._applyValuesToTabs();
-          that.mainFabricCanvas.bringToFront(that.overLay);
           that.mainFabricCanvas.renderAll();
         });
-        */
+
 
         /*
           correct dynamic rectangles placing
@@ -169,7 +166,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
-          var endingTileIndex = (Math.round(right / tileWidth) - 1) + (12 * (Math.round(bottom / tileWidth) - 1));
+          // We expect the drag to cover 50% at the bottom right tile,
+          // otherwise ignore for the particula tile.
+          if( Math.floor(right / (tileWidth/2)) % 2 != 0) {
+              right = right - (tileWidth/2);
+          }
+
+          if( Math.floor(bottom / (tileWidth/2)) % 2 != 0) {
+              bottom = bottom - (tileWidth/2);
+          }
+
+          var endingTileIndex = (Math.round(right / tileWidth) ) + (12 * (Math.round(bottom / tileWidth) ));
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
@@ -181,7 +188,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._addPreset();
             this._applyValuesToTabs();
             this._addBottomTableData();
-            //this.mainFabricCanvas.bringToFront(this.overLay);
+            this.mainFabricCanvas.bringToFront(this.overLay);
           }
 
       },
@@ -284,7 +291,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _selectTiles: function() {
         // Here we select tile/s from the selection or click
-        console.log(this.allSelectedObjects);
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];

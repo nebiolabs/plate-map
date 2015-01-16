@@ -68,6 +68,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if((captions.length) * 150 > 1024) {
             $(this.bottomRow).css("width", (captions.length) * 152 + "px");
           }
+        } else {
+          this._addForMultiselect();
+        }
+      },
+
+      _addForMultiselect: function() {
+        // When more than one fields are selected .. !
+        var referenceTile =  this.allSelectedObjects[0];
+        var referenceFields = referenceTile["wellData"];
+        var referenceUnits = referenceTile["unitData"];
+        var referenceSelectedFields = referenceTile["selectedWellAttributes"];
+        var equalWellData = true;
+        var equalUnitData = true;
+        var equalSelectData = true;
+        // Looking for same well data
+        for(var i = 0; i < this.allSelectedObjects.length; i++) {
+
+          if(this.allSelectedObjects[i]["type"] == "tile") {
+            equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
+            equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
+            equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
+
+            if(!equalWellData || !equalUnitData || !equalSelectData) {
+
+              this._clearAllFields(referenceFields);
+              return true;
+            }
+          }
         }
       }
 
