@@ -180,8 +180,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
-
-
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
             this._selectTiles();
@@ -309,7 +307,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects.length === 1) {
           // Incase there is only one well selected.
           this._addDataToTabFields();
-        } else {
+        } else if(this.allSelectedObjects.length > 1){
           // Here we check if all the values are same
           // if yes apply those values to tabs
           // else show empty value in tabs

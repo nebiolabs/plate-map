@@ -76,27 +76,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addForMultiselect: function() {
         // When more than one fields are selected .. !
         var referenceTile =  this.allSelectedObjects[0];
-        var referenceFields = referenceTile["wellData"];
-        var referenceUnits = referenceTile["unitData"];
-        var referenceSelectedFields = referenceTile["selectedWellAttributes"];
-        var equalWellData = true;
-        var equalUnitData = true;
-        var equalSelectData = true;
-        // Looking for same well data
-        for(var i = 0; i < this.allSelectedObjects.length; i++) {
+        if(referenceTile) {
+          var referenceFields = referenceTile["wellData"];
+          var referenceUnits = referenceTile["unitData"];
+          var referenceSelectedFields = referenceTile["selectedWellAttributes"];
+          var equalWellData = true;
+          var equalUnitData = true;
+          var equalSelectData = true;
+          // Looking for same well data
+          for(var i = 0; i < this.allSelectedObjects.length; i++) {
 
-          if(this.allSelectedObjects[i]["type"] == "tile") {
-            equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
-            equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-            equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
+            if(this.allSelectedObjects[i]["type"] == "tile") {
+              equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
+              equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
+              equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
 
-            if(!equalWellData || !equalUnitData || !equalSelectData) {
+              if(!equalWellData || !equalUnitData || !equalSelectData) {
 
-              this._clearAllFields(referenceFields);
-              return true;
+                this._clearAllFields(referenceFields);
+                return true;
+              }
             }
           }
         }
+
       }
 
     };
