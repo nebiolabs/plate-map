@@ -47,7 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
-
+          
           that.mouseDown = true;
           that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
@@ -112,8 +112,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               rect.setHeight(this.spacing);
             } else {
               // If its a multiselect ...!
-              rect.setWidth((this.columnCount * this.spacing) + this.spacing);
-              rect.setHeight((this.rowCount * this.spacing) + this.spacing);
+              //rect.setWidth((this.columnCount * this.spacing) + this.spacing);
+              //rect.setHeight((this.rowCount * this.spacing) + this.spacing);
+              rect.setWidth((lastRect.left - rect.left) + this.spacing / 2);
+              rect.setHeight((lastRect.top - rect.top) + this.spacing / 2);
             }
 
             rect.rx = 5;
