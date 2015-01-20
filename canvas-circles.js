@@ -22,6 +22,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // incrementing color pointer should be out of for loop, only then the whole selected
           // tiles have one color.
           if(colorAdded) {
+            console.log(this.colorPointer);
             this.colorPointer ++;
           }
         }
@@ -34,6 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.distinctColors.push(newColor);
         }
 
+        var currentColor = (this.colorPointer + 1) * 2;
         var circle = new fabric.Circle({
           radius: 22,
           //fill: this.distinctColors[this.colorPointer],
@@ -51,8 +53,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           x2: 0,
           y2: circle.height,
           colorStops: {
-            0: "#ffc100",
-            1: '#ff6a00'
+            0: this.colorPairs[currentColor - 1],
+            1: this.colorPairs[currentColor]
           }
         });
 
