@@ -48,7 +48,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "boolean":
             // select box provide bool value as text,
             // so we need a minor tweek to admit "true" and "false"
-            var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
+            var boolText = "NULL";
+
+            if(values[id] == true || values[id] == "true") {
+              boolText = "true";
+            } else if(values[id] == false || values[id] == "false") {
+              boolText = "false";
+            }
+
             $("#" + id).val(boolText).trigger("change", "Automatic");
           break;
         }

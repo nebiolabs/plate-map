@@ -13,10 +13,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             if(this.allSelectedObjects[objectIndex].type == "tile") {
               var wellData = this.allSelectedObjects[objectIndex]["wellData"];
-              if(boolean) {
-                var boolVal = (e.target.value == "true" || e.target.value == true) ? true : false;
-                wellData[e.target.id]
-              }
               wellData[e.target.id] = e.target.value;
             }
           }
@@ -25,7 +21,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             "value": this.allTiles
           };
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
-          this._trigger("getPlates", null, data);
+          //this._trigger("getPlates", null, data);
         }
       },
 

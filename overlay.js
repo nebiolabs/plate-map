@@ -55,7 +55,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // that works like a charm, we remove circle from canvas and delete the reference from
               // tile/well object.
               this.mainFabricCanvas.remove(this.allSelectedObjects[objectIndex].circle);
-              delete this.allSelectedObjects[objectIndex].circle
+              this.mainFabricCanvas.remove(this.allSelectedObjects[objectIndex].circleCenter);
+              delete this.allSelectedObjects[objectIndex].circle;
+              delete this.allSelectedObjects[objectIndex].circleCenter;
             }
           }
           this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);

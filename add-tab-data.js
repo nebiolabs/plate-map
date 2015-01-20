@@ -21,7 +21,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var input = this._createField(data);
 
               if(data.id && data.type) {
-                this.allWellData[data.id] = (data.type == "boolean") ? true : "";
+                this.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
               } else {
                 console.log("Plz check the format of attributes provided");
               }

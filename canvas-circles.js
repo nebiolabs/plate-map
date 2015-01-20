@@ -82,6 +82,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
+        tileToAdd.circleCenter = circleCenter;
         this.mainFabricCanvas.add(circle);
         this.mainFabricCanvas.add(circleCenter);
         this.mainFabricCanvas.renderAll();

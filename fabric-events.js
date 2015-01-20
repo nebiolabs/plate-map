@@ -168,28 +168,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
             bottom = 400;
           }
 
-          // We expect the drag to cover 50% at the bottom right tile,
-          // otherwise ignore for the particula tile.
+          if(! click) {
+              // if its not a click, We expect the drag to cover 50% of the tile to be selected,
+              // otherwise ignore for the particula tile.
+              if( Math.floor(left / halfTileWidth) % 2 === 0) {
+                  left = left + halfTileWidth;
+              }
 
-          if( Math.floor(left / halfTileWidth) % 2 === 0) {
-              left = left + halfTileWidth;
+              if( Math.floor(top / halfTileWidth) % 2 === 0) {
+                  top = top + halfTileWidth;
+              }
+
+              if( Math.floor(right / halfTileWidth) % 2 != 0) {
+                  right = right - halfTileWidth;
+              }
+
+              if( Math.floor(bottom / halfTileWidth) % 2 != 0) {
+                  bottom = bottom - halfTileWidth;
+              }
           }
 
-          if( Math.floor(top / halfTileWidth) % 2 === 0) {
-              top = top + halfTileWidth;
-          }
+          var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1) );
+          var endingTileIndex = (Math.round(right / tileWidth) ) + (12 * (Math.round(bottom / tileWidth) ) );
 
-          var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
-
-          if( Math.floor(right / halfTileWidth) % 2 != 0) {
-              right = right - halfTileWidth;
-          }
-
-          if( Math.floor(bottom / halfTileWidth) % 2 != 0) {
-              bottom = bottom - halfTileWidth;
-          }
-
-          var endingTileIndex = (Math.round(right / tileWidth) ) + (12 * (Math.round(bottom / tileWidth) ));
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
@@ -201,7 +202,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._addBottomTableData();
             this.mainFabricCanvas.bringToFront(this.overLay);
           }
-
       },
 
       _selectTilesFromRectangle: function(start, row, column, click) {
