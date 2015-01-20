@@ -47,7 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
-          
+
           that.mouseDown = true;
           that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
@@ -141,6 +141,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           var tileWidth = this.spacing;
+          var halfTileWidth = tileWidth / 2;
           var top = rect.top;
           var left = rect.left;
           var width = rect.width;
@@ -167,15 +168,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
             bottom = 400;
           }
 
-          var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
           // We expect the drag to cover 50% at the bottom right tile,
           // otherwise ignore for the particula tile.
-          if( Math.floor(right / (tileWidth/2)) % 2 != 0) {
-              right = right - (tileWidth/2);
+
+          if( Math.floor(left / halfTileWidth) % 2 === 0) {
+              left = left + halfTileWidth;
           }
 
-          if( Math.floor(bottom / (tileWidth/2)) % 2 != 0) {
-              bottom = bottom - (tileWidth/2);
+          if( Math.floor(top / halfTileWidth) % 2 === 0) {
+              top = top + halfTileWidth;
+          }
+
+          var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1));
+
+          if( Math.floor(right / halfTileWidth) % 2 != 0) {
+              right = right - halfTileWidth;
+          }
+
+          if( Math.floor(bottom / halfTileWidth) % 2 != 0) {
+              bottom = bottom - halfTileWidth;
           }
 
           var endingTileIndex = (Math.round(right / tileWidth) ) + (12 * (Math.round(bottom / tileWidth) ));
