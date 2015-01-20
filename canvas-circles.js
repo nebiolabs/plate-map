@@ -35,20 +35,43 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         var circle = new fabric.Circle({
-          radius: 18,
+          radius: 22,
+          //fill: this.distinctColors[this.colorPointer],
+          originX:'center',
+          originY: 'center',
+          top: tileToAdd.top,
+          left: tileToAdd.left,
+          shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
+          evented: false
+        });
+
+        circle.setGradient('fill', {
+          x1: 0,
+          y1: 0,
+          x2: 0,
+          y2: circle.height,
+          colorStops: {
+            0: "#ffc100",
+            1: '#ff6a00'
+          }
+        });
+
+        var circleCenter = new fabric.Circle({
+          radius: 14,
           fill: "white",
           originX:'center',
           originY: 'center',
           top: tileToAdd.top,
           left: tileToAdd.left,
-          strokeWidth: 8,
-          stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
+          shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
           evented: false
         });
+
 
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         this.mainFabricCanvas.add(circle);
+        this.mainFabricCanvas.add(circleCenter);
         return true;
       },
 
