@@ -6,23 +6,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object contains circles
     return {
 
+      tooManyColorsApplyed: false,
+
       _addColorCircle: function() {
       // This method checks if given selection has circle.
         var colorAdded = false;
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
+            //if(this.allSelectedObjects[objectIndex].type == "tile") {
               var tile = this.allSelectedObjects[objectIndex];
               if(! tile.circle) {
                 colorAdded = this._addCircleToCanvas(tile);
               }
-            }
+            //}
           }
           // incrementing color pointer should be out of for loop, only then the whole selected
           // tiles have one color.
           if(colorAdded) {
-            console.log(this.colorPointer);
+            //console.log(this.colorPointer);
             this.colorPointer ++;
           }
         }
@@ -30,12 +32,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addCircleToCanvas: function(tileToAdd) {
         // Adding circle to particular tile
-        if(this.colorPointer > this.distinctColors.length - 1) {
-          var newColor = this.getRandomColor();
-          this.distinctColors.push(newColor);
+        if(this.colorPointer > (this.colorPairs.length / 2) - 1) { // (this.colorPairs.length / 2) - 1
+          this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
+          if(! this.tooManyColorsApplyed) {
+              this.applyTooManyColors();
+          }
+        } else {
+          var currentColor = (this.colorPointer + 1) * 2;
+          this.addCircle(currentColor, tileToAdd);
         }
+        return true;
+      },
 
-        var currentColor = (this.colorPointer + 1) * 2;
+      addCircle: function(currentColor, tileToAdd) {
+
         var circle = new fabric.Circle({
           radius: 22,
           //fill: this.distinctColors[this.colorPointer],
@@ -74,29 +84,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
         tileToAdd.circle = circle;
         this.mainFabricCanvas.add(circle);
         this.mainFabricCanvas.add(circleCenter);
+        this.mainFabricCanvas.renderAll();
         return true;
       },
 
-      getRandomColor: function() {
-        // This method generate a random color incase we run out of predefined color.
-        // Again it checks if randomly generated color already exists in the array and if it is
-        // generate some other color.
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        var colorCount = this.distinctColors.length;
-        var colorIndex = 0;
-        // Check if the generated color is already in the list
-        while(colorIndex < colorCount) {
-          if(this.distinctColors[colorIndex] === (color).toUpperCase()) {
-            this.getRandomColor();
+      applyTooManyColors: function() {
+
+          var noOfTiles = this.allTiles.length;
+          for(var i = 0; i < noOfTiles; i++ ) {
+            if(this.allTiles[i].circle) {
+
+              this.allTiles[i].circle.setGradient('fill', {
+                x1: 0,
+                y1: 0,
+                x2: 0,
+                y2: this.allTiles[i].circle.height,
+                colorStops: {
+                  0: "#ffc100",
+                  1: "#ff6a00"
+                }
+              });
+            }
           }
-          colorIndex ++;
-        }
-        return (color).toUpperCase();
-      },
+
+          this.mainFabricCanvas.renderAll();
+      }
 
     };
   }
