@@ -47,7 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
-
+          that.engine.cool();
           that.mouseDown = true;
           that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
@@ -112,8 +112,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               rect.setHeight(this.spacing);
             } else {
               // If its a multiselect ...!
-              //rect.setWidth((this.columnCount * this.spacing) + this.spacing);
-              //rect.setHeight((this.rowCount * this.spacing) + this.spacing);
               rect.setWidth((lastRect.left - rect.left) + this.spacing / 2);
               rect.setHeight((lastRect.top - rect.top) + this.spacing / 2);
             }
@@ -209,7 +207,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tileObjects = [];
         if(click) {
           // If its a single click event.
-          tileObjects.push(this.allTiles[start])
+          tileObjects.push(this.allTiles[start]);
+          return tileObjects;
         } else {
           var i = 0;
           for(var i = 0; i <= row; i ++) {
@@ -263,7 +262,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
             var currentObj = this.allSelectedObjects[objectIndex];
-            if(currentObj.type == "tile" && $.isEmptyObject(currentObj["selectedWellAttributes"])) {
+            if($.isEmptyObject(currentObj["selectedWellAttributes"])) {
               // It says we haven't added any manual selection yet
               var currentSelected = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
               var presetCount = this.presetSettings[this.previousPreset].length;
@@ -335,4 +334,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     };
   }
-})(jQuery, fabric)
+})(jQuery, fabric);

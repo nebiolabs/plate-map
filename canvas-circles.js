@@ -14,12 +14,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            //if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var tile = this.allSelectedObjects[objectIndex];
-              if(! tile.circle) {
-                colorAdded = this._addCircleToCanvas(tile);
-              }
-            //}
+            var tile = this.allSelectedObjects[objectIndex];
+            if(! tile.circle) {
+              colorAdded = this._addCircleToCanvas(tile);
+            }
           }
           // incrementing color pointer should be out of for loop, only then the whole selected
           // tiles have one color.
@@ -36,6 +34,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
+              this.tooManyColorsApplyed = true;
           }
         } else {
           var currentColor = (this.colorPointer + 1) * 2;
@@ -54,7 +53,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: tileToAdd.top,
           left: tileToAdd.left,
           shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
-          evented: false
+          evented: false,
+          colorStops: {
+            0: this.colorPairs[currentColor - 1],
+            1: this.colorPairs[currentColor]
+          }
         });
 
         circle.setGradient('fill', {
