@@ -16,7 +16,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex];
             if(! tile.circle) {
+              this.engine.processChange(tile);
               colorAdded = this._addCircleToCanvas(tile);
+            } else {
+              console.log("change color");
             }
           }
           // incrementing color pointer should be out of for loop, only then the whole selected

@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
           }
+          //this.engine.processChange(this.allSelectedObjects[0]["wellData"]);
           this._addColorCircle();
           /*var data = {
             "value": this.allTiles

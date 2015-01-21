@@ -47,7 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
-          that.engine.cool();
+
           that.mouseDown = true;
           that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
@@ -315,7 +315,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // Looking for same well data
           for(var i = 0; i < this.allSelectedObjects.length; i++) {
 
-            //if(this.allSelectedObjects[i]["type"] == "tile") {
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
               equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
@@ -325,7 +324,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this._clearAllFields(referenceFields);
                 return true;
               }
-            //}
           }
 
           this._addDataToTabFields();
