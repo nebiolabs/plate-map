@@ -11,15 +11,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var wellData = this.allSelectedObjects[objectIndex]["wellData"];
-              wellData[e.target.id] = e.target.value;
-            }
+            var wellData = this.allSelectedObjects[objectIndex]["wellData"];
+            wellData[e.target.id] = e.target.value;
           }
           this._addColorCircle();
-          var data = {
+          /*var data = {
             "value": this.allTiles
-          };
+          };*/
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
           //this._trigger("getPlates", null, data);
         }
@@ -30,10 +28,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var unitData = this.allSelectedObjects[objectIndex]["unitData"];
-              unitData[e.target.id] = e.target.value;
-            }
+            var unitData = this.allSelectedObjects[objectIndex]["unitData"];
+            unitData[e.target.id] = e.target.value;
           }
         }
       },

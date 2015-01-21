@@ -48,7 +48,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "boolean":
             // select box provide bool value as text,
             // so we need a minor tweek to admit "true" and "false"
-            var boolText = "NULL";
+            var boolText = "";
 
             if(values[id] == true || values[id] == "true") {
               boolText = "true";
@@ -91,7 +91,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var fakeAllFields = $.extend({}, allFields);
         for(var field in fakeAllFields) {
           if($("#" + field).data("type") == "boolean") {
-            fakeAllFields[field] = true;
+            fakeAllFields[field] = null;
           } else {
             fakeAllFields[field] = "";
           }

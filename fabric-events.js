@@ -282,15 +282,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
             var currentObj = this.allSelectedObjects[objectIndex];
-
-            if(currentObj.circle) {
               currentObj.backgroundImg.setVisible(false);
-              //currentObj.notSelected.setVisible(false);
-
-            } else {
-              currentObj.backgroundImg.setVisible(false);
-              //currentObj.notSelected.setVisible(true);
-            }
           }
         }
       },
@@ -300,14 +292,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
-          if(currentObj.type == "image"){
-            //currentObj.setVisible(false);
-            //currentObj.parent.setFill("#cceffc");
-          } else if(currentObj.type == "tile") {
-            //currentObj.notSelected.setVisible(false);
-            //currentObj.setFill("#cceffc");
             currentObj.backgroundImg.setVisible(true);
-          }
         }
       },
 
@@ -331,7 +316,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // Looking for same well data
           for(var i = 0; i < this.allSelectedObjects.length; i++) {
 
-            if(this.allSelectedObjects[i]["type"] == "tile") {
+            //if(this.allSelectedObjects[i]["type"] == "tile") {
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
               equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
@@ -341,7 +326,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this._clearAllFields(referenceFields);
                 return true;
               }
-            }
+            //}
           }
 
           this._addDataToTabFields();

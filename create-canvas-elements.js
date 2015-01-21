@@ -89,10 +89,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
-        this._addNotYetSelectedImage();
+        this._addImages();
       },
 
-      _addNotYetSelectedImage: function() {
+      _addImages: function() {
         // We load the image for once and then make copies of it
         // and add it to the tile we made in allTiles[]
         var that = this;
@@ -100,7 +100,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
 
-          fabric.Image.fromURL(that.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
+          fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
             console.log(backImg);
             for(var runner = 0; runner < finishing; runner ++) {
               var imaging = $.extend({}, img);
@@ -120,8 +120,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               backgroundImg.visible = false;
               that.allTiles[runner].notSelected = imaging; // Pointing to img
               that.allTiles[runner].backgroundImg = backgroundImg;
-              that.mainFabricCanvas.add(backgroundImg);
-              that.mainFabricCanvas.add(imaging);
+              that.mainFabricCanvas.add(backgroundImg, imaging);
             }
 
           });
