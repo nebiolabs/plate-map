@@ -284,17 +284,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var currentObj = this.allSelectedObjects[objectIndex];
 
             if(currentObj.circle) {
+              currentObj.backgroundImg.setVisible(false);
+              //currentObj.notSelected.setVisible(false);
 
-              if(currentObj.type == "tile") {
-                currentObj.setFill("#f5f5f5");
-                currentObj.notSelected.setVisible(false);
-              }
             } else {
-
-              if(currentObj.type == "tile") {
-                currentObj.setFill("#f5f5f5");
-                currentObj.notSelected.setVisible(true);
-              }
+              currentObj.backgroundImg.setVisible(false);
+              //currentObj.notSelected.setVisible(true);
             }
           }
         }
@@ -306,11 +301,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
           if(currentObj.type == "image"){
-            currentObj.setVisible(false);
-            currentObj.parent.setFill("#cceffc");
+            //currentObj.setVisible(false);
+            //currentObj.parent.setFill("#cceffc");
           } else if(currentObj.type == "tile") {
             //currentObj.notSelected.setVisible(false);
-            currentObj.setFill("#cceffc");
+            //currentObj.setFill("#cceffc");
+            currentObj.backgroundImg.setVisible(true);
           }
         }
       },

@@ -97,25 +97,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // and add it to the tile we made in allTiles[]
         var that = this;
         var finishing = this.allTiles.length;
-        fabric.Image.fromURL(this.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
 
-          for(var runner = 0; runner < finishing; runner ++) {
-            var imaging = $.extend({}, img);
-            var currentTile = that.allTiles[runner];
-            imaging.top = currentTile.top;
-            imaging.left = currentTile.left;
-            imaging.parent = currentTile; // Pointing to tile
-            imaging.originX = 'center';
-            imaging.originY = 'center';
-            imaging.hasControls = false;
-            imaging.hasBorders = false;
-            imaging.lockMovementX = true;
-            imaging.lockMovementY = true;
-            imaging.evented = false;
-            imaging.type = "image";
-            that.allTiles[runner].notSelected = imaging; // Pointing to img
-            that.mainFabricCanvas.add(imaging);
-          }
+        fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
+
+          fabric.Image.fromURL(that.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
+            console.log(backImg);
+            for(var runner = 0; runner < finishing; runner ++) {
+              var imaging = $.extend({}, img);
+              var backgroundImg = $.extend({}, backImg)
+              var currentTile = that.allTiles[runner];
+              imaging.top = backgroundImg.top = currentTile.top;
+              imaging.left = backgroundImg.left = currentTile.left;
+              imaging.parent = currentTile; // Pointing to tile
+              imaging.originX = backgroundImg.originX = 'center';
+              imaging.originY = backgroundImg.originY = 'center';
+              imaging.hasControls = backgroundImg.hasControls = false;
+              imaging.hasBorders = backgroundImg.hasBorders = false;
+              imaging.lockMovementX = backgroundImg.lockMovementX = true;
+              imaging.lockMovementY = backgroundImg.lockMovementY = true;
+              imaging.evented = backgroundImg.evented = false;
+              imaging.type = "image";
+              backgroundImg.visible = false;
+              that.allTiles[runner].notSelected = imaging; // Pointing to img
+              that.allTiles[runner].backgroundImg = backgroundImg;
+              that.mainFabricCanvas.add(backgroundImg);
+              that.mainFabricCanvas.add(imaging);
+            }
+
+          });
           that._addLargeRectangleOverlay();
         });
 
