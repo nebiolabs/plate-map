@@ -62,13 +62,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var x = evt.e.x || evt.e.clientX;
           var y = evt.e.y || evt.e.clientY;
 
-          if((!that.dynamicRect) && (that.mouseDown) && (x < limitX) && (y < limitY) && (x > that.spacing) && (y > that.spacing)) {
+          if((!that.dynamicRect) && (that.mouseDown)) {
             // Create rectangle .. !
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
 
-          if(that.dynamicRect && that.mouseDown && x < limitX && y < limitY && x > that.spacing && y > that.spacing) {
+          if(that.dynamicRect && that.mouseDown && x > that.spacing && y > that.spacing) {
             // Need a change in logic according to u drag left of right / top bottom
             that.dynamicRect.setWidth(x - that.startX - xDiff);
             that.dynamicRect.setHeight(y - that.startY - yDiff);
@@ -233,7 +233,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originX:'left',
             originY: 'top',
             fill: null,
-            strokeWidth: 2,
+            strokeWidth: 1.5,
             stroke: "#00506e"
           });
           this.mainFabricCanvas.add(this.dynamicRect);
@@ -249,7 +249,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           originX:'left',
           originY: 'top',
           fill: null,
-          strokeWidth: 2,
+          strokeWidth: 1.5,
           stroke: "#00506e"
         });
         this.mainFabricCanvas.add(this.dynamicSingleRect);

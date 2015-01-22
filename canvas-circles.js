@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.engine.processChange(tile);
               colorAdded = this._addCircleToCanvas(tile);
             } else {
-              console.log("change color");
+              //console.log("change color");
             }
           }
           // incrementing color pointer should be out of for loop, only then the whole selected

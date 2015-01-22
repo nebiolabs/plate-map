@@ -17,6 +17,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // color management should be here
           // extend comparison to units and checkboxes
           // Need to think about color management wen some colors are cleared using clear button
+          // think how to keep color data
+          // what if we keep tiles in derivatives ??
 
           var wellData  = tile["wellData"];
           if(this.derivative.length === 0) {
@@ -28,12 +30,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for(var i = 0; i < derivativeLength; i ++) {
               if(THIS.compareObjects(this.derivative[i], wellData)) {
                 // there is already a well with same configuration
-                console.log("match found");
+                //console.log("match found");
+                // change the color to matching tile
                 return true
               }
             }
-            console.log("No match , new entry");
-            // if it has circle 
+            //console.log("No match , new entry");
+            // if it has circle and no match is found just keep the color
+            // if it has no circle assign a new color circle
             this.derivative.push(wellData);
           }
 
