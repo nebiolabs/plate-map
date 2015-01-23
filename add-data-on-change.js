@@ -13,9 +13,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
+            this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+          //console.log(this.engine.derivative, this.engine.colorCounter);
+          this.mainFabricCanvas.renderAll();
           //this.engine.processChange(this.allSelectedObjects[0]["wellData"]);
-          this._addColorCircle();
+
           /*var data = {
             "value": this.allTiles
           };*/

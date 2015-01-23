@@ -10,6 +10,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         derivative: [],
 
+        colorCounter: {},
+
         processChange: function(tile) {
           // this method process change in values
           // Determines if we need to assign a new color or assign implemented colors
@@ -20,30 +22,55 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // think how to keep color data
           // what if we keep tiles in derivatives ??
 
-          var wellData  = tile["wellData"];
+
           if(this.derivative.length === 0) {
-            this.derivative[0] = wellData;
+            this.derivative[0] = $.extend({},tile);
+            return {
+              "action": "New Circle"
+            };
             //console.log(this.derivative);
           } else {
             var derivativeLength = this.derivative.length;
-            var va = false;
+            var wellData  = tile["wellData"];
+            //var va = false;
             for(var i = 0; i < derivativeLength; i ++) {
-              if(THIS.compareObjects(this.derivative[i], wellData)) {
+              console.log(wellData, this.derivative[i]["wellData"], this.derivative.length);
+              if(THIS.compareObjects(this.derivative[i]["wellData"], wellData)) {
                 // there is already a well with same configuration
-                //console.log("match found");
+                // Updating the entry
+                //console.log("inside");
+                console.log("match found", wellData, this.derivative[i]["wellData"], this.derivative.length);
+                this.derivative[i] = $.extend({}, THIS.allTiles[this.derivative[i].index]);
+
                 // change the color to matching tile
-                return true
+                return {
+                  "action": "Copy Color",
+                  "colorStops": this.derivative[i].circle.colorStops
+                };
               }
             }
-            //console.log("No match , new entry");
-            // if it has circle and no match is found just keep the color
-            // if it has no circle assign a new color circle
-            this.derivative.push(wellData);
+            console.log("No match , new entry");
+            // if it has circle and no match is found just keep the color;
+            this.derivative.push($.extend({},tile));
+            console.log("deri", this.derivative);
+            if(tile.circle) {
+
+              return {
+                "action": "New Color"
+              };
+
+            } else {
+
+              return {
+                "action": "New Circle"
+              };
+
+            }
           }
 
 
 
-        }
+        },
 
       }
     }
