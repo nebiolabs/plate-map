@@ -193,6 +193,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
+            this.colorCounter = {};
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
             this._selectTiles();
             this._addPreset();
@@ -208,6 +209,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(click) {
           // If its a single click event.
           tileObjects.push(this.allTiles[start]);
+          this.getColorCount(this.allTiles[start]);
+          console.log(this.colorCounter);
           return tileObjects;
         } else {
           var i = 0;
@@ -215,11 +218,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             for(var j = 0; j <= column; j++) {
               tileObjects.push(this.allTiles[start + j]);
+              this.getColorCount(this.allTiles[start + j]);
             }
             start = start + 12;
           }
         }
-
+        console.log(this.colorCounter, this.engine.colorCounter);
         return tileObjects;
       },
 
@@ -329,6 +333,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._addDataToTabFields();
         }
       },
+
+      getColorCount: function(tile) {
+
+        if(tile.circle) {
+          var temp = tile.circle.colorStops;
+
+          this.colorCounter[temp[0]] = this.colorCounter[temp[0]] + 1 || 1;
+        }
+      }
 
     };
   }

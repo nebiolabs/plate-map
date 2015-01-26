@@ -45,6 +45,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this._addCircleToCanvas(tile, job.colorStops);
 
             }
+            break;
+
+          case "Keep Color":
+            console.log("just keep color");
+
         }
         //this._addCircleToCanvas(tile);
         /*if(this.allSelectedObjects) {
