@@ -14,7 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         processChange: function(tile) {
 
-
+          console.log(this.derivative);
           if(this.derivative.length === 0) {
             var substitute = {};
             $.extend(true, substitute, tile);
@@ -52,6 +52,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             //console.log("deri", this.derivative);
             if(tile.circle) {
               var color = tile.circle.colorStops[0];
+              console.log(this.colorCounter, THIS.colorCounter);
               if(this.colorCounter[color] === THIS.colorCounter[color]) {
                 return {
                   "action": "Keep Color"

@@ -17,6 +17,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "New Circle":
             this._addCircleToCanvas(tile);
             colorAdded = true;
+            this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] + 1 || 1;
+            //this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] + 1 || 1;
             break;
 
           case "New Color":
@@ -28,8 +30,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                               };
                               console.log(tempColors);
             this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
+            this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
             tile.circle.colorStops = tempColors;
             this.engine.colorCounter[tempColors[0]] = this.engine.colorCounter[tempColors[0]] + 1 || 1;
+            this.colorCounter[tempColors[0]] = this.colorCounter[tempColors[0]] + 1 || 1;
             this._changeGradient(tile, tempColors);
             colorAdded = true;
             break;
@@ -38,12 +42,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(tile.circle) {
               // Minusing changed color
               this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
+              this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
+
               tile.circle.colorStops = job.colorStops;
+
               this.engine.colorCounter[job.colorStops[0]] = this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
+              this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
+
               this._changeGradient(tile, job.colorStops);
             } else {
               this._addCircleToCanvas(tile, job.colorStops);
-
+              //this.engine.colorCounter[job.colorStops[0]] = this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
+              this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
             }
             break;
 
