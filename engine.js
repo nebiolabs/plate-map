@@ -14,12 +14,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         processChange: function(tile) {
 
-          console.log(this.derivative);
+          //console.log(this.derivative);
           if(this.derivative.length === 0) {
             var substitute = {};
             $.extend(true, substitute, tile);
             this.derivative.push(substitute);
-
+            console.log(this.createDerivative(tile));;
             return {
               "action": "New Circle"
             };
@@ -70,10 +70,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             }
           }
-
-
-
         },
+
+        createDerivative: function(tile) {
+          var tempDer = {};
+          var indexing = {};
+          $.extend(true, tempDer, tile.wellData);
+          return indexing[tile.index] = tempDer;;
+        }
 
       }
     }
