@@ -8,51 +8,36 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
       engine: {
 
-        derivative: [],
+        derivative: {},
 
         colorCounter: {},
 
         processChange: function(tile) {
 
-          //console.log(this.derivative);
-          if(this.derivative.length === 0) {
-            var substitute = {};
-            $.extend(true, substitute, tile);
-            this.derivative.push(substitute);
-            console.log(this.createDerivative(tile));;
+          if($.isEmptyObject(this.derivative)) {
+            this.createDerivative(tile);
             return {
               "action": "New Circle"
             };
-            //console.log(this.derivative);
+
           } else {
             var derivativeLength = this.derivative.length;
             var wellData  = tile["wellData"];
 
-            for(var i = 0; i < derivativeLength; i ++) {
-              if(THIS.compareObjects(this.derivative[i]["wellData"], wellData)) {
-                // there is already a well with same configuration
-                // Updating the entry
-                //console.log("inside");
-                //console.log("match found", wellData, this.derivative[i]["wellData"], this.derivative.length);
-                var substitute = {};
-                $.extend(true, substitute, THIS.allTiles[this.derivative[i].index]);
-                this.derivative[i] = substitute;
-                // change the color to matching tile
+            for(var i in this.derivative) {
+
+              if(THIS.compareObjects(this.derivative[i], wellData)) {
+                //this.createDerivative(tile);
                 return {
                   "action": "Copy Color",
-                  "colorStops": this.derivative[i].circle.colorStops
+                  "colorStops": THIS.allTiles[i].circle.colorStops
                 };
               }
             }
-            console.log("No match , new entry");
-            // if it has circle and no match is found just keep the color;
-            var substitute = {};
-            $.extend(true, substitute, tile);
-            this.derivative.push(substitute);
-            //console.log("deri", this.derivative);
+
+            this.createDerivative(tile);
             if(tile.circle) {
               var color = tile.circle.colorStops[0];
-              console.log(this.colorCounter, THIS.colorCounter);
               if(this.colorCounter[color] === THIS.colorCounter[color]) {
                 return {
                   "action": "Keep Color"
@@ -76,7 +61,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var tempDer = {};
           var indexing = {};
           $.extend(true, tempDer, tile.wellData);
-          return indexing[tile.index] = tempDer;;
+          this.derivative[tile.index] = tempDer;
         }
 
       }
