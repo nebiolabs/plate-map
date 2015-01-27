@@ -27,7 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for(var i in this.derivative) {
 
               if(THIS.compareObjects(this.derivative[i], wellData)) {
-                //this.createDerivative(tile);
+                
+                this.createDerivative(tile);
                 return {
                   "action": "Copy Color",
                   "colorStops": THIS.allTiles[i].circle.colorStops
@@ -62,6 +63,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var indexing = {};
           $.extend(true, tempDer, tile.wellData);
           this.derivative[tile.index] = tempDer;
+          console.log("Wow", this.derivative);
         }
 
       }
