@@ -28,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               if(THIS.compareObjects(this.derivative[i], wellData)) {
                 // This may not be needed, but if we call this method here we have derivatives having
-                // all the data about filled circles. 
+                // all the data about filled circles.
                 this.createDerivative(tile);
                 return {
                   "action": "Copy Color",
@@ -64,7 +64,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var indexing = {};
           $.extend(true, tempDer, tile.wellData);
           this.derivative[tile.index] = tempDer;
-          console.log("Wow", this.derivative);
+          //console.log("Wow", this.derivative);
         }
 
       }

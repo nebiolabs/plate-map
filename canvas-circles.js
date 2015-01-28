@@ -50,7 +50,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this._changeGradient(tile, job.colorStops);
             } else {
               this._addCircleToCanvas(tile, job.colorStops);
-              //this.engine.colorCounter[job.colorStops[0]] = this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
               this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
             }
             break;
@@ -59,15 +58,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             console.log("just keep color");
 
         }
-
+          console.log(this.engine.colorCounter)
           if(colorAdded) {
+            // Here check if color array has any zero values color
             this.colorPointer ++;
           }
       },
 
       _addCircleToCanvas: function(tileToAdd, colorStops) {
         // Adding circle to particular tile
-        if(this.colorPointer > (this.colorPairs.length / 2) - 1) { // (this.colorPairs.length / 2) - 1
+        if(this.colorPointer > (this.colorPairs.length / 2) - 1) {
           this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
@@ -93,7 +93,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                                     };
         var circle = new fabric.Circle({
           radius: 22,
-          //fill: this.distinctColors[this.colorPointer],
           originX:'center',
           originY: 'center',
           top: tileToAdd.top,
