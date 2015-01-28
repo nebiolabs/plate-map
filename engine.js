@@ -27,7 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for(var i in this.derivative) {
 
               if(THIS.compareObjects(this.derivative[i], wellData)) {
-                
+                // This may not be needed, but if we call this method here we have derivatives having
+                // all the data about filled circles. 
                 this.createDerivative(tile);
                 return {
                   "action": "Copy Color",

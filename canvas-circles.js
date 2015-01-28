@@ -18,17 +18,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._addCircleToCanvas(tile);
             colorAdded = true;
             this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] + 1 || 1;
-            //this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] + 1 || 1;
             break;
 
           case "New Color":
-            console.log("new color");
             var currentColor = (this.colorPointer + 1) * 2;
             var tempColors = {
                                 0: this.colorPairs[currentColor - 1],
                                 1: this.colorPairs[currentColor]
                               };
-                              console.log(tempColors);
+
             this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
             this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
             tile.circle.colorStops = tempColors;
@@ -61,25 +59,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             console.log("just keep color");
 
         }
-        //this._addCircleToCanvas(tile);
-        /*if(this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex];
-            if(! tile.circle) {
-              this.engine.processChange(tile);
-              colorAdded = this._addCircleToCanvas(tile);
-            } else {
-              //console.log("change color");
-            }
-          }*/
-          // incrementing color pointer should be out of for loop, only then the whole selected
-          // tiles have one color.
+
           if(colorAdded) {
-            //console.log(this.colorPointer);
             this.colorPointer ++;
           }
-        //}
       },
 
       _addCircleToCanvas: function(tileToAdd, colorStops) {
@@ -170,7 +153,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _changeGradient: function(tile, colorStops) {
-        //console.log("boom", colorStops);
         tile.circle.setGradient('fill', {
           x1: 0,
           y1: 0,
@@ -179,7 +161,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           colorStops: colorStops
         });
       }
-
     };
   }
 })(jQuery, fabric)
