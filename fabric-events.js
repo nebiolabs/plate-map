@@ -210,20 +210,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // If its a single click event.
           tileObjects.push(this.allTiles[start]);
           this.getColorCount(this.allTiles[start]);
-          console.log(this.colorCounter);
           return tileObjects;
-        } else {
-          var i = 0;
-          for(var i = 0; i <= row; i ++) {
-
-            for(var j = 0; j <= column; j++) {
-              tileObjects.push(this.allTiles[start + j]);
-              this.getColorCount(this.allTiles[start + j]);
-            }
-            start = start + 12;
-          }
         }
-        console.log(this.colorCounter, this.engine.colorCounter);
+
+        var i = 0;
+        for(var i = 0; i <= row; i ++) {
+
+          for(var j = 0; j <= column; j++) {
+            tileObjects.push(this.allTiles[start + j]);
+            this.getColorCount(this.allTiles[start + j]);
+          }
+          start = start + 12;
+        }
+
         return tileObjects;
       },
 

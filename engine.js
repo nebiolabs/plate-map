@@ -64,7 +64,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var indexing = {};
           $.extend(true, tempDer, tile.wellData);
           this.derivative[tile.index] = tempDer;
-          //console.log("Wow", this.derivative);
+        },
+
+        _getFreeColor: function() {
+
+          for(var color in this.colorCounter) {
+            if(this.colorCounter[color] === 0) {
+              return color;
+            }
+          }
+          return false;
         }
 
       }

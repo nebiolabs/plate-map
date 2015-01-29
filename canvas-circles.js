@@ -26,6 +26,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
                                 0: this.colorPairs[currentColor - 1],
                                 1: this.colorPairs[currentColor]
                               };
+            colorAdded = true;
+
+            var freeColor = this.engine._getFreeColor();
+            if(freeColor) {
+              // Incase there is a color left out when changing
+              tempColors = {
+                              0: freeColor,
+                              1: this.colorPairObject[freeColor]
+                            };
+              colorAdded = false;
+            }
 
             this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
             this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
@@ -33,7 +44,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.colorCounter[tempColors[0]] = this.engine.colorCounter[tempColors[0]] + 1 || 1;
             this.colorCounter[tempColors[0]] = this.colorCounter[tempColors[0]] + 1 || 1;
             this._changeGradient(tile, tempColors);
-            colorAdded = true;
             break;
 
           case "Copy Color":
@@ -51,14 +61,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
             } else {
               this._addCircleToCanvas(tile, job.colorStops);
               this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
+              this.engine.colorCounter[job.colorStops[0]] =  this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
             }
             break;
 
           case "Keep Color":
-            console.log("just keep color");
+            //console.log("just keep color");
 
         }
-          console.log(this.engine.colorCounter)
+          //console.log(this.engine.colorCounter)
           if(colorAdded) {
             // Here check if color array has any zero values color
             this.colorPointer ++;
@@ -73,15 +84,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.applyTooManyColors();
               this.tooManyColorsApplyed = true;
           }
-        } else if(colorStops) {
-          this.addCircle(false, tileToAdd, colorStops);
-          this.engine.colorCounter[colorStops[0]] =  this.engine.colorCounter[colorStops[0]] + 1 || 1;
-        }else {
-          var currentColor = (this.colorPointer + 1) * 2;
-          var firstC = this.colorPairs[currentColor - 1];
-          this.engine.colorCounter[firstC] =  this.engine.colorCounter[firstC] + 1 || 1;
-          this.addCircle(currentColor, tileToAdd);
+          return true;
         }
+
+        if(colorStops) {
+          this.addCircle(false, tileToAdd, colorStops);
+          return true;
+        }
+
+        var freeColor = this.engine._getFreeColor();
+        var currentColor = (this.colorPointer + 1) * 2;
+        var firstC = this.colorPairs[currentColor - 1];
+        this.engine.colorCounter[firstC] =  this.engine.colorCounter[firstC] + 1 || 1;
+        this.addCircle(currentColor, tileToAdd);
+
         return true;
       },
 
@@ -159,7 +175,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           y2: tile.circle.height,
           colorStops: colorStops
         });
-      }
+      },
     };
   }
 })(jQuery, fabric)
