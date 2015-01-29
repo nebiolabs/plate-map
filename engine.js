@@ -15,7 +15,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         processChange: function(tile) {
 
           if($.isEmptyObject(this.derivative)) {
-            // this block is executed for the very first time.
+            // this block is executed at the very first time.
             this.createDerivative(tile);
             return {
               "action": "New Circle"

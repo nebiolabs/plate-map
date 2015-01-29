@@ -299,6 +299,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _applyValuesToTabs: function() {
+        // re write this method so that everytime it doesn't have to run full
         // Here we look for the values on the well and apply it to tabs.
         if(this.allSelectedObjects.length === 1) {
           // Incase there is only one well selected.
@@ -337,7 +338,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         if(tile.circle) {
           var temp = tile.circle.colorStops;
-
           this.colorCounter[temp[0]] = this.colorCounter[temp[0]] + 1 || 1;
         }
       }

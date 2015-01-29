@@ -57,7 +57,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addCircleToCanvas: function(tileToAdd, colorStops) {
         // Adding circle to particular tile
-        if(this.colorPointer > 5 ) { //(this.colorPairs.length / 2) - 1
+        if(this.colorPointer > (this.colorPairs.length / 2) - 1 ) {
+          // integrate number system into current #based system..!
           this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
@@ -134,7 +135,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             0: "#ffc100",
             1: "#ff6a00"
           };
-          
+
           for(var i in this.engine.derivative) {
             this._setGradient(this.allTiles[i].circle, colorStops);
           }
@@ -158,6 +159,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._plusColor(colorObject);
         this._setGradient(tile.circle, colorObject);
       },
+
       _plusColor: function(colorObject) {
 
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] + 1 || 1;
