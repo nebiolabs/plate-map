@@ -17,7 +17,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "New Circle":
             this.colorAdded = true;
             this._addCircleToCanvas(tile);
-            this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] + 1 || 1;
             break;
 
           case "New Color":
@@ -26,9 +25,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                                 0: this.colorPairs[currentColor - 1],
                                 1: this.colorPairs[currentColor]
                               };
-            this.colorAdded = true;
 
+            this.colorAdded = true;
             var freeColor = this.engine._getFreeColor();
+
             if(freeColor) {
               // Incase there is a color left out when changing
               tempColors = {
@@ -37,44 +37,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
                             };
               this.colorAdded = false;
             }
-            this._minusColor(tile.circle.colorStops);
-            //this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
-            //this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
-            tile.circle.colorStops = tempColors;
-            //this.engine.colorCounter[tempColors[0]] = this.engine.colorCounter[tempColors[0]] + 1 || 1;
-            //this.colorCounter[tempColors[0]] = this.colorCounter[tempColors[0]] + 1 || 1;
-            this._plusColor(tempColors);
-            this._changeGradient(tile, tempColors);
+
+            this._changeColoredCircle(tile, tempColors);
             break;
 
           case "Copy Color":
             if(tile.circle) {
-              // Minusing changed color
-              this.engine.colorCounter[tile.circle.colorStops[0]] = this.engine.colorCounter[tile.circle.colorStops[0]] - 1 || 0;
-              this.colorCounter[tile.circle.colorStops[0]] = this.colorCounter[tile.circle.colorStops[0]] -1 || 0;
-
-              tile.circle.colorStops = job.colorStops;
-
-              this.engine.colorCounter[job.colorStops[0]] = this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
-              this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
-
-              this._changeGradient(tile, job.colorStops);
+              this._changeColoredCircle(tile, job.colorStops);
             } else {
               this._addCircleToCanvas(tile, job.colorStops);
-              this.colorCounter[job.colorStops[0]] = this.colorCounter[job.colorStops[0]] + 1 || 1;
-              this.engine.colorCounter[job.colorStops[0]] =  this.engine.colorCounter[job.colorStops[0]] + 1 || 1;
+              this._plusColor(job.colorStops);
             }
             break;
 
           case "Keep Color":
-            //console.log("just keep color");
-
         }
-          //console.log(this.engine.colorCounter)
-          if(this.colorAdded) {
-            // Here check if color array has any zero values color
-            this.colorPointer ++;
-          }
+
+        if(this.colorAdded) this.colorPointer ++;
       },
 
       _addCircleToCanvas: function(tileToAdd, colorStops) {
@@ -101,23 +80,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
             1: this.colorPairObject[freeColor]
           }
           this.addCircle(currentColor, tileToAdd, colorObj);
-          this.engine.colorCounter[freeColor] =  this.engine.colorCounter[freeColor] + 1 || 1;
+          this._plusColor(colorObj);
           this.colorAdded = false;
           return true;
         }
 
         var currentColor = (this.colorPointer + 1) * 2;
-        var firstC = this.colorPairs[currentColor - 1];
+        var firstC = { 0: this.colorPairs[currentColor - 1] };
         this.addCircle(currentColor, tileToAdd);
-        this.engine.colorCounter[firstC] =  this.engine.colorCounter[firstC] + 1 || 1;
+        this._plusColor(firstC);
       },
 
       addCircle: function(currentColor, tileToAdd, colorStops) {
 
-        var colors = colorStops || {
-                                      0: this.colorPairs[currentColor - 1],
-                                      1: this.colorPairs[currentColor]
-                                    };
+        var colors = colorStops || { 0: this.colorPairs[currentColor - 1],
+                                     1: this.colorPairs[currentColor]
+                                   };
         var circle = new fabric.Circle({
           radius: 22,
           originX:'center',
@@ -188,6 +166,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
       },
 
+      _changeColoredCircle: function(tile, colorObject) {
+
+        this._minusColor(tile.circle.colorStops);
+        tile.circle.colorStops = colorObject;
+        this._plusColor(colorObject);
+        this._changeGradient(tile, colorObject);
+      },
       _plusColor: function(colorObject) {
 
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] + 1 || 1;
