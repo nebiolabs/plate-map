@@ -31,8 +31,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             if(freeColor) {
               // Incase there is a color left out when changing
-              tempColors = {
-                              0: freeColor,
+              tempColors = { 0: freeColor,
                               1: this.colorPairObject[freeColor]
                             };
               this.colorAdded = false;
@@ -68,7 +67,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         if(colorStops) {
-          this.addCircle(false, tileToAdd, colorStops);
+          this.addCircle(null, tileToAdd, colorStops);
           return true;
         }
 
@@ -79,16 +78,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             0: freeColor,
             1: this.colorPairObject[freeColor]
           }
-          this.addCircle(currentColor, tileToAdd, colorObj);
+          this.addCircle(null, tileToAdd, colorObj);
           this._plusColor(colorObj);
           this.colorAdded = false;
           return true;
         }
 
         var currentColor = (this.colorPointer + 1) * 2;
-        var firstC = { 0: this.colorPairs[currentColor - 1] };
+        var firstColor = { 0: this.colorPairs[currentColor - 1] };
         this.addCircle(currentColor, tileToAdd);
-        this._plusColor(firstC);
+        this._plusColor(firstColor);
       },
 
       addCircle: function(currentColor, tileToAdd, colorStops) {
@@ -107,13 +106,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           colorStops: colors
         });
 
-        circle.setGradient('fill', {
-          x1: 0,
-          y1: 0,
-          x2: 0,
-          y2: circle.height,
-          colorStops: colors
-        });
+        this._setGradient(circle, colors);
 
         var circleCenter = new fabric.Circle({
           radius: 14,
@@ -125,7 +118,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
           evented: false
         });
-
 
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
@@ -141,27 +133,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var noOfTiles = this.allTiles.length;
           for(var i = 0; i < noOfTiles; i++ ) {
             if(this.allTiles[i].circle) {
-
-              this.allTiles[i].circle.setGradient('fill', {
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: this.allTiles[i].circle.height,
-                colorStops: {
-                  0: "#ffc100",
-                  1: "#ff6a00"
-                }
-              });
+              var colorStops =  {
+                0: "#ffc100",
+                1: "#ff6a00"
+              };
+              this._setGradient(this.allTiles[i].circle, colorStops);
             }
           }
       },
 
-      _changeGradient: function(tile, colorStops) {
-        tile.circle.setGradient('fill', {
+      _setGradient: function(circle, colorStops) {
+
+        circle.setGradient("fill", {
           x1: 0,
           y1: 0,
           x2: 0,
-          y2: tile.circle.height,
+          y2: circle.height,
           colorStops: colorStops
         });
       },
@@ -171,7 +158,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._minusColor(tile.circle.colorStops);
         tile.circle.colorStops = colorObject;
         this._plusColor(colorObject);
-        this._changeGradient(tile, colorObject);
+        this._setGradient(tile.circle, colorObject);
       },
       _plusColor: function(colorObject) {
 
