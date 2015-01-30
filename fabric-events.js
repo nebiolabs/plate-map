@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // Once we used this handler when we clicked and dragged , not anymore.
           // Now only purpose is when we click on clear fields.
           //Deselect already selected tiles
+          console.log("ddoooooooooooo");
           that._deselectSelected();
           // Adding newly selected group -: here it is tiles whose values are cleared..!
           if(selectedObjects.target) {
