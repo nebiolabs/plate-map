@@ -34,6 +34,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "#a3a3a3": "#6f6f6f"
         },
 
+        colorIndexValues: {
+          "#e10404": 1,
+          "#f8666c": 2,
+          "#ff9600": 3,
+          "#ffc100": 4,
+          "#ffd5ed": 5,
+          "#ffe735": 6,
+          "#fff77a": 7,
+          "#dbfa89": 8,
+          "#a9eac9": 9,
+          "#376a00": 10,
+          "#84f0ff": 11,
+          "#2ea2be": 12,
+          "#003d7d": 13,
+          "#a316e7": 14,
+          "#a70075": 15,
+          "#ee11ee": 16,
+          "#5c5c5c": 17,
+          "#a3a3a3": 18
+        },
+
         getColor: function() {
           console.log("Wow");
         }

@@ -27,6 +27,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                               };
 
             this.colorAdded = true;
+            colorIndex = this.colorPointer + 1;
             var freeColor = this.engine._getFreeColor();
 
             if(freeColor) {
@@ -35,14 +36,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
                               1: this.colorPairObject[freeColor]
                             };
               this.colorAdded = false;
+              colorIndex = this.colorIndexValues[freeColor];
             }
 
-            this._changeColoredCircle(tile, tempColors);
+            this._changeColoredCircle(tile, tempColors, colorIndex);
             break;
 
           case "Copy Color":
             if(tile.circle) {
-              this._changeColoredCircle(tile, job.colorStops);
+              this._changeColoredCircle(tile, job.colorStops, job.colorIndex);
             } else {
               this._addCircleToCanvas(tile, job.colorStops, job.colorIndex);
               this._plusColor(job.colorStops);
@@ -79,7 +81,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             0: freeColor,
             1: this.colorPairObject[freeColor]
           }
-          this.addCircle(null, tileToAdd, colorObj);
+          colorIndex = this.colorIndexValues[freeColor];
+          this.addCircle(null, tileToAdd, colorObj, colorIndex);
           this._plusColor(colorObj);
           this.colorAdded = false;
           return true;
@@ -136,6 +139,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         tileToAdd.circleCenter = circleCenter;
+        tileToAdd.circleText = circleText;
         this.mainFabricCanvas.add(circle);
         this.mainFabricCanvas.add(circleCenter);
         this.mainFabricCanvas.add(circleText);
@@ -166,10 +170,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
       },
 
-      _changeColoredCircle: function(tile, colorObject) {
+      _changeColoredCircle: function(tile, colorObject, colorIndex) {
 
         this._minusColor(tile.circle.colorStops);
         tile.circle.colorStops = colorObject;
+        tile.circle.colorIndex = colorIndex;
+        tile.circleText.text = "" + colorIndex + "";
         this._plusColor(colorObject);
         this._setGradient(tile.circle, colorObject);
       },
