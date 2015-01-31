@@ -33,7 +33,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.createDerivative(tile);
               return {
                 "action": "Copy Color",
-                "colorStops": THIS.allTiles[i].circle.colorStops
+                "colorStops": THIS.allTiles[i].circle.colorStops,
+                "colorIndex": THIS.allTiles[i].circle.colorIndex
               };
             }
           }

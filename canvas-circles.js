@@ -44,7 +44,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(tile.circle) {
               this._changeColoredCircle(tile, job.colorStops);
             } else {
-              this._addCircleToCanvas(tile, job.colorStops);
+              this._addCircleToCanvas(tile, job.colorStops, job.colorIndex);
               this._plusColor(job.colorStops);
             }
             break;
@@ -55,9 +55,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.colorAdded) this.colorPointer ++;
       },
 
-      _addCircleToCanvas: function(tileToAdd, colorStops) {
+      _addCircleToCanvas: function(tileToAdd, colorStops, colorIndex) {
         // Adding circle to particular tile
-        if(this.colorPointer > (this.colorPairs.length / 2) - 1 ) {
+        if(this.colorPointer > ((this.colorPairs.length - 1) / 2) - 1 ) {
           // integrate number system into current #based system..!
           this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
           if(! this.tooManyColorsApplyed) {
@@ -68,7 +68,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         if(colorStops) {
-          this.addCircle(null, tileToAdd, colorStops);
+          this.addCircle(null, tileToAdd, colorStops, colorIndex);
           return true;
         }
 
@@ -91,7 +91,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._plusColor(firstColor);
       },
 
-      addCircle: function(currentColor, tileToAdd, colorStops) {
+      addCircle: function(currentColor, tileToAdd, colorStops, colorIndex) {
 
         var colors = colorStops || { 0: this.colorPairs[currentColor - 1],
                                      1: this.colorPairs[currentColor]
@@ -107,6 +107,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           colorStops: colors
         });
 
+        circle.colorIndex = (colorIndex) ? colorIndex : this.colorPointer + 1;
+
         this._setGradient(circle, colors);
 
         var circleCenter = new fabric.Circle({
@@ -117,14 +119,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: tileToAdd.top,
           left: tileToAdd.left,
           shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
-          evented: false
+          evented: false,
         });
 
+        var circleText = new fabric.IText(""+circle.colorIndex+"", {
+            top: tileToAdd.top,
+            left: tileToAdd.left,
+            fill: 'black',
+            evented: false,
+            fontSize: 12,
+            lockScalingX: true,
+            lockScalingY: true,
+            originX:'center',
+            originY: 'center',
+        });
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         tileToAdd.circleCenter = circleCenter;
         this.mainFabricCanvas.add(circle);
         this.mainFabricCanvas.add(circleCenter);
+        this.mainFabricCanvas.add(circleText);
 
         return true;
       },
