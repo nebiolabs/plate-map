@@ -7,11 +7,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       tooManyColorsApplyed: false,
+      limit: 0,
 
       _addColorCircle: function(tile) {
       // This method checks if given selection has circle.
         this.colorAdded = false;
+        this.limit = ((this.colorPairs.length - 1) / 2) - 1;
         var job = this.engine.processChange(tile);
+
+        if(this.colorPointer > this.limit ) {
+          this._handleOverLimit(tile, job);
+          return true;
+        }
+
         switch(job.action) {
 
           case "New Circle":
@@ -59,16 +67,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addCircleToCanvas: function(tileToAdd, colorStops, colorIndex) {
         // Adding circle to particular tile
-        if(this.colorPointer > ((this.colorPairs.length - 1) / 2) - 1 ) {
-          // integrate number system into current #based system..!
-          this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
-          if(! this.tooManyColorsApplyed) {
-              this.applyTooManyColors();
-              this.tooManyColorsApplyed = true;
-          }
-          return true;
-        }
-
         if(colorStops) {
           this.addCircle(null, tileToAdd, colorStops, colorIndex);
           return true;
@@ -136,6 +134,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originX:'center',
             originY: 'center',
         });
+        
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         tileToAdd.circleCenter = circleCenter;
@@ -190,7 +189,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] - 1 || 0;
         this.colorCounter[colorObject[0]]  = this.colorCounter[colorObject[0]] - 1 || 0;
+      },
+
+      _handleOverLimit: function(tileToAdd, job) {
+          this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
+          if(! this.tooManyColorsApplyed) {
+              this.applyTooManyColors();
+              this.tooManyColorsApplyed = true;
+          }
       }
-    };
+
+     };
   }
 })(jQuery, fabric)
