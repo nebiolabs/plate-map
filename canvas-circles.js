@@ -12,10 +12,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addColorCircle: function(tile) {
       // This method checks if given selection has circle.
         this.colorAdded = false;
-        this.limit = ((this.colorPairs.length - 1) / 2) - 1;
+        this.limit = (this.colorPairs.length - 1) / 2;
         var job = this.engine.processChange(tile);
 
-        if(this.colorPointer > this.limit ) {
+        if(this.colorPointer > this.limit) {
           this._handleOverLimit(tile, job);
           return true;
         }
@@ -134,7 +134,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originX:'center',
             originY: 'center',
         });
-        
+
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         tileToAdd.circleCenter = circleCenter;
@@ -192,7 +192,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _handleOverLimit: function(tileToAdd, job) {
-          this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
+          console.log(job);
+          this.addCircle(8, tileToAdd, null, job.colorIndex); // 8 is the index of orenge gradient.
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
               this.tooManyColorsApplyed = true;
