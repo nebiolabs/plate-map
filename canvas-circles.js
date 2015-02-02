@@ -14,7 +14,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.colorAdded = false;
         this.limit = (this.colorPairs.length - 1) / 2;
         var job = this.engine.processChange(tile);
-
         if(this.colorPointer > this.limit) {
           this._handleOverLimit(tile, job);
           return true;
@@ -23,6 +22,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         switch(job.action) {
 
           case "New Circle":
+            if(this.colorPointer === this.limit && ! this.engine._getFreeColor()) {
+              // This is a special case, Just after we reach the limit and we want a new color circle
+              this._handleOverLimit(tile, job);
+              this.colorPointer ++;
+              return true;
+            }
             this.colorAdded = true;
             this._addCircleToCanvas(tile);
             break;
@@ -193,7 +198,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _handleOverLimit: function(tileToAdd, job) {
           console.log(job);
-          this.addCircle(8, tileToAdd, null, job.colorIndex); // 8 is the index of orenge gradient.
+          switch(job.action) {
+
+            case "New Circle":
+              this.addCircle(8, tileToAdd); // 8 is the index of orenge gradient.
+              break;
+          }
+
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
               this.tooManyColorsApplyed = true;
