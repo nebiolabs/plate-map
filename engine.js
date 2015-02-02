@@ -72,6 +72,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(this.colorCounter[color] === 0) return color;
           }
           return false;
+        },
+
+        _getFreeColorAfterLimit: function() {
+
+          for(var color in this.colorCounter) {
+            if(this.colorCounter[color] === 0 && color.charAt(1) == "#") return color;
+          }
+          return false;
         }
 
       }

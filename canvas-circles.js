@@ -41,7 +41,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                               };
 
             this.colorAdded = true;
-            colorIndex = this.colorPointer + 1;
+            var colorIndex = this.colorPointer + 1;
             var freeColor = this.engine._getFreeColor();
 
             if(freeColor) {
@@ -166,6 +166,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _setGradient: function(circle, colorStops) {
 
+        var colorStops =  colorStops || {
+                                          0: "#ffc100",
+                                          1: "#ff6a00"
+                                        };
         circle.setGradient("fill", {
           x1: 0,
           y1: 0,
@@ -185,6 +189,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._setGradient(tile.circle, colorObject);
       },
 
+      _changeColoredCircleAfterLimit: function(tile, colorObject, colorIndex) {
+        this._minusColor(tile.circle.colorStops);
+        tile.circle.colorStops = colorObject;
+        tile.circle.colorIndex = colorIndex;
+        tile.circleText.text = "" + colorIndex + "";
+        this._plusColor(colorObject);
+        this._setGradient(tile.circle);
+      },
       _plusColor: function(colorObject) {
 
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] + 1 || 1;
@@ -192,29 +204,61 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _minusColor: function(colorObject) {
-
+        console.log(colorObject);
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] - 1 || 0;
         this.colorCounter[colorObject[0]]  = this.colorCounter[colorObject[0]] - 1 || 0;
+        console.log(colorObject, this.engine.colorCounter);
       },
 
       _handleOverLimit: function(tileToAdd, job) {
-          console.log(job);
+          //console.log(job);
           this.afterLimitPointerAdded = false;
           switch(job.action) {
 
             case "New Circle":
               this.afterLimitPointerAdded = true;
+
+              var freeColor = this.engine._getFreeColor();
+
+              if(freeColor) {
+                this.afterLimitPointerAdded = false;
+                colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];
+                console.log(freeColor, colorIndex);
+                this.addCircle(8, tileToAdd, null, colorIndex);
+                var tempCol = {0: freeColor};
+                this._plusColor(tempCol);
+                break;
+              }
+
               this.addCircle(8, tileToAdd, null, this.afterLimitPointer); // 8 is the index of orenge gradient.
+              var tempCol = {0: "##" + this.afterLimitPointer + "##"};
+              tileToAdd.circle.colorStops = tempCol;
+              this._plusColor(tempCol);
               break;
 
             case "New Color":
+              var tmpCol = {0: "##" + this.afterLimitPointerAdded + "##"};
+              this.afterLimitPointerAdded = true;
+              var colorIndex = this.afterLimitPointer + 1;
+
+              var freeColor = this.engine._getFreeColor();
+
+              if(freeColor) {
+                tmpCol = { 0: freeColor};
+                this.afterLimitPointerAdded = false;
+                colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];
+              }
+              this._changeColoredCircleAfterLimit(tileToAdd, tmpCol, colorIndex);
               break;
 
             case "Copy Color":
               if(tileToAdd.circle) {
-
+                this._changeColoredCircleAfterLimit(tileToAdd, job.colorStops, job.colorIndex);
               } else {
                 this.addCircle(8, tileToAdd, null, job.colorIndex);
+                var tempCol = {0: "##" + job.colorIndex + "##"};
+                tileToAdd.circle.colorStops = tempCol;
+                this._plusColor(tempCol);
               }
 
               break;
@@ -227,7 +271,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(this.afterLimitPointerAdded) this.afterLimitPointer ++;
       },
-
      };
   }
 })(jQuery, fabric)
