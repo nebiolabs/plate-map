@@ -204,14 +204,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _minusColor: function(colorObject) {
-        console.log(colorObject);
+        //console.log(colorObject);
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] - 1 || 0;
         this.colorCounter[colorObject[0]]  = this.colorCounter[colorObject[0]] - 1 || 0;
-        console.log(colorObject, this.engine.colorCounter);
+        //console.log(colorObject, this.engine.colorCounter);
       },
 
       _handleOverLimit: function(tileToAdd, job) {
-          //console.log(job);
+          // Correct mistakes in indexing
           this.afterLimitPointerAdded = false;
           switch(job.action) {
 
@@ -222,12 +222,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               if(freeColor) {
                 this.afterLimitPointerAdded = false;
-                colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];
-                console.log(freeColor, colorIndex);
-                this.addCircle(8, tileToAdd, null, colorIndex);
+                var colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];
                 var tempCol = {0: freeColor};
+                this.addCircle(8, tileToAdd, null, colorIndex);
+                tileToAdd.circle.colorStops = tempCol;
                 this._plusColor(tempCol);
-                break;
+                console.log(this.engine.colorCounter, tempCol, colorIndex);
+                return true;
               }
 
               this.addCircle(8, tileToAdd, null, this.afterLimitPointer); // 8 is the index of orenge gradient.
@@ -237,9 +238,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               break;
 
             case "New Color":
-              var tmpCol = {0: "##" + this.afterLimitPointerAdded + "##"};
+              var tmpCol = {0: "##" + this.afterLimitPointer + "##"};
               this.afterLimitPointerAdded = true;
-              var colorIndex = this.afterLimitPointer + 1;
+              var colorIndex = this.afterLimitPointer;
 
               var freeColor = this.engine._getFreeColor();
 
@@ -256,20 +257,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this._changeColoredCircleAfterLimit(tileToAdd, job.colorStops, job.colorIndex);
               } else {
                 this.addCircle(8, tileToAdd, null, job.colorIndex);
-                var tempCol = {0: "##" + job.colorIndex + "##"};
-                tileToAdd.circle.colorStops = tempCol;
-                this._plusColor(tempCol);
+                tileToAdd.circle.colorStops = job.colorStops;
+                this._plusColor(job.colorStops);
               }
+              break;
 
+            case "Keep Color":
+              console.log("Keeping color");
               break;
           }
-
           if(! this.tooManyColorsApplyed) {
               this.applyTooManyColors();
               this.tooManyColorsApplyed = true;
           }
-
-          if(this.afterLimitPointerAdded) this.afterLimitPointer ++;
+          if(this.afterLimitPointerAdded) {
+            this.afterLimitPointer ++;
+            console.log("bonda", this.afterLimitPointer);
+          }
+          console.log(job, this.afterLimitPointer, this.engine.colorCounter);
       },
      };
   }

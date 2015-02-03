@@ -15,7 +15,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             wellData[e.target.id] = e.target.value;
             this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
-          //console.log(this.engine.derivative, this.engine.colorCounter);
+          console.log("_______________________________________________");
           this.mainFabricCanvas.renderAll();
           //this.engine.processChange(this.allSelectedObjects[0]["wellData"]);
 
