@@ -204,14 +204,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _minusColor: function(colorObject) {
-        //console.log(colorObject);
+
         this.engine.colorCounter[colorObject[0]]  = this.engine.colorCounter[colorObject[0]] - 1 || 0;
         this.colorCounter[colorObject[0]]  = this.colorCounter[colorObject[0]] - 1 || 0;
-        //console.log(colorObject, this.engine.colorCounter);
       },
 
       _handleOverLimit: function(tileToAdd, job) {
-          // Correct mistakes in indexing
           this.afterLimitPointerAdded = false;
           switch(job.action) {
 
@@ -227,7 +225,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this.addCircle(8, tileToAdd, null, colorIndex);
                 tileToAdd.circle.colorStops = tempCol;
                 this._plusColor(tempCol);
-                console.log(this.engine.colorCounter, tempCol, colorIndex);
                 return true;
               }
 
@@ -270,11 +267,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.applyTooManyColors();
               this.tooManyColorsApplyed = true;
           }
-          if(this.afterLimitPointerAdded) {
-            this.afterLimitPointer ++;
-            console.log("bonda", this.afterLimitPointer);
-          }
-          console.log(job, this.afterLimitPointer, this.engine.colorCounter);
+          if(this.afterLimitPointerAdded) this.afterLimitPointer ++;
       },
      };
   }
