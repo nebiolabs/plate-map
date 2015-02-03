@@ -80,7 +80,51 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(this.colorCounter[color] === 0 && color.charAt(1) == "#") return color;
           }
           return false;
-        }
+        },
+
+        _checkRollBack: function() {
+
+          var counter = 0;
+          for(var i in this.colorCounter) {
+            if(this.colorCounter[i] != 0) {
+              counter ++;
+              if(counter > THIS.limit) {
+                return false;
+              }
+            }
+          }
+          return "rollback";
+        },
+
+        _rollBack: function() {
+          // Here we roll back from numbers to color
+          var colorAllocationObject = {};
+          var allocationIndex = 0;
+          for(var i in this.derivative) {
+            //console.log(THIS.allTiles[i].circle.colorIndex);
+            var colorIndex = THIS.allTiles[i].circle.colorIndex;
+            var colorObject = {};
+
+            if(colorAllocationObject[colorIndex]) {
+              var currentColor = (colorAllocationObject[colorIndex]) * 2;
+              colorObject = {
+                                  0: THIS.colorPairs[currentColor - 1],
+                                  1: THIS.colorPairs[currentColor]
+                                }
+            } else {
+              colorAllocationObject[colorIndex] = ++allocationIndex;
+              var currentColor = (colorAllocationObject[colorIndex]) * 2;
+              colorObject = {
+                                  0: THIS.colorPairs[currentColor - 1],
+                                  1: THIS.colorPairs[currentColor]
+                                }
+                                console.log(colorAllocationObject)
+              //allocationIndex = allocationIndex + 1;
+            }
+            THIS._setGradient(THIS.allTiles[i].circle, colorObject)
+          }
+          console.log(colorAllocationObject)
+        },
 
       }
     }

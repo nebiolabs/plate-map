@@ -273,6 +273,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.tooManyColorsApplyed = true;
           }
           if(this.afterLimitPointerAdded) this.afterLimitPointer ++;
+
+          if(this.engine._checkRollBack() === "rollback") {
+            // clear values ---- > after rollback
+
+            this.engine._rollBack();
+          }
       },
      };
   }
