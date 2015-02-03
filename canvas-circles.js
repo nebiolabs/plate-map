@@ -139,8 +139,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             lockScalingY: true,
             originX:'center',
             originY: 'center',
+            visible: false
         });
 
+        if(this.afterLimitPointer) {
+          circleText.setVisible(true);
+        }
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
         tileToAdd.circleCenter = circleCenter;
@@ -161,6 +165,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var i in this.engine.derivative) {
             this._setGradient(this.allTiles[i].circle, colorStops);
+            this.allTiles[i].circleText.setVisible(true);
           }
       },
 
