@@ -23,7 +23,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           case "New Circle":
             if(this.colorPointer === this.limit && ! this.engine._getFreeColor()) {
-              // This is a special case, Just after we reach the limit and we want a new color circle
+              // This is a special case, Just after we reach the limit and we want a new color circle.
               this.afterLimitPointer = this.colorPointer + 1;
               this._handleOverLimit(tile, job);
               this.colorPointer ++;
@@ -34,6 +34,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             break;
 
           case "New Color":
+            if(this.colorPointer === this.limit && ! this.engine._getFreeColor()) {
+              // This is a special case, Just after we reach the limit and we want a new color circle.
+              this.afterLimitPointer = this.colorPointer + 1;
+              this._handleOverLimit(tile, job);
+              this.colorPointer ++;
+              return true;
+            }
             var currentColor = (this.colorPointer + 1) * 2;
             var tempColors = {
                                 0: this.colorPairs[currentColor - 1],

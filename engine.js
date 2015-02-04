@@ -98,33 +98,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         _rollBack: function() {
           // Here we roll back from numbers to color
+          this.colorCounter = {};
+          THIS.afterLimitPointer = 0;
+          THIS.tooManyColorsApplyed = false;
+          THIS.colorPointer  = THIS.colorPointer - 1;
           var colorAllocationObject = {};
           var allocationIndex = 0;
-          for(var i in this.derivative) {
-            //console.log(THIS.allTiles[i].circle.colorIndex);
-            var colorIndex = THIS.allTiles[i].circle.colorIndex;
-            var colorObject = {};
 
-            if(colorAllocationObject[colorIndex]) {
-              var currentColor = (colorAllocationObject[colorIndex]) * 2;
-              colorObject = {
-                                  0: THIS.colorPairs[currentColor - 1],
-                                  1: THIS.colorPairs[currentColor]
-                                }
-            } else {
+          for(var i in this.derivative) {
+            var colorIndex = THIS.allTiles[i].circle.colorIndex;
+
+            if(! colorAllocationObject[colorIndex]) {
               colorAllocationObject[colorIndex] = ++allocationIndex;
-              var currentColor = (colorAllocationObject[colorIndex]) * 2;
-              colorObject = {
-                                  0: THIS.colorPairs[currentColor - 1],
-                                  1: THIS.colorPairs[currentColor]
-                                }
-                                console.log(colorAllocationObject)
-              //allocationIndex = allocationIndex + 1;
             }
+
+            var currentColor = (colorAllocationObject[colorIndex]) * 2;
+            var colorObject = this._rollBackValues(THIS.allTiles[i], currentColor);
             THIS._setGradient(THIS.allTiles[i].circle, colorObject)
           }
-          console.log(colorAllocationObject)
+          console.log(colorAllocationObject, this.colorCounter);
         },
+
+        _rollBackValues: function(tile, currentColor) {
+
+          var colorObject = {
+                          0: THIS.colorPairs[currentColor - 1],
+                          1: THIS.colorPairs[currentColor]
+                        };
+          this.colorCounter[THIS.colorPairs[currentColor - 1]] = this.colorCounter[THIS.colorPairs[currentColor - 1]] + 1 || 1;
+          tile.circle.colorStops = colorObject;
+          tile.circle.colorIndex = THIS.colorIndexValues[colorObject[0]];
+          tile.circleText.text = "" + THIS.colorIndexValues[colorObject[0]] + "";
+          tile.circleText.setVisible(false);
+
+          return colorObject;
+        }
 
       }
     }
