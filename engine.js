@@ -116,7 +116,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var colorObject = this._rollBackValues(THIS.allTiles[i], currentColor);
             THIS._setGradient(THIS.allTiles[i].circle, colorObject)
           }
-          console.log(colorAllocationObject, this.colorCounter);
         },
 
         _rollBackValues: function(tile, currentColor) {
