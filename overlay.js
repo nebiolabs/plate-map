@@ -49,16 +49,28 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              this.allSelectedObjects[objectIndex]["wellData"] = $.extend({}, this.allWellData);
-              this.allSelectedObjects[objectIndex]["unitData"] = $.extend({}, this.allUnitData);
+
+            var tile = this.allSelectedObjects[objectIndex];
+            // Restore the original data.
+            if(tile.circle) {
+              tile["wellData"] = $.extend({}, this.allWellData);
+              tile["unitData"] = $.extend({}, this.allUnitData);
               // that works like a charm, we remove circle from canvas and delete the reference from
               // tile/well object.
-              this.mainFabricCanvas.remove(this.allSelectedObjects[objectIndex].circle);
-              this.mainFabricCanvas.remove(this.allSelectedObjects[objectIndex].circleCenter);
-              delete this.allSelectedObjects[objectIndex].circle;
-              delete this.allSelectedObjects[objectIndex].circleCenter;
+
+              this.mainFabricCanvas.remove(tile.circle);
+              this.mainFabricCanvas.remove(tile.circleCenter);
+              this.mainFabricCanvas.remove(tile.circleText);
+              -- this.engine.colorCounter[tile.circle.colorStops[0]];
+              delete this.engine.derivative[tile.index];
+              delete tile.circle;
+              delete tile.circleCenter;
+              delete tile.circleText;
             }
+
+          }
+          if(this.engine._checkRollBack() === "rollback" && this.tooManyColorsApplyed) {
+            this.engine._rollBack();
           }
           this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
         } else {
