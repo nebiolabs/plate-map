@@ -22,20 +22,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
           }
 
-          var derivativeLength = this.derivative.length;
+          //var derivativeLength = this.derivative.length;
           var wellData  = tile["wellData"];
-
+          var unitData = tile["unitData"];
+          var selectedWellAttributes = tile["selectedWellAttributes"];
+          // here we bring checkmarks and unit data.
+          //console.log(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], selectedWellAttributes));
           for(var i in this.derivative) {
 
-            if(THIS.compareObjects(this.derivative[i], wellData)) {
-              // createDerivative() may not be needed, but if we call this method here we have derivatives having
-              // all the data about filled circles.
-              this.createDerivative(tile);
-              return {
-                "action": "Copy Color",
-                "colorStops": THIS.allTiles[i].circle.colorStops,
-                "colorIndex": THIS.allTiles[i].circle.colorIndex
-              };
+            if(THIS.compareObjects(this.derivative[i]["wellData"], wellData)) {
+              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], selectedWellAttributes)) {
+                if(THIS.compareObjects(this.derivative[i]["unitData"], unitData)) {
+                  this.createDerivative(tile);
+                  return {
+                    "action": "Copy Color",
+                    "colorStops": THIS.allTiles[i].circle.colorStops,
+                    "colorIndex": THIS.allTiles[i].circle.colorIndex
+                  };
+                }
+              }
             }
           }
 
@@ -61,9 +66,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         createDerivative: function(tile) {
 
-          var tempDer = {};
-          $.extend(true, tempDer, tile.wellData);
-          this.derivative[tile.index] = tempDer;
+          this.derivative[tile.index] = {};
+
+          this.derivative[tile.index]["wellData"] = $.extend(true, {}, tile.wellData);;
+          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, tile.selectedWellAttributes);;
+          this.derivative[tile.index]["unitData"] = $.extend(true, {}, tile.unitData);;;
         },
 
         _getFreeColor: function() {

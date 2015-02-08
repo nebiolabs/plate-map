@@ -18,7 +18,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._handleOverLimit(tile, job);
           return true;
         }
-
+        
         switch(job.action) {
 
           case "New Circle":

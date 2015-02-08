@@ -34,7 +34,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var unitData = this.allSelectedObjects[objectIndex]["unitData"];
             unitData[e.target.id] = e.target.value;
+            this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+          this.mainFabricCanvas.renderAll();
         }
       },
 

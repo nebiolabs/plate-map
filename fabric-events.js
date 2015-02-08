@@ -305,7 +305,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects.length === 1) {
           // Incase there is only one well selected.
           this._addDataToTabFields();
-        } else if(this.allSelectedObjects.length > 1){
+        } else if(this.allSelectedObjects.length > 1) {
           // Here we check if all the values are same
           // if yes apply those values to tabs
           // else show empty value in tabs

@@ -51,10 +51,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
 
             var tile = this.allSelectedObjects[objectIndex];
+            // Restore the original data.
+            tile["wellData"] = $.extend(true, {}, this.allWellData);
+            tile["unitData"] = $.extend(true, {}, this.allUnitData);
+            tile["selectedWellAttributes"] = {};
+
             if(tile.circle) {
-              // Restore the original data.
-              tile["wellData"] = $.extend({}, this.allWellData);
-              tile["unitData"] = $.extend({}, this.allUnitData);
               // that works like a charm, we remove circle from canvas and delete the reference from
               // tile/well object.
               this.mainFabricCanvas.remove(tile.circle);

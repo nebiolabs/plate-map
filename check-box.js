@@ -50,20 +50,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
-              if(clickedCheckBox.data("clicked")) {
-                selectionData[clickedCheckBox.data("linkedFieldId")] = true;
-              } else {
-                //delete selectionData[clickedCheckBox.data("linkedFieldId")];
-                selectionData[clickedCheckBox.data("linkedFieldId")] = false;
-              }
-
+            var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
+            if(clickedCheckBox.data("clicked")) {
+              selectionData[clickedCheckBox.data("linkedFieldId")] = true;
+            } else {
+              //delete selectionData[clickedCheckBox.data("linkedFieldId")];
+              selectionData[clickedCheckBox.data("linkedFieldId")] = false;
             }
+            // Look for appropriate color.
+            this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+            this.mainFabricCanvas.renderAll();
         }
       },
-
     };
   }
 })(jQuery, fabric);
