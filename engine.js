@@ -22,17 +22,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
           }
 
-          //var derivativeLength = this.derivative.length;
-          var wellData  = tile["wellData"];
-          var unitData = tile["unitData"];
-          var selectedWellAttributes = tile["selectedWellAttributes"];
-          // here we bring checkmarks and unit data.
-          //console.log(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], selectedWellAttributes));
           for(var i in this.derivative) {
 
-            if(THIS.compareObjects(this.derivative[i]["wellData"], wellData)) {
-              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], selectedWellAttributes)) {
-                if(THIS.compareObjects(this.derivative[i]["unitData"], unitData)) {
+            if(THIS.compareObjects(this.derivative[i]["wellData"], tile["wellData"])) {
+              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
+                if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
                   this.createDerivative(tile);
                   return {
                     "action": "Copy Color",

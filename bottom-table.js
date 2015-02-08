@@ -75,6 +75,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addForMultiselect: function() {
         // When more than one fields are selected .. !
+        // Look for implementations in engine, from selected objects we know differnt colors selected..!!
         var referenceTile =  this.allSelectedObjects[0];
         if(referenceTile) {
           var referenceFields = referenceTile["wellData"];
