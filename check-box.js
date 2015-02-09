@@ -19,20 +19,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _applyCheckboxHandler: function(checkBoxImage) {
         // We add checkbox handler here, thing is it s not checkbox , its an image and we change
         // source
-
         var that = this;
         $(checkBoxImage).click(function(evt, machineClick) {
-          console.log("Lolax", $(this).data("clicked"));
+
           if($(this).data("clicked")) {
             $(this).attr("src", that.imgSrc + "/dont.png");
           } else {
             $(this).attr("src", that.imgSrc + "/do.png");
           }
 
-          var we = ! $(this).data("clicked");
-          console.log(we)
-          $(this).data("clicked", we);
-          console.log($(this).data("clicked"));
+          $(this).data("clicked", !$(this).data("clicked"));
           // when we un/select values it should reflect to the tiles selected at the moment
           that._addRemoveSelection($(this));
           // Now add corresponding field to the bottom of table.
@@ -56,6 +52,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
             if(clickedCheckBox.data("clicked")) {
+              // This could be changed so that many things get easier .. !
               selectionData[clickedCheckBox.data("linkedFieldId")] = true;
             } else {
               delete selectionData[clickedCheckBox.data("linkedFieldId")];

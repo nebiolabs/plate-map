@@ -69,7 +69,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             $(this.bottomRow).css("width", (captions.length) * 152 + "px");
           }
         } else {
-          this._addForMultiselect();
+          //this._addForMultiselect();
         }
       },
 

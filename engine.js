@@ -18,14 +18,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if($.isEmptyObject(this.derivative)) {
             // this block is executed at the very first time.
-          //  this._getCheckedValues(tile)
+            this._getCheckedValues(tile)
             this.createDerivative(tile);
             return {
               "action": "New Circle"
             };
           }
 
-          var wellD =  tile["wellData"];
+          var wellD = this._getCheckedValues(tile) || tile["wellData"];
 
           for(var i in this.derivative) {
 

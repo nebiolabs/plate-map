@@ -61,7 +61,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         // Clear previously selected checkboxes
         var checkBoxImage = $("#" + id).data("checkBox");
-        $(checkBoxImage).attr("src", this.imgSrc + "/dont.png").data("clicked", false);
+
+        if($(checkBoxImage).data("clicked")) {
+          $(checkBoxImage).attr("src", this.imgSrc + "/dont.png");
+          $(checkBoxImage).data("clicked", false);
+        }
       },
 
       _applyUnitData: function(unitId, units) {
@@ -95,7 +99,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             fakeAllFields[field] = "";
           }
-
+          console.log("wow Wow wow");
           this._applyFieldData(field, fakeAllFields);
         }
       },
