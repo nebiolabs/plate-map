@@ -99,7 +99,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             fakeAllFields[field] = "";
           }
-          console.log("wow Wow wow");
           this._applyFieldData(field, fakeAllFields);
         }
       },
