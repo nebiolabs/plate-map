@@ -12,20 +12,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         colorCounter: {},
 
+        checkValues: {},
+
         processChange: function(tile) {
 
           if($.isEmptyObject(this.derivative)) {
             // this block is executed at the very first time.
+          //  this._getCheckedValues(tile)
             this.createDerivative(tile);
             return {
               "action": "New Circle"
             };
           }
 
+          var wellD =  tile["wellData"];
+
           for(var i in this.derivative) {
 
-            if(THIS.compareObjects(this.derivative[i]["wellData"], tile["wellData"])) {
-              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
+            if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
+              if(THIS.compareObjects(this.derivative[i]["wellData"], wellD)) {
                 if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
                   this.createDerivative(tile);
                   return {
@@ -62,9 +67,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           this.derivative[tile.index] = {};
 
-          this.derivative[tile.index]["wellData"] = $.extend(true, {}, tile.wellData);;
-          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, tile.selectedWellAttributes);;
-          this.derivative[tile.index]["unitData"] = $.extend(true, {}, tile.unitData);;;
+          this.derivative[tile.index]["wellData"] = ($.isEmptyObject(this.checkValues)) ?
+                        $.extend(true, {}, tile.wellData) : $.extend(true, {}, this.checkValues);
+
+          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, tile.selectedWellAttributes);
+          this.derivative[tile.index]["unitData"] = $.extend(true, {}, tile.unitData);
+          this.checkValues = {};
+        },
+
+        _getCheckedValues: function(tile) {
+
+          if($.isEmptyObject(tile["selectedWellAttributes"])) return false;
+
+          var keys = Object.keys(tile.selectedWellAttributes);
+          var length = keys.length;
+
+          for(var i = 0; i < length; i ++) {
+            this.checkValues[keys[i]] = tile["wellData"][keys[i]];
+          }
+          return this.checkValues;
         },
 
         _getFreeColor: function() {
@@ -75,6 +96,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return false;
         },
 
+        // This is not used -:)
         _getFreeColorAfterLimit: function() {
 
           for(var color in this.colorCounter) {

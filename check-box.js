@@ -19,16 +19,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _applyCheckboxHandler: function(checkBoxImage) {
         // We add checkbox handler here, thing is it s not checkbox , its an image and we change
         // source
+
         var that = this;
         $(checkBoxImage).click(function(evt, machineClick) {
-
+          console.log("Lolax", $(this).data("clicked"));
           if($(this).data("clicked")) {
             $(this).attr("src", that.imgSrc + "/dont.png");
           } else {
             $(this).attr("src", that.imgSrc + "/do.png");
           }
 
-          $(this).data("clicked", !$(this).data("clicked"));
+          var we = ! $(this).data("clicked");
+          console.log(we)
+          $(this).data("clicked", we);
+          console.log($(this).data("clicked"));
           // when we un/select values it should reflect to the tiles selected at the moment
           that._addRemoveSelection($(this));
           // Now add corresponding field to the bottom of table.
@@ -54,8 +58,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(clickedCheckBox.data("clicked")) {
               selectionData[clickedCheckBox.data("linkedFieldId")] = true;
             } else {
-              //delete selectionData[clickedCheckBox.data("linkedFieldId")];
-              selectionData[clickedCheckBox.data("linkedFieldId")] = false;
+              delete selectionData[clickedCheckBox.data("linkedFieldId")];
+              //selectionData[clickedCheckBox.data("linkedFieldId")] = false;
             }
             // Look for appropriate color.
             this._addColorCircle(this.allSelectedObjects[objectIndex]);
