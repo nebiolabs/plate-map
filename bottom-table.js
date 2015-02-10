@@ -42,65 +42,112 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(this.allSelectedObjects.length == 1) {
           var selectedObj = this.allSelectedObjects[0];
           var selectedWellAttributes = selectedObj["selectedWellAttributes"];
-          var captions = ["Plate ID"];
+          var captions = {"Plate ID": true};
+          this.captionIds = {};
           $(".plate-setup-bottom-container").html("");
           //Creates a row
           this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
           for(var attr in selectedWellAttributes) {
               if(selectedWellAttributes[attr]) {
-                captions.push($("#" + attr).data("caption"));
+                captions[$("#" + attr).data("caption")] = true;
+                this.captionIds[attr] = true;
                 var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                                 .html("<div>" + $("#" + attr).data("caption") + "</div>");
                 $(this.bottomRow).append(singleField);
             }
           }
 
-          if(captions.length > 1) {
+          var noOfFields = Object.keys(captions).length;
+
+          if(noOfFields > 1) {
             // If there is atleast one field to show .
             var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                               .html("<div>" + "Plate ID" + "</div>");
             $(this.bottomRow).prepend(singleField);
             // Now we append all the captions at the place.
             $(this.bottomContainer).append(this.bottomRow);
+            this.addDataToBottomTable(this.captionIds, noOfFields);
           }
 
-          if((captions.length) * 150 > 1024) {
-            $(this.bottomRow).css("width", (captions.length) * 152 + "px");
+
+
+          if(noOfFields * 150 > 1024) {
+            $(this.bottomRow).css("width", (noOfFields) * 152 + "px");
           }
+
         } else {
-          //this._addForMultiselect();
+          this._addForMultiselect();
         }
       },
 
       _addForMultiselect: function() {
         // When more than one fields are selected .. !
         // Look for implementations in engine, from selected objects we know differnt colors selected..!!
-        var referenceTile =  this.allSelectedObjects[0];
-        if(referenceTile) {
-          var referenceFields = referenceTile["wellData"];
-          var referenceUnits = referenceTile["unitData"];
-          var referenceSelectedFields = referenceTile["selectedWellAttributes"];
-          var equalWellData = true;
-          var equalUnitData = true;
-          var equalSelectData = true;
-          // Looking for same well data
-          for(var i = 0; i < this.allSelectedObjects.length; i++) {
+        var captions = {"Plate ID": true};
+        this.captionIds = {};
+        $(".plate-setup-bottom-container").html("");
+        //Creates a row
+        this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
-            if(this.allSelectedObjects[i]["type"] == "tile") {
-              equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
-              equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-              equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
+        for(var tileIndex in this.colorIndices) {
+          var selectedObj = this.allTiles[tileIndex];
+          var selectedWellAttributes = selectedObj["selectedWellAttributes"];
 
-              if(!equalWellData || !equalUnitData || !equalSelectData) {
 
-                this._clearAllFields(referenceFields);
-                return true;
+          for(var attr in selectedWellAttributes) {
+              if(! captions[$("#" + attr).data("caption")]) {
+                captions[$("#" + attr).data("caption")] = true;
+                this.captionIds[attr] = true;
+                var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                                .html("<div>" + $("#" + attr).data("caption") + "</div>");
+                $(this.bottomRow).append(singleField);
               }
-            }
           }
         }
 
+        var noOfFields = Object.keys(captions).length;
+        if(noOfFields > 1) {
+          // If there is atleast one field to show .
+          var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                            .html("<div>" + "Plate ID" + "</div>");
+          $(this.bottomRow).prepend(singleField);
+          // Now we append all the captions at the place.
+          $(this.bottomContainer).append(this.bottomRow);
+          this.addDataToBottomTable(this.captionIds, noOfFields);
+        }
+
+        if((noOfFields + 1) * 150 > 1024) {
+          $(this.bottomRow).css("width", noOfFields * 152 + "px");
+        }
+
+      },
+
+      addDataToBottomTable: function(captionIds, captionLength) {
+
+        var tile;
+        var length = captionLength;
+
+        for(var tileIndex in this.colorIndices) {
+
+          var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
+          tile = this.allTiles[tileIndex];
+          var colorStops = tile.circle.colorStops;
+          var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
+          $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
+          $(row).append(plateIdDiv);
+
+          for(var selected in captionIds) {
+            var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").
+            html(tile["wellData"][selected] || "");
+            $(row).append(dataDiv);
+          }
+          $(this.bottomContainer).append(row);
+        }
+
+        if((length) * 150 > 1024) {
+          $(row).css("width", (length) * 152 + "px");
+        }
       }
 
     };

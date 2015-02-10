@@ -195,6 +195,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
             this.colorCounter = {};
+            this.colorIndices = {};
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
             this._selectTiles();
             this._addPreset();
@@ -210,6 +211,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(click) {
           // If its a single click event.
           tileObjects.push(this.allTiles[start]);
+          this.getUniqueIndexes(this.allTiles[start]);
           this.getColorCount(this.allTiles[start]);
           return tileObjects;
         }
@@ -219,6 +221,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var j = 0; j <= column; j++) {
             tileObjects.push(this.allTiles[start + j]);
+            this.getUniqueIndexes(this.allTiles[start + j]);
             this.getColorCount(this.allTiles[start + j]);
           }
           start = start + 12;
@@ -340,6 +343,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(tile.circle) {
           var temp = tile.circle.colorStops;
           this.colorCounter[temp[0]] = this.colorCounter[temp[0]] + 1 || 1;
+        }
+      },
+
+      getUniqueIndexes: function(tile) {
+
+        if(tile.circle) {
+          var temp = tile.circle.colorStops;
+          if(! this.colorCounter[temp[0]]) {
+            this.colorIndices[tile.index] = true;
+          }
         }
       }
 
