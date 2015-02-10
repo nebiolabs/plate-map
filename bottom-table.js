@@ -40,10 +40,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addBottomTableData: function() {
 
         if(this.allSelectedObjects.length == 1) {
+          var noOfFields;
           var selectedObj = this.allSelectedObjects[0];
           var selectedWellAttributes = selectedObj["selectedWellAttributes"];
           var captions = {"Plate ID": true};
-          this.captionIds = {};
+          this.captionIds = [];
           $(".plate-setup-bottom-container").html("");
           //Creates a row
           this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
@@ -51,14 +52,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var attr in selectedWellAttributes) {
               if(selectedWellAttributes[attr]) {
                 captions[$("#" + attr).data("caption")] = true;
-                this.captionIds[attr] = true;
+                this.captionIds.push(attr);
                 var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                                 .html("<div>" + $("#" + attr).data("caption") + "</div>");
                 $(this.bottomRow).append(singleField);
             }
           }
 
-          var noOfFields = Object.keys(captions).length;
+          noOfFields = this.captionIds.length;
 
           if(noOfFields > 1) {
             // If there is atleast one field to show .
@@ -72,8 +73,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 
 
-          if(noOfFields * 150 > 1024) {
-            $(this.bottomRow).css("width", (noOfFields) * 152 + "px");
+          if((noOfFields + 1) * 150 > 1024) {
+            $(this.bottomRow).css("width", (noOfFields + 1) * 152 + "px");
           }
 
         } else {
@@ -84,8 +85,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addForMultiselect: function() {
         // When more than one fields are selected .. !
         // Look for implementations in engine, from selected objects we know differnt colors selected..!!
+        var noOfFields;
         var captions = {"Plate ID": true};
-        this.captionIds = {};
+        this.captionIds = [];
         $(".plate-setup-bottom-container").html("");
         //Creates a row
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
@@ -98,7 +100,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var attr in selectedWellAttributes) {
               if(! captions[$("#" + attr).data("caption")]) {
                 captions[$("#" + attr).data("caption")] = true;
-                this.captionIds[attr] = true;
+                this.captionIds.push(attr);
                 var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                                 .html("<div>" + $("#" + attr).data("caption") + "</div>");
                 $(this.bottomRow).append(singleField);
@@ -106,7 +108,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
-        var noOfFields = Object.keys(captions).length;
+        noOfFields = this.captionIds.length;
         if(noOfFields > 1) {
           // If there is atleast one field to show .
           var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
@@ -116,9 +118,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           $(this.bottomContainer).append(this.bottomRow);
           this.addDataToBottomTable(this.captionIds, noOfFields);
         }
-
+        console.log(noOfFields)
         if((noOfFields + 1) * 150 > 1024) {
-          $(this.bottomRow).css("width", noOfFields * 152 + "px");
+          $(this.bottomRow).css("width", (noOfFields + 1) * 152 + "px");
         }
 
       },
@@ -127,7 +129,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var tile;
         var length = captionLength;
-
+        var row;
         for(var tileIndex in this.colorIndices) {
 
           var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
@@ -137,16 +139,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
           $(row).append(plateIdDiv);
 
-          for(var selected in captionIds) {
-            var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").
-            html(tile["wellData"][selected] || "");
+          for(var selected = 0; selected< length; selected ++) {
+            var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").html("");
+            if(tile.selectedWellAttributes[captionIds[selected]]) {
+              $(dataDiv).html(tile["wellData"][captionIds[selected]] || "");
+            }
+            //console.log(tile["wellData"][captionIds[selected]]);
             $(row).append(dataDiv);
           }
           $(this.bottomContainer).append(row);
-        }
 
-        if((length) * 150 > 1024) {
-          $(row).css("width", (length) * 152 + "px");
+          if((length + 1) * 150 > 1024) {
+            $(row).css("width", (length +1) * 152 + "px");
+          }
+          console.log( "_______________________________");
         }
       }
 
