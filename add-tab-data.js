@@ -111,6 +111,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           case "boolean":
             $("#" + data.id).select2({
+              allowClear: true
             });
 
             $("#" + data.id).on("change", function(evt, generated) {
