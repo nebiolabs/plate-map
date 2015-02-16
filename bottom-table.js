@@ -14,9 +14,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addRemoveToBottamTable: function(field) {
 
         if(this.allSelectedObjects) {
-          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
-
-          console.log("Wow", this.colorIndices, this.startingTileIndex, this.rowCount);
           this._addBottomTableData();
         }
       },
@@ -55,14 +52,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.addDataToBottomTable(this.captionIds, noOfFields);
           }
 
-
-
-          if((noOfFields + 1) * 150 > 1024) {
-            $(this.bottomRow).css("width", (noOfFields + 1) * 152 + "px");
-          }
+          this.adjustFieldWidth(noOfFields, this.bottomRow);
 
         } else {
-          console.log("Okay This is the place");
           this._addForMultiselect();
         }
       },
@@ -78,7 +70,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
         for(var tileIndex in this.colorIndices) {
-          console.log("meh", tileIndex);
+
           var selectedObj = this.allTiles[tileIndex];
           var selectedWellAttributes = selectedObj["selectedWellAttributes"];
 
@@ -105,9 +97,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.addDataToBottomTable(this.captionIds, noOfFields);
         }
 
-        if((noOfFields + 1) * 150 > 1024) {
-          $(this.bottomRow).css("width", (noOfFields + 1) * 152 + "px");
-        }
+        this.adjustFieldWidth(noOfFields, this.bottomRow);
 
       },
 
@@ -117,7 +107,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var length = captionLength;
         var row;
         for(var tileIndex in this.colorIndices) {
-          console.log(tileIndex);
+
           var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
           tile = this.allTiles[tileIndex];
           var colorStops = tile.circle.colorStops;
@@ -135,10 +125,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           $(this.bottomContainer).append(row);
 
-          if((length + 1) * 150 > 1024) {
-            $(row).css("width", (length +1) * 152 + "px");
-          }
+          this.adjustFieldWidth(length, row);
           console.log( "_______________________________");
+        }
+      },
+
+      adjustFieldWidth: function(length, row) {
+
+        if((length + 1) * 150 > 1024) {
+          $(row).css("width", (length +1) * 152 + "px");
         }
       }
 
