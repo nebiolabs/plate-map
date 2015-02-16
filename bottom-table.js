@@ -14,47 +14,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addRemoveToBottamTable: function(field) {
 
         if(this.allSelectedObjects) {
-          this._addBottomTableData();
-        }
-      },
-
-      _addBottomTableData: function() {
-
-        if(this.allSelectedObjects.length == 1) {
-          var noOfFields;
-          var selectedObj = this.allSelectedObjects[0];
-          var selectedWellAttributes = selectedObj["selectedWellAttributes"];
-          var captions = {"Plate ID": true};
-          this.captionIds = [];
-          $(".plate-setup-bottom-container").html("");
-          //Creates a row
-          this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
-
-          for(var attr in selectedWellAttributes) {
-              if(selectedWellAttributes[attr]) {
-                captions[$("#" + attr).data("caption")] = true;
-                this.captionIds.push(attr);
-                var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                                .html("<div>" + $("#" + attr).data("caption") + "</div>");
-                $(this.bottomRow).append(singleField);
-            }
-          }
-
-          noOfFields = this.captionIds.length;
-
-          if(noOfFields > 0) {
-            // If there is atleast one field to show .
-            var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                              .html("<div>" + "Plate ID" + "</div>");
-            $(this.bottomRow).prepend(singleField);
-            // Now we append all the captions at the place.
-            $(this.bottomContainer).append(this.bottomRow);
-            this.addDataToBottomTable(this.captionIds, noOfFields);
-          }
-
-          this.adjustFieldWidth(noOfFields, this.bottomRow);
-
-        } else {
           this._addForMultiselect();
         }
       },
@@ -76,13 +35,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 
           for(var attr in selectedWellAttributes) {
-              if(! captions[$("#" + attr).data("caption")]) {
-                captions[$("#" + attr).data("caption")] = true;
-                this.captionIds.push(attr);
-                var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                                .html("<div>" + $("#" + attr).data("caption") + "</div>");
-                $(this.bottomRow).append(singleField);
-              }
+            if(! captions[$("#" + attr).data("caption")]) {
+              captions[$("#" + attr).data("caption")] = true;
+              this.captionIds.push(attr);
+              var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                              .html("<div>" + $("#" + attr).data("caption") + "</div>");
+              $(this.bottomRow).append(singleField);
+            }
           }
         }
 

@@ -200,7 +200,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._selectTiles();
             this._addPreset();
             this._applyValuesToTabs();
-            this._addBottomTableData();
+            this._addForMultiselect();
             this.mainFabricCanvas.bringToFront(this.overLay);
           }
       },
@@ -209,7 +209,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.colorCounter = {};
         this.colorIndices = {};
-        
+
         var tileObjects = [];
         if(click) {
           // If its a single click event.
