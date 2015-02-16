@@ -15,13 +15,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             wellData[e.target.id] = e.target.value;
             this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
+          this._addRemoveToBottamTable();
           console.log("_______________________________________________");
           this.mainFabricCanvas.renderAll();
-          //this.engine.processChange(this.allSelectedObjects[0]["wellData"]);
-
-          /*var data = {
-            "value": this.allTiles
-          };*/
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
           //this._trigger("getPlates", null, data);
         }
@@ -36,6 +33,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             unitData[e.target.id] = e.target.value;
             this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
+          this._addRemoveToBottamTable();
           this.mainFabricCanvas.renderAll();
         }
       },

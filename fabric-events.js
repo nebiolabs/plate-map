@@ -194,8 +194,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
           if(startingTileIndex >= 0 && startingTileIndex <= 95) {
-            this.colorCounter = {};
-            this.colorIndices = {};
+            this.startingTileIndex = startingTileIndex;
+            this.CLICK = click;
             this.allSelectedObjects = this._selectTilesFromRectangle(startingTileIndex, this.rowCount, this.columnCount, click);
             this._selectTiles();
             this._addPreset();
@@ -207,6 +207,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _selectTilesFromRectangle: function(start, row, column, click) {
 
+        this.colorCounter = {};
+        this.colorIndices = {};
+        
         var tileObjects = [];
         if(click) {
           // If its a single click event.
