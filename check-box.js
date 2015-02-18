@@ -66,7 +66,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
-          alert("check point 1");
           this.mainFabricCanvas.renderAll();
         }
       },
