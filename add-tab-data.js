@@ -17,7 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
             for(field in tabData[currentTab]["fields"]) {
-              
+
               var data = tabData[currentTab]["fields"][field];
               var input = this._createField(data);
 
@@ -112,7 +112,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           case "boolean":
             $("#" + data.id).select2({
-              allowClear: true
+              allowClear: true,
+              minimumResultsForSearch: -1
             });
 
             $("#" + data.id).on("change", function(evt, generated) {
