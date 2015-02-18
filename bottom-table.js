@@ -28,6 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //Creates a row
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
+        console.log(this.colorIndices);
         for(var tileIndex in this.colorIndices) {
 
           var selectedObj = this.allTiles[tileIndex];
@@ -46,7 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         noOfFields = this.captionIds.length;
-        if(noOfFields > 0) {
+        if(! $.isEmptyObject(this.colorIndices)) {
           // If there is atleast one field to show .
           var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                             .html("<div>" + "Plate ID" + "</div>");
