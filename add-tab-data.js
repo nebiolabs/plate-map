@@ -17,6 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
             for(field in tabData[currentTab]["fields"]) {
+              
               var data = tabData[currentTab]["fields"][field];
               var input = this._createField(data);
 

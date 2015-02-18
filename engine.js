@@ -15,7 +15,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         checkValues: {},
 
         processChange: function(tile) {
-
+          // We have commands here, It is implemented like this so that we can undo/redo
+          // actions. Implement it in some other file.... !!
           if($.isEmptyObject(this.derivative)) {
             // this block is executed at the very first time.
             this._getCheckedValues(tile)
