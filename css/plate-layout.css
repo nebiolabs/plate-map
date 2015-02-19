@@ -339,6 +339,10 @@
   border-bottom: solid #c2c2c2 1px;
 }
 
+.plate-setup-bottom-row-seperate {
+  border-bottom: solid #c2c2c2 1px;
+}
+
 .plate-setup-bottom-single-field div {
   margin-top: 5px;
   margin-left: 10px;

@@ -47,6 +47,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Canvas
         this._canvas();
 
+        this.bottomForFirstTime();
       },
 
       _createElement: function(element) {
