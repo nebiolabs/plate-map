@@ -28,9 +28,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //Creates a row
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
-        for(var tileIndex in this.colorIndices) {
+        for(var tileColor in this.colorToIndex) {
 
-          var selectedObj = this.allTiles[tileIndex];
+          if(this.engine.colorCounter[tileColor] == 0) {
+            console.log(tileColor);
+            delete this.colorToIndex[tileColor];
+            continue;
+          }
+          var selectedObj = this.allTiles[this.colorToIndex[tileColor]];
           var selectedWellAttributes = selectedObj["selectedWellAttributes"];
 
 
@@ -53,15 +58,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Now we append all the captions at the place.
         $(this.bottomContainer).append(this.bottomRow);
 
-        if( $.isEmptyObject(this.colorIndices)) {
+        $(this.bottomRow).addClass("plate-setup-bottom-row-seperate");
 
-          $(this.bottomRow).addClass("plate-setup-bottom-row-seperate");
-        } else {
-
-          this.addDataToBottomTable(this.captionIds, noOfFields);
-          this.adjustFieldWidth(noOfFields, this.bottomRow);
-        }
-
+        this.addDataToBottomTable(this.captionIds, noOfFields);
+        this.adjustFieldWidth(noOfFields, this.bottomRow);
       },
 
       bottomForFirstTime: function() {
@@ -93,10 +93,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tile;
         var length = captionLength;
         var row;
-        for(var tileIndex in this.colorIndices) {
+        for(var tileColor in this.colorToIndex) {
 
           var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
-          tile = this.allTiles[tileIndex];
+          tile = this.allTiles[this.colorToIndex[tileColor]];
           var colorStops = tile.circle.colorStops;
           var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
           $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");

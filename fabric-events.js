@@ -5,6 +5,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.fabricEvents = function() {
     // This object contains Menu items and how it works;
     return {
+        colorToIndex: {},
 
       _fabricEvents: function() {
 
@@ -357,8 +358,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var temp = tile.circle.colorStops;
           if(! this.colorCounter[temp[0]]) {
             this.colorIndices[tile.index] = true;
+            var colors = Object.keys(this.colorToIndex);
+
+            if(colors.indexOf(temp[0]) == -1) {
+              this.colorToIndex[temp[0]] = tile.index;
+            }
+
           }
         }
+        console.log("big shot", this.colorIndices, this.colorToIndex);
       }
 
     };
