@@ -102,7 +102,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.unCheckedWell = THIS.allTiles[tile.index];
             }
           }
-
+          console.log(this.unCheckedWell);
           return {
             "action": "Copy Color",
             "colorStops": THIS.allTiles[this.unCheckedWell.index].circle.colorStops,
@@ -169,6 +169,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         _rollBack: function() {
           // Here we roll back from numbers to color
           this.colorCounter = {};
+          THIS.colorToIndex = {};
           THIS.afterLimitPointer = 0;
           THIS.tooManyColorsApplyed = false;
           THIS.colorPointer  = THIS.colorPointer - 1;
@@ -186,6 +187,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var colorObject = this._rollBackValues(THIS.allTiles[i], currentColor);
             THIS._setGradient(THIS.allTiles[i].circle, colorObject)
           }
+
+          THIS._selectTilesFromRectangle(0, 7, 11, this.CLICK);
+          this.allSelectedObject = null;
+          //THIS.mainFabricCanvas.renderAll();
         },
 
         _rollBackValues: function(tile, currentColor) {
@@ -215,10 +220,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var keys = Object.keys(this.unCheckedWellIndexes);
             this.unCheckedWell = THIS.allTiles[keys[0]];
           }
-
-
-        }
-
+        },
       }
     }
   }

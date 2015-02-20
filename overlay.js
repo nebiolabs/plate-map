@@ -56,6 +56,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
             tile["unitData"] = $.extend(true, {}, this.allUnitData);
             tile["selectedWellAttributes"] = {};
 
+            /*if(this.engine.unCheckedWell != null) {
+              //alert("boom 1");
+              if(this.engine.unCheckedWell.index == tile.index) {
+                //alert("boom 2");
+                this.engine.unCheckedWell = null;
+              }
+            }*/
+            /*if(this.engine.unCheckedWellIndexes[tile.index]) {
+              delete this.engine.unCheckedWellIndexes[tile.index];
+            }*/
+            this.engine._manageUnCheckedWellIndexes(tile);
+
             if(tile.circle) {
               // that works like a charm, we remove circle from canvas and delete the reference from
               // tile/well object.
@@ -64,6 +76,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.mainFabricCanvas.remove(tile.circleText);
 
               -- this.engine.colorCounter[tile.circle.colorStops[0]];
+
+
+
 
               delete this.engine.derivative[tile.index];
               delete tile.circle;
@@ -74,7 +89,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           if(this.engine._checkRollBack() === "rollback" && this.tooManyColorsApplyed) {
             this.engine._rollBack();
+
+          } else {
+            this.colorToIndex = {};
+            this._selectTilesFromRectangle(0, 7, 11, this.CLICK);
+            this.allSelectedObject = null;
+            //this.mainFabricCanvas.renderAll();
           }
+          this._addForMultiselect();
           this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
         } else {
           alert("Please select any well");

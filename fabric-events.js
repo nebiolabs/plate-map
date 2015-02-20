@@ -366,7 +366,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           }
         }
-        console.log("big shot", this.colorIndices, this.colorToIndex);
+        //console.log("big shot", this.colorIndices, this.colorToIndex);
       }
 
     };

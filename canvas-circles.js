@@ -242,9 +242,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             case "New Circle":
               this.afterLimitPointerAdded = true;
-
               var freeColor = this.engine._getFreeColor();
 
+              if(this.job.mode == "Unchecked") {
+                this.engine.unCheckedWell = this.allTiles[tileToAdd.index]
+              }
+              
               if(freeColor) {
                 this.afterLimitPointerAdded = false;
                 var colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];
@@ -252,10 +255,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this.addCircle(8, tileToAdd, null, colorIndex);
                 tileToAdd.circle.colorStops = tempCol;
                 this._plusColor(tempCol);
-
-                if(this.job.mode == "Unchecked") {
-                  this.engine.unCheckedWell = this.allTiles[tileToAdd.index]
-                }
                 return true;
               }
 
