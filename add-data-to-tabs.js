@@ -90,6 +90,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return true;
       },
 
+      compareObjectsOneWay: function(object, reference) {
+
+        for(var ref in reference) {
+          if(reference[ref] !== object[ref] ) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+
       _clearAllFields: function(allFields) {
         // Clear all the fields
         var fakeAllFields = $.extend({}, allFields);

@@ -13,31 +13,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
       // This method checks if given selection has circle.
         this.colorAdded = false;
         this.limit = (this.colorPairs.length - 1) / 2;
-        var job = this.engine.processChange(tile);
+        this.job = this.engine.processChange(tile);
         if(this.colorPointer > this.limit) {
-          this._handleOverLimit(tile, job);
+          this._handleOverLimit(tile, this.job);
           return true;
         }
-        
-        switch(job.action) {
+        console.log(this.job)
+        switch(this.job.action) {
 
           case "New Circle":
             if(this.colorPointer === this.limit && ! this.engine._getFreeColor()) {
               // This is a special case, Just after we reach the limit and we want a new color circle.
               this.afterLimitPointer = this.colorPointer + 1;
-              this._handleOverLimit(tile, job);
+              this._handleOverLimit(tile, this.job);
               this.colorPointer ++;
               return true;
             }
             this.colorAdded = true;
             this._addCircleToCanvas(tile);
+            if(this.job.mode == "Unchecked") {
+              console.log("Wow");
+              this.engine.unCheckedWell = this.allTiles[tile.index]
+            }
             break;
 
           case "New Color":
             if(this.colorPointer === this.limit && ! this.engine._getFreeColor()) {
               // This is a special case, Just after we reach the limit and we want a new color circle.
               this.afterLimitPointer = this.colorPointer + 1;
-              this._handleOverLimit(tile, job);
+              this._handleOverLimit(tile, this.job);
               this.colorPointer ++;
               return true;
             }
@@ -65,14 +69,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           case "Copy Color":
             if(tile.circle) {
-              this._changeColoredCircle(tile, job.colorStops, job.colorIndex);
+              this._changeColoredCircle(tile, this.job.colorStops, this.job.colorIndex);
             } else {
-              this._addCircleToCanvas(tile, job.colorStops, job.colorIndex);
-              this._plusColor(job.colorStops);
+              this._addCircleToCanvas(tile, this.job.colorStops, this.job.colorIndex);
+              this._plusColor(this.job.colorStops);
             }
             break;
 
           case "Keep Color":
+            break;
+
+          case "Unchecked":
+
+            if(this.uncheckedColor) {
+
+            } else {
+              console.log("this dude is unchecked");
+            }
+
         }
 
         if(this.colorAdded) this.colorPointer ++;
@@ -189,6 +203,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           y2: circle.height,
           colorStops: colorStops
         });
+
       },
 
       _changeColoredCircle: function(tile, colorObject, colorIndex) {
@@ -221,9 +236,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.colorCounter[colorObject[0]]  = this.colorCounter[colorObject[0]] - 1 || 0;
       },
 
-      _handleOverLimit: function(tileToAdd, job) {
+      _handleOverLimit: function(tileToAdd) {
           this.afterLimitPointerAdded = false;
-          switch(job.action) {
+          switch(this.job.action) {
 
             case "New Circle":
               this.afterLimitPointerAdded = true;
@@ -237,6 +252,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this.addCircle(8, tileToAdd, null, colorIndex);
                 tileToAdd.circle.colorStops = tempCol;
                 this._plusColor(tempCol);
+
+                if(this.job.mode == "Unchecked") {
+                  this.engine.unCheckedWell = this.allTiles[tileToAdd.index]
+                }
                 return true;
               }
 
@@ -263,11 +282,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             case "Copy Color":
               if(tileToAdd.circle) {
-                this._changeColoredCircleAfterLimit(tileToAdd, job.colorStops, job.colorIndex);
+                this._changeColoredCircleAfterLimit(tileToAdd, this.job.colorStops, this.job.colorIndex);
               } else {
-                this.addCircle(8, tileToAdd, null, job.colorIndex);
-                tileToAdd.circle.colorStops = job.colorStops;
-                this._plusColor(job.colorStops);
+                this.addCircle(8, tileToAdd, null, this.job.colorIndex);
+                tileToAdd.circle.colorStops = this.job.colorStops;
+                this._plusColor(this.job.colorStops);
               }
               break;
 

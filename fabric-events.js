@@ -320,10 +320,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var referenceFields = referenceTile["wellData"];
           var referenceUnits = referenceTile["unitData"];
           var referenceSelectedFields = referenceTile["selectedWellAttributes"];
+          var wellD = this.engine._getCheckedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
           var equalWellData = true;
           var equalUnitData = true;
           var equalSelectData = true;
           // Looking for same well data
+          // Correct this
           for(var i = 0; i < this.allSelectedObjects.length; i++) {
 
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);

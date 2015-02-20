@@ -14,54 +14,100 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         checkValues: {},
 
+        unCheckedWell: null,
+
+        unCheckedWellIndexes: {},
+
         processChange: function(tile) {
           // We have commands here, It is implemented like this so that we can undo/redo
           // actions. Implement it in some other file.... !!
-          if($.isEmptyObject(this.derivative)) {
-            // this block is executed at the very first time.
-            this._getCheckedValues(tile)
-            this.createDerivative(tile);
-            return {
-              "action": "New Circle"
-            };
-          }
+          if(! $.isEmptyObject(tile["selectedWellAttributes"])) {
 
-          var wellD = this._getCheckedValues(tile) || tile["wellData"];
+            if($.isEmptyObject(this.derivative)) {
+              // this block is executed at the very first time.
+              this.createDerivative(tile);
+              return {
+                "action": "New Circle",
+                "mode": "Checked"
+              };
+            }
 
-          for(var i in this.derivative) {
+            this._manageUnCheckedWellIndexes(tile);
 
-            if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
-              if(THIS.compareObjects(this.derivative[i]["wellData"], wellD)) {
-                if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
-                  this.createDerivative(tile);
-                  return {
-                    "action": "Copy Color",
-                    "colorStops": THIS.allTiles[i].circle.colorStops,
-                    "colorIndex": THIS.allTiles[i].circle.colorIndex
-                  };
+            var wellD = this._getCheckedValues(tile) || tile["wellData"];
+
+            for(var i in this.derivative) {
+              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
+                if(THIS.compareObjectsOneWay(this.derivative[i]["wellData"], wellD)) {
+                  if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
+                    this.createDerivative(tile);
+                    return {
+                      "action": "Copy Color",
+                      "colorStops": THIS.allTiles[i].circle.colorStops,
+                      "colorIndex": THIS.allTiles[i].circle.colorIndex,
+                      "mode": "Checked"
+                    };
+                  }
                 }
               }
             }
+
+            this.createDerivative(tile);
+
+            if(tile.circle) {
+              var color = tile.circle.colorStops[0];
+              if(this.colorCounter[color] === THIS.colorCounter[color]) {
+                return {
+                  "action": "Keep Color",
+                  "mode": "Checked"
+                };
+              }
+              return {
+                "action": "New Color",
+                "mode": "Checked"
+              };
+            }
+
+            return {
+              "action": "New Circle",
+              "mode": "Checked"
+            };
+          } else {
+            // We come to this place if there is no checked values
+            return this._manageUncheckedTiles(tile);
+          }
+
+        },
+
+        _manageUncheckedTiles: function(tile) {
+
+          this.unCheckedWellIndexes[tile.index] = true;
+          if($.isEmptyObject(this.derivative)) {
+            this.createDerivative(tile);
+            return {
+              "action": "New Circle",
+              "mode": "Unchecked"
+            };
           }
 
           this.createDerivative(tile);
 
-          if(tile.circle) {
-            var color = tile.circle.colorStops[0];
-            if(this.colorCounter[color] === THIS.colorCounter[color]) {
+          if(this.unCheckedWell == null) {
+            if(! tile.circle) {
               return {
-                "action": "Keep Color"
+                "action": "New Circle",
+                "mode": "Unchecked"
               };
+            } else {
+              this.unCheckedWell = THIS.allTiles[tile.index];
             }
-            return {
-              "action": "New Color"
-            };
           }
 
           return {
-            "action": "New Circle"
+            "action": "Copy Color",
+            "colorStops": THIS.allTiles[this.unCheckedWell.index].circle.colorStops,
+            "colorIndex": THIS.allTiles[this.unCheckedWell.index ].circle.colorIndex
           };
-
         },
 
         createDerivative: function(tile) {
@@ -155,6 +201,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           tile.circleText.setVisible(false);
 
           return colorObject;
+        },
+
+        _manageUnCheckedWellIndexes: function(tile) {
+
+          if(this.unCheckedWellIndexes[tile.index]) {
+            delete this.unCheckedWellIndexes[tile.index];
+          }
+
+          if($.isEmptyObject(this.unCheckedWellIndexes)) {
+            this.unCheckedWell = null;
+          } else {
+            var keys = Object.keys(this.unCheckedWellIndexes);
+            this.unCheckedWell = THIS.allTiles[keys[0]];
+          }
+
+
         }
 
       }
