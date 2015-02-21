@@ -14,7 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.colorAdded = false;
         this.limit = (this.colorPairs.length - 1) / 2;
         this.job = this.engine.processChange(tile);
-        console.log(this.job)
+        //console.log(this.job)
         if(this.colorPointer > this.limit) {
           this._handleOverLimit(tile, this.job);
           return true;

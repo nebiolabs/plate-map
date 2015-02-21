@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           //console.log(selectedIndexes)
           this._colorMixer(selectedIndexes);
-          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
+          //this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
           console.log("_______________________________________________");
           this.mainFabricCanvas.renderAll();
@@ -31,14 +31,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _colorMixer: function(selectedIndexes) {
 
         this.colorToIndex = {};
-        for(var i = 0; i < 50; i++) {
+        for(var i = 0; i < 96; i++) {
           //console.log(selectedIndexes.indexOf(this.allTiles[i].index))
           if(this.allTiles[i].circle || selectedIndexes.indexOf(this.allTiles[i].index) != -1) {
             this._addColorCircle(this.allTiles[i]);
             this.colorToIndex[this.allTiles[i].circle.colorStops[0]] = this.allTiles[i].index;
           }
-
         }
+        this.allSelectedObjects = this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
       },
       _addUnitData: function(e) {
         // This method add/change data when unit of some numeric field is changed
@@ -49,7 +49,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             unitData[e.target.id] = e.target.value;
             this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
-          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
+          this._colorMixer(selectedIndexes);
+          //this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
           this.mainFabricCanvas.renderAll();
         }

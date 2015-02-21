@@ -58,25 +58,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if(clickedCheckBox.data("clicked")) {
 
               this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
-              var fieldId = $("#" + clickedCheckBox.data("linkedFieldId")).val();
-              if(fieldId) {
+              var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
+              if(fieldVal) {
                 this._colorMixer([]);
               }
             } else {
               delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
               this._colorMixer([])
-              
+
             }
             this.allSelectedObjects[objectIndex]["selectedWellAttributes"] = this.globalSelectedAttributes;
             // Look for appropriate color.
             //this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
 
-          this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
+          //this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
           this.mainFabricCanvas.renderAll();
         }
-        console.log("Cool", this.globalSelectedAttributes)
       },
     };
   }

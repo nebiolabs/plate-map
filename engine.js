@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         _manageUncheckedTiles: function(tile) {
-          
+
           this.unCheckedWellIndexes[tile.index] = true;
           if($.isEmptyObject(this.derivative)) {
             this.createDerivative(tile);

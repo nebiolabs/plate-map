@@ -97,6 +97,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
           tile = this.allTiles[this.colorToIndex[tileColor]];
+          
           var colorStops = tile.circle.colorStops;
           var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
 
@@ -110,7 +111,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var selected = 0; selected< length; selected ++) {
             var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").html("");
-            if(tile.selectedWellAttributes[captionIds[selected]]) {
+            if(this.globalSelectedAttributes[captionIds[selected]]) {
               $(dataDiv).html(tile["wellData"][captionIds[selected]] || "");
             }
 
