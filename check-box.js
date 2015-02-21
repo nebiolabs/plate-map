@@ -6,6 +6,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // For those check boxes associated with every field in the tab
     return {
 
+      globalSelectedAttributes: {},
+
       _addCheckBox: function(fieldArray, fieldArrayIndex, data) {
 
         var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
@@ -54,20 +56,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
             if(clickedCheckBox.data("clicked")) {
-              // This could be changed so that many things get easier .. !
-              selectionData[clickedCheckBox.data("linkedFieldId")] = true;
+
+              this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
+              var fieldId = $("#" + clickedCheckBox.data("linkedFieldId")).val();
+              if(fieldId) {
+                this._colorMixer([]);
+              }
             } else {
-              delete selectionData[clickedCheckBox.data("linkedFieldId")];
-              //selectionData[clickedCheckBox.data("linkedFieldId")] = false;
+              delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
+              this._colorMixer([])
+              
             }
+            this.allSelectedObjects[objectIndex]["selectedWellAttributes"] = this.globalSelectedAttributes;
             // Look for appropriate color.
-            this._addColorCircle(this.allSelectedObjects[objectIndex]);
+            //this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
 
           this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
           this.mainFabricCanvas.renderAll();
         }
+        console.log("Cool", this.globalSelectedAttributes)
       },
     };
   }

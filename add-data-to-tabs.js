@@ -18,7 +18,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._applyUnitData(unitId, units);
         }
         // Now put back selected fields
-        var selectedFields = this.allSelectedObjects[0]["selectedWellAttributes"];
+        var selectedFields = this.globalSelectedAttributes;
 
         for(var selectedFieldId in selectedFields) {
           if(selectedFields[selectedFieldId] == true) {
@@ -60,12 +60,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           break;
         }
         // Clear previously selected checkboxes
-        var checkBoxImage = $("#" + id).data("checkBox");
+        /*var checkBoxImage = $("#" + id).data("checkBox");
 
         if($(checkBoxImage).data("clicked")) {
           $(checkBoxImage).attr("src", this.imgSrc + "/dont.png");
           $(checkBoxImage).data("clicked", false);
-        }
+        }*/
       },
 
       _applyUnitData: function(unitId, units) {

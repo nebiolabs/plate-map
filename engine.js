@@ -21,7 +21,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         processChange: function(tile) {
           // We have commands here, It is implemented like this so that we can undo/redo
           // actions. Implement it in some other file.... !!
-          if(! $.isEmptyObject(tile["selectedWellAttributes"])) {
+          if(! $.isEmptyObject(THIS.globalSelectedAttributes)) {
 
             if($.isEmptyObject(this.derivative)) {
               // this block is executed at the very first time.
@@ -37,7 +37,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var wellD = this._getCheckedValues(tile) || tile["wellData"];
 
             for(var i in this.derivative) {
-              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], tile["selectedWellAttributes"])) {
+              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], THIS.globalSelectedAttributes)) {
                 if(THIS.compareObjectsOneWay(this.derivative[i]["wellData"], wellD)) {
                   if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
                     this.createDerivative(tile);
@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         _manageUncheckedTiles: function(tile) {
-
+          
           this.unCheckedWellIndexes[tile.index] = true;
           if($.isEmptyObject(this.derivative)) {
             this.createDerivative(tile);
@@ -102,7 +102,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.unCheckedWell = THIS.allTiles[tile.index];
             }
           }
-          console.log(this.unCheckedWell);
+          //console.log(this.unCheckedWell);
           return {
             "action": "Copy Color",
             "colorStops": THIS.allTiles[this.unCheckedWell.index].circle.colorStops,
@@ -117,20 +117,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.derivative[tile.index]["wellData"] = ($.isEmptyObject(this.checkValues)) ?
                         $.extend(true, {}, tile.wellData) : $.extend(true, {}, this.checkValues);
 
-          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, tile.selectedWellAttributes);
+          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, THIS.globalSelectedAttributes);
           this.derivative[tile.index]["unitData"] = $.extend(true, {}, tile.unitData);
           this.checkValues = {};
         },
 
         _getCheckedValues: function(tile) {
 
-          if($.isEmptyObject(tile["selectedWellAttributes"])) return false;
+          if($.isEmptyObject(THIS.globalSelectedAttributes)) return false;
 
-          var keys = Object.keys(tile.selectedWellAttributes);
+          var keys = Object.keys(THIS.globalSelectedAttributes);
           var length = keys.length;
 
           for(var i = 0; i < length; i ++) {
-            this.checkValues[keys[i]] = tile["wellData"][keys[i]];
+            this.checkValues[keys[i]] = THIS.allTiles[tile.index]["wellData"][keys[i]];
           }
           return this.checkValues;
         },

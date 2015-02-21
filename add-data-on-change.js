@@ -9,12 +9,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addData: function(e, boolean) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if(this.allSelectedObjects) {
+          selectedIndexes = [];
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
-            this._addColorCircle(this.allSelectedObjects[objectIndex]);
+            selectedIndexes.push(this.allSelectedObjects[objectIndex].index)
+            //this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
+          //console.log(selectedIndexes)
+          this._colorMixer(selectedIndexes);
           this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
           this._addRemoveToBottamTable();
           console.log("_______________________________________________");
@@ -24,6 +28,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
+      _colorMixer: function(selectedIndexes) {
+
+        this.colorToIndex = {};
+        for(var i = 0; i < 50; i++) {
+          //console.log(selectedIndexes.indexOf(this.allTiles[i].index))
+          if(this.allTiles[i].circle || selectedIndexes.indexOf(this.allTiles[i].index) != -1) {
+            this._addColorCircle(this.allTiles[i]);
+            this.colorToIndex[this.allTiles[i].circle.colorStops[0]] = this.allTiles[i].index;
+          }
+
+        }
+      },
       _addUnitData: function(e) {
         // This method add/change data when unit of some numeric field is changed
         if(this.allSelectedObjects) {

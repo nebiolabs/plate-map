@@ -324,16 +324,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var wellD = this.engine._getCheckedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
           var equalWellData = true;
           var equalUnitData = true;
-          var equalSelectData = true;
+          //var equalSelectData = true;
           // Looking for same well data
           // Correct this
           for(var i = 0; i < this.allSelectedObjects.length; i++) {
 
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-              equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
+              //equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
 
-              if(!equalWellData || !equalUnitData || !equalSelectData) {
+              if(!equalWellData || !equalUnitData) {
 
                 this._clearAllFields(referenceFields);
                 return true;
@@ -358,11 +358,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var temp = tile.circle.colorStops;
           if(! this.colorCounter[temp[0]]) {
             this.colorIndices[tile.index] = true;
-            var colors = Object.keys(this.colorToIndex);
+            //var colors = Object.keys(this.colorToIndex);
 
-            if(colors.indexOf(temp[0]) == -1) {
-              this.colorToIndex[temp[0]] = tile.index;
-            }
+            //if(colors.indexOf(temp[0]) == -1) {
+              //this.colorToIndex[temp[0]] = tile.index;
+            //}
 
           }
         }

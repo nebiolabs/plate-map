@@ -35,7 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             continue;
           }
           var selectedObj = this.allTiles[this.colorToIndex[tileColor]];
-          var selectedWellAttributes = selectedObj["selectedWellAttributes"];
+          var selectedWellAttributes = this.globalSelectedAttributes;
 
 
           for(var attr in selectedWellAttributes) {
@@ -122,7 +122,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           console.log( "_______________________________");
         }
       },
-      
+
       adjustFieldWidth: function(length, row) {
 
         if((length + 1) * 150 > 1024) {
