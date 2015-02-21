@@ -217,6 +217,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _changeColoredCircleAfterLimit: function(tile, colorObject, colorIndex) {
+
         this._minusColor(tile.circle.colorStops);
         tile.circle.colorStops = colorObject;
         tile.circle.colorIndex = colorIndex;
@@ -247,7 +248,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if(this.job.mode == "Unchecked") {
                 this.engine.unCheckedWell = this.allTiles[tileToAdd.index]
               }
-              
+
               if(freeColor) {
                 this.afterLimitPointerAdded = false;
                 var colorIndex = (freeColor.charAt(1) == "#") ? parseInt(freeColor.replace("##", "")) : this.colorIndexValues[freeColor];

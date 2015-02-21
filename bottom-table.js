@@ -23,7 +23,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Look for implementations in engine, from selected objects we know differnt colors selected..!!
         var noOfFields;
         var captions = {"Plate ID": true};
-        this.captionIds = [];
+        this.captionIds = new Array();
         $(".plate-setup-bottom-container").html("");
         //Creates a row
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
@@ -31,7 +31,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for(var tileColor in this.colorToIndex) {
 
           if(this.engine.colorCounter[tileColor] == 0) {
-            console.log(tileColor);
             delete this.colorToIndex[tileColor];
             continue;
           }
@@ -61,6 +60,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.bottomRow).addClass("plate-setup-bottom-row-seperate");
 
         this.addDataToBottomTable(this.captionIds, noOfFields);
+
         this.adjustFieldWidth(noOfFields, this.bottomRow);
       },
 
@@ -99,7 +99,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           tile = this.allTiles[this.colorToIndex[tileColor]];
           var colorStops = tile.circle.colorStops;
           var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
-          $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
+
+          if(this.tooManyColorsApplyed) {
+            $(plateIdDiv).html(tile.circle.colorIndex);
+          } else {
+            $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
+          }
+
           $(row).append(plateIdDiv);
 
           for(var selected = 0; selected< length; selected ++) {
@@ -116,7 +122,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           console.log( "_______________________________");
         }
       },
-
+      
       adjustFieldWidth: function(length, row) {
 
         if((length + 1) * 150 > 1024) {
