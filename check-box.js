@@ -51,22 +51,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // corresponding field to the tile. So now a well/tile knows if particular checkbox is checkd and
         // if checked whats the value in it. because we use the value id of the element,
         // which in turn passed through attribute.
+        if(clickedCheckBox.data("clicked")) {
+
+          this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
+          var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
+          if(fieldVal) {
+            this._colorMixer([]);
+          }
+        } else {
+          delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
+          this._colorMixer([])
+
+        }
+        // For compatability remove it later
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            var selectionData = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
-            if(clickedCheckBox.data("clicked")) {
-
-              this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
-              var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
-              if(fieldVal) {
-                this._colorMixer([]);
-              }
-            } else {
-              delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
-              this._colorMixer([])
-
-            }
             this.allSelectedObjects[objectIndex]["selectedWellAttributes"] = this.globalSelectedAttributes;
             // Look for appropriate color.
             //this._addColorCircle(this.allSelectedObjects[objectIndex]);

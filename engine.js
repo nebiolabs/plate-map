@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         _manageUncheckedTiles: function(tile) {
-
+          console.log("bingo");
           this.unCheckedWellIndexes[tile.index] = true;
           if($.isEmptyObject(this.derivative)) {
             this.createDerivative(tile);
@@ -130,7 +130,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var length = keys.length;
 
           for(var i = 0; i < length; i ++) {
-            this.checkValues[keys[i]] = THIS.allTiles[tile.index]["wellData"][keys[i]];
+            //if(THIS.allTiles[tile.index]["wellData"][keys[i]] != "") {
+              this.checkValues[keys[i]] = THIS.allTiles[tile.index]["wellData"][keys[i]];
+            //}
           }
           return this.checkValues;
         },
