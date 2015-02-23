@@ -14,7 +14,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
-            selectedIndexes.push(this.allSelectedObjects[objectIndex].index)
+            selectedIndexes.push(this.allSelectedObjects[objectIndex].index);
+            this.newDude = e.target.id;
+            // new dude keeps the data , which field is edited lates or which field is checked lates
             //this._addColorCircle(this.allSelectedObjects[objectIndex]);
           }
           //console.log(selectedIndexes)
@@ -38,6 +40,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.colorToIndex[this.allTiles[i].circle.colorStops[0]] = this.allTiles[i].index;
           }
         }
+        this.newDude = null;
         this.allSelectedObjects = this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
       },
       _addUnitData: function(e) {

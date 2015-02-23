@@ -7,7 +7,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       globalSelectedAttributes: {},
-
+      newDude: null,
       _addCheckBox: function(fieldArray, fieldArrayIndex, data) {
 
         var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
@@ -56,10 +56,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
           var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
           if(fieldVal) {
+            this.newDude = clickedCheckBox.data("linkedFieldId");
             this._colorMixer([]);
           }
         } else {
           delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
+          this.newDude = clickedCheckBox.data("linkedFieldId");
           this._colorMixer([])
 
         }

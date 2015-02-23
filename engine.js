@@ -35,12 +35,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._manageUnCheckedWellIndexes(tile);
 
             var wellD = this._getCheckedValues(tile) || tile["wellData"];
-
+            //console.log(wellD)
             for(var i in this.derivative) {
               if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], THIS.globalSelectedAttributes)) {
                 if(THIS.compareObjectsOneWay(this.derivative[i]["wellData"], wellD)) {
                   if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
                     this.createDerivative(tile);
+                    //console.log("seee", this.derivative[i], i)
                     return {
                       "action": "Copy Color",
                       "colorStops": THIS.allTiles[i].circle.colorStops,
@@ -53,15 +54,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
 
             this.createDerivative(tile);
-
+            //console.log(this.derivative)
             if(tile.circle) {
               var color = tile.circle.colorStops[0];
-              if(this.colorCounter[color] === THIS.colorCounter[color]) {
+              if(this.colorCounter[color] === THIS.colorCounter[color] || ! wellD[THIS.newDude] || wellD[THIS.newDude] == "NULL") {
                 return {
                   "action": "Keep Color",
                   "mode": "Checked"
                 };
               }
+
               return {
                 "action": "New Color",
                 "mode": "Checked"
@@ -80,7 +82,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         _manageUncheckedTiles: function(tile) {
-          console.log("bingo");
+          
           this.unCheckedWellIndexes[tile.index] = true;
           if($.isEmptyObject(this.derivative)) {
             this.createDerivative(tile);
@@ -134,6 +136,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.checkValues[keys[i]] = THIS.allTiles[tile.index]["wellData"][keys[i]];
             //}
           }
+
+          /*if(THIS.newDude) {
+            //console.log("bonga");
+              if(this.checkValues[THIS.newDude] == "") {
+                //console.log("bonga inside");
+                delete this.checkValues[THIS.newDude];
+              }
+          }*/
           return this.checkValues;
         },
 
