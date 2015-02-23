@@ -33,7 +33,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.colorAdded = true;
             this._addCircleToCanvas(tile);
             if(this.job.mode == "Unchecked") {
-              console.log("Wow");
               this.engine.unCheckedWell = this.allTiles[tile.index]
             }
             break;
