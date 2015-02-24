@@ -9,230 +9,168 @@ var plateLayOutWidget = plateLayOutWidget || {};
       engine: {
 
         derivative: {},
-
-        colorCounter: {},
-
-        checkValues: {},
-
-        unCheckedWell: null,
-
-        unCheckedWellIndexes: {},
-
-        processChange: function(tile) {
-          // We have commands here, It is implemented like this so that we can undo/redo
-          // actions. Implement it in some other file.... !!
-          if(! $.isEmptyObject(THIS.globalSelectedAttributes)) {
-
-            if($.isEmptyObject(this.derivative)) {
-              // this block is executed at the very first time.
-              this.createDerivative(tile);
-              return {
-                "action": "New Circle",
-                "mode": "Checked"
-              };
-            }
-
-            this._manageUnCheckedWellIndexes(tile);
-
-            var wellD = this._getCheckedValues(tile) || tile["wellData"];
-            //console.log(wellD)
-            for(var i in this.derivative) {
-              if(THIS.compareObjects(this.derivative[i]["selectedWellAttributes"], THIS.globalSelectedAttributes)) {
-                if(THIS.compareObjectsOneWay(this.derivative[i]["wellData"], wellD)) {
-                  if(THIS.compareObjects(this.derivative[i]["unitData"], tile["unitData"])) {
-                    this.createDerivative(tile);
-                    //console.log("seee", this.derivative[i], i)
-                    return {
-                      "action": "Copy Color",
-                      "colorStops": THIS.allTiles[i].circle.colorStops,
-                      "colorIndex": THIS.allTiles[i].circle.colorIndex,
-                      "mode": "Checked"
-                    };
-                  }
-                }
-              }
-            }
-
-            this.createDerivative(tile);
-            //console.log(this.derivative)
-            if(tile.circle) {
-              var color = tile.circle.colorStops[0];
-              if(this.colorCounter[color] === THIS.colorCounter[color] || ! wellD[THIS.newDude] || wellD[THIS.newDude] == "NULL") {
-                return {
-                  "action": "Keep Color",
-                  "mode": "Checked"
-                };
-              }
-
-              return {
-                "action": "New Color",
-                "mode": "Checked"
-              };
-            }
-
-            return {
-              "action": "New Circle",
-              "mode": "Checked"
-            };
-          } else {
-            // We come to this place if there is no checked values
-            return this._manageUncheckedTiles(tile);
-          }
-
-        },
-
-        _manageUncheckedTiles: function(tile) {
-
-          this.unCheckedWellIndexes[tile.index] = true;
-          if($.isEmptyObject(this.derivative)) {
-            this.createDerivative(tile);
-            return {
-              "action": "New Circle",
-              "mode": "Unchecked"
-            };
-          }
-
-          this.createDerivative(tile);
-
-          if(this.unCheckedWell == null) {
-            if(! tile.circle) {
-              return {
-                "action": "New Circle",
-                "mode": "Unchecked"
-              };
-            } else {
-              this.unCheckedWell = THIS.allTiles[tile.index];
-            }
-          }
-          //console.log(this.unCheckedWell);
-          return {
-            "action": "Copy Color",
-            "colorStops": THIS.allTiles[this.unCheckedWell.index].circle.colorStops,
-            "colorIndex": THIS.allTiles[this.unCheckedWell.index ].circle.colorIndex
-          };
-        },
+        stackUpWithColor: {},
+        stackPointer: 2,
 
         createDerivative: function(tile) {
 
-          this.derivative[tile.index] = {};
+          var selectedValues = this.getSelectedValues(tile);
+          var attrs  = $.extend(true, {}, THIS.globalSelectedAttributes);
+          // add unitData too.
 
-          this.derivative[tile.index]["wellData"] = ($.isEmptyObject(this.checkValues)) ?
-                        $.extend(true, {}, tile.wellData) : $.extend(true, {}, this.checkValues);
-
-          this.derivative[tile.index]["selectedWellAttributes"] = $.extend(true, {}, THIS.globalSelectedAttributes);
-          this.derivative[tile.index]["unitData"] = $.extend(true, {}, tile.unitData);
-          this.checkValues = {};
+          this.derivative[tile.index] = {
+            "selectedValues": selectedValues,
+            "attrs": attrs
+          }
         },
 
-        _getCheckedValues: function(tile) {
+        getSelectedValues: function(tile) {
 
-          if($.isEmptyObject(THIS.globalSelectedAttributes)) return false;
-
-          var keys = Object.keys(THIS.globalSelectedAttributes);
-          var length = keys.length;
-
-          for(var i = 0; i < length; i ++) {
-            //if(THIS.allTiles[tile.index]["wellData"][keys[i]] != "") {
-              this.checkValues[keys[i]] = THIS.allTiles[tile.index]["wellData"][keys[i]];
-            //}
+          var data = {};
+          for(var attr in THIS.globalSelectedAttributes) {
+            if(tile["wellData"][attr] && tile["wellData"][attr] != "NULL") {
+              data[attr] = tile["wellData"][attr];
+            }
           }
 
-          /*if(THIS.newDude) {
-            //console.log("bonga");
-              if(this.checkValues[THIS.newDude] == "") {
-                //console.log("bonga inside");
-                delete this.checkValues[THIS.newDude];
+          return data;
+        },
+
+        searchAndStack: function(derivativeCopy) {
+          this.stackUpWithColor = {};
+          this.stackPointer = 2;
+          while(! $.isEmptyObject(derivativeCopy)) {
+
+            var refDerivativeIndex = Object.keys(derivativeCopy)[0];
+            var referenceDerivative = derivativeCopy[refDerivativeIndex];
+            var arr = [];
+
+            if($.isEmptyObject(referenceDerivative.selectedValues)) {
+              //console.log("wow", refDerivativeIndex);
+              if(this.stackUpWithColor[1]) {
+                this.stackUpWithColor[1].push(refDerivativeIndex);
+              } else {
+                this.stackUpWithColor[1] = [refDerivativeIndex];
               }
-          }*/
-          return this.checkValues;
-        },
-
-        _getFreeColor: function() {
-
-          for(var color in this.colorCounter) {
-            if(this.colorCounter[color] === 0) return color;
+              delete derivativeCopy[refDerivativeIndex];
+            } else {
+              // if its not an empty object
+              for(data in derivativeCopy) {
+                if(THIS.compareObjectsOneWay(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
+                  console.log("Match Found", data);
+                  arr.push(data);
+                  this.stackUpWithColor[this.stackPointer] = arr;
+                  delete derivativeCopy[data];
+                }
+              }
+              if(data.length > 0)
+              this.stackPointer ++;
+            }
           }
-          return false;
+
+          //delete derivativeCopy[refDerivative];
+
+          console.log(this.stackUpWithColor, this.stackPointer);
+
+          console.log("_____________________________");
+
         },
 
-        // This is not used -:)
-        _getFreeColorAfterLimit: function() {
+        applyColors: function() {
 
-          for(var color in this.colorCounter) {
-            if(this.colorCounter[color] === 0 && color.charAt(1) == "#") return color;
-          }
-          return false;
-        },
+          for(color in this.stackUpWithColor) {
+            console.log("colors", color);
 
-        _checkRollBack: function() {
+            for(tileIndex in this.stackUpWithColor[color]) {
+              //tile = THIS.allTiles[tileIndex];
+              console.log(this.stackUpWithColor[color][tileIndex]);
 
-          var counter = 0;
-          for(var i in this.colorCounter) {
-            if(this.colorCounter[i] != 0) {
-              counter ++;
-              if(counter > THIS.limit) {
-                return false;
+              tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
+              if(!tile.circle) {
+                this.addCircle(tile, color);
+              } else {
+                console.log("tileIndex", tileIndex);
+                var colGrad = {
+                  0: THIS.valueToColor[color],
+                  1: THIS.colorPairObject[THIS.valueToColor[color]]
+                };
+                this.setGradient(tile.circle, colGrad);
               }
             }
           }
-          return "rollback";
         },
 
-        _rollBack: function() {
-          // Here we roll back from numbers to color
-          this.colorCounter = {};
-          THIS.colorToIndex = {};
-          THIS.afterLimitPointer = 0;
-          THIS.tooManyColorsApplyed = false;
-          THIS.colorPointer  = THIS.colorPointer - 1;
-          var colorAllocationObject = {};
-          var allocationIndex = 0;
+        addCircle: function(tileToAdd, color) {
 
-          for(var i in this.derivative) {
-            var colorIndex = THIS.allTiles[i].circle.colorIndex;
+          var colGrad = {
+            0: THIS.valueToColor[color],
+            1: THIS.colorPairObject[THIS.valueToColor[color]]
+          };
+          var circle = new fabric.Circle({
+            radius: 22,
+            originX:'center',
+            originY: 'center',
+            top: tileToAdd.top,
+            left: tileToAdd.left,
+            shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
+            evented: false,
+            colorStops: colGrad
+          });
 
-            if(! colorAllocationObject[colorIndex]) {
-              colorAllocationObject[colorIndex] = ++allocationIndex;
-            }
+          circle.colorIndex = color;
 
-            var currentColor = (colorAllocationObject[colorIndex]) * 2;
-            var colorObject = this._rollBackValues(THIS.allTiles[i], currentColor);
-            THIS._setGradient(THIS.allTiles[i].circle, colorObject)
-          }
+          this.setGradient(circle, colGrad);
 
-          THIS._selectTilesFromRectangle(0, 7, 11, this.CLICK);
-          this.allSelectedObject = null;
-          //THIS.mainFabricCanvas.renderAll();
+          var circleCenter = new fabric.Circle({
+            radius: 14,
+            fill: "white",
+            originX:'center',
+            originY: 'center',
+            top: tileToAdd.top,
+            left: tileToAdd.left,
+            shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
+            evented: false,
+          });
+
+          var circleText = new fabric.IText(""+circle.colorIndex+"", {
+              top: tileToAdd.top,
+              left: tileToAdd.left,
+              fill: 'black',
+              evented: false,
+              fontSize: 12,
+              lockScalingX: true,
+              lockScalingY: true,
+              originX:'center',
+              originY: 'center',
+              visible: false
+          });
+
+          circle.parent = tileToAdd; // Linking the objects;
+          tileToAdd.circle = circle;
+          tileToAdd.circleCenter = circleCenter;
+          tileToAdd.circleText = circleText;
+          THIS.mainFabricCanvas.add(circle);
+          THIS.mainFabricCanvas.add(circleCenter);
+          THIS.mainFabricCanvas.add(circleText);
         },
 
-        _rollBackValues: function(tile, currentColor) {
+        setGradient: function(circle, colorStops) {
 
-          var colorObject = {
-                          0: THIS.colorPairs[currentColor - 1],
-                          1: THIS.colorPairs[currentColor]
-                        };
-          this.colorCounter[THIS.colorPairs[currentColor - 1]] = this.colorCounter[THIS.colorPairs[currentColor - 1]] + 1 || 1;
-          tile.circle.colorStops = colorObject;
-          tile.circle.colorIndex = THIS.colorIndexValues[colorObject[0]];
-          tile.circleText.text = "" + THIS.colorIndexValues[colorObject[0]] + "";
-          tile.circleText.setVisible(false);
+          var colorStops =  colorStops || {
+                                            0: "#ffc100",
+                                            1: "#ff6a00"
+                                          };
+          circle.setGradient("fill", {
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: circle.height,
+            colorStops: colorStops
+          });
 
-          return colorObject;
         },
 
-        _manageUnCheckedWellIndexes: function(tile) {
 
-          if(this.unCheckedWellIndexes[tile.index]) {
-            delete this.unCheckedWellIndexes[tile.index];
-          }
-
-          if($.isEmptyObject(this.unCheckedWellIndexes)) {
-            this.unCheckedWell = null;
-          } else {
-            var keys = Object.keys(this.unCheckedWellIndexes);
-            this.unCheckedWell = THIS.allTiles[keys[0]];
-          }
-        },
       }
     }
   }

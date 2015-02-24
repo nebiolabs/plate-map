@@ -33,14 +33,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _colorMixer: function(selectedIndexes) {
 
         this.colorToIndex = {};
-        for(var i = 0; i < 96; i++) {
+        for(var i = 0; i < 11; i++) {
           //console.log(selectedIndexes.indexOf(this.allTiles[i].index))
-          if(this.allTiles[i].circle || selectedIndexes.indexOf(this.allTiles[i].index) != -1) {
-            this._addColorCircle(this.allTiles[i]);
-            this.colorToIndex[this.allTiles[i].circle.colorStops[0]] = this.allTiles[i].index;
-          }
+          //if(this.allTiles[i].circle || selectedIndexes.indexOf(this.allTiles[i].index) != -1) {
+            //if(this.allTiles[i].wellData)
+            this.engine.createDerivative(this.allTiles[i]);
+
+            //this._addColorCircle(this.allTiles[i]);
+            //this.colorToIndex[this.allTiles[i].circle.colorStops[0]] = this.allTiles[i].index;
+          //}
         }
-        this.newDude = null;
+        //console.log(this.engine.derivative);
+        var derivativeCopy = $.extend(true, {}, this.engine.derivative);
+        //for(var i = 0; i < 11 ; i++) {
+          //if(! $.isEmptyObject(this.engine.derivative[this.allTiles[i].index].selectedValues)) {
+            this.engine.searchAndStack(derivativeCopy);
+            this.engine.applyColors();
+          //}
+
+        //}
+
+        //this.newDude = null;
         this.allSelectedObjects = this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
       },
       _addUnitData: function(e) {

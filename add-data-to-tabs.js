@@ -91,7 +91,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       compareObjectsOneWay: function(object, reference) {
-
+        
+        if($.isEmptyObject(reference)) return false;
         for(var ref in reference) {
           if(reference[ref] !== object[ref] ) {
             return false;

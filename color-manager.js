@@ -55,6 +55,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "#a3a3a3": 18
         },
 
+        valueToColor: {
+          1: "#e10404",
+          2: "#f8666c",
+          3: "#ff9600",
+          4: "#ffc100",
+          5: "#ffd5ed",
+          6: "#ffe735",
+          7: "#fff77a",
+          8: "#dbfa89",
+          9: "#a9eac9",
+          10: "#376a00",
+          11: "#84f0ff",
+          12: "#2ea2be",
+          13: "#003d7d",
+          14: "#a316e7",
+          15: "#a70075",
+          16: "#ee11ee",
+          17: "#5c5c5c",
+          18: "#a3a3a3"
+        },
+
         getColor: function() {
           console.log("Wow");
         }
