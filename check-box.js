@@ -55,10 +55,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")] = true;
           var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
-          if(fieldVal) {
+          //if(fieldVal) {
             this.newDude = clickedCheckBox.data("linkedFieldId");
             this._colorMixer([]);
-          }
+          //}
         } else {
           delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
           this.newDude = clickedCheckBox.data("linkedFieldId");
