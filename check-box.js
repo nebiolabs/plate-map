@@ -57,12 +57,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var fieldVal = $("#" + clickedCheckBox.data("linkedFieldId")).val();
           //if(fieldVal) {
             this.newDude = clickedCheckBox.data("linkedFieldId");
-            this._colorMixer([]);
+            this._colorMixer(false);
           //}
         } else {
           delete this.globalSelectedAttributes[clickedCheckBox.data("linkedFieldId")];
           this.newDude = clickedCheckBox.data("linkedFieldId");
-          this._colorMixer([])
+          this._colorMixer(false);
 
         }
         // For compatability remove it later
@@ -75,8 +75,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           //this._selectTilesFromRectangle(this.startingTileIndex, this.rowCount, this.columnCount, this.CLICK);
-          this._addRemoveToBottamTable();
-          this.mainFabricCanvas.renderAll();
+          //this._addRemoveToBottamTable();
+          //this.mainFabricCanvas.renderAll();
         }
       },
     };

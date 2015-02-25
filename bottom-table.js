@@ -11,123 +11,72 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.container).append(this.bottomContainer);
       },
 
-      _addRemoveToBottamTable: function(field) {
+      addBottomTableHeadings: function() {
 
-        if(this.allSelectedObjects) {
-          this._addForMultiselect();
-        }
-      },
-
-      _addForMultiselect: function() {
-        // When more than one fields are selected .. !
-        // Look for implementations in engine, from selected objects we know differnt colors selected..!!
-        var noOfFields;
-        var captions = {"Plate ID": true};
-        this.captionIds = new Array();
         $(".plate-setup-bottom-container").html("");
-        //Creates a row
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
-
-        for(var tileColor in this.colorToIndex) {
-
-          if(this.engine.colorCounter[tileColor] == 0) {
-            delete this.colorToIndex[tileColor];
-            continue;
-          }
-          var selectedObj = this.allTiles[this.colorToIndex[tileColor]];
-          var selectedWellAttributes = this.globalSelectedAttributes;
-
-
-          for(var attr in selectedWellAttributes) {
-            if(! captions[$("#" + attr).data("caption")]) {
-              captions[$("#" + attr).data("caption")] = true;
-              this.captionIds.push(attr);
-              var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                              .html("<div>" + $("#" + attr).data("caption") + "</div>");
-              $(this.bottomRow).append(singleField);
-            }
-          }
-        }
-
-        noOfFields = this.captionIds.length;
 
         var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                           .html("<div>" + "Plate ID" + "</div>");
         $(this.bottomRow).prepend(singleField);
         // Now we append all the captions at the place.
         $(this.bottomContainer).append(this.bottomRow);
-
         $(this.bottomRow).addClass("plate-setup-bottom-row-seperate");
+        this.rowCounter = 1;
 
-        this.addDataToBottomTable(this.captionIds, noOfFields);
+        for(var attr in this.globalSelectedAttributes) {
 
-        this.adjustFieldWidth(noOfFields, this.bottomRow);
+          var fieldName = $("#" + attr).data("caption");
+          var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
+                            .html("<div>" + fieldName + "</div>");
+          $(this.bottomRow).append(singleField);
+          this.rowCounter = this.rowCounter + 1;
+        }
+
+        this.adjustFieldWidth(this.bottomRow);
+      },
+
+      addBottomTableRow: function(colors, singleStack) {
+
+        var modelTile = this.allTiles[singleStack[0]];
+        var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
+        var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
+
+        if(this.engine.stackPointer <= (this.colorPairs.length / 2) +1){
+          $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ this.valueToColor[color] +" , "+ this.colorPairObject[this.valueToColor[color]] +")");
+        } else {
+          $(plateIdDiv).html(colors);
+        }
+
+        $(row).append(plateIdDiv);
+
+        for(var attr in this.globalSelectedAttributes) {
+          var data = (modelTile.wellData[attr] == "NULL") ? "" : modelTile.wellData[attr];
+          var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").html(data);
+          $(row).append(dataDiv);
+        }
+
+        $(this.bottomContainer).append(row);
+        this.adjustFieldWidth(row);
       },
 
       bottomForFirstTime: function() {
+        this.addBottomTableHeadings();
         // This is executed for the very first time.. !
-        var noOfFields;
-        var captions = {"Plate ID": true};
-        this.captionIds = [];
-        $(".plate-setup-bottom-container").html("");
-        //Creates a row
-        this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
-
-        var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
-                          .html("<div>" + "Plate ID" + "</div>");
-        $(this.bottomRow).prepend(singleField);
-        // Now we append all the captions at the place.
-        $(this.bottomContainer).append(this.bottomRow);
-
         var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
 
-        var colorStops = {0: this.colorPairs[1], 1: this.colorPairs[2]};
+        var colorStops = {0: this.colorPairs[0], 1: this.colorPairs[1]};
         var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
         $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
         $(row).append(plateIdDiv);
         $(this.bottomContainer).append(row);
       },
 
-      addDataToBottomTable: function(captionIds, captionLength) {
+      adjustFieldWidth: function(row) {
 
-        var tile;
-        var length = captionLength;
-        var row;
-        for(var tileColor in this.colorToIndex) {
-
-          var row = this._createElement("<div></div>").addClass("plate-setup-bottom-row-data");
-          tile = this.allTiles[this.colorToIndex[tileColor]];
-          
-          var colorStops = tile.circle.colorStops;
-          var plateIdDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data");
-
-          if(this.tooManyColorsApplyed) {
-            $(plateIdDiv).html(tile.circle.colorIndex);
-          } else {
-            $(plateIdDiv).css("background", "-webkit-linear-gradient(left, "+ colorStops[0] +" , "+ colorStops[1] +")");
-          }
-
-          $(row).append(plateIdDiv);
-
-          for(var selected = 0; selected< length; selected ++) {
-            var dataDiv = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field-data").html("");
-            if(this.globalSelectedAttributes[captionIds[selected]]) {
-              $(dataDiv).html(tile["wellData"][captionIds[selected]] || "");
-            }
-
-            $(row).append(dataDiv);
-          }
-          $(this.bottomContainer).append(row);
-
-          this.adjustFieldWidth(length, row);
-          console.log( "_______________________________");
-        }
-      },
-
-      adjustFieldWidth: function(length, row) {
-
-        if((length + 1) * 150 > 1024) {
-          $(row).css("width", (length +1) * 152 + "px");
+        var length = this.rowCounter;
+        if((length) * 150 > 1024) {
+          $(row).css("width", (length) * 152 + "px");
         }
       }
 

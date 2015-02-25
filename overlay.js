@@ -77,9 +77,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               -- this.engine.colorCounter[tile.circle.colorStops[0]];
 
-
-
-
               delete this.engine.derivative[tile.index];
               delete tile.circle;
               delete tile.circleCenter;
@@ -96,7 +93,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.allSelectedObject = null;
             //this.mainFabricCanvas.renderAll();
           }
-          this._addForMultiselect();
+          //this._addForMultiselect();
           this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
         } else {
           alert("Please select any well");

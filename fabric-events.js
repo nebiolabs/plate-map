@@ -208,15 +208,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _selectTilesFromRectangle: function(start, row, column, click) {
 
-        this.colorCounter = {};
-        this.colorIndices = {};
+        //this.colorCounter = {};
+        //this.colorIndices = {};
 
         var tileObjects = [];
         if(click) {
           // If its a single click event.
           tileObjects.push(this.allTiles[start]);
-          this.getUniqueIndexes(this.allTiles[start]);
-          this.getColorCount(this.allTiles[start]);
+          //this.getUniqueIndexes(this.allTiles[start]);
+          //this.getColorCount(this.allTiles[start]);
           return tileObjects;
         }
 
@@ -321,7 +321,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var referenceFields = referenceTile["wellData"];
           var referenceUnits = referenceTile["unitData"];
           var referenceSelectedFields = referenceTile["selectedWellAttributes"];
-          var wellD = this.engine._getCheckedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
+          var wellD = this.engine.getSelectedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
           var equalWellData = true;
           var equalUnitData = true;
           //var equalSelectData = true;

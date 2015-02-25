@@ -36,7 +36,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return data;
         },
 
+        getUnits: function(tile) {
+          
+        }
+
         searchAndStack: function(derivativeCopy) {
+
           this.stackUpWithColor = {};
           this.stackPointer = 2;
           while(! $.isEmptyObject(derivativeCopy)) {
@@ -63,6 +68,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   delete derivativeCopy[data];
                 }
               }
+              // here u cud add applyColors , its a different implementation, but might be a performer.
               if(data.length > 0)
               this.stackPointer ++;
             }
@@ -78,23 +84,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         applyColors: function() {
 
+          THIS.addBottomTableHeadings();
           for(color in this.stackUpWithColor) {
-            console.log("colors", color);
-
+            THIS.addBottomTableRow(color, this.stackUpWithColor[color]);
             for(tileIndex in this.stackUpWithColor[color]) {
-              //tile = THIS.allTiles[tileIndex];
-              console.log(this.stackUpWithColor[color][tileIndex]);
 
               tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
               if(!tile.circle) {
                 this.addCircle(tile, color);
               } else {
-                console.log("tileIndex", tileIndex);
-                var colGrad = {
-                  0: THIS.valueToColor[color],
-                  1: THIS.colorPairObject[THIS.valueToColor[color]]
-                };
-                this.setGradient(tile.circle, colGrad);
+                this.setGradient(tile.circle, color);
               }
             }
           }
@@ -102,10 +101,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         addCircle: function(tileToAdd, color) {
 
-          var colGrad = {
-            0: THIS.valueToColor[color],
-            1: THIS.colorPairObject[THIS.valueToColor[color]]
-          };
           var circle = new fabric.Circle({
             radius: 22,
             originX:'center',
@@ -113,13 +108,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             top: tileToAdd.top,
             left: tileToAdd.left,
             shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
-            evented: false,
-            colorStops: colGrad
+            evented: false
           });
 
           circle.colorIndex = color;
 
-          this.setGradient(circle, colGrad);
+
 
           var circleCenter = new fabric.Circle({
             radius: 14,
@@ -149,17 +143,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
           tileToAdd.circle = circle;
           tileToAdd.circleCenter = circleCenter;
           tileToAdd.circleText = circleText;
+
+          this.setGradient(circle, color);
+
           THIS.mainFabricCanvas.add(circle);
           THIS.mainFabricCanvas.add(circleCenter);
           THIS.mainFabricCanvas.add(circleText);
         },
 
-        setGradient: function(circle, colorStops) {
+        setGradient: function(circle, color) {
 
-          var colorStops =  colorStops || {
-                                            0: "#ffc100",
-                                            1: "#ff6a00"
-                                          };
+          var tile = circle.parent;
+          tile.circleText.text = "" + parseInt(color) - 1 + "";
+
+          if(this.stackPointer <= (THIS.colorPairs.length / 2) +1){
+            colorStops = {
+              0: THIS.valueToColor[color],
+              1: THIS.colorPairObject[THIS.valueToColor[color]]
+            };
+          } else {
+            tile.circleText.setVisible(true);
+            var colorStops = {
+                                0: "#ffc100",
+                                1: "#ff6a00"
+                              };
+          }
+
           circle.setGradient("fill", {
             x1: 0,
             y1: 0,
