@@ -16,11 +16,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var selectedValues = this.getSelectedValues(tile);
           var attrs  = $.extend(true, {}, THIS.globalSelectedAttributes);
+          var units = this.getUnits(tile);
           // add unitData too.
 
           this.derivative[tile.index] = {
             "selectedValues": selectedValues,
-            "attrs": attrs
+            "attrs": attrs,
+            "units": units
           }
         },
 
@@ -37,21 +39,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         getUnits: function(tile) {
-          
-        }
+
+          var data = {};
+          for(var attr in THIS.globalSelectedAttributes) {
+            if(tile.unitData[attr + "unit"]) {
+              data[attr + "unit" ] = tile.unitData[attr + "unit"];
+            }
+          }
+          return data;
+          //console.log(tile.unitData, THIS.globalSelectedAttributes);
+        },
 
         searchAndStack: function(derivativeCopy) {
 
           this.stackUpWithColor = {};
           this.stackPointer = 2;
           while(! $.isEmptyObject(derivativeCopy)) {
-
+            console.log("looping ......!")
             var refDerivativeIndex = Object.keys(derivativeCopy)[0];
             var referenceDerivative = derivativeCopy[refDerivativeIndex];
             var arr = [];
 
             if($.isEmptyObject(referenceDerivative.selectedValues)) {
-              //console.log("wow", refDerivativeIndex);
+              //
               if(this.stackUpWithColor[1]) {
                 this.stackUpWithColor[1].push(refDerivativeIndex);
               } else {
@@ -62,10 +72,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // if its not an empty object
               for(data in derivativeCopy) {
                 if(THIS.compareObjectsOneWay(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
-                  console.log("Match Found", data);
-                  arr.push(data);
-                  this.stackUpWithColor[this.stackPointer] = arr;
-                  delete derivativeCopy[data];
+                  if(THIS.compareObjectsOneWay(referenceDerivative.units, derivativeCopy[data].units)) {
+                    //console.log("Match Found", referenceDerivative.units, derivativeCopy[data].units);
+                    arr.push(data);
+                    this.stackUpWithColor[this.stackPointer] = arr;
+                    delete derivativeCopy[data];
+                  }
                 }
               }
               // here u cud add applyColors , its a different implementation, but might be a performer.
@@ -161,6 +173,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               0: THIS.valueToColor[color],
               1: THIS.colorPairObject[THIS.valueToColor[color]]
             };
+            tile.circleText.setVisible(false);
           } else {
             tile.circleText.setVisible(true);
             var colorStops = {

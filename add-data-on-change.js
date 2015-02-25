@@ -17,7 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           this._colorMixer(true);
           console.log("_______________________________________________");
-          this.mainFabricCanvas.renderAll();
+
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
           //this._trigger("getPlates", null, data);
         }
@@ -35,6 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var derivativeCopy = $.extend(true, {}, this.engine.derivative);
         this.engine.searchAndStack(derivativeCopy);
         this.engine.applyColors();
+        this.mainFabricCanvas.renderAll();
       },
 
       _addUnitData: function(e) {
@@ -48,7 +49,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           this._colorMixer(true);
           //this._addRemoveToBottamTable();
-          this.mainFabricCanvas.renderAll();
+          //this.mainFabricCanvas.renderAll();
         }
       },
 
