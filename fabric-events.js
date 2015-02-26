@@ -201,7 +201,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._selectTiles();
             this._addPreset();
             this._applyValuesToTabs();
-            //this._addForMultiselect();
             this.mainFabricCanvas.bringToFront(this.overLay);
           }
       },

@@ -46,8 +46,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               data[attr + "unit" ] = tile.unitData[attr + "unit"];
             }
           }
+          
           return data;
-          //console.log(tile.unitData, THIS.globalSelectedAttributes);
         },
 
         searchAndStack: function(derivativeCopy) {
