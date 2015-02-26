@@ -71,8 +71,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             } else {
               // if its not an empty object
               for(data in derivativeCopy) {
-                if(THIS.compareObjectsOneWay(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
-                  if(THIS.compareObjectsOneWay(referenceDerivative.units, derivativeCopy[data].units)) {
+                if(THIS.compareObjects(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
+                  if(THIS.compareObjects(referenceDerivative.units, derivativeCopy[data].units)) {
                     //console.log("Match Found", referenceDerivative.units, derivativeCopy[data].units);
                     arr.push(data);
                     this.stackUpWithColor[this.stackPointer] = arr;
