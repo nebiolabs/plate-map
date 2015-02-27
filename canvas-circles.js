@@ -61,7 +61,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tile = circle.parent;
         tile.circleText.text = "" + parseInt(color) - 1 + "";
 
-        if(stackPointer <= (this.colorPairs.length / 2) +1){
+        if(stackPointer <= (this.colorPairs.length / 2) +1) {
+
           var colorStops = {
             0: this.valueToColor[color],
             1: this.colorPairObject[this.valueToColor[color]]
@@ -69,6 +70,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           tile.circleText.setVisible(false);
         } else {
+          // If we are going beyond number of colors
           tile.circleText.setVisible(true);
           var colorStops = {
             0: "#ffc100",
@@ -84,7 +86,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           colorStops: colorStops
         });
       },
-      
+
     };
   }
 })(jQuery, fabric)

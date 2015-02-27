@@ -42,11 +42,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var limitX = 624 + xDiff;
         var limitY = 474 + xDiff;
 
-        $(window).scroll(function(evt){
+        //$(window).scroll(function(evt){
           // Look for a solution to this problem ... !!!
           // May be implement a way to handle offset, Look for calcOffset Source code.
-          that.mainFabricCanvas.calcOffset();
-        });
+          //that.mainFabricCanvas.calcOffset();
+        //});
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
 
@@ -312,7 +312,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var referenceTile =  this.allSelectedObjects[0];
           var referenceFields = referenceTile["wellData"];
           var referenceUnits = referenceTile["unitData"];
-          var referenceSelectedFields = referenceTile["selectedWellAttributes"];
           var wellD = this.engine.getSelectedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
           var equalWellData = true;
           var equalUnitData = true;
@@ -323,7 +322,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
               equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-              //equalSelectData = this.compareObjects(this.allSelectedObjects[i]["selectedWellAttributes"], referenceSelectedFields);
 
               if(!equalWellData || !equalUnitData) {
 
