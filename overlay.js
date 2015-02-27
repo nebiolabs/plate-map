@@ -44,8 +44,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      clearCrieteria: function() {
-        //correct this part .. !!
+      clearCrieteria: function(dontCallMixer) {
+        
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
@@ -70,8 +70,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
 
           }
+          if(!dontCallMixer) {
+            this._colorMixer(true);
+          }
 
-          this._colorMixer(true);
           this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
         } else {
           alert("Please select any well");

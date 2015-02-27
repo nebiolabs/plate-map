@@ -28,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.createDerivative(this.allTiles[index]);
           }
         }
-
+        this.engine.checkForValidData(this.allSelectedObjects[0]);
         var derivativeCopy = $.extend(true, {}, this.engine.derivative);
         this.engine.searchAndStack(derivativeCopy).applyColors();
         this.mainFabricCanvas.renderAll();

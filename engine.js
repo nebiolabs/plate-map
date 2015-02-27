@@ -66,6 +66,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               } else {
                 this.stackUpWithColor[1] = [refDerivativeIndex];
               }
+
               delete derivativeCopy[refDerivativeIndex];
             } else {
               // if cheked boxes have values
@@ -103,6 +104,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         },
 
+        checkForValidData: function(tile) {
+          console.log("is this the problem ")
+          for(var wellIndex in tile.wellData) {
+            if(tile.wellData[wellIndex] != "" && tile.wellData[wellIndex] != "NULL") {
+              //If the well has some value just be there;
+              return true;
+            }
+          }
+          //No values at all, Clear it.
+          THIS.clearCrieteria(true); // passing the value sayong dont call color mixer
+          return false;
+        }
       }
     }
   }
