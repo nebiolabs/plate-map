@@ -17,7 +17,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           this._colorMixer(true);
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
-          //this._trigger("getPlates", null, {});
         }
       },
 
@@ -32,6 +31,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var derivativeCopy = $.extend(true, {}, this.engine.derivative);
         this.engine.searchAndStack(derivativeCopy).applyColors();
         this.mainFabricCanvas.renderAll();
+        this._trigger("updateWells", null, this.engine.derivative);
       },
 
       _addUnitData: function(e) {

@@ -209,6 +209,12 @@ window.onload = function() {
 
       getPlates: function(event, data) {
         console.log("Wow good", data);
+      },
+
+      updateWells: function(event, data) {
+        // here we have changed data
+        console.log(JSON.stringify(data));
+        console.log("_______________________________");
       }
     });
   });
