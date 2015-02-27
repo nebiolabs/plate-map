@@ -45,7 +45,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       clearCrieteria: function() {
-
         //correct this part .. !!
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;

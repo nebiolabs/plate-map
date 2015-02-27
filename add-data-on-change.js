@@ -16,16 +16,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
           }
           this._colorMixer(true);
-          console.log("_______________________________________________");
-
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
-          //this._trigger("getPlates", null, data);
+          //this._trigger("getPlates", null, {});
         }
       },
 
       _colorMixer: function(valueChange) {
         // value change is true if data in the field is changed, false if its a change in checkbox
-
         if(! valueChange) {
           for(var index in this.engine.derivative) {
             this.engine.createDerivative(this.allTiles[index]);
@@ -33,8 +30,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         var derivativeCopy = $.extend(true, {}, this.engine.derivative);
-        this.engine.searchAndStack(derivativeCopy);
-        this.engine.applyColors();
+        this.engine.searchAndStack(derivativeCopy).applyColors();
         this.mainFabricCanvas.renderAll();
       },
 
@@ -48,8 +44,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
           }
           this._colorMixer(true);
-          //this._addRemoveToBottamTable();
-          //this.mainFabricCanvas.renderAll();
         }
       },
 

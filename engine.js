@@ -17,7 +17,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var selectedValues = this.getSelectedValues(tile);
           var attrs  = $.extend(true, {}, THIS.globalSelectedAttributes);
           var units = this.getUnits(tile);
-          // add unitData too.
 
           this.derivative[tile.index] = {
             "selectedValues": selectedValues,
@@ -46,22 +45,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
               data[attr + "unit" ] = tile.unitData[attr + "unit"];
             }
           }
-          
+
           return data;
         },
 
         searchAndStack: function(derivativeCopy) {
-
+          // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 2;
           while(! $.isEmptyObject(derivativeCopy)) {
-            console.log("looping ......!")
+
             var refDerivativeIndex = Object.keys(derivativeCopy)[0];
             var referenceDerivative = derivativeCopy[refDerivativeIndex];
             var arr = [];
 
             if($.isEmptyObject(referenceDerivative.selectedValues)) {
-              //
+              // if no checked box has value, push it to first spot
               if(this.stackUpWithColor[1]) {
                 this.stackUpWithColor[1].push(refDerivativeIndex);
               } else {
@@ -69,11 +68,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               delete derivativeCopy[refDerivativeIndex];
             } else {
-              // if its not an empty object
+              // if cheked boxes have values
               for(data in derivativeCopy) {
                 if(THIS.compareObjects(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
                   if(THIS.compareObjects(referenceDerivative.units, derivativeCopy[data].units)) {
-                    //console.log("Match Found", referenceDerivative.units, derivativeCopy[data].units);
                     arr.push(data);
                     this.stackUpWithColor[this.stackPointer] = arr;
                     delete derivativeCopy[data];
@@ -82,16 +80,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               // here u cud add applyColors , its a different implementation, but might be a performer.
               if(data.length > 0)
-              this.stackPointer ++;
+                this.stackPointer ++;
             }
           }
-
-          //delete derivativeCopy[refDerivative];
-
-          console.log(this.stackUpWithColor, this.stackPointer);
-
-          console.log("_____________________________");
-
+          return this;
         },
 
         applyColors: function() {
@@ -103,95 +95,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
               if(!tile.circle) {
-                this.addCircle(tile, color);
+                THIS.addCircle(tile, color, this.stackPointer);
               } else {
-                this.setGradient(tile.circle, color);
+                THIS.setGradient(tile.circle, color, this.stackPointer);
               }
             }
           }
         },
-
-        addCircle: function(tileToAdd, color) {
-
-          var circle = new fabric.Circle({
-            radius: 22,
-            originX:'center',
-            originY: 'center',
-            top: tileToAdd.top,
-            left: tileToAdd.left,
-            shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
-            evented: false
-          });
-
-          circle.colorIndex = color;
-
-
-
-          var circleCenter = new fabric.Circle({
-            radius: 14,
-            fill: "white",
-            originX:'center',
-            originY: 'center',
-            top: tileToAdd.top,
-            left: tileToAdd.left,
-            shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
-            evented: false,
-          });
-
-          var circleText = new fabric.IText(""+circle.colorIndex+"", {
-              top: tileToAdd.top,
-              left: tileToAdd.left,
-              fill: 'black',
-              evented: false,
-              fontSize: 12,
-              lockScalingX: true,
-              lockScalingY: true,
-              originX:'center',
-              originY: 'center',
-              visible: false
-          });
-
-          circle.parent = tileToAdd; // Linking the objects;
-          tileToAdd.circle = circle;
-          tileToAdd.circleCenter = circleCenter;
-          tileToAdd.circleText = circleText;
-
-          this.setGradient(circle, color);
-
-          THIS.mainFabricCanvas.add(circle);
-          THIS.mainFabricCanvas.add(circleCenter);
-          THIS.mainFabricCanvas.add(circleText);
-        },
-
-        setGradient: function(circle, color) {
-
-          var tile = circle.parent;
-          tile.circleText.text = "" + parseInt(color) - 1 + "";
-
-          if(this.stackPointer <= (THIS.colorPairs.length / 2) +1){
-            colorStops = {
-              0: THIS.valueToColor[color],
-              1: THIS.colorPairObject[THIS.valueToColor[color]]
-            };
-            tile.circleText.setVisible(false);
-          } else {
-            tile.circleText.setVisible(true);
-            var colorStops = {
-                                0: "#ffc100",
-                                1: "#ff6a00"
-                              };
-          }
-
-          circle.setGradient("fill", {
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: circle.height,
-            colorStops: colorStops
-          });
-
-        },
-
 
       }
     }
