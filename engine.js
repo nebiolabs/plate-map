@@ -105,7 +105,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         checkForValidData: function(tile) {
-          console.log("is this the problem ")
+          
           for(var wellIndex in tile.wellData) {
             if(tile.wellData[wellIndex] != "" && tile.wellData[wellIndex] != "NULL") {
               //If the well has some value just be there;
