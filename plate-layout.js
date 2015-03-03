@@ -31,7 +31,7 @@
 
 }(document, "", function($, fabric){
 
-  $.widget("DNA.plateLayOut", {
+   $.widget("DNA.plateLayOut", {
 
     plateLayOutWidget: {},
 
@@ -46,6 +46,13 @@
     allTiles: [], // All tiles containes all thise circles in the canvas
 
     _create: function() {
+
+      // This is a little hack, so that we get the text of the outer container of the widget
+      this.options.created = function(event, data) {
+        data.target = (event.target.id) ? "#" + event.target.id : "." + event.target.className;
+      };
+      
+      this._trigger("created", null, this);
       // Import classes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
       // Helpers are methods which return other methods and objects.
@@ -56,7 +63,8 @@
         $.extend(this, new plateLayOutWidget[component](this));
       }
 
-      this.imgSrc = this.options.imgSrc || "assets",
+      this.imgSrc = this.options.imgSrc || "assets";
+
       this._createInterface();
     },
 
@@ -64,7 +72,6 @@
       // This is invoked when the user use the plugin after _create is called.
       // The point is _create is invoked for the very first time and for all other
       // times _init is used.
-    },
-
+    }
   });
 }));

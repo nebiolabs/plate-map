@@ -201,22 +201,22 @@ window.onload = function() {
     };
 
 
-    $("#plate-layout").plateLayOut({
+    var jossie = $("#plate-layout").plateLayOut({
       numRows:          '8',
       numCols:          '12',
       imgSrc: "css",
       attributes:       attributes,
 
-      getPlates: function(event, data) {
-        console.log("Wow good", data);
-      },
-
       updateWells: function(event, data) {
-        // here we have changed data
+        // here we have changed data, Now this can be sent to server
         console.log(JSON.stringify(data));
-        console.log("_______________________________");
+        console.log(this,$(this), event, "_______________________________");
       }
     });
+
+    $("#plate-layout").trigger("getPlates", {data: {}});
+
   });
+
 }
 </script>
