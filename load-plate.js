@@ -9,26 +9,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       getPlates: function(data) {
 
-        this.loadDataToCircles(data);
+        var derivativeData = JSON.parse(data)
 
-        this.engine.derivative = $.extend(true, {}, data);
+        this.loadDataToCircles(derivativeData.derivative);
 
-        this.loadCheckboxes(data);
+        this.engine.derivative = $.extend(true, {}, derivativeData.derivative);
 
-        this._colorMixer(true);
+        if($.isEmptyObject(derivativeData.checkboxes)) {
+          this._colorMixer(true);
+        } else {
+          this.loadCheckboxes(derivativeData.checkboxes);
+        }
+
       },
 
       loadDataToCircles: function(circleData) {
 
         for(var index in circleData) {
-          this.allTiles[index].wellData = circleData[index].selectedValues;
+          this.allTiles[index].wellData = $.extend(true, {}, circleData[index].wellData);
         }
-        
-        this.globalSelectedAttributes = $.extend(true, {}, this.allTiles[index].attrs);
       },
 
-      loadCheckboxes: function(data) {
+      loadCheckboxes: function(checkboxes) {
 
+        var checkBoxImage;
+
+        for(var checkbox in checkboxes) {
+          checkBoxImage = $("#" + checkbox).data("checkBox");
+          $(checkBoxImage).data("clicked", false).trigger("click", true);
+        }
       }
     }
   }

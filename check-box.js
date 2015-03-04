@@ -7,6 +7,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       globalSelectedAttributes: {},
+      
       _addCheckBox: function(fieldArray, fieldArrayIndex, data) {
 
         var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")

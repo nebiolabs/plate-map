@@ -36,9 +36,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.mainFabricCanvas.renderAll();
         var data = {
           "derivative": this.engine.derivative,
-          "checkboxes": this.globalSelectedAttributes 
+          "checkboxes": this.globalSelectedAttributes
         }
-        this._trigger("updateWells", null, this.engine.derivative);
+        this._trigger("updateWells", null, data);
       },
 
       _addUnitData: function(e) {

@@ -212,35 +212,13 @@ window.onload = function() {
 
       updateWells: function(event, data) {
         // here we have changed data, Now this can be sent to server
-        //console.log(JSON.stringify(data));
-        //console.log(this,$(this), event, "_______________________________");
+        console.log(JSON.stringify(data));
+        console.log("_______________________________");
       }
     });
     //console.log(jossie)
-    var data = {
-
-      "0":{"selectedValues":{"volume":"23"},
-      "attrs":{"volume":true},
-      "units":{"volumeunit":"m/s"}
-      },
-      "1":
-      {"selectedValues":{"volume":"23"},
-      "attrs":{"volume":true},
-      "units":{"volumeunit":"m/s"}
-      },
-      "12":
-      {"selectedValues":{"volume":"23"},
-      "attrs":{"volume":true},
-      "units":{"volumeunit":"m/s"}
-      },
-      "13":
-      {"selectedValues":{"volume":"23"},
-      "attrs":{"volume":true},
-      "units":{"volumeunit":"m/s"}
-      }
-    };
-
-    $("#demo").click(function() {
+    var data = '{"derivative":{"0":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"12","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"1":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"12","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"3":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"4":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"5":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"12":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"12","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"13":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"12","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"15":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"16":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"17":{"selectedValues":{},"attrs":{},"units":{},"wellData":{"volume":"13","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}}},"checkboxes":{}}';
+      $("#demo").click(function() {
       $("#plate-layout").trigger("getPlates",data);
     })
     //$("#plate-layout").trigger("getPlates",data);

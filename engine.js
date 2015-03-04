@@ -17,11 +17,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var selectedValues = this.getSelectedValues(tile);
           var attrs  = $.extend(true, {}, THIS.globalSelectedAttributes);
           var units = this.getUnits(tile);
+          var data = $.extend(true, {}, tile.wellData);
 
           this.derivative[tile.index] = {
             "selectedValues": selectedValues,
             "attrs": attrs,
-            "units": units
+            "units": units,
+            "wellData": data
           };
 
           //this.derivative.checkBoxes = attrs;
@@ -51,12 +53,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return data;
         },
 
-        searchAndStack: function(derivativeCopy) {
+        searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 2;
           var derivativeCopy = $.extend(true, {}, this.derivative);
-          console.log(derivativeCopy, this.derivative);
+
           while(! $.isEmptyObject(derivativeCopy)) {
 
             var refDerivativeIndex = Object.keys(derivativeCopy)[0];
