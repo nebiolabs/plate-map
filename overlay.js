@@ -81,8 +81,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      clearCrieteriaForAll: function(dontCallMixer) {
-
+      clearCrieteriaForAll: function(selectedObjects) {
+        console.log(selectedObjects);
         for(var objectIndex in this.engine.derivative) {
 
           var tile = this.allTiles[objectIndex];
@@ -103,6 +103,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         }
 
+        this.allSelectedObjects = this._selectTilesFromRectangle(selectedObjects.startingTileIndex, selectedObjects.rowCount, selectedObjects.columnCount, selectedObjects.click);
         this.engine.derivative = {};
       }
     };

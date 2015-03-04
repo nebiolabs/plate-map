@@ -34,10 +34,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //var derivativeCopy = $.extend(true, {}, this.engine.derivative);
         this.engine.searchAndStack().applyColors();
         this.mainFabricCanvas.renderAll();
+
+        var selectedObjects = {
+          "startingTileIndex": this.startingTileIndex,
+          "rowCount": this.rowCount,
+          "columnCount": this.columnCount,
+          "click": this.clicked || false,
+          "selectionRectangle": this.dynamicRect
+        };
+
         var data = {
           "derivative": this.engine.derivative,
-          "checkboxes": this.globalSelectedAttributes
-        }
+          "checkboxes": this.globalSelectedAttributes,
+          "selectedObjects": selectedObjects
+        };
+
         this._trigger("updateWells", null, data);
       },
 

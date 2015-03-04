@@ -9,9 +9,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       getPlates: function(data) {
 
-        this.clearCrieteriaForAll(false);
-        
-        var derivativeData = JSON.parse(data)
+        var derivativeData = JSON.parse(data);
+
+        this.clearCheckBoxes();
+
+        this.clearCrieteriaForAll(derivativeData.selectedObjects);
 
         this.loadDataToCircles(derivativeData.derivative);
 
@@ -23,6 +25,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.loadCheckboxes(derivativeData.checkboxes);
         }
 
+        this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
+
+        /*if(derivativeData.selectedObjects.selectionRectangle) {
+          this._decideSelectedFields(derivativeData.selectedObjects.selectionRectangle);
+          this._alignRectangle(derivativeData.selectedObjects.selectionRectangle);
+        }*/
+        //this.allSelectedObjects = {}
       },
 
       loadDataToCircles: function(circleData) {
@@ -39,6 +48,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for(var checkbox in checkboxes) {
           checkBoxImage = $("#" + checkbox).data("checkBox");
           $(checkBoxImage).data("clicked", false).trigger("click", true);
+        }
+      },
+
+      clearCheckBoxes: function() {
+
+        var checkBoxImage;
+
+        for(var checkbox in this.globalSelectedAttributes) {
+          checkBoxImage = $("#" + checkbox).data("checkBox");
+          $(checkBoxImage).data("clicked", true).trigger("click", true);
         }
       }
     }

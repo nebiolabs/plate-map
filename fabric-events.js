@@ -120,8 +120,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               rect.setHeight(this.spacing);
             } else {
               // If its a multiselect ...!
-              rect.setWidth((lastRect.left - rect.left) + this.spacing / 2);
-              rect.setHeight((lastRect.top - rect.top) + this.spacing / 2);
+              rect.setWidth((lastRect.left - rect.left) + 48 / 2);
+              rect.setHeight((lastRect.top - rect.top) + 48 / 2);
             }
 
             rect.rx = 5;
@@ -196,7 +196,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var startingTileIndex = (Math.round(left / tileWidth) - 1) + (12 * (Math.round(top / tileWidth) - 1) );
           var endingTileIndex = (Math.round(right / tileWidth) ) + (12 * (Math.round(bottom / tileWidth) ) );
-
+          this.startingTileIndex = startingTileIndex;
+          this.clicked = click;
           this.rowCount = Math.round(bottom / tileWidth) - Math.round(top / tileWidth);
           this.columnCount = Math.round(right / tileWidth) - Math.round(left / tileWidth);
 
