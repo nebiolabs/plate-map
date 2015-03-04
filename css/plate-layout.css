@@ -1,11 +1,11 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto);
 
-
+.
 /* line 1, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-container {
   width: 1024px;
   height: 768px;
-
+  float: left;
 }
 
 /* line 7, ../../app/assets/stylesheets/plate-layout.css.scss */
@@ -348,4 +348,10 @@
   margin-left: 10px;
   font-weight: bold;
   font-size: 12px;
+}
+
+.plate-setup-container-outer {
+  width: 1024px;
+  height: 768px;
+  float: left;
 }

@@ -24,7 +24,7 @@
   // Make sure you follow the syntax or return an object from the file
   fileArray = ["libs/jquery-1.11.2.min", "libs/jquery-ui.min", "libs/fabric", "libs/select2","add-data-on-change",
   "add-data-to-tabs", "add-tab-data", "apply-well-data", "bottom-table", "canvas-circles",
-  "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine",  "fabric-events", "interface", "menu",
+  "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine", "fabric-events", "interface", "load-plate", "menu",
  "overlay", "preset", "tabs", "unit-data-field"];
 
   loadScript(arrayPointer);
@@ -51,7 +51,7 @@
       this.options.created = function(event, data) {
         data.target = (event.target.id) ? "#" + event.target.id : "." + event.target.className;
       };
-      
+
       this._trigger("created", null, this);
       // Import classes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
@@ -66,12 +66,18 @@
       this.imgSrc = this.options.imgSrc || "assets";
 
       this._createInterface();
+
+      return this;
     },
 
     _init: function() {
       // This is invoked when the user use the plugin after _create is called.
       // The point is _create is invoked for the very first time and for all other
       // times _init is used.
+    },
+
+    addData: function() {
+      alert("wow this is good");
     }
   });
 }));

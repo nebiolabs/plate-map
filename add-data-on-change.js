@@ -27,10 +27,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.createDerivative(this.allTiles[index]);
           }
         }
-        this.engine.checkForValidData(this.allSelectedObjects[0]);
-        var derivativeCopy = $.extend(true, {}, this.engine.derivative);
-        this.engine.searchAndStack(derivativeCopy).applyColors();
+
+        if(this.allSelectedObjects) {
+          this.engine.checkForValidData(this.allSelectedObjects[0]);
+        }
+        //var derivativeCopy = $.extend(true, {}, this.engine.derivative);
+        this.engine.searchAndStack().applyColors();
         this.mainFabricCanvas.renderAll();
+        var data = {
+          "derivative": this.engine.derivative,
+          "checkboxes": this.globalSelectedAttributes 
+        }
         this._trigger("updateWells", null, this.engine.derivative);
       },
 

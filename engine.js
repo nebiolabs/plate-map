@@ -22,7 +22,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             "selectedValues": selectedValues,
             "attrs": attrs,
             "units": units
-          }
+          };
+
+          //this.derivative.checkBoxes = attrs;
         },
 
         getSelectedValues: function(tile) {
@@ -53,6 +55,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 2;
+          var derivativeCopy = $.extend(true, {}, this.derivative);
+          console.log(derivativeCopy, this.derivative);
           while(! $.isEmptyObject(derivativeCopy)) {
 
             var refDerivativeIndex = Object.keys(derivativeCopy)[0];
@@ -105,7 +109,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         checkForValidData: function(tile) {
-          
+
           for(var wellIndex in tile.wellData) {
             if(tile.wellData[wellIndex] != "" && tile.wellData[wellIndex] != "NULL") {
               //If the well has some value just be there;

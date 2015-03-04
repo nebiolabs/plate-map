@@ -3,8 +3,11 @@
 <link href="/css/select2.css" media="all" rel="stylesheet">
 <script src="/plate-layout.js"></script>
   <body>
-    <div id="plate-layout">
+    <div id="plate-layout" class="plate-setup-container-outer">
       Loading plate layout ... !
+    </div>
+    <div id="demo" style="width: 100px;height: 100px;float: right;">
+      <button type="button" id="Load" value="load data" style="width: 80px;height: 30px;">Load Data</button>
     </div>
   </body>
 </html>
@@ -201,7 +204,7 @@ window.onload = function() {
     };
 
 
-    var jossie = $("#plate-layout").plateLayOut({
+    $("#plate-layout").plateLayOut({
       numRows:          '8',
       numCols:          '12',
       imgSrc: "css",
@@ -209,13 +212,40 @@ window.onload = function() {
 
       updateWells: function(event, data) {
         // here we have changed data, Now this can be sent to server
-        console.log(JSON.stringify(data));
-        console.log(this,$(this), event, "_______________________________");
+        //console.log(JSON.stringify(data));
+        //console.log(this,$(this), event, "_______________________________");
       }
     });
+    //console.log(jossie)
+    var data = {
 
-    $("#plate-layout").trigger("getPlates", {data: {}});
+      "0":{"selectedValues":{"volume":"23"},
+      "attrs":{"volume":true},
+      "units":{"volumeunit":"m/s"}
+      },
+      "1":
+      {"selectedValues":{"volume":"23"},
+      "attrs":{"volume":true},
+      "units":{"volumeunit":"m/s"}
+      },
+      "12":
+      {"selectedValues":{"volume":"23"},
+      "attrs":{"volume":true},
+      "units":{"volumeunit":"m/s"}
+      },
+      "13":
+      {"selectedValues":{"volume":"23"},
+      "attrs":{"volume":true},
+      "units":{"volumeunit":"m/s"}
+      }
+    };
 
+    $("#demo").click(function() {
+      $("#plate-layout").trigger("getPlates",data);
+    })
+    //$("#plate-layout").trigger("getPlates",data);
+
+    //$("#plate-layout").plateLayOut("addData");
   });
 
 }

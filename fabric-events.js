@@ -15,7 +15,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // Once we used this handler when we clicked and dragged , not anymore.
           // Now only purpose is when we click on clear fields.
           //Deselect already selected tiles
-          console.log("ddoooooooooooo", that);
+          //console.log("ddoooooooooooo", that);
           that._deselectSelected();
           // Adding newly selected group -: here it is tiles whose values are cleared..!
           if(selectedObjects.target) {
@@ -33,8 +33,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //
         $(that.target).on("getPlates", function(evt, data) {
           // This method should be compatable to redo/undo.
-          alert("alright")
-          that.loadData();
+          //alert("alright")
+          that.getPlates(data);
         });
         /*
           correct dynamic rectangles placing
