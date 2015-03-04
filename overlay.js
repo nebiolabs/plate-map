@@ -79,6 +79,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
           alert("Please select any well");
         }
 
+      },
+
+      clearCrieteriaForAll: function(dontCallMixer) {
+
+        for(var objectIndex in this.engine.derivative) {
+
+          var tile = this.allTiles[objectIndex];
+          // Restore the original data.
+          tile["wellData"] = $.extend(true, {}, this.allWellData);
+          tile["unitData"] = $.extend(true, {}, this.allUnitData);
+          tile["selectedWellAttributes"] = {};
+
+          if(tile.circle) {
+            this.mainFabricCanvas.remove(tile.circle);
+            this.mainFabricCanvas.remove(tile.circleCenter);
+            this.mainFabricCanvas.remove(tile.circleText);
+
+            delete tile.circle;
+            delete tile.circleCenter;
+            delete tile.circleText;
+          }
+
+        }
+
+        this.engine.derivative = {};
       }
     };
   }

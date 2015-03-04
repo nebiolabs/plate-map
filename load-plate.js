@@ -9,6 +9,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       getPlates: function(data) {
 
+        this.clearCrieteriaForAll(false);
+        
         var derivativeData = JSON.parse(data)
 
         this.loadDataToCircles(derivativeData.derivative);
