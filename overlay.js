@@ -74,7 +74,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._colorMixer(true);
           }
 
-          //this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
         } else {
           alert("Please select any well");
         }
@@ -82,11 +81,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       clearCrieteriaForAll: function(selectedObjects) {
-        console.log(selectedObjects);
+
+        this._deselectSelected();
         for(var objectIndex in this.engine.derivative) {
 
           var tile = this.allTiles[objectIndex];
-          // Restore the original data.
           tile["wellData"] = $.extend(true, {}, this.allWellData);
           tile["unitData"] = $.extend(true, {}, this.allUnitData);
           tile["selectedWellAttributes"] = {};
@@ -103,8 +102,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         }
 
-        this.allSelectedObjects = this._selectTilesFromRectangle(selectedObjects.startingTileIndex, selectedObjects.rowCount, selectedObjects.columnCount, selectedObjects.click);
+        this.mainFabricCanvas.remove(this.dynamicRect);
+        this.mainFabricCanvas.remove(this.dynamicSingleRect);
+
         this.engine.derivative = {};
+      },
+
+      clearSingleCrieteria: function(tile) {
+
+        // Restore the original data.
+        tile["wellData"] = $.extend(true, {}, this.allWellData);
+        tile["unitData"] = $.extend(true, {}, this.allUnitData);
+        tile["selectedWellAttributes"] = {};
+
+        if(tile.circle) {
+          // that works like a charm, we remove circle from canvas and delete the reference from
+          // tile/well object.
+          this.mainFabricCanvas.remove(tile.circle);
+          this.mainFabricCanvas.remove(tile.circleCenter);
+          this.mainFabricCanvas.remove(tile.circleText);
+
+          delete this.engine.derivative[tile.index];
+          delete tile.circle;
+          delete tile.circleCenter;
+          delete tile.circleText;
+        }
+
       }
     };
   }

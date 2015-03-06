@@ -25,13 +25,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.loadCheckboxes(derivativeData.checkboxes);
         }
 
-        this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
+        if(derivativeData.selectedObjects.selectionRectangle) {
+          this.createRectangle(derivativeData.selectedObjects.selectionRectangle, derivativeData.selectedObjects.click);
+        }
 
-        /*if(derivativeData.selectedObjects.selectionRectangle) {
-          this._decideSelectedFields(derivativeData.selectedObjects.selectionRectangle);
-          this._alignRectangle(derivativeData.selectedObjects.selectionRectangle);
-        }*/
-        //this.allSelectedObjects = {}
       },
 
       loadDataToCircles: function(circleData) {
@@ -59,6 +56,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkBoxImage = $("#" + checkbox).data("checkBox");
           $(checkBoxImage).data("clicked", true).trigger("click", true);
         }
+      },
+
+      createRectangle: function(rectData, click) {
+
+        this.startX = rectData.left; // assigning these values so that they are used when creating rectangle.
+        this.startY = rectData.top;
+
+        if(rectData.type == "dynamicRect") {
+          this.mouseMove = true;
+          this._createDynamicRect();
+          this.dynamicRect.setWidth(rectData.width);
+          this.dynamicRect.setHeight(rectData.height);
+        } else {
+          this.mouseMove = false;
+        }
+
+        this.mainFabricCanvas.fire("mouse:up");
       }
     }
   }

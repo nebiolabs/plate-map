@@ -119,7 +119,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
           //No values at all, Clear it.
-          THIS.clearCrieteria(true); // passing the value sayong dont call color mixer
+          THIS.clearSingleCrieteria(tile); // passing the value sayong dont call color mixer
           return false;
         }
       }

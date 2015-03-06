@@ -11,11 +11,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         // When we ckick and drag
+        // This is not uesd may be remove it.
         this.mainFabricCanvas.on("object:selected", function(selectedObjects) {
           // Once we used this handler when we clicked and dragged , not anymore.
           // Now only purpose is when we click on clear fields.
           //Deselect already selected tiles
-          //console.log("ddoooooooooooo", that);
           that._deselectSelected();
           // Adding newly selected group -: here it is tiles whose values are cleared..!
           if(selectedObjects.target) {
@@ -33,7 +33,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //
         $(that.target).on("getPlates", function(evt, data) {
           // This method should be compatable to redo/undo.
-          //alert("alright")
           that.getPlates(data);
         });
         /*
@@ -94,6 +93,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             that._decideSelectedFields(that.dynamicSingleRect, true);
             that._alignRectangle(that.dynamicSingleRect);
           } else {
+
             that._decideSelectedFields(that.dynamicRect);
             that._alignRectangle(that.dynamicRect);
           }
@@ -110,7 +110,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
 
           if(firstRect) {
-
+            
             rect.left = firstRect.left - 25;
             rect.top = firstRect.top - 25;
 
@@ -271,6 +271,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var noOfSelectedObjects = this.allSelectedObjects.length;
 
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
+
             var currentObj = this.allSelectedObjects[objectIndex];
             if($.isEmptyObject(currentObj["selectedWellAttributes"])) {
               // It says we haven't added any manual selection yet

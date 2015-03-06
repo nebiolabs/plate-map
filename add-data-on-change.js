@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
+            this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }
           this._colorMixer(true);
           // here we triggergetPlates , so that when ever something change with any of the well, it is fired
@@ -28,27 +29,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
-        if(this.allSelectedObjects) {
-          this.engine.checkForValidData(this.allSelectedObjects[0]);
-        }
-        //var derivativeCopy = $.extend(true, {}, this.engine.derivative);
         this.engine.searchAndStack().applyColors();
         this.mainFabricCanvas.renderAll();
 
-        var selectedObjects = {
-          "startingTileIndex": this.startingTileIndex,
-          "rowCount": this.rowCount,
-          "columnCount": this.columnCount,
-          "click": this.clicked || false,
-          "selectionRectangle": this.dynamicRect
-        };
-
-        var data = {
-          "derivative": this.engine.derivative,
-          "checkboxes": this.globalSelectedAttributes,
-          "selectedObjects": selectedObjects
-        };
-
+        var data  = this.createObject();
         this._trigger("updateWells", null, data);
       },
 
@@ -64,6 +48,48 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._colorMixer(true);
         }
       },
+
+      createObject: function() {
+
+        var selectedObjects = {
+          "startingTileIndex": this.startingTileIndex,
+          "rowCount": this.rowCount,
+          "columnCount": this.columnCount,
+          "click": this.clicked || false,
+        };
+
+        if(this.dynamicRect) {
+
+          var selectionRectangle = {
+            type: "dynamicRect",
+            width: this.dynamicRect.width,
+            height: this.dynamicRect.height,
+            left: this.startX,
+            top: this.startY,
+            mouseMove: this.mouseMove
+          }
+          selectedObjects["selectionRectangle"] = selectionRectangle;
+        } else if(this.dynamicSingleRect) {
+
+          var selectionRectangle = {
+            type: "dynamicSingleRect",
+            width: this.dynamicSingleRect.width,
+            height: this.dynamicSingleRect.height,
+            left: this.startX,
+            top: this.startY,
+            mouseMove: this.mouseMove
+          }
+          selectedObjects["selectionRectangle"] = selectionRectangle;
+        }
+
+        var data = {
+          "derivative": this.engine.derivative,
+          "checkboxes": this.globalSelectedAttributes,
+          "selectedObjects": selectedObjects,
+        };
+
+        return data;
+      }
 
     };
   }
