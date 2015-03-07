@@ -17,7 +17,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }
           this._colorMixer(true);
-          // here we triggergetPlates , so that when ever something change with any of the well, it is fired
         }
       },
 
@@ -33,6 +32,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.mainFabricCanvas.renderAll();
 
         var data  = this.createObject();
+        this.addToUndoRedo(data);
         this._trigger("updateWells", null, data);
       },
 

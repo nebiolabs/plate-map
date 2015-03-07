@@ -25,7 +25,7 @@
   fileArray = ["libs/jquery-1.11.2.min", "libs/jquery-ui.min", "libs/fabric", "libs/select2","add-data-on-change",
   "add-data-to-tabs", "add-tab-data", "apply-well-data", "bottom-table", "canvas-circles",
   "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine", "fabric-events", "interface", "load-plate", "menu",
- "overlay", "preset", "tabs", "unit-data-field"];
+ "overlay", "preset", "redo", "tabs", "undo-redo-manager", "undo", "unit-data-field"];
 
   loadScript(arrayPointer);
 
@@ -53,6 +53,12 @@
       };
 
       this._trigger("created", null, this);
+
+      var that = this;
+
+      window.addEventListener("keyup", function(e) {
+        that._handleShortcuts(e);
+      });
       // Import classes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
       // Helpers are methods which return other methods and objects.
