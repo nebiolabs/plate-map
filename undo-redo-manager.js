@@ -8,6 +8,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       undoRedoArray: [],
 
+      actionPointer: null,
+
       addToUndoRedo: function(derivative) {
 
         if(! this.undoRedoActive) {
@@ -23,12 +25,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (e.keyCode == 90 && e.ctrlKey) {
           // it says that we have undo/redo action is going on.
           this.undoRedoActive = true;
-          this.undo();
+
+          if(! this.actionPointer) {
+            this.actionPointer = this.undoRedoArray.length - 1;
+          } else {
+            this.actionPointer = this.actionPointer - 1;
+          }
+          this.undo(this.actionPointer);
         }
         if(e.keyCode == 89 && e.ctrlKey) {
           // it says that we have undo/redo action is going on.
           this.undoRedoActive = true;
-          this.redo();
+
+          //if(this.actionPointer < this.undoRedoArray.length) {
+            this.actionPointer = this.actionPointer + 1;
+          //}
+          this.redo(this.actionPointer);
         }
       },
 
