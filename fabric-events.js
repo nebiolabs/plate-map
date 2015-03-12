@@ -33,7 +33,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //
         $(that.target).on("getPlates", function(evt, data) {
           // This method should be compatable to redo/undo.
-          that.getPlates(data);
+          that.getPlates(JSON.parse(data));
         });
         /*
           correct dynamic rectangles placing
@@ -110,7 +110,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
 
           if(firstRect) {
-            
+
             rect.left = firstRect.left - 25;
             rect.top = firstRect.top - 25;
 
