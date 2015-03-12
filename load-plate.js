@@ -9,7 +9,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       getPlates: function(data) {
 
-        var derivativeData = data;//JSON.parse(data);
+        var derivativeData = JSON.parse(data);
 
         this.clearCheckBoxes();
 
