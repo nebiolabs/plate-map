@@ -16,6 +16,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
             this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }
+
+          //this.undoRedoActive = false; //It says we dont have undo/redo active;
           this._colorMixer(true);
         }
       },

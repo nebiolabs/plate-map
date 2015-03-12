@@ -12,6 +12,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         console.log("undo");
         this.getPlates(this.undoRedoArray[pointer]);
+        this.undoRedoActive = false;
       },
 
     }

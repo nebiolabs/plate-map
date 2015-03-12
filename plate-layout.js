@@ -73,6 +73,8 @@
 
       this._createInterface();
 
+      this._configureUndoRedoArray();
+
       return this;
     },
 

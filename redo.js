@@ -9,9 +9,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       undoRedoArray: [],
 
       redo: function(pointer) {
-        
+
         this.getPlates(this.undoRedoArray[pointer]);
         console.log("redo");
+        this.undoRedoActive = false;
       },
 
     }

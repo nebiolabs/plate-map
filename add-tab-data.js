@@ -126,8 +126,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "text":
             // we use keyup instead of blur. Blur fires event but canvas fire event even faster
             // so most likely our targeted tile changed, and value added to wrong tile.
+
+
             $("#" + data.id).keyup(function(evt) {
-              that._addData(evt);
+              if (evt.keyCode == 90 && evt.ctrlKey) {
+                console.log("Cool");
+                //return false;
+                //that._handleShortcuts(evt);
+                // Here our problem is, taking unwanted keus, key up fires even when we release control key.. fix this.
+              } else {
+                that._addData(evt);
+              }
             });
             break;
         }
