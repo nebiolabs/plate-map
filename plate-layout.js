@@ -57,6 +57,7 @@
       var that = this;
 
       window.addEventListener("keyup", function(e) {
+        e.preventDefault();
         that._handleShortcuts(e);
       });
       // Import classes from other files.. Here we import it using extend and add it to this

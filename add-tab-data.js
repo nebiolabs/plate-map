@@ -129,12 +129,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 
             $("#" + data.id).keyup(function(evt) {
+              evt.preventDefault();
+              console.log("Cool", evt);
               if (evt.keyCode == 90 && evt.ctrlKey) {
-                console.log("Cool");
+                console.log("Cool", evt);
                 //return false;
                 //that._handleShortcuts(evt);
-                // Here our problem is, taking unwanted keus, key up fires even when we release control key.. fix this.
-              } else {
+                // Here our problem is, taking unwanted keys, key up fires even when we release control key.. fix this.
+              } else if(evt.keyCode == 89 && evt.ctrlKey)  {
+
+              }else if(evt.which != 17){
                 that._addData(evt);
               }
             });
