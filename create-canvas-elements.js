@@ -6,6 +6,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // this class manages creating all the elements within canvas
     return {
 
+      spacing: 48,
+
       _canvas: function() {
         // Those 1,2,3 s and A,B,C s
         this._fixRowAndColumn();
@@ -25,7 +27,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originY: 'center',
             fontSize: 12,
             top : 10,
-            left: 50 + ((i - 1) * 50),
+            left: this.spacing + ((i - 1) * this.spacing),
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -43,7 +45,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originY: 'center',
             fontSize: 12,
             left: 5,
-            top: 50 + (i * 50),
+            top: this.spacing + (i * this.spacing),
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -65,8 +67,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var tempCircle = new fabric.Rect({
               width: 48,
               height: 48,
-              left: 50 + (j * 50),
-              top: 50 + (i * 50),
+              left: this.spacing + (j * this.spacing),
+              top: this.spacing + (i * this.spacing),
               fill: '#f5f5f5',
               originX:'center',
               originY: 'center',
@@ -87,33 +89,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
-        this._addNotYetSelectedImage();
+        this._addImages();
       },
 
-      _addNotYetSelectedImage: function() {
+      _addImages: function() {
         // We load the image for once and then make copies of it
         // and add it to the tile we made in allTiles[]
         var that = this;
         var finishing = this.allTiles.length;
-        fabric.Image.fromURL(this.imgSrc + "/Percent-Complete-3-1_03.png", function(img) {
 
-          for(var runner = 0; runner < finishing; runner ++) {
-            var imaging = $.extend({}, img);
-            var currentTile = that.allTiles[runner];
-            imaging.top = currentTile.top;
-            imaging.left = currentTile.left;
-            imaging.parent = currentTile; // Pointing to tile
-            imaging.originX = 'center';
-            imaging.originY = 'center';
-            imaging.hasControls = false;
-            imaging.hasBorders = false;
-            imaging.lockMovementX = true;
-            imaging.lockMovementY = true;
-            imaging.evented = false;
-            imaging.type = "image";
-            that.allTiles[runner].notSelected = imaging; // Pointing to img
-            that.mainFabricCanvas.add(imaging);
-          }
+        fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
+
+          fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
+            
+            for(var runner = 0; runner < finishing; runner ++) {
+              var imaging = $.extend({}, img);
+              var backgroundImg = $.extend({}, backImg)
+              var currentTile = that.allTiles[runner];
+              imaging.top = backgroundImg.top = currentTile.top;
+              imaging.left = backgroundImg.left = currentTile.left;
+              imaging.parent = currentTile; // Pointing to tile
+              imaging.originX = backgroundImg.originX = 'center';
+              imaging.originY = backgroundImg.originY = 'center';
+              imaging.hasControls = backgroundImg.hasControls = false;
+              imaging.hasBorders = backgroundImg.hasBorders = false;
+              imaging.lockMovementX = backgroundImg.lockMovementX = true;
+              imaging.lockMovementY = backgroundImg.lockMovementY = true;
+              imaging.evented = backgroundImg.evented = false;
+              imaging.type = "image";
+              backgroundImg.visible = false;
+              that.allTiles[runner].notSelected = imaging; // Pointing to img
+              that.allTiles[runner].backgroundImg = backgroundImg;
+              that.mainFabricCanvas.add(backgroundImg, imaging);
+            }
+
+          });
           that._addLargeRectangleOverlay();
         });
 

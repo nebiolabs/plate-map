@@ -3,74 +3,88 @@ var plateLayOutWidget = plateLayOutWidget || {};
 (function($, fabric) {
 
   plateLayOutWidget.canvasCircles = function() {
-    // This object contains circles
+    // this object contains circles
     return {
 
-      _addColorCircle: function() {
-      // This method checks if given selection has circle.
-        var colorAdded = false;
-        if(this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              var tile = this.allSelectedObjects[objectIndex];
-              if(! tile.circle) {
-                colorAdded = this._addCircleToCanvas(tile);
-              }
-            }
-          }
-          // incrementing color pointer should be out of for loop, only then the whole selected
-          // tiles have one color.
-          if(colorAdded) {
-            this.colorPointer ++;
-          }
-        }
-      },
-
-      _addCircleToCanvas: function(tileToAdd) {
-        // Adding circle to particular tile
-        if(this.colorPointer > this.distinctColors.length - 1) {
-          var newColor = this.getRandomColor();
-          this.distinctColors.push(newColor);
-        }
+      addCircle: function(tileToAdd, color, stackPointer) {
 
         var circle = new fabric.Circle({
-          radius: 20,
+          radius: 22,
+          originX:'center',
+          originY: 'center',
+          top: tileToAdd.top,
+          left: tileToAdd.left,
+          shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
+          evented: false
+        });
+
+        circle.colorIndex = color;
+
+        var circleCenter = new fabric.Circle({
+          radius: 14,
           fill: "white",
           originX:'center',
           originY: 'center',
           top: tileToAdd.top,
           left: tileToAdd.left,
-          strokeWidth: 8,
-          stroke: this.distinctColors[this.colorPointer],//this.colours[this.colorPointer],
-          evented: false
+          shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
+          evented: false,
+        });
+
+        var circleText = new fabric.IText(""+circle.colorIndex+"", {
+            top: tileToAdd.top,
+            left: tileToAdd.left,
+            fill: 'black',
+            evented: false,
+            fontSize: 12,
+            lockScalingX: true,
+            lockScalingY: true,
+            originX:'center',
+            originY: 'center',
+            visible: false
         });
 
         circle.parent = tileToAdd; // Linking the objects;
         tileToAdd.circle = circle;
+        tileToAdd.circleCenter = circleCenter;
+        tileToAdd.circleText = circleText;
+
+        this.setGradient(circle, color, stackPointer);
+
         this.mainFabricCanvas.add(circle);
-        return true;
+        this.mainFabricCanvas.add(circleCenter);
+        this.mainFabricCanvas.add(circleText);
       },
 
-      getRandomColor: function() {
-        // This method generate a random color incase we run out of predefined color.
-        // Again it checks if randomly generated color already exists in the array and if it is
-        // generate some other color.
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
+      setGradient: function(circle, color, stackPointer) {
+
+        var tile = circle.parent;
+        tile.circleText.text = "" + parseInt(color) - 1 + "";
+
+        if(stackPointer <= (this.colorPairs.length / 2) +1) {
+
+          var colorStops = {
+            0: this.valueToColor[color],
+            1: this.colorPairObject[this.valueToColor[color]]
+          };
+
+          tile.circleText.setVisible(false);
+        } else {
+          // If we are going beyond number of colors
+          tile.circleText.setVisible(true);
+          var colorStops = {
+            0: "#ffc100",
+            1: "#ff6a00"
+          };
         }
-        var colorCount = this.distinctColors.length;
-        var colorIndex = 0;
-        // Check if the generated color is already in the list
-        while(colorIndex < colorCount) {
-          if(this.distinctColors[colorIndex] === (color).toUpperCase()) {
-            this.getRandomColor();
-          }
-          colorIndex ++;
-        }
-        return (color).toUpperCase();
+
+        circle.setGradient("fill", {
+          x1: 0,
+          y1: 0,
+          x2: 0,
+          y2: circle.height,
+          colorStops: colorStops
+        });
       },
 
     };

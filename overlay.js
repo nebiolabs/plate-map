@@ -44,23 +44,88 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      clearCrieteria: function() {
+      clearCrieteria: function(dontCallMixer) {
 
         if(this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
-            if(this.allSelectedObjects[objectIndex].type == "tile") {
-              this.allSelectedObjects[objectIndex]["wellData"] = $.extend({}, this.allWellData);
-              this.allSelectedObjects[objectIndex]["unitData"] = $.extend({}, this.allUnitData);
+
+            var tile = this.allSelectedObjects[objectIndex];
+            // Restore the original data.
+            tile["wellData"] = $.extend(true, {}, this.allWellData);
+            tile["unitData"] = $.extend(true, {}, this.allUnitData);
+            tile["selectedWellAttributes"] = {};
+
+            if(tile.circle) {
               // that works like a charm, we remove circle from canvas and delete the reference from
               // tile/well object.
-              this.mainFabricCanvas.remove(this.allSelectedObjects[objectIndex].circle);
-              delete this.allSelectedObjects[objectIndex].circle
+              this.mainFabricCanvas.remove(tile.circle);
+              this.mainFabricCanvas.remove(tile.circleCenter);
+              this.mainFabricCanvas.remove(tile.circleText);
+
+              delete this.engine.derivative[tile.index];
+              delete tile.circle;
+              delete tile.circleCenter;
+              delete tile.circleText;
             }
+
           }
-          this.mainFabricCanvas.trigger("object:selected", this.allSelectedObjects);
+          if(!dontCallMixer) {
+            this._colorMixer(true);
+          }
+
         } else {
           alert("Please select any well");
+        }
+
+      },
+
+      clearCrieteriaForAll: function(selectedObjects) {
+
+        this._deselectSelected();
+        for(var objectIndex in this.engine.derivative) {
+
+          var tile = this.allTiles[objectIndex];
+          tile["wellData"] = $.extend(true, {}, this.allWellData);
+          tile["unitData"] = $.extend(true, {}, this.allUnitData);
+          tile["selectedWellAttributes"] = {};
+
+          if(tile.circle) {
+            this.mainFabricCanvas.remove(tile.circle);
+            this.mainFabricCanvas.remove(tile.circleCenter);
+            this.mainFabricCanvas.remove(tile.circleText);
+
+            delete tile.circle;
+            delete tile.circleCenter;
+            delete tile.circleText;
+          }
+
+        }
+
+        this.mainFabricCanvas.remove(this.dynamicRect);
+        this.mainFabricCanvas.remove(this.dynamicSingleRect);
+
+        this.engine.derivative = {};
+      },
+
+      clearSingleCrieteria: function(tile) {
+
+        // Restore the original data.
+        tile["wellData"] = $.extend(true, {}, this.allWellData);
+        tile["unitData"] = $.extend(true, {}, this.allUnitData);
+        tile["selectedWellAttributes"] = {};
+
+        if(tile.circle) {
+          // that works like a charm, we remove circle from canvas and delete the reference from
+          // tile/well object.
+          this.mainFabricCanvas.remove(tile.circle);
+          this.mainFabricCanvas.remove(tile.circleCenter);
+          this.mainFabricCanvas.remove(tile.circleText);
+
+          delete this.engine.derivative[tile.index];
+          delete tile.circle;
+          delete tile.circleCenter;
+          delete tile.circleText;
         }
 
       }

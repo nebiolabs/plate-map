@@ -11,7 +11,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Here we are adding an object containing all the id s of fields in the right to tiles
         var noOfTiles = this.allTiles.length;
         for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
-          this.allTiles[tileRunner]["wellData"] = $.extend({}, this.allWellData);
+          this.allTiles[tileRunner]["wellData"] = $.extend(true, {}, this.allWellData);
         }
       },
 
@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Here we are adding an object containing all the id s of units in the right to tiles
         var noOfTiles = this.allTiles.length;
         for(var tileRunner = 0; tileRunner < noOfTiles; tileRunner ++) {
-          this.allTiles[tileRunner]["unitData"] = $.extend({}, this.allUnitData);
+          this.allTiles[tileRunner]["unitData"] = $.extend(true, {}, this.allUnitData);
         }
       },
 

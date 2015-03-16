@@ -17,11 +17,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
             for(field in tabData[currentTab]["fields"]) {
+
               var data = tabData[currentTab]["fields"][field];
               var input = this._createField(data);
 
               if(data.id && data.type) {
-                this.allWellData[data.id] = (data.type == "boolean") ? true : "";
+                this.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
               } else {
                 console.log("Plz check the format of attributes provided");
               }
@@ -92,16 +93,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // Adding prevention for non numeric keys, its basic. need to improve.
             // We use keyup and keydown combination to get only numbers saved in the object
             $(input).keydown(function(evt) {
-              var charCode = (evt.which) ? evt.which : evt.keyCode
-              if (charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
+              if (charCode != 190 && charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
                 return false;
               }
             });
 
             $(input).keyup(function(evt) {
-              var charCode = (evt.which) ? evt.which : evt.keyCode
-              if (!(charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
-                that._addData(evt)
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
+              if (!(charCode != 190 && charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
+                that._addData(evt);
               }
             });
             // Now add the label which shows unit.
@@ -111,6 +112,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           case "boolean":
             $("#" + data.id).select2({
+              allowClear: true,
+              minimumResultsForSearch: -1
             });
 
             $("#" + data.id).on("change", function(evt, generated) {
@@ -123,8 +126,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "text":
             // we use keyup instead of blur. Blur fires event but canvas fire event even faster
             // so most likely our targeted tile changed, and value added to wrong tile.
+
+
             $("#" + data.id).keyup(function(evt) {
-              that._addData(evt);
+              evt.preventDefault();
+              console.log("Cool", evt);
+              if (evt.keyCode == 90 && evt.ctrlKey) {
+                console.log("Cool", evt);
+                //return false;
+                //that._handleShortcuts(evt);
+                // Here our problem is, taking unwanted keys, key up fires even when we release control key.. fix this.
+              } else if(evt.keyCode == 89 && evt.ctrlKey)  {
+
+              }else if(evt.which != 17){
+                that._addData(evt);
+              }
             });
             break;
         }

@@ -18,7 +18,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._applyUnitData(unitId, units);
         }
         // Now put back selected fields
-        var selectedFields = this.allSelectedObjects[0]["selectedWellAttributes"];
+        var selectedFields = this.globalSelectedAttributes;
 
         for(var selectedFieldId in selectedFields) {
           if(selectedFields[selectedFieldId] == true) {
@@ -48,13 +48,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
           case "boolean":
             // select box provide bool value as text,
             // so we need a minor tweek to admit "true" and "false"
-            var boolText = (values[id] == true || values[id] == "true") ? "true" : "false";
+            var boolText = "";
+
+            if(values[id] == true || values[id] == "true") {
+              boolText = "true";
+            } else if(values[id] == false || values[id] == "false") {
+              boolText = "false";
+            }
+
             $("#" + id).val(boolText).trigger("change", "Automatic");
           break;
         }
         // Clear previously selected checkboxes
-        var checkBoxImage = $("#" + id).data("checkBox");
-        $(checkBoxImage).attr("src", this.imgSrc + "/dont.png").data("clicked", false);
+        /*var checkBoxImage = $("#" + id).data("checkBox");
+
+        if($(checkBoxImage).data("clicked")) {
+          $(checkBoxImage).attr("src", this.imgSrc + "/dont.png");
+          $(checkBoxImage).data("clicked", false);
+        }*/
       },
 
       _applyUnitData: function(unitId, units) {
@@ -84,11 +95,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var fakeAllFields = $.extend({}, allFields);
         for(var field in fakeAllFields) {
           if($("#" + field).data("type") == "boolean") {
-            fakeAllFields[field] = true;
+            fakeAllFields[field] = null;
           } else {
             fakeAllFields[field] = "";
           }
-
           this._applyFieldData(field, fakeAllFields);
         }
       },
