@@ -25,8 +25,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             "units": units,
             "wellData": data
           };
-
-          //this.derivative.checkBoxes = attrs;
         },
 
         getSelectedValues: function(tile) {

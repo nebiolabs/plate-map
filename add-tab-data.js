@@ -132,10 +132,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               evt.preventDefault();
               //console.log("Cool", evt);
               if ((evt.keyCode == 90 && evt.ctrlKey) || (evt.keyCode == 89 && evt.ctrlKey)) {
-                //console.log("Cool", evt);
-                //return false;
-                //that._handleShortcuts(evt);
-                // Here our problem is, taking unwanted keys, key up fires even when we release control key.. fix this.
+                // Leaving it blank so that other event handler takes control.
               }else if(evt.which != 17){
                 that._addData(evt);
               }

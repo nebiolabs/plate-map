@@ -12,18 +12,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addToUndoRedo: function(derivative) {
 
-
-        console.log("voohoo", this.undoRedoActive, this.actionPointer, this.undoRedoArray.length);
-        if(! this.undoRedoActive) {
-
-          if(this.actionPointer != null && this.actionPointer < (this.undoRedoArray.length - 1)) {
-            this.undoRedoArray.splice(this.actionPointer + 1, this.undoRedoArray.length);
-            console.log("I am in this");
-          }
-          this.actionPointer = null;
-          this.undoRedoArray.push($.extend(true, {}, derivative));
-          console.log(this.undoRedoArray);
+        if(this.actionPointer != null && this.actionPointer < (this.undoRedoArray.length - 1)) {
+          this.undoRedoArray.splice(this.actionPointer + 1, this.undoRedoArray.length);
         }
+        this.actionPointer = null;
+        this.undoRedoArray.push($.extend(true, {}, derivative));
 
       },
 
@@ -40,14 +33,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
-        this.undoRedoArray.push($.extend(true, {}, data));
+        this.undoRedoArray.push($.extend({}, data));
       },
 
       _handleShortcuts: function(e) {
 
         if (e.keyCode == 90 && e.ctrlKey) {
           // it says that we have undo/redo action is going on.
-          console.log("Pling");
+          //console.log("Pling");
           this.undoRedoActive = true;
 
           if(this.actionPointer == null) {
@@ -62,7 +55,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if(e.keyCode == 89 && e.ctrlKey) {
           // it says that we have undo/redo action is going on.
           this.undoRedoActive = true;
-          console.log("Janko", this.actionPointer);
+          //console.log("Janko", this.actionPointer);
           if(this.actionPointer != null && this.actionPointer < this.undoRedoArray.length - 1) {
             this.actionPointer = this.actionPointer + 1;
             this.redo(this.actionPointer);
