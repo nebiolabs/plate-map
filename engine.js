@@ -11,6 +11,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         derivative: {},
         stackUpWithColor: {},
         stackPointer: 2,
+        currentPercentage: 0,
+        wholePercentage: 0,
+        wholeNoTiles: 0,
 
         createDerivative: function(tile) {
 
@@ -93,18 +96,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         applyColors: function() {
 
+          this.wholeNoTiles = 0;
+          this.currentPercentage = 0;
+          this.wholePercentage = 0;
+
           THIS.addBottomTableHeadings();
           for(color in this.stackUpWithColor) {
             THIS.addBottomTableRow(color, this.stackUpWithColor[color]);
             for(tileIndex in this.stackUpWithColor[color]) {
 
+              this.wholeNoTiles ++;
               tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
               if(!tile.circle) {
                 THIS.addCircle(tile, color, this.stackPointer);
               } else {
                 THIS.setGradient(tile.circle, color, this.stackPointer);
               }
+              // Checks if all the required fields are filled
+              this.wholePercentage = this.wholePercentage + this.checkCompletion(tile.wellData, tile);
             }
+            //this.wholePercentage = (this.wholePercentage / this.wholeTiles)
+            //this.findPercentage(this.stackUpWithColor[color][0], this.stackUpWithColor[color].length);
+          }
+          this.wholePercentage = Math.floor(this.wholePercentage / (this.wholeNoTiles * 100) * 100);
+          console.log(this.wholePercentage);
+          if(! isNaN(this.wholePercentage)) {
+            $(THIS.overLayTextContainer).html("Completion Percentage: " + this.wholePercentage + "%");
+          } else {
+            $(THIS.overLayTextContainer).html("Completion Percentage: 0%");
           }
         },
 
@@ -119,6 +138,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           //No values at all, Clear it.
           THIS.clearSingleCrieteria(tile); // passing the value sayong dont call color mixer
           return false;
+        },
+
+        checkCompletion: function(wellData, tile) {
+
+          var length = THIS.requiredFields.length;
+          var fill = length;
+          for(var i = 0; i < length; i++) {
+            if(wellData[THIS.requiredFields[i]] == "" || wellData[THIS.requiredFields[i]] == "NULL") {
+              tile.circleCenter.radius = 14;
+              fill --;
+            }
+          }
+          if(fill != length) return ((fill) / length) * 100;
+
+          tile.circleCenter.radius = 8;
+          return 100;
         }
       }
     }

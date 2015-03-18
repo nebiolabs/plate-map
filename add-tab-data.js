@@ -6,6 +6,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     return {
 
+      requiredFields: [],
+
       _addTabData: function() {
         // Here we may need more changes becuse attributes format likely to change
         var tabData = this.options["attributes"]["tabs"];
@@ -17,7 +19,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
             for(field in tabData[currentTab]["fields"]) {
-
+              if(tabData[currentTab]["fields"][field].required) {
+                console.log("its required", tabData[currentTab]["fields"][field].id);
+                this.requiredFields.push(tabData[currentTab]["fields"][field].id);
+              }
               var data = tabData[currentTab]["fields"][field];
               var input = this._createField(data);
 
