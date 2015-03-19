@@ -154,7 +154,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           tile.circleCenter.radius = 8;
           return 100;
-        }
+        },
+
+        findCommonValues: function(reference, option) {
+          // Find common values in number of Objects
+          THIS.allSelectedObjects.filter(function(element, index) {
+            for(var key in reference) {
+              if(reference[key] != element[option][key]) {
+                reference[key] = "";
+              }
+            }
+          });
+          return reference;
+        },
       }
     }
   }
