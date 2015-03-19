@@ -114,10 +114,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               // Checks if all the required fields are filled
               this.wholePercentage = this.wholePercentage + this.checkCompletion(tile.wellData, tile);
+              this.checkForValidData(tile);
             }
-            //this.wholePercentage = (this.wholePercentage / this.wholeTiles)
-            //this.findPercentage(this.stackUpWithColor[color][0], this.stackUpWithColor[color].length);
           }
+
           this.wholePercentage = Math.floor(this.wholePercentage / (this.wholeNoTiles * 100) * 100);
           console.log(this.wholePercentage);
           if(! isNaN(this.wholePercentage)) {
@@ -136,7 +136,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
           //No values at all, Clear it.
-          THIS.clearSingleCrieteria(tile); // passing the value sayong dont call color mixer
+          console.log(tile);
+          THIS.clearSingleCrieteria(tile);
           return false;
         },
 
@@ -156,8 +157,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return 100;
         },
 
-        findCommonValues: function(reference, option) {
+        findCommonValues: function(option) {
           // Find common values in number of Objects
+          var reference = $.extend(true, {}, THIS.allSelectedObjects[0][option]);
+
           THIS.allSelectedObjects.filter(function(element, index) {
             for(var key in reference) {
               if(reference[key] != element[option][key]) {

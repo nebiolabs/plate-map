@@ -14,7 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
-            this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
+            //this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }
 
           this._colorMixer(true);
