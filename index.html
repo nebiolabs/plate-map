@@ -30,6 +30,7 @@ window.onload = function() {
         "tab 1": {
           fields: {
             Volume: {
+              required: true,
               id:       'volume',
               name:     'Volume',
               type:     'numeric',
@@ -43,6 +44,7 @@ window.onload = function() {
             },
 
             Polymerase: {
+              required: true,
               id: 'pol',
               name: 'Polymerase',
               type: 'multiselect',
@@ -73,6 +75,7 @@ window.onload = function() {
             },
 
             master_mix: {
+              required: true,
               id:       'volume-master',
               name:     'master mix concentration factor',
               type:     'text',
@@ -80,6 +83,7 @@ window.onload = function() {
             },
 
             Amplicons: {
+              required: true,
               id:       'volume-ampli',
               name:     'Amplicons',
               type:     'boolean',

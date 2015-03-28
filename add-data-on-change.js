@@ -14,10 +14,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
-            this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
+            //this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }
 
-          //this.undoRedoActive = false; //It says we dont have undo/redo active;
           this._colorMixer(true);
         }
       },
@@ -30,12 +29,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
+        if(! this.undoRedoActive) {
+          var data  = this.createObject();
+          this.addToUndoRedo(data);
+          this._trigger("updateWells", null, data);
+        }
+
         this.engine.searchAndStack().applyColors();
         this.mainFabricCanvas.renderAll();
-
-        var data  = this.createObject();
-        this.addToUndoRedo(data);
-        this._trigger("updateWells", null, data);
       },
 
       _addUnitData: function(e) {

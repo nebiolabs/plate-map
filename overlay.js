@@ -35,11 +35,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         $(this.copyCrieteriaButton).click(function(evt) {
-          console.log(this);
+          //console.log(this);
+          that.copyCrieteria();
         });
 
         $(this.pasteCrieteriaButton).click(function(evt) {
-          console.log(this);
+          //console.log(this);
+          that.pasteCrieteria();
         });
 
       },
@@ -128,6 +130,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
           delete tile.circleText;
         }
 
+      },
+
+      copyCrieteria: function() {
+
+        if(this.allSelectedObjects) {
+          this.commonWell = this.engine.findCommonValues("wellData");
+          this.commonUnit = this.engine.findCommonValues("unitData");
+        } else {
+          alert("Please select any well.");
+        }
+      },
+
+      pasteCrieteria: function() {
+
+        if(this.commonWell) {
+          this.allSelectedObjects.filter(function(element, index) {
+
+            this.allTiles[element.index].wellData = $.extend(true, {}, this.commonWell);
+            this.allTiles[element.index].unitData = $.extend(true, {}, this.commonUnit);
+            this.engine.createDerivative(this.allTiles[element.index]);
+
+          }, this);
+          this._colorMixer(true);
+          this.mouseMove = (this.allSelectedObjects.length > 1) ? true : false;
+          this.mainFabricCanvas.fire("mouse:up");
+        }
       }
     };
   }
