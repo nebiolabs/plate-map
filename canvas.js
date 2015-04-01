@@ -27,7 +27,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           selection: true,
           stateful: false,
           hoverCursor: "pointer",
-          renderOnAddRemove: false
+          renderOnAddRemove: false,
         })
         .setWidth(632)
         .setHeight(482);

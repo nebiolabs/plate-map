@@ -43,7 +43,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         */
         var xDiff = 25;
         var yDiff = 74;
-        var limitX = 624 + xDiff;
+        var limitX = 624;
         var limitY = 474 + xDiff;
 
         //$(window).scroll(function(evt){
@@ -89,13 +89,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           if(! that.mouseMove) {
             // if its just a click
-            that._createDynamicSingleRect(evt);
-            that._decideSelectedFields(that.dynamicSingleRect, true);
-            that._alignRectangle(that.dynamicSingleRect);
+            if(evt.e.y < 480 && evt.e.x < limitX) {
+              that._createDynamicSingleRect(evt);
+              that._decideSelectedFields(that.dynamicSingleRect, true);
+              that._alignRectangle(that.dynamicSingleRect);
+            }
+
           } else {
 
-            that._decideSelectedFields(that.dynamicRect);
-            that._alignRectangle(that.dynamicRect);
+            if(that._decideSelectedFields(that.dynamicRect)) {
+              that._alignRectangle(that.dynamicRect);
+            } else {
+              //that.mainFabricCanvas.remove(that.dynamicRect);
+            }
+
           }
 
           that.mouseMove = false;
@@ -110,7 +117,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var lastRect = this.allSelectedObjects[this.allSelectedObjects.length - 1];
 
           if(firstRect) {
-
             rect.left = firstRect.left - 25;
             rect.top = firstRect.top - 25;
 
@@ -166,6 +172,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             bottom = bottom - (25 - rect.top);
           }
 
+          if(rect.top > 404) {
+            console.log(rect.top);
+            this.mainFabricCanvas.remove(rect);
+            return false;
+          }
           if(right >= 580) {
             right = 580;
           }
@@ -210,6 +221,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._applyValuesToTabs();
             this.mainFabricCanvas.bringToFront(this.overLay);
           }
+          return true;
       },
 
       _selectTilesFromRectangle: function(start, row, column, click) {
@@ -292,8 +304,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex ++) {
             var currentObj = this.allSelectedObjects[objectIndex];
-              currentObj.backgroundImg.setVisible(false);
+              if(currentObj.backgroundImg) {
+                currentObj.backgroundImg.setVisible(false);
+              }
           }
+
+          this.allSelectedObjects = []; // Clearing values form allselected object
         }
       },
 
@@ -302,7 +318,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var noOfSelectedObjects = this.allSelectedObjects.length;
         for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
           var currentObj = this.allSelectedObjects[objectIndex];
-            currentObj.backgroundImg.setVisible(true);
+            if(currentObj.backgroundImg) {
+              currentObj.backgroundImg.setVisible(true);
+            }
         }
       },
 

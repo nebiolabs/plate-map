@@ -68,8 +68,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               delete this.engine.derivative[tile.index];
               delete tile.circle;
-              delete tile.circleCenter;
-              delete tile.circleText;
+              //delete tile.circleCenter;
+              //delete tile.circleText;
             }
 
           }
@@ -101,8 +101,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.mainFabricCanvas.remove(tile.circleText);
 
             delete tile.circle;
-            delete tile.circleCenter;
-            delete tile.circleText;
+            //delete tile.circleCenter;
+            //delete tile.circleText;
           }
 
         }
@@ -131,8 +131,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           delete this.engine.derivative[tile.index];
           delete tile.circle;
-          delete tile.circleCenter;
-          delete tile.circleText;
+          //delete tile.circleCenter;
+          //delete tile.circleText;
         }
 
       },

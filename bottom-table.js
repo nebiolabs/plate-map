@@ -13,15 +13,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addBottomTableHeadings: function() {
 
-        $(".plate-setup-bottom-container").html("");
         this.bottomRow = this._createElement("<div></div>").addClass("plate-setup-bottom-row");
 
         var singleField = this._createElement("<div></div>").addClass("plate-setup-bottom-single-field")
                           .html("<div>" + "Plate ID" + "</div>");
-        $(this.bottomRow).prepend(singleField);
+        $(this.bottomRow).addClass("plate-setup-bottom-row-seperate")
+        .prepend(singleField);
         // Now we append all the captions at the place.
-        $(this.bottomContainer).append(this.bottomRow);
-        $(this.bottomRow).addClass("plate-setup-bottom-row-seperate");
+        $(this.bottomContainer).html(this.bottomRow);
+
         this.rowCounter = 1;
 
         for(var attr in this.globalSelectedAttributes) {
