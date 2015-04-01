@@ -34,7 +34,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.addToUndoRedo(data);
           this._trigger("updateWells", null, data);
         }
-
+        
         this.engine.searchAndStack().applyColors();
         this.mainFabricCanvas.renderAll();
       },
