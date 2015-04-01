@@ -5,6 +5,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.engine = function(THIS) {
     // Methods which look after data changes and stack up accordingly
     // Remember THIS points to plateLayOutWidget and 'this' points to engine
+    // Use THIS to refer parent this.
     return {
       engine: {
 
@@ -58,7 +59,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 2;
-          var derivativeCopy = $.extend(true, {}, this.derivative);
+          var derivativeCopy = JSON.parse(JSON.stringify(this.derivative));//$.extend(true, {}, this.derivative);
 
           while(! $.isEmptyObject(derivativeCopy)) {
 
@@ -101,8 +102,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.wholePercentage = 0;
 
           THIS.addBottomTableHeadings();
+
           for(color in this.stackUpWithColor) {
+
             THIS.addBottomTableRow(color, this.stackUpWithColor[color]);
+
             for(tileIndex in this.stackUpWithColor[color]) {
 
               this.wholeNoTiles ++;
@@ -119,7 +123,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           this.wholePercentage = Math.floor(this.wholePercentage / (this.wholeNoTiles * 100) * 100);
-          console.log(this.wholePercentage);
+
           if(! isNaN(this.wholePercentage)) {
             $(THIS.overLayTextContainer).html("Completion Percentage: " + this.wholePercentage + "%");
           } else {
@@ -136,7 +140,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
           //No values at all, Clear it.
-          console.log(tile);
           THIS.clearSingleCrieteria(tile);
           return false;
         },
@@ -158,8 +161,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         findCommonValues: function(option) {
-          // Find common values in number of Objects
-          var reference = $.extend(true, {}, THIS.allSelectedObjects[0][option]);
+          // Find common values in number of Objects.
+          // When we copy different wells together we only take common values.
+          var reference = JSON.parse(JSON.stringify(THIS.allSelectedObjects[0][option]));//$.extend(true, {}, THIS.allSelectedObjects[0][option]);
 
           THIS.allSelectedObjects.filter(function(element, index) {
             for(var key in reference) {

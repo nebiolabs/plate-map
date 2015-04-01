@@ -49,6 +49,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       clearCrieteria: function(dontCallMixer) {
 
         if(this.allSelectedObjects) {
+
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
 
@@ -67,11 +68,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               delete this.engine.derivative[tile.index];
               delete tile.circle;
-              delete tile.circleCenter;
-              delete tile.circleText;
+              //delete tile.circleCenter;
+              //delete tile.circleText;
             }
 
           }
+
           if(!dontCallMixer) {
             this._colorMixer(true);
           }
@@ -85,6 +87,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       clearCrieteriaForAll: function(selectedObjects) {
 
         this._deselectSelected();
+
         for(var objectIndex in this.engine.derivative) {
 
           var tile = this.allTiles[objectIndex];
@@ -98,8 +101,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this.mainFabricCanvas.remove(tile.circleText);
 
             delete tile.circle;
-            delete tile.circleCenter;
-            delete tile.circleText;
+            //delete tile.circleCenter;
+            //delete tile.circleText;
           }
 
         }
@@ -108,6 +111,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.mainFabricCanvas.remove(this.dynamicSingleRect);
 
         this.engine.derivative = {};
+
       },
 
       clearSingleCrieteria: function(tile) {
@@ -118,6 +122,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         tile["selectedWellAttributes"] = {};
 
         if(tile.circle) {
+
           // that works like a charm, we remove circle from canvas and delete the reference from
           // tile/well object.
           this.mainFabricCanvas.remove(tile.circle);
@@ -126,8 +131,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           delete this.engine.derivative[tile.index];
           delete tile.circle;
-          delete tile.circleCenter;
-          delete tile.circleText;
+          //delete tile.circleCenter;
+          //delete tile.circleText;
         }
 
       },

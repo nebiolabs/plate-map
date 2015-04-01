@@ -101,7 +101,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
 
           fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
-            
+
             for(var runner = 0; runner < finishing; runner ++) {
               var imaging = $.extend({}, img);
               var backgroundImg = $.extend({}, backImg)
@@ -122,7 +122,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               that.allTiles[runner].backgroundImg = backgroundImg;
               that.mainFabricCanvas.add(backgroundImg, imaging);
             }
-
+            that.mainFabricCanvas.renderAll();
           });
           that._addLargeRectangleOverlay();
         });
