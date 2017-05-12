@@ -22,67 +22,74 @@ Embed code similar to the below to add the plate layout tool to your application
 <head>
 	<script type="text/javascript" src="javascripts/plate-layout.js"></script>
 	<script type="text/javascript">
-		var volume_units = [
-			{
-				id:   'unit1',
-				name: 'uL'
+	window.onload = function() {
+
+		//Define fields to hold data
+		var fields = {
+			Volume: {
+			  required: true,
+			  id:       'volume',
+			  name:     'Volume',
+			  type:     'numeric',
+			  placeholder: "Volume",
+			  units: {
+			    1: "uL",
+			    2: "mL"
+			  }
 			},
-			{
-				id:   'unit2',
-				name: 'mL'
+			Polymerase: {
+			  required: true,
+			  id: 'pol',
+			  name: 'Polymerase',
+			  type: 'multiselect',
+			  placeHolder: "Polymerase",
+			  options: {
+			    'Taq 1': {
+			          id:   '234',
+			          name: 'Taq 1'
+			    },
+			    'Taq 2': {
+			          id:   '123',
+			          name: 'Taq 2'
+			    }
+			  }
 			}
-		];
+		}; 
 
-		var attributes = [
-			//tab 1
-			[
-				{
-					id:       'volume',
-					name:     'Volume',
-					type:     'numeric',
-					units:    volume_units //optional
-				},
-				//etc
-			],
-
-			//tab 2
-			[
-				{
-					id:         'pol',
-					name:       'Polymerase',
-					type:       'multiselect',
-					options: [
-						{
-							id:   '234',
-							name: 'Taq 1'
-						},
-						{
-							id:   '123',
-							name: 'Taq 2'
-						}
-					]
+		// Define presentation attributes
+		var attributes = {
+			presets: { // Define quick pick of different combinations of checked fields
+				"preset 1": ['volume', 'pol'],
+				"preset 2": ["pol"]
+			},
+			tabs: {
+				"Settings": {
+					fields: fields 
 				}
-			]; //etc, up to 4 tabs
-		];
+			}, 
+		} //attributes
 
 		$("#my-plate-layout").plateLayout({
 
 			numRows:          '8',
 			numCols:          '12',
+			imgSrc:           "css",
 			attributes:       attributes,
 
-			getPlate: function() {
-				//this function should retrieve the plate from the server
-				//and call either getPlateSuccessful() or getPlateFailed()
-				//on completion
-			},
-
-			updateWells: function(wells) {
+			updateWells: function(event, data) {
 				//this function should save the provided wells to the server
 				//and call either updateWellsSuccessful() or updateWellsFailed()
 				//on completion
 			}
 		});
+
+		//You can trigger the load of plateData at any time, 
+		//including initializing, using the getPlates method
+		$("#my-plate-layout").plateLayOut("getPlates", plateData);
+
+		//You can retrieve the current state at any time using the createObject method
+		$("#my-plate-layout").plateLayOut("createObject"); 
+	}
 	</script>
 </head>
 
@@ -96,43 +103,45 @@ More detailed explanation of the example attribute definition provided above to 
 
 ## JavaScript API
 ### User-Provided Callback Functions
-The following two callback functions must be implemented by the user and provided to the init function.
+The following callback function must be implemented by the user and provided to the init function.
 
-#### updateWells(wellChangeArray)
-As the user makes changes, the plate layout tool tracks what changes need to be saved to the server. It serializes these changes into batches, and calls this function once per batch. The
-function is passed a list of wells that have changes, and should make an AJAX request to save these changes to the server. Upon completion you should call either `plateLayout.updateWellsSuccessful()` or `plateLayout.updateWellsFailure()`. If successful, updateWells() will be called again once there are further changes. If a failure occurs, an error will be displayed to the user, and the plate will be re-loaded.
+#### updateWells(event, data)
+Anytime the user makes changes, this callback will be invoked with the current state of the data, 
+allowing the developer to respond to changes.
 
-#### getPlate()
-This function is called when the tool initializes to retrieve the existing plate layout. Once retrieved, you should call either `plateLayout.getPlateSuccessful(wells)` or `plateLayout.getPlateFailed()`. If successful, well data should be passed in the following form:
+### Major functions
+The following functions may be called at any time to interact with the UI.  
+Typically you will invoke these functions using `$("#mylayout").plateLayOut("function", ...args)` form. 
 
+#### getPlates(data)
+This function may be called at any time to load data. Well data should be passed in the following form:
+
+```js
+{
+	derivative: {
+		"0": { //row-major index of well
+			wellData: {
+				field_1: "value 1"
+				field_2: "value 2"
+			}, 
+			units: {
+				field_1unit: "value 1 unit"
+			}
+		}
+	}, 
+	checkboxes: { //activation of checkboxes
+		field_1: true, 
+		field_2: false
+	}, 
+	selectedObjects: { //selection
+		startingTileIndex: 0, // row-major index of first well
+		columnCount: 1,       // number of cols -1
+		rowCount: 2           // number of rows -1
+	}
+}
 ```
-[
-	//well 0
-	{
-		attribute_id_1: 'attribute_value_1',
-		attribute_id_2: 'attribute_value_2
-	},
-
-	//well 1, etc
-]
-```
-`attribute_id_x` cooresponds to the id of the attribute as it is defined in the configuration options.
-
-###Plate Layout Callback Functions
-
-The plate layout tool exposes the following callback functions intended to be called by the user.
-
-#### getPlateSuccessful(wells)
-Called back in response to getPlate(). Used to initialize the plate layout tool with the well array data if getPlate() succeeded.
-
-#### getPlateFailed()
-Called back in response to a failed getPlate() call.
-
-#### updateWellsSuccessful()
-Called back when updateWells() successfully updates all wells it was provided to the server.
-
-#### updateWellsFailed()
-Called back when updateWells() was unsuccessful in updating all wells to the server.
+#### createObject()
+This function will return the current state of the UI. The form of the data will be as documented for getPlates. 
 
 ###Data Types.
 
@@ -140,25 +149,24 @@ We have four data types which can be used to initialize tabs in the right hand s
 
 #### Text
 
-Text field are the normal and basic text field they are just take some text value inside. Nothing specific.
+Text field are the normal and basic text field which holds a text value inside. Nothing specific.
 
 #### Numeric
 
 When we have numeric data which has some unit we use numeric data type. Sometime we should be using volume like quantities, So we provide an extra field to hand over units too.
 
-```
-Speed: {
-	id:       'SpeedData',
-	name:     'Speed',
-	type:     'numeric',
-	placeholder: "Speed",
-
-	units: {
-		1: "m/s",
-		2: "km/hr"
-	}
+```js
+Volume: {
+  required: true,
+  id:       'volume',
+  name:     'Volume',
+  type:     'numeric',
+  placeholder: "Volume",
+  units: {
+    1: "uL",
+    2: "mL"
+  }
 }
-
 ```
 
 see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter speed data.
@@ -173,23 +181,22 @@ Normal select box but we bring select2 to modify it. Look at the example object 
 
 ```
 Polymerase: {
-	id: 'pol',
-	name: 'Polymerase',
-	type: 'multiselect',
-	placeHolder: "Polymerase",
-
-	options: {
-			'Taq 1':  {
-						id:   '234',
-						name: 'Taq 1'
-				},
-			'Taq 2':  {
-						id:   '123',
-						name: 'Taq 2'
-				}
-	}
+  required: true,
+  id: 'pol',
+  name: 'Polymerase',
+  type: 'multiselect',
+  placeHolder: "Polymerase",
+  options: {
+    'Taq 1': {
+      id:   '234',
+      name: 'Taq 1'
+    },
+    'Taq 2': {
+      id:   '123',
+      name: 'Taq 2'
+    }
+  }
 }
-
 ```
 
 Here options are going to be the values in the dropdown.
