@@ -59,8 +59,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.mainFabricCanvas.remove(that.dynamicRect);
           that.mainFabricCanvas.remove(that.dynamicSingleRect);
           that.dynamicRect = false;
-          that.startX = evt.e.clientX - xDiff;
-          that.startY = evt.e.clientY - yDiff;
+          
+          // Solution for a scroll problem    
+          //that.startX = evt.e.clientX - xDiff;
+          //that.startY = evt.e.clientY - yDiff;
+          
+          that.startX = event.layerX;
+          that.startY = event.layerY;
         });
 
         that.mainFabricCanvas.on("mouse:move", function(evt) {
