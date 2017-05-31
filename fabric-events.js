@@ -46,12 +46,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var limitX = 624;
         var limitY = 474 + xDiff;
 
-        //$(window).scroll(function(evt){
-          // Look for a solution to this problem ... !!!
-          // May be implement a way to handle offset, Look for calcOffset Source code.
-          //that.mainFabricCanvas.calcOffset();
-        //});
-
         that.mainFabricCanvas.on("mouse:down", function(evt) {
 
           that.mouseDown = true;
@@ -59,8 +53,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.mainFabricCanvas.remove(that.dynamicRect);
           that.mainFabricCanvas.remove(that.dynamicSingleRect);
           that.dynamicRect = false;
+          var scrollTop = $(window).scrollTop();
           that.startX = evt.e.clientX - xDiff;
-          that.startY = evt.e.clientY - yDiff;
+          that.startY = evt.e.clientY - yDiff + scrollTop;
         });
 
         that.mainFabricCanvas.on("mouse:move", function(evt) {
@@ -74,10 +69,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             that._createDynamicRect(evt);
           }
 
+          var scrollTop = $(window).scrollTop();
           if(that.dynamicRect && that.mouseDown && x > that.spacing && y > that.spacing) {
             // Need a change in logic according to u drag left of right / top bottom
             that.dynamicRect.setWidth(x - that.startX - xDiff);
-            that.dynamicRect.setHeight(y - that.startY - yDiff);
+            that.dynamicRect.setHeight(y + scrollTop - that.startY - yDiff);
             that.mainFabricCanvas.renderAll();
           }
 
