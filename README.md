@@ -69,7 +69,7 @@ Embed code similar to the below to add the plate layout tool to your application
 			}, 
 		} //attributes
 
-		$("#my-plate-layout").plateLayout({
+		$("#my-plate-layout").plateLayOut({
 
 			numRows:          '8',
 			numCols:          '12',
