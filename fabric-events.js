@@ -3,6 +3,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 (function($, fabric) {
 
   plateLayOutWidget.fabricEvents = function() {
+    function clickCoords(evt) {
+      var rect = evt.e.target.getBoundingClientRect();
+      return {
+        x: evt.e.clientX - rect.left,
+        y: evt.e.clientY - rect.top
+      }
+    }
+
     // This object contains Menu items and how it works;
     return {
         colorToIndex: {},
@@ -36,73 +44,49 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.getPlates(JSON.parse(data));
         });
         /*
-          correct dynamic rectangles placing
-          correct drag in the opposite direction
-          pass those tiles to all those functions already written
           consider undo redo .. It should be easy now as I have only one place to control everything
         */
-        var xDiff = 25;
-        var yDiff = 74;
-        var limitX = 624;
-        var limitY = 474 + xDiff;
-
-        //$(window).scroll(function(evt){
-          // Look for a solution to this problem ... !!!
-          // May be implement a way to handle offset, Look for calcOffset Source code.
-          //that.mainFabricCanvas.calcOffset();
-        //});
 
         that.mainFabricCanvas.on("mouse:down", function(evt) {
-
           that.mouseDown = true;
           that._deselectSelected(); // Deselecting already selected tiles.
           that.mainFabricCanvas.remove(that.dynamicRect);
           that.mainFabricCanvas.remove(that.dynamicSingleRect);
           that.dynamicRect = false;
-          that.startX = evt.e.clientX - xDiff;
-          that.startY = evt.e.clientY - yDiff;
+          that.startXY = clickCoords(evt);
         });
 
         that.mainFabricCanvas.on("mouse:move", function(evt) {
-
-          var x = evt.e.x || evt.e.clientX;
-          var y = evt.e.y || evt.e.clientY;
-
           if((!that.dynamicRect) && (that.mouseDown)) {
             // Create rectangle .. !
             that.mouseMove = true;
             that._createDynamicRect(evt);
           }
 
-          if(that.dynamicRect && that.mouseDown && x > that.spacing && y > that.spacing) {
-            // Need a change in logic according to u drag left of right / top bottom
-            that.dynamicRect.setWidth(x - that.startX - xDiff);
-            that.dynamicRect.setHeight(y - that.startY - yDiff);
+          if(that.dynamicRect && that.mouseDown) {
+            var endXY = clickCoords(evt);
+            that.dynamicRect.setWidth(endXY.x - that.startXY.x);
+            that.dynamicRect.setHeight(endXY.y - that.startXY.y);
             that.mainFabricCanvas.renderAll();
           }
 
         });
 
         that.mainFabricCanvas.on("mouse:up", function(evt) {
-
+          var endXY = clickCoords(evt)
           that.mouseDown = false;
 
           if(! that.mouseMove) {
             // if its just a click
-            if(evt.e.y < 480 && evt.e.x < limitX) {
-              that._createDynamicSingleRect(evt);
-              that._decideSelectedFields(that.dynamicSingleRect, true);
+            that._createDynamicSingleRect(evt);
+            if(that._decideSelectedFields(that.dynamicSingleRect, true)) {
               that._alignRectangle(that.dynamicSingleRect);
             }
-
           } else {
 
             if(that._decideSelectedFields(that.dynamicRect)) {
               that._alignRectangle(that.dynamicRect);
-            } else {
-              //that.mainFabricCanvas.remove(that.dynamicRect);
-            }
-
+            } 
           }
 
           that.mouseMove = false;
@@ -246,19 +230,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _createDynamicRect: function(evt) {
+        var endXY = clickCoords(evt);
 
-          this.dynamicRect = new fabric.Rect({
-            width: 1,
-            height: 2,
-            left: this.startX,
-            top: this.startY,
-            originX:'left',
-            originY: 'top',
-            fill: null,
-            strokeWidth: 1.5,
-            stroke: "#00506e"
-          });
-          this.mainFabricCanvas.add(this.dynamicRect);
+        this.dynamicRect = new fabric.Rect({
+          width: endXY.x - this.startXY.x,
+          height: endXY.y - this.startXY.y,
+          left: this.startXY.x,
+          top: this.startXY.y,
+          originX:'left',
+          originY: 'top',
+          fill: null,
+          strokeWidth: 1.5,
+          stroke: "#00506e"
+        });
+        this.mainFabricCanvas.add(this.dynamicRect);
       },
 
       _createDynamicSingleRect: function(evt) {
@@ -266,8 +251,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.dynamicSingleRect = new fabric.Rect({
           width: this.spacing,
           height: this.spacing,
-          left: this.startX,
-          top: this.startY,
+          left: this.startXY.x,
+          top: this.startXY.y,
           originX:'left',
           originY: 'top',
           fill: null,
