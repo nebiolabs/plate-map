@@ -60,10 +60,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Indeed we are using rectangles as basic tile. Over the tile we are putting
         // not selected image and later the circle [When we select it].
         var rowCount = this.rowIndex.length;
+        var colCount = this.columnCount; 
         var tileCounter = 0;
         for( var i = 0; i < rowCount; i++) {
 
-          for(var j = 0; j < 12; j++) {
+          for(var j = 0; j < colCount; j++) {
             var tempCircle = new fabric.Rect({
               width: 48,
               height: 48,
@@ -98,9 +99,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         var finishing = this.allTiles.length;
 
+        function zIndex(o) {
+          return that.mainFabricCanvas.getObjects().indexOf(o)
+        }
+
         fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
 
           fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
+
 
             for(var runner = 0; runner < finishing; runner ++) {
               var imaging = $.extend({}, img);
@@ -117,10 +123,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
               imaging.lockMovementY = backgroundImg.lockMovementY = true;
               imaging.evented = backgroundImg.evented = false;
               imaging.type = "image";
-              backgroundImg.visible = false;
+              var currentlySelected = selectedTiles.indexOf(currentTile) >= 0; 
+              backgroundImg.visible = currentlySelected;
               that.allTiles[runner].notSelected = imaging; // Pointing to img
               that.allTiles[runner].backgroundImg = backgroundImg;
               that.mainFabricCanvas.add(backgroundImg, imaging);
+              var z = zIndex(currentTile);
+              backgroundImg.moveTo(z+1); 
+              imaging.moveTo(z+2);  
             }
             that.mainFabricCanvas.renderAll();
           });
