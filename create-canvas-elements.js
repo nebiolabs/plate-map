@@ -8,6 +8,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       spacing: 48,
 
+      _scale: function () {
+        //Get a scale factor for rendering
+        return this.spacing / 48; 
+      },
+
       _canvas: function() {
         // Those 1,2,3 s and A,B,C s
         this._fixRowAndColumn();
@@ -18,6 +23,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _fixRowAndColumn: function() {
+        var scale = this._scale(); 
 
         // For column
         for(var i = 1; i<= this.columnCount; i++) {
@@ -25,7 +31,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fill: 'black',
             originX:'center',
             originY: 'center',
-            fontSize: 12,
+            fontSize: 12*scale,
             top : 10,
             left: this.spacing + ((i - 1) * this.spacing),
             fontFamily: "Roboto",
@@ -43,7 +49,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fill: 'black',
             originX:'center',
             originY: 'center',
-            fontSize: 12,
+            fontSize: 12*scale,
             left: 5,
             top: this.spacing + (i * this.spacing),
             fontFamily: "Roboto",
@@ -66,8 +72,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for(var j = 0; j < colCount; j++) {
             var tempCircle = new fabric.Rect({
-              width: 48,
-              height: 48,
+              width: this.spacing,
+              height: this.spacing,
               left: this.spacing + (j * this.spacing),
               top: this.spacing + (i * this.spacing),
               fill: '#f5f5f5',
@@ -114,6 +120,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var currentTile = that.allTiles[runner];
               imaging.top = backgroundImg.top = currentTile.top;
               imaging.left = backgroundImg.left = currentTile.left;
+              imaging.width = backgroundImg.width = currentTile.width; 
+              imaging.height = backgroundImg.height = currentTile.height; 
               imaging.parent = currentTile; // Pointing to tile
               imaging.originX = backgroundImg.originX = 'center';
               imaging.originY = backgroundImg.originY = 'center';

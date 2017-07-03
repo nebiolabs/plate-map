@@ -7,9 +7,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       addCircle: function(tileToAdd, color, stackPointer) {
+        var scale = this._scale(); 
 
         var circle = new fabric.Circle({
-          radius: 22,
+          radius: 22 * scale,
           originX:'center',
           originY: 'center',
           top: tileToAdd.top,
@@ -21,7 +22,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         circle.colorIndex = color;
 
         var circleCenter = new fabric.Circle({
-          radius: 14,
+          radius: 14 * scale,
           fill: "white",
           originX:'center',
           originY: 'center',
@@ -36,7 +37,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             left: tileToAdd.left,
             fill: 'black',
             evented: false,
-            fontSize: 12,
+            fontSize: 12 * scale,
             lockScalingX: true,
             lockScalingY: true,
             originX:'center',
