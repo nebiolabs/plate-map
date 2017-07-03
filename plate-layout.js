@@ -24,7 +24,7 @@
   // Make sure you follow the syntax or return an object from the file
   fileArray = ["libs/jquery-1.11.2.min", "libs/jquery-ui.min", "libs/fabric", "libs/select2","add-data-on-change",
   "add-data-to-tabs", "add-tab-data", "apply-well-data", "bottom-table", "canvas-circles",
-  "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine", "fabric-events", "interface", "load-plate", "menu",
+  "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine", "well-area", "fabric-events", "interface", "load-plate", "menu",
  "overlay", "preset", "redo", "tabs", "undo-redo-manager", "undo", "unit-data-field"];
 
   loadScript(arrayPointer);

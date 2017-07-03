@@ -86,7 +86,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       clearCriteriaForAll: function(selectedObjects) {
 
-        this._deselectSelected();
+        //this._deselectSelected();
 
         for(var objectIndex in this.engine.derivative) {
 
@@ -158,6 +158,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           }, this);
           this._colorMixer(true);
+          that.decideSelectedFields(); 
+
           this.mouseMove = (this.allSelectedObjects.length > 1) ? true : false;
           this.mainFabricCanvas.fire("mouse:up");
         }

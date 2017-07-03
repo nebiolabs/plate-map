@@ -25,11 +25,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var data  = {
           checkboxes: {},
           derivative: {},
-          selectedObjects: {
-            startingTileIndex :0, rowCount: 1, columnCount: 1,click: true,
-              selectionRectangle: {
-                type: "dynamicSingleRect", width: 48, height: 48, left: 45, top: 36, mouseMove: false
-              }
+          selectedAreas: [{
+            minRow: 0, 
+            minCol: 0, 
+            maxRow: 0, 
+            maxCol: 0
+          }], 
+          focalWell: {
+            row: 0, 
+            col: 0
           }
         };
 
