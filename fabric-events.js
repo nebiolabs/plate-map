@@ -123,36 +123,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.allSelectedObjects = this._areasToTiles(areas); 
         this._setSelectedTiles();
         this._setFocalWellRect(this.focalWell)
-        if (this.selectedAreas.length > 1) {
-          this._setSelectionRect(null); 
-        } else {
-          this._setSelectionRect(this._areaToRect(this.selectedAreas[0]))
-        }
       }, 
 
       _setFocalWellRect: function (well) {
         if (well) {
           var rect = this._areaToRect(this._wellToArea(well)); 
+          var strokeWidth = 2; 
           if (this.focalWellRect) {
             //update focalWellRect
-            this.focalWellRect.setTop(rect.top+1); 
-            this.focalWellRect.setLeft(rect.left+1); 
-            this.focalWellRect.setWidth(rect.width-2); 
-            this.focalWellRect.setHeight(rect.height-2); 
+            this.focalWellRect.setTop(rect.top); 
+            this.focalWellRect.setLeft(rect.left); 
+            this.focalWellRect.setWidth(rect.width-strokeWidth); 
+            this.focalWellRect.setHeight(rect.height-strokeWidth); 
           } else {
             //create focalWellRect
             this.focalWellRect = new fabric.Rect({
-              width: rect.width-2,
-              height: rect.height-2,
-              left: rect.left+1,
-              top: rect.top+1,
-              originX:'left',
-              originY: 'top',
+              width: rect.width-strokeWidth,
+              height: rect.height-strokeWidth,
+              left: rect.left,
+              top: rect.top,
               fill: null,
-              strokeWidth: 1,
-              stroke: "#00506e",
-              rx: 5, 
-              ry: 5
+              strokeWidth: strokeWidth,
+              stroke: "black",
+              selectable: false
             });
             this.mainFabricCanvas.add(this.focalWellRect); 
           }
@@ -163,47 +156,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       }, 
 
-      _setSelectionRect: function (rect) {
-        //set the selection rect
-        if (rect) {
-          if (this.selectionRect) {
-            //update selectionRect
-            this.selectionRect.setTop(rect.top); 
-            this.selectionRect.setLeft(rect.left); 
-            this.selectionRect.setWidth(rect.width); 
-            this.selectionRect.setHeight(rect.height); 
-          } else {
-            //create selectionRect
-            this.selectionRect = new fabric.Rect({
-              width: rect.width,
-              height: rect.height,
-              left: rect.left,
-              top: rect.top,
-              originX:'left',
-              originY: 'top',
-              fill: null,
-              strokeWidth: 1.5,
-              stroke: "#00506e", 
-              rx: 5, 
-              ry: 5
-            });
-            this.mainFabricCanvas.add(this.selectionRect); 
-          }
-        } else {
-          //clear selectionRect
-          this.mainFabricCanvas.remove(this.selectionRect); 
-          this.selectionRect = null; 
-        }
-      }, 
-
       _setSelectedTiles: function() {
         // Update selected tile display only
         var selectedTiles = this.allSelectedObjects; 
         this.allTiles.forEach(function (tile) {
-          if (tile.backgroundImg) {
-            var selected = selectedTiles.indexOf(tile) >= 0; 
-            tile.backgroundImg.setVisible(selected); 
-          }
+          var selected = selectedTiles.indexOf(tile) >= 0; 
+          tile.highlight.setVisible(selected); 
         })
       },
 

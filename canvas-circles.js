@@ -15,7 +15,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           originY: 'center',
           top: tileToAdd.top,
           left: tileToAdd.left,
-          shadow: 'rgba(0,0,0,0.3) 0 2px 2px',
+          stroke: 'gray',
+          strokeWidth: 0.5,
           evented: false
         });
 
@@ -28,7 +29,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           originY: 'center',
           top: tileToAdd.top,
           left: tileToAdd.left,
-          shadow: 'rgba(0,0,0,0.1) 0 -1px 0',
+          stroke: 'gray',
+          strokeWidth: 0.5,
           evented: false,
         });
 
@@ -81,9 +83,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         circle.setGradient("fill", {
           x1: 0,
-          y1: 0,
+          y1: -circle.height/2,
           x2: 0,
-          y2: circle.height,
+          y2: circle.height/2,
           colorStops: colorStops
         });
       },
