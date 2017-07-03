@@ -140,7 +140,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
           //No values at all, Clear it.
-          THIS.clearSingleCrieteria(tile);
+          THIS.clearSingleCriteria(tile);
           return false;
         },
 

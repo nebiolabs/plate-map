@@ -13,7 +13,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.clearCheckBoxes();
 
-        this.clearCrieteriaForAll(derivativeData.selectedObjects);
+        this.clearCriteriaForAll(derivativeData.selectedObjects);
 
         this.loadDataToCircles(derivativeData.derivative);
 

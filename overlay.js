@@ -4,10 +4,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
   plateLayOutWidget.overlay = function() {
     // overlay holds all the methods to put the part just above the canvas which contains all those
-    // 'completion percentage' annd 'copy crieteria' button etc ...
+    // 'completion percentage' annd 'copy Criteria' button etc ...
     return {
 
-      copyCrieteria: {},
+      copyCriteria: {},
 
       _createOverLay: function() {
 
@@ -18,35 +18,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
         $(this.overLayContainer).append(this.overLayButtonContainer);
 
-        this.clearCrieteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.clearCrieteriaButton).text("Clear Criteria");
-        $(this.overLayButtonContainer).append(this.clearCrieteriaButton);
+        this.clearCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        $(this.clearCriteriaButton).text("Clear Criteria");
+        $(this.overLayButtonContainer).append(this.clearCriteriaButton);
 
-        this.copyCrieteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.copyCrieteriaButton).text("Copy Criteria");
-        $(this.overLayButtonContainer).append(this.copyCrieteriaButton);
+        this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        $(this.copyCriteriaButton).text("Copy Criteria");
+        $(this.overLayButtonContainer).append(this.copyCriteriaButton);
 
-        this.pasteCrieteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.pasteCrieteriaButton).text("Paste Criteria");
-        $(this.overLayButtonContainer).append(this.pasteCrieteriaButton);
+        this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        $(this.pasteCriteriaButton).text("Paste Criteria");
+        $(this.overLayButtonContainer).append(this.pasteCriteriaButton);
 
-        $(this.clearCrieteriaButton).click(function(evt) {
-          that.clearCrieteria();
+        $(this.clearCriteriaButton).click(function(evt) {
+          that.clearCriteria();
         });
 
-        $(this.copyCrieteriaButton).click(function(evt) {
+        $(this.copyCriteriaButton).click(function(evt) {
           //console.log(this);
-          that.copyCrieteria();
+          that.copyCriteria();
         });
 
-        $(this.pasteCrieteriaButton).click(function(evt) {
+        $(this.pasteCriteriaButton).click(function(evt) {
           //console.log(this);
-          that.pasteCrieteria();
+          that.pasteCriteria();
         });
 
       },
 
-      clearCrieteria: function(dontCallMixer) {
+      clearCriteria: function(dontCallMixer) {
 
         if(this.allSelectedObjects) {
 
@@ -68,8 +68,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               delete this.engine.derivative[tile.index];
               delete tile.circle;
-              //delete tile.circleCenter;
-              //delete tile.circleText;
+              delete tile.circleCenter;
+              delete tile.circleText;
             }
 
           }
@@ -84,7 +84,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      clearCrieteriaForAll: function(selectedObjects) {
+      clearCriteriaForAll: function(selectedObjects) {
 
         this._deselectSelected();
 
@@ -114,7 +114,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      clearSingleCrieteria: function(tile) {
+      clearSingleCriteria: function(tile) {
 
         // Restore the original data.
         tile["wellData"] = $.extend(true, {}, this.allWellData);
@@ -137,7 +137,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       },
 
-      copyCrieteria: function() {
+      copyCriteria: function() {
 
         if(this.allSelectedObjects) {
           this.commonWell = this.engine.findCommonValues("wellData");
@@ -147,7 +147,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      pasteCrieteria: function() {
+      pasteCriteria: function() {
 
         if(this.commonWell) {
           this.allSelectedObjects.filter(function(element, index) {
