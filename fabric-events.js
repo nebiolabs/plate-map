@@ -154,8 +154,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               rx: 5, 
               ry: 5
             });
+            this.mainFabricCanvas.add(this.focalWellRect); 
           }
-          this.mainFabricCanvas.add(this.focalWellRect); 
         } else {
           //clear focalWellRect
           this.mainFabricCanvas.remove(this.focalWellRect); 
