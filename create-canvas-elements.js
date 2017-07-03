@@ -106,7 +106,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
 
           fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
-
+            var selectedTiles = that.allSelectedObjects || [];
 
             for(var runner = 0; runner < finishing; runner ++) {
               var imaging = $.extend({}, img);

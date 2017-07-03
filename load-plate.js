@@ -25,7 +25,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.loadCheckboxes(derivativeData.checkboxes);
         }
 
-        if(derivativeData.selectedObjects.selectionRectangle) {
+        if(derivativeData.selectedObjects && derivativeData.selectedObjects.selectionRectangle) {
           this.createRectangle(derivativeData.selectedObjects.selectionRectangle, derivativeData.selectedObjects.click);
         }
 
