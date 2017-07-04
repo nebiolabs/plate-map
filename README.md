@@ -71,10 +71,10 @@ Embed code similar to the below to add the plate layout tool to your application
 
 		$("#my-plate-layout").plateLayOut({
 
-			numRows:          '8',
-			numCols:          '12',
-			imgSrc:           "css",
-			attributes:       attributes,
+			numRows: 8,
+			numCols: 12,
+			imgSrc:  "css",
+			attributes: attributes,
 
 			updateWells: function(event, data) {
 				//this function should save the provided wells to the server
