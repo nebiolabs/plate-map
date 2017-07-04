@@ -39,13 +39,26 @@
       value: 0
     },
 
-    columnCount: 12,
-
-    rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
-
     allTiles: [], // All tiles containes all thise circles in the canvas
 
     _create: function() {
+      function rowKey(i) {
+        var c1 = i % 26; 
+        var c2 = (i - c1)/26; 
+        var code = String.fromCharCode(65+c1); 
+        if (c2 > 0) {
+          code = String.fromCharCode(64 + c2) + code
+        }
+        return code; 
+      }; 
+
+      this.numRows = parseInt(this.options.numRows || 8); 
+      this.numCols = parseInt(this.options.numCols || 12); 
+      this.scaleFactor = Math.min(8/this.numRows, 12/this.numCols); 
+      this.rowIndex = []; 
+      for (var i = 0; i < this.numRows; i++) {
+        this.rowIndex.push(rowKey(i)); 
+      }
 
       // This is a little hack, so that we get the text of the outer container of the widget
       this.options.created = function(event, data) {

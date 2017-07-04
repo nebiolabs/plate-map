@@ -8,7 +8,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _areasToTiles: function(areas) {
         //Convert areas to tiles
-        var cols = this.columnCount; 
+        var cols = this.numCols; 
         var that = this; 
         return areas.reduce(function (tiles, area) {
           if (area) {
@@ -146,10 +146,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _coordsToWell: function (coord) {
         //Convert a coordinate to a well
-        var cols = this.columnCount; 
-        var rows = this.rowIndex.length; 
-        var colWidth = this.spacing; 
-        var rowHeight = this.spacing; 
+        var scale = this.scaleFactor; 
+        var cols = this.numCols; 
+        var rows = this.numRows; 
+        var colWidth = this.spacing*scale; 
+        var rowHeight = this.spacing*scale; 
         var colMargin = colWidth / 2; 
         var rowMargin = rowHeight / 2; 
 
@@ -168,8 +169,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _wellToCoords: function (well, center) {
         //Convert a well to a coordinate
-        var colWidth = this.spacing; 
-        var rowHeight = this.spacing; 
+        var scale = this.scaleFactor; 
+        var colWidth = this.spacing*scale; 
+        var rowHeight = this.spacing*scale; 
         var colMargin = colWidth / 2; 
         var rowMargin = rowHeight / 2; 
         
@@ -188,8 +190,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _areaToRect: function(area) {
         //Convert area to rectangle
-        var colWidth = this.spacing; 
-        var rowHeight = this.spacing; 
+        var scale = this.scaleFactor; 
+        var colWidth = this.spacing*scale; 
+        var rowHeight = this.spacing*scale; 
         var colMargin = colWidth / 2; 
         var rowMargin = rowHeight / 2; 
 
@@ -206,10 +209,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _rectToArea: function(rect) {
         //Convert a rectangular region to an area
-        var cols = this.columnCount; 
-        var rows = this.rowIndex.length; 
-        var colWidth = this.spacing; 
-        var rowHeight = this.spacing; 
+        var cols = this.numCols; 
+        var rows = this.numRows; 
+        var scale = this.scaleFactor; 
+        var colWidth = this.spacing*scale; 
+        var rowHeight = this.spacing*scale; 
         var colMargin = colWidth / 2; 
         var rowMargin = rowHeight / 2; 
 

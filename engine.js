@@ -145,18 +145,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         checkCompletion: function(wellData, tile) {
-
+          var scale = THIS.scaleFactor; 
           var length = THIS.requiredFields.length;
           var fill = length;
           for(var i = 0; i < length; i++) {
             if(wellData[THIS.requiredFields[i]] == "" || wellData[THIS.requiredFields[i]] == "NULL") {
-              tile.circleCenter.radius = 14;
+              tile.circleCenter.radius = 14*scale;
               fill --;
+            } else {
+              tile.circleCenter.radius = 10*scale;
             }
           }
           if(fill != length) return ((fill) / length) * 100;
 
-          tile.circleCenter.radius = 8;
           return 100;
         },
 

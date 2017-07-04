@@ -7,7 +7,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       addCircle: function(tileToAdd, color, stackPointer) {
-        var scale = this._scale(); 
+        var scale = this.scaleFactor; 
 
         var circle = new fabric.Circle({
           radius: 22 * scale,
@@ -16,7 +16,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: tileToAdd.top,
           left: tileToAdd.left,
           stroke: 'gray',
-          strokeWidth: 0.5,
+          strokeWidth: 0.5*scale,
           evented: false
         });
 
@@ -30,7 +30,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: tileToAdd.top,
           left: tileToAdd.left,
           stroke: 'gray',
-          strokeWidth: 0.5,
+          strokeWidth: 0.5*scale,
           evented: false,
         });
 
