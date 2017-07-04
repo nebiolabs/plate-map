@@ -40,19 +40,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.undoRedoArray.push($.extend({}, data));
       },
 
-      _handleShortcuts: function(e) {
-
-        if (e.keyCode == 90 && e.ctrlKey) {
-          // it says that we have undo/redo action is going on.
-          this.callUndo();
-        }
-
-        if(e.keyCode == 89 && e.ctrlKey) {
-          // it says that we have undo/redo action is going on.
-          this.callRedo();
-        }
-      },
-
       callUndo: function() {
 
         this.undoRedoActive = true;

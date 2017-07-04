@@ -22,10 +22,10 @@
   }
   // So this array contains all the file names, whenever u add a new file just add it here
   // Make sure you follow the syntax or return an object from the file
-  fileArray = ["libs/jquery-1.11.2.min", "libs/jquery-ui.min", "libs/fabric", "libs/select2","add-data-on-change",
-  "add-data-to-tabs", "add-tab-data", "apply-well-data", "bottom-table", "canvas-circles",
+  fileArray = ["libs/jquery-1.11.2.min", "libs/jquery-ui.min", "libs/fabric", "libs/select2",
+  "add-data-on-change", "add-data-to-tabs", "add-tab-data", "apply-well-data", "bottom-table", "canvas-circles",
   "canvas", "check-box", "color-manager", "create-canvas-elements", "create-field", "engine", "well-area", "fabric-events", "interface", "load-plate", "menu",
- "overlay", "preset", "redo", "tabs", "undo-redo-manager", "undo", "unit-data-field"];
+  "overlay", "preset", "redo", "tabs", "undo-redo-manager", "undo", "unit-data-field"];
 
   loadScript(arrayPointer);
 
@@ -54,12 +54,6 @@
 
       this._trigger("created", null, this);
 
-      var that = this;
-
-      window.addEventListener("keyup", function(e) {
-        e.preventDefault();
-        that._handleShortcuts(e);
-      });
       // Import classes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
       // Helpers are methods which return other methods and objects.
@@ -73,8 +67,6 @@
       this.imgSrc = this.options.imgSrc || "assets";
 
       this._createInterface();
-
-      this._configureUndoRedoArray();
 
       return this;
     },

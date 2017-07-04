@@ -35,12 +35,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         $(this.copyCriteriaButton).click(function(evt) {
-          //console.log(this);
           that.copyCriteria();
         });
 
         $(this.pasteCriteriaButton).click(function(evt) {
-          //console.log(this);
           that.pasteCriteria();
         });
 
@@ -158,10 +156,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           }, this);
           this._colorMixer(true);
-          that.decideSelectedFields(); 
-
-          this.mouseMove = (this.allSelectedObjects.length > 1) ? true : false;
-          this.mainFabricCanvas.fire("mouse:up");
+          this.decideSelectedFields(); 
+          this.mainFabricCanvas.renderAll();
         }
       }
     };
