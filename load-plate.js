@@ -25,10 +25,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.loadCheckboxes(derivativeData.checkboxes);
         }
 
-        if(derivativeData.selectedObjects && derivativeData.selectedObjects.selectionRectangle) {
-          this.createRectangle(derivativeData.selectedObjects.selectionRectangle, derivativeData.selectedObjects.click);
-        }
-
+        this.setSelection(derivativeData.selectedAreas, derivativeData.focalWell);
+        this.decideSelectedFields(); 
+        this.mainFabricCanvas.renderAll();
       },
 
       loadDataToCircles: function(circleData) {
@@ -56,24 +55,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkBoxImage = $("#" + checkbox).data("checkBox");
           $(checkBoxImage).data("clicked", true).trigger("click", true);
         }
-      },
-
-      createRectangle: function(rectData, click) {
-
-        this.startX = rectData.left; // assigning these values so that they are used when creating rectangle.
-        this.startY = rectData.top;
-
-        if(rectData.type == "dynamicRect") {
-          this.mouseMove = true;
-          this._createDynamicRect();
-          this.dynamicRect.setWidth(rectData.width);
-          this.dynamicRect.setHeight(rectData.height);
-        } else {
-          this.mouseMove = false;
-        }
-
-        this.mainFabricCanvas.fire("mouse:up");
       }
+
     }
   }
 })(jQuery, fabric);

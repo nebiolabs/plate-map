@@ -18,16 +18,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _fixRowAndColumn: function() {
+        var scale = this.scaleFactor; 
 
         // For column
-        for(var i = 1; i<= this.columnCount; i++) {
+        for(var i = 1; i<= this.numCols; i++) {
           var tempFabricText = new fabric.IText(i.toString(), {
             fill: 'black',
             originX:'center',
             originY: 'center',
             fontSize: 12,
-            top : 10,
-            left: this.spacing + ((i - 1) * this.spacing),
+            top : 10*scale,
+            left: i * this.spacing *scale,
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -44,8 +45,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             originX:'center',
             originY: 'center',
             fontSize: 12,
-            left: 5,
-            top: this.spacing + (i * this.spacing),
+            left: 5*scale,
+            top: (i+1) * this.spacing *scale,
             fontFamily: "Roboto",
             selectable: false,
             fontWeight: "400"
@@ -57,20 +58,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _putCircles: function() {
-        // Indeed we are using rectangles as basic tile. Over the tile we are putting
-        // not selected image and later the circle [When we select it].
-        var rowCount = this.rowIndex.length;
-        var colCount = this.columnCount; 
+        var scale = this.scaleFactor; 
+        var rowCount = this.numRows;
+        var colCount = this.numCols; 
         var tileCounter = 0;
         for( var i = 0; i < rowCount; i++) {
 
           for(var j = 0; j < colCount; j++) {
-            var tempCircle = new fabric.Rect({
-              width: 48,
-              height: 48,
-              left: this.spacing + (j * this.spacing),
-              top: this.spacing + (i * this.spacing),
-              fill: '#f5f5f5',
+            var tile = new fabric.Circle({
+              width: this.spacing*scale,
+              height: this.spacing*scale,
+              left: (j+1) * this.spacing * scale,
+              top: (i+1) * this.spacing * scale,
+              radius: 22*scale,
               originX:'center',
               originY: 'center',
               name: "tile-" + i +"X"+ j,
@@ -81,62 +81,43 @@ var plateLayOutWidget = plateLayOutWidget || {};
               lockMovementY: true,
               index: tileCounter ++,
               wellData: {}, // now we use this to show the data in the tabs when selected
-              selectedWellAttributes: {}
-              //selectable: false
+              selectedWellAttributes: {},
+              selectable: false
             });
 
-            this.allTiles.push(tempCircle);
-            this.mainFabricCanvas.add(tempCircle);
+            tile.setGradient("fill", {
+              type: "radial",
+              y1: 2*scale,
+              y2: 2*scale,
+              r1: tile.radius-(2*scale),
+              r2: tile.radius,
+              colorStops: {
+                0: 'rgba(0,0,0,0.1)',
+                1: 'rgba(0,0,0,0.2)'
+              }
+            });
+
+            var highlight = new fabric.Rect({
+              width: this.spacing*scale,
+              height: this.spacing*scale,
+              left: (j+1) * this.spacing * scale,
+              top: (i+1) * this.spacing * scale,
+              originX:'center',
+              originY: 'center',
+              fill: "rgba(0,0,0,0.4)", 
+              selectable: false,
+              visible: false
+            }); 
+
+            tile.highlight = highlight; 
+
+            this.allTiles.push(tile);
+            this.mainFabricCanvas.add(tile);
+            this.mainFabricCanvas.add(highlight); 
           }
         }
 
-        this._addImages();
-      },
-
-      _addImages: function() {
-        // We load the image for once and then make copies of it
-        // and add it to the tile we made in allTiles[]
-        var that = this;
-        var finishing = this.allTiles.length;
-
-        function zIndex(o) {
-          return that.mainFabricCanvas.getObjects().indexOf(o)
-        }
-
-        fabric.Image.fromURL(this.imgSrc + "/background-pattern.png", function(backImg) {
-
-          fabric.Image.fromURL(that.imgSrc + "/empty-well.png", function(img) {
-            var selectedTiles = that.allSelectedObjects || [];
-
-            for(var runner = 0; runner < finishing; runner ++) {
-              var imaging = $.extend({}, img);
-              var backgroundImg = $.extend({}, backImg)
-              var currentTile = that.allTiles[runner];
-              imaging.top = backgroundImg.top = currentTile.top;
-              imaging.left = backgroundImg.left = currentTile.left;
-              imaging.parent = currentTile; // Pointing to tile
-              imaging.originX = backgroundImg.originX = 'center';
-              imaging.originY = backgroundImg.originY = 'center';
-              imaging.hasControls = backgroundImg.hasControls = false;
-              imaging.hasBorders = backgroundImg.hasBorders = false;
-              imaging.lockMovementX = backgroundImg.lockMovementX = true;
-              imaging.lockMovementY = backgroundImg.lockMovementY = true;
-              imaging.evented = backgroundImg.evented = false;
-              imaging.type = "image";
-              var currentlySelected = selectedTiles.indexOf(currentTile) >= 0; 
-              backgroundImg.visible = currentlySelected;
-              that.allTiles[runner].notSelected = imaging; // Pointing to img
-              that.allTiles[runner].backgroundImg = backgroundImg;
-              that.mainFabricCanvas.add(backgroundImg, imaging);
-              var z = zIndex(currentTile);
-              backgroundImg.moveTo(z+1); 
-              imaging.moveTo(z+2);  
-            }
-            that.mainFabricCanvas.renderAll();
-          });
-          that._addLargeRectangleOverlay();
-        });
-
+        this._addLargeRectangleOverlay();
         this._addWellDataToAll();
         this._addUnitDataToAll();
         this._fabricEvents();

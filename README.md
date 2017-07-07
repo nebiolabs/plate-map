@@ -71,10 +71,10 @@ Embed code similar to the below to add the plate layout tool to your application
 
 		$("#my-plate-layout").plateLayOut({
 
-			numRows:          '8',
-			numCols:          '12',
-			imgSrc:           "css",
-			attributes:       attributes,
+			numRows: 8,
+			numCols: 12,
+			imgSrc:  "css",
+			attributes: attributes,
 
 			updateWells: function(event, data) {
 				//this function should save the provided wells to the server
@@ -133,11 +133,16 @@ This function may be called at any time to load data. Well data should be passed
 		field_1: true, 
 		field_2: false
 	}, 
-	selectedObjects: { //selection
-		startingTileIndex: 0, // row-major index of first well
-		columnCount: 1,       // number of cols -1
-		rowCount: 2           // number of rows -1
-	}
+	selectedAreas: { //min and max rows and columns, inclusive
+    minRow: 0, 
+    maxRow: 3, 
+    minCol: 2, 
+    maxCol: 3
+  }, 
+  focalWell: { // position of current focal well
+    row: 0,
+    col: 2
+  }
 }
 ```
 #### createObject()
