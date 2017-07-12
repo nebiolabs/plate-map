@@ -148,13 +148,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var scale = THIS.scaleFactor; 
           var length = THIS.requiredFields.length;
           var fill = length;
+          tile.circleCenter.radius = 10*scale;
           for(var i = 0; i < length; i++) {
             if(wellData[THIS.requiredFields[i]] == "" || wellData[THIS.requiredFields[i]] == "NULL") {
               tile.circleCenter.radius = 14*scale;
               fill --;
-            } else {
-              tile.circleCenter.radius = 10*scale;
-            }
+              continue;
+            } 
           }
           if(fill != length) return ((fill) / length) * 100;
 
