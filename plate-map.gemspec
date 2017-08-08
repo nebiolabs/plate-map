@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "plate/map/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "plate-map"
+  spec.name          = "plate-map-rails"
   spec.version       = Plate::Map::Rails::VERSION
   spec.authors       = ["Eric Kappotis"]
   spec.email         = ["eric.kappotis@altran.com"]
