@@ -5,7 +5,7 @@ require "plate/map/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "plate-map"
-  spec.version       = Plate::Map::VERSION
+  spec.version       = Plate::Map::Rails::VERSION
   spec.authors       = ["Eric Kappotis"]
   spec.email         = ["eric.kappotis@altran.com"]
 
