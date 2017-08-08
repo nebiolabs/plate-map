@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = "plate-map"
   spec.version       = Plate::Map::VERSION
   spec.authors       = ["Eric Kappotis"]
-  spec.email         = ["ekappotis@foliage.com"]
+  spec.email         = ["eric.kappotis@altran.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = "plate-map packaged for Rails asset pipeline"
+  spec.description   = "plate-map packaged for Rails asset pipeline"
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
