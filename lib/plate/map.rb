@@ -1,7 +1,2 @@
-require "plate/map/version"
+require "plate/map/rails/version"
 
-module Plate
-  module Map
-    # Your code goes here...
-  end
-end
