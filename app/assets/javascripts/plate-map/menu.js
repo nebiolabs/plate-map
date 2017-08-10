@@ -9,7 +9,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createMenu: function() {
 
         var menuItems = {
-          "Templates": {},
+          //"Master": {},
           "Redo": {},
           "Undo": {}
         };
@@ -33,6 +33,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           $(this.menuContainer).append(menuContent);
         }
+        var masterTitle = this._createElement("<span></span>")
+        masterTitle.html("Master:&nbsp;")
+        var masterSelect = this._createElement("<select></select>")
+        masterSelect.attr('id', 'master_select');
+
+        for(var setItem in masterSetOptions) {
+          var masterItem = this._createElement("<option></option>");
+          masterItem.attr('value', masterSetOptions[setItem].id);
+          masterItem.html(masterSetOptions[setItem].text);
+          masterSelect.append(masterItem);
+        }
+
+        //masterSelect.select2();
+        //masterSelect.addClass("plate-setup-menu-item")
+        $(this.menuContainer).append(masterTitle);
+        $(this.menuContainer).append(masterSelect);
+
+        var applyButton = this._createElement("<button>Apply Master</button>");
+        applyButton.click(applyMasterSet);
+        $(this.menuContainer).append(applyButton);
+        masterSelect.select2();
       },
     };
   }

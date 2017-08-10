@@ -5,9 +5,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.interface = function() {
     // interface holds all the methods to put the interface in place
     return {
-      shortcuts: [], 
 
       _createInterface: function() {
+
         var divIdentifier = '<div></div>';
         this.container = this._createElement(divIdentifier).addClass("plate-setup-wrapper");
         this.topSection = this._createElement(divIdentifier).addClass("plate-setup-top-section");
@@ -48,48 +48,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._canvas();
 
         this.bottomForFirstTime();
-
-        var that = this; 
-        $(document).keyup(function(e) {
-          that._handleShortcuts(e);
-        });
-
-        this._configureUndoRedoArray();
       },
 
       _createElement: function(element) {
 
         return $(element);
-      },
+      }
 
-      _handleShortcuts: function(e) {
-        if (document.activeElement === document.body) {
-            if (e.keyCode == 46) {
-              this.clearCriteria(); 
-              e.preventDefault();
-            } else if (e.ctrlKey) {
-              if (e.keyCode == 90) {
-                // it says that we have undo/redo action is going on.
-                this.callUndo();
-                e.preventDefault();
-              } else if (e.keyCode == 89) {
-                // it says that we have undo/redo action is going on.
-                this.callRedo();
-                e.preventDefault();
-              } else if (e.keyCode == 67) {
-                this.copyCriteria();
-                e.preventDefault();
-              } else if (e.keyCode == 86) {
-                this.pasteCriteria(); 
-                e.preventDefault();
-              } else if (e.keyCode == 88) {
-                this.copyCriteria(); 
-                this.clearCriteria(); 
-                e.preventDefault();
-              }
-            } 
-        }
-      },
     };
   }
 })(jQuery, fabric);

@@ -54,11 +54,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       createObject: function() {
 
+        var selectedObjects = {
+          "startingTileIndex": this.startingTileIndex,
+          "rowCount": this.rowCount,
+          "columnCount": this.columnCount,
+          "click": this.clicked || false,
+        };
+
+        if(this.dynamicRect) {
+
+          var selectionRectangle = {
+            type: "dynamicRect",
+            width: this.dynamicRect.width,
+            height: this.dynamicRect.height,
+            left: this.startX,
+            top: this.startY,
+            mouseMove: this.mouseMove
+          }
+          selectedObjects["selectionRectangle"] = selectionRectangle;
+        } else if(this.dynamicSingleRect) {
+
+          var selectionRectangle = {
+            type: "dynamicSingleRect",
+            width: this.dynamicSingleRect.width,
+            height: this.dynamicSingleRect.height,
+            left: this.startX,
+            top: this.startY,
+            mouseMove: this.mouseMove
+          }
+          selectedObjects["selectionRectangle"] = selectionRectangle;
+        }
+
         var data = {
           "derivative": this.engine.derivative,
           "checkboxes": this.globalSelectedAttributes,
-          "selectedAreas": this.selectedAreas,
-          "focalWell": this.focalWell
+          "selectedObjects": selectedObjects,
         };
 
         return data;
