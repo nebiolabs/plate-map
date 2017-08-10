@@ -1,3 +1,4 @@
+//= require plate-map/plate-layout
 //= require plate-map/fabric
 //= require plate-map/add-data-on-change
 //= require plate-map/add-data-to-tabs
@@ -23,4 +24,3 @@
 //= require plate-map/undo
 //= require plate-map/undo-redo-manager
 //= require plate-map/unit-data-field
-//= require plate-map/plate-layout
