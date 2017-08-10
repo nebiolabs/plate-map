@@ -1,40 +1,4 @@
-(function(doc, script, code) {
-
-
-  var fileArray = [];
-  var fileArrayLength, arrayPointer = 0;
-
-  loadScript = function() {
-    script = doc.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.onload = function(){
-
-      if(arrayPointer < fileArray.length) {
-        // Recursive call
-        loadScript(arrayPointer);
-      } else {
-        // once all the files are loaded execute the code to crete widget.
-        code($, fabric);
-      }
-    };
-    script.src = fileArray[arrayPointer ++] + ".js";
-    doc.getElementsByTagName('script')[0].appendChild(script);
-  }
-  // So this array contains all the file names, whenever u add a new file just add it here
-  // Make sure you follow the syntax or return an object from the file
-    /*
-  fileArray = ["/platemap/libs/fabric", "/platemap/add-data-on-change",
-  "/platemap/add-data-to-tabs", "/platemap/add-tab-data", "/platemap/apply-well-data", "/platemap/bottom-table", "/platemap/canvas-circles",
-  "/platemap/canvas", "/platemap/check-box", "/platemap/color-manager", "/platemap/create-canvas-elements", "/platemap/create-field", "/platemap/engine", "/platemap/well-area", "/platemap/fabric-events", "/platemap/interface", "/platemap/load-plate", "/platemap/menu",
- "/platemap/overlay", "/platemap/preset", "/platemap/redo", "/platemap/tabs", "/platemap/undo-redo-manager", "/platemap/undo", "/platemap/unit-data-field"];
-  */
-    fileArray = [];
-  loadScript(arrayPointer);
-
-}(document, "", function($, fabric){
-
-   $.widget("DNA.plateLayOut", {
+ $.widget("DNA.plateLayOut", {
 
     plateLayOutWidget: {},
 
@@ -110,4 +74,3 @@
       alert("wow this is good");
     }
   });
-}));
