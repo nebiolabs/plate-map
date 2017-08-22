@@ -10,7 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addTabData: function() {
         // Here we may need more changes becuse attributes format likely to change
-        var tabData = this.options["attributes"]["tabs"];
+        var tabData = this.options.attributes.tabs;
         var tabPointer = 0;
         var that = this;
         for(currentTab in tabData) {

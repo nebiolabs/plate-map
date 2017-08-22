@@ -8,7 +8,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _createMenu: function() {
         var menuItems = {
-          //"Master": {},
           "Redo": {},
           "Undo": {}
         };
@@ -32,7 +31,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           $(this.menuContainer).append(menuContent);
         }
-        
       },
     };
   }

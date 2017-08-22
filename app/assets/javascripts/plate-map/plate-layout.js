@@ -6,10 +6,6 @@
       value: 0
     },
 
-       columnCount: 12,
-
-       rowIndex: ["A", "B", "C", "D", "E", "F", "G", "H"],
-
     allTiles: [], // All tiles containes all thise circles in the canvas
 
     _create: function() {
@@ -39,12 +35,6 @@
 
       this._trigger("created", null, this);
 
-      var that = this;
-
-      window.addEventListener("keyup", function(e) {
-        e.preventDefault();
-        that._handleShortcuts(e);
-      });
       // Import classes from other files.. Here we import it using extend and add it to this
       // object. internally we add to widget.DNA.getPlates.prototype.
       // Helpers are methods which return other methods and objects.
@@ -58,8 +48,6 @@
       this.imgSrc = this.options.imgSrc || "assets";
 
       this._createInterface();
-
-      this._configureUndoRedoArray();
 
       return this;
     },
