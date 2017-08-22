@@ -1,0 +1,123 @@
+<html>
+<link href="css/plate-layout.css" media="all" rel="stylesheet">
+<link href="css/select2.css" media="all" rel="stylesheet">
+<script src="plate-layout.js"></script>
+  <body>
+    <div id="my-plate-layout" class="plate-setup-container-outer">
+      Loading plate layout ... !
+    </div>
+    <div id="demo" style="width: 100px;height: 100px;float: right;">
+      <button type="button" id="Load" value="load data" style="width: 80px;height: 30px;">Load Data</button>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+// Wait for all the script load from the loader.js and fire up
+window.onload = function() {
+
+  var fields = {
+        Volume: {
+          required: true,
+          id:       'volume',
+          name:     'Volume',
+          type:     'numeric',
+          placeholder: "Volume",
+          units: {
+            1: "uL",
+            2: "mL"
+          }
+        },
+        Polymerase: {
+          required: true,
+          id: 'pol',
+          name: 'Polymerase',
+          type: 'multiselect',
+          placeHolder: "Polymerase",
+          options: {
+              'Taq 1':  {
+                    id:   '234',
+                    name: 'Taq 1'
+                },
+              'Taq 2':  {
+                    id:   '123',
+                    name: 'Taq 2'
+                },
+                'Taq 3':  {
+                    id:   '3',
+                    name: 'Taq 3'
+                },
+                'Taq 4':  {
+                    id:   '4',
+                    name: 'Taq 4'
+                },
+                'Taq 5':  {
+                    id:   '5',
+                    name: 'Taq 5'
+                }
+          }
+        }
+    }; 
+
+  var attributes = {
+    presets: {
+      "preset 1": ['volume', 'pol'],
+      "preset 2": ["volume"]
+    },
+    tabs: {
+      "Settings": {
+        fields: fields 
+      }
+    }, 
+  }; //attributes
+
+  window.plateData = {}; 
+
+  function makeNewPlate(obj) {
+    var rows = obj.numRows; 
+    var cols = obj.numCols; 
+    var wells = {}; 
+    for (var r = 0; r < rows; r++) {
+      var volume = 100; 
+      var pol = (r < (rows/2)) ? 'Taq 1' : 'Taq 2'; 
+      for (var c = 0; c < cols; c++) {
+        var i = r*cols + c; 
+        wells[i.toString()] = {
+          units: {
+            volumeunit:'unit1',
+          },
+          wellData: {
+            volume: volume.toString(),
+            pol: pol
+          }
+        }; 
+        if ((c % 2) > 0) {
+          volume /= 10
+        }
+      }
+    }
+    return {
+      derivative: wells, 
+      checkboxes: {volume:true, pol: true}, 
+    }; 
+  }
+
+  $("#my-plate-layout").plateLayOut({
+    numRows: 8,
+    numCols: 12,
+    imgSrc: "css",
+    attributes: attributes,
+
+    updateWells: function(event, data) {
+      //this function should save the provided wells to the server
+      //and call either updateWellsSuccessful() or updateWellsFailed()
+      //on completion
+      window.plateData = data; 
+      console.log(Object.keys(data.derivative).length + " wells updated"); 
+    }
+  });
+  window.plateData = makeNewPlate($("#my-plate-layout").data().DNAPlateLayOut); 
+  $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
+
+}
+</script>
