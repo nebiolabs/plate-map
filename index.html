@@ -1,7 +1,40 @@
 <html>
-<link href="/css/plate-layout.css" media="all" rel="stylesheet">
-<link href="/css/select2.css" media="all" rel="stylesheet">
-<script src="/plate-layout.js"></script>
+  <head>
+    <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.css" media="all" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.js"></script>
+
+    <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/apply-well-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/bottom-table.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas-circles.js"></script>
+    <script src="app/assets/javascripts/plate-map/check-box.js"></script>
+    <script src="app/assets/javascripts/plate-map/color-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-canvas-elements.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-field.js"></script>
+    <script src="app/assets/javascripts/plate-map/engine.js"></script>
+    <script src="app/assets/javascripts/plate-map/well-area.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric-events.js"></script>
+    <script src="app/assets/javascripts/plate-map/interface.js"></script>
+    <script src="app/assets/javascripts/plate-map/load-plate.js"></script>
+    <script src="app/assets/javascripts/plate-map/menu.js"></script>
+    <script src="app/assets/javascripts/plate-map/overlay.js"></script>
+    <script src="app/assets/javascripts/plate-map/preset.js"></script>
+    <script src="app/assets/javascripts/plate-map/redo.js"></script>
+    <script src="app/assets/javascripts/plate-map/tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/unit-data-field.js"></script>
+  </head>
+
   <body>
     <div id="plate-layout" class="plate-setup-container-outer">
       Loading plate layout ... !
@@ -210,7 +243,7 @@ window.onload = function() {
     $("#plate-layout").plateLayOut({
       numRows: 8,
       numCols: 12,
-      imgSrc: "css",
+      imgSrc: "app/assets/images/plate-map",
       attributes:       attributes,
 
       updateWells: function(event, data) {
