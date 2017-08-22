@@ -35,11 +35,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var presetArray = [];
         var counter = 0;
-        for(var preset in wellAttrData) {
+        for (var preset in wellAttrData) {
           var divText = this._createElement("<div></div>").html(preset)
-          .addClass("plate-setup-prest-tab-div");
-          presetArray[counter ++] = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
-          .data("preset", preset).append(divText);
+            .addClass("plate-setup-prest-tab-div");
+          presetArray[counter++] = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
+            .data("preset", preset).append(divText);
           $(this.presetTabContainer).append(presetArray[counter - 1]);
 
           var that = this;
@@ -52,27 +52,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _presetClickHandler: function(clickedPreset) {
 
-          if(this.previousPreset == $(clickedPreset).children().html().toLowerCase()) {
-            // if we are clicking on the same preset again..!
-            $(clickedPreset).removeClass("plate-setup-prest-tab-selected")
+        if (this.previousPreset == $(clickedPreset).children().html().toLowerCase()) {
+          // if we are clicking on the same preset again..!
+          $(clickedPreset).removeClass("plate-setup-prest-tab-selected")
             .addClass("plate-setup-prest-tab");
-            this.previouslyClickedPreset = null;
-            this.previousPreset = "";
-          } else {
+          this.previouslyClickedPreset = null;
+          this.previousPreset = "";
+        } else {
 
-            if(this.previouslyClickedPreset) {
-              $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
+          if (this.previouslyClickedPreset) {
+            $(this.previouslyClickedPreset).removeClass("plate-setup-prest-tab-selected")
               .addClass("plate-setup-prest-tab");
-              // clear already set preset if any...!!
-              this.onOffCheckBox(true, this.previousPreset);
-            }
-            $(clickedPreset).addClass("plate-setup-prest-tab-selected");
-            this.previouslyClickedPreset = clickedPreset;
-
-            this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
-            // Fill the checkboxes as preset array says ...!!
-            this.onOffCheckBox(false, this.previousPreset);
+            // clear already set preset if any...!!
+            this.onOffCheckBox(true, this.previousPreset);
           }
+          $(clickedPreset).addClass("plate-setup-prest-tab-selected");
+          this.previouslyClickedPreset = clickedPreset;
+
+          this.previousPreset = $(clickedPreset).data("preset").toLowerCase();
+          // Fill the checkboxes as preset array says ...!!
+          this.onOffCheckBox(false, this.previousPreset);
+        }
       },
 
       onOffCheckBox: function(click, preset) {
@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var currentPresetItems = this.presetSettings[preset];
         var presetCount = this.presetSettings[preset].length;
         var checkBoxImage;
-        for(var i = 0; i < presetCount; i++) {
+        for (var i = 0; i < presetCount; i++) {
           // Here we trigger the event which was defined in the check-box.js
           checkBoxImage = $("#" + currentPresetItems[i]).data("checkBox");
           // triggeres second arguement tells if its a machine generated or user generated

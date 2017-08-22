@@ -12,7 +12,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addToUndoRedo: function(derivative) {
 
-        if(this.actionPointer != null && this.actionPointer < (this.undoRedoArray.length - 1)) {
+        if (this.actionPointer != null && this.actionPointer < (this.undoRedoArray.length - 1)) {
           this.undoRedoArray.splice(this.actionPointer + 1, this.undoRedoArray.length);
         }
         this.actionPointer = null;
@@ -22,17 +22,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _configureUndoRedoArray: function() {
 
-        var data  = {
+        var data = {
           checkboxes: {},
           derivative: {},
           selectedAreas: [{
-            minRow: 0, 
-            minCol: 0, 
-            maxRow: 0, 
+            minRow: 0,
+            minCol: 0,
+            maxRow: 0,
             maxCol: 0
-          }], 
+          }],
           focalWell: {
-            row: 0, 
+            row: 0,
             col: 0
           }
         };
@@ -43,7 +43,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       callUndo: function() {
 
         this.undoRedoActive = true;
-        if(this.actionPointer == null) {
+        if (this.actionPointer == null) {
           this.actionPointer = this.undoRedoArray.length - 2;
           this.undo(this.actionPointer);
         } else {
@@ -55,10 +55,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       callRedo: function() {
 
         this.undoRedoActive = true;
-        if(this.actionPointer != null && this.actionPointer < this.undoRedoArray.length - 1) {
+        if (this.actionPointer != null && this.actionPointer < this.undoRedoArray.length - 1) {
           this.actionPointer = this.actionPointer + 1;
           this.redo(this.actionPointer);
-        } else if(this.actionPointer == this.undoRedoArray.length - 1) {
+        } else if (this.actionPointer == this.undoRedoArray.length - 1) {
           this.undoRedoActive = false;
         }
       }

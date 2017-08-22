@@ -32,10 +32,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var tabIndex = 0;
 
-        for(var tab in tabData) {
-          this.allTabs[tabIndex ++] = this._createElement("<div></div>").addClass("plate-setup-tab");
+        for (var tab in tabData) {
+          this.allTabs[tabIndex++] = this._createElement("<div></div>").addClass("plate-setup-tab");
           $(this.allTabs[tabIndex - 1]).data("index", tabIndex - 1)
-          .html(tab);
+            .html(tab);
 
           var that = this;
 
@@ -59,9 +59,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _tabClickHandler: function(clickedTab) {
 
-        if(this.selectedTab) {
+        if (this.selectedTab) {
           $(this.selectedTab).removeClass("plate-setup-tab-selected")
-          .addClass("plate-setup-tab");
+            .addClass("plate-setup-tab");
 
           var previouslyClickedTabIndex = $(this.selectedTab).data("index");
           $(this.allDataTabs[previouslyClickedTabIndex]).css("z-index", 0);
@@ -79,9 +79,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var tabIndex = 0;
 
-        for(var tabData in tabs) {
-          this.allDataTabs[tabIndex ++] = this._createElement("<div></div>").addClass("plate-setup-data-div")
-          .css("z-index", 0);
+        for (var tabData in tabs) {
+          this.allDataTabs[tabIndex++] = this._createElement("<div></div>").addClass("plate-setup-data-div")
+            .css("z-index", 0);
           $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
         }
       },
@@ -89,7 +89,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _placePresetCaption: function() {
         // This method add place above preset.
         this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container")
-        .html("Well Attribute Tabs");
+          .html("Well Attribute Tabs");
         $(this.tabContainer).append(this.wellAttrContainer);
       },
 

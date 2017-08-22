@@ -21,14 +21,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var scale = this.scaleFactor;
 
                 // For column
-                for(var i = 1; i<= this.numCols; i++) {
+                for (var i = 1; i <= this.numCols; i++) {
                     var tempFabricText = new fabric.IText(i.toString(), {
                         fill: 'black',
-                        originX:'center',
+                        originX: 'center',
                         originY: 'center',
                         fontSize: 12,
-                        top : 10*scale,
-                        left: i * this.spacing *scale,
+                        top: 10 * scale,
+                        left: i * this.spacing * scale,
                         fontFamily: "Roboto",
                         selectable: false,
                         fontWeight: "400"
@@ -39,21 +39,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
                 // for row
                 var i = 0;
-                while(this.rowIndex[i]) {
+                while (this.rowIndex[i]) {
                     var tempFabricText = new fabric.IText(this.rowIndex[i], {
                         fill: 'black',
-                        originX:'center',
+                        originX: 'center',
                         originY: 'center',
                         fontSize: 12,
-                        left: 5*scale,
-                        top: (i+1) * this.spacing *scale,
+                        left: 5 * scale,
+                        top: (i + 1) * this.spacing * scale,
                         fontFamily: "Roboto",
                         selectable: false,
                         fontWeight: "400"
                     });
 
                     this.mainFabricCanvas.add(tempFabricText);
-                    i ++;
+                    i++;
                 }
             },
 
@@ -62,24 +62,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var rowCount = this.numRows;
                 var colCount = this.numCols;
                 var tileCounter = 0;
-                for( var i = 0; i < rowCount; i++) {
+                for (var i = 0; i < rowCount; i++) {
 
-                    for(var j = 0; j < colCount; j++) {
+                    for (var j = 0; j < colCount; j++) {
                         var tile = new fabric.Circle({
-                            width: this.spacing*scale,
-                            height: this.spacing*scale,
-                            left: (j+1) * this.spacing * scale,
-                            top: (i+1) * this.spacing * scale,
-                            radius: 22*scale,
-                            originX:'center',
+                            width: this.spacing * scale,
+                            height: this.spacing * scale,
+                            left: (j + 1) * this.spacing * scale,
+                            top: (i + 1) * this.spacing * scale,
+                            radius: 22 * scale,
+                            originX: 'center',
                             originY: 'center',
-                            name: "tile-" + i +"X"+ j,
+                            name: "tile-" + i + "X" + j,
                             type: "tile",
                             hasControls: false,
                             hasBorders: false,
                             lockMovementX: true,
                             lockMovementY: true,
-                            index: tileCounter ++,
+                            index: tileCounter++,
                             wellData: {}, // now we use this to show the data in the tabs when selected
                             selectedWellAttributes: {},
                             selectable: false
@@ -87,9 +87,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
                         tile.setGradient("fill", {
                             type: "radial",
-                            y1: 2*scale,
-                            y2: 2*scale,
-                            r1: tile.radius-(2*scale),
+                            y1: 2 * scale,
+                            y2: 2 * scale,
+                            r1: tile.radius - (2 * scale),
                             r2: tile.radius,
                             colorStops: {
                                 0: 'rgba(0,0,0,0.1)',
@@ -98,11 +98,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         });
 
                         var highlight = new fabric.Rect({
-                            width: this.spacing*scale,
-                            height: this.spacing*scale,
-                            left: (j+1) * this.spacing * scale,
-                            top: (i+1) * this.spacing * scale,
-                            originX:'center',
+                            width: this.spacing * scale,
+                            height: this.spacing * scale,
+                            left: (j + 1) * this.spacing * scale,
+                            top: (i + 1) * this.spacing * scale,
+                            originX: 'center',
                             originY: 'center',
                             fill: "rgba(0,0,0,0.4)",
                             selectable: false,
@@ -131,7 +131,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     left: 0,
                     top: 0,
                     opacity: 0.0,
-                    originX:'left',
+                    originX: 'left',
                     originY: 'top',
                     lockMovementY: true,
                     lockMovementX: true,

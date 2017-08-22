@@ -14,16 +14,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var menuContent = null;
         var that = this;
-        for(var menuItem in menuItems) {
+        for (var menuItem in menuItems) {
           menuContent = this._createElement("<div></div>")
-          .html(menuItem)
-          .addClass("plate-setup-menu-item");
+            .html(menuItem)
+            .addClass("plate-setup-menu-item");
 
           $(menuContent).on("click", function(evt) {
 
-            if($(this).html() == "Undo") { // May be we shoush change it to an array, So that "undo" is not required.
+            if ($(this).html() == "Undo") { // May be we shoush change it to an array, So that "undo" is not required.
               that.callUndo();
-            } else if($(this).html() == "Redo") {
+            } else if ($(this).html() == "Redo") {
               that.callRedo();
             }
             //Code for click event. May be will have to implement poping menu here.

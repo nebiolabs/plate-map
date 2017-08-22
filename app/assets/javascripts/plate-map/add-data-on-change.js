@@ -8,9 +8,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addData: function(e, boolean) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
-        if(this.allSelectedObjects) {
+        if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
-          for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
             wellData[e.target.id] = e.target.value;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
@@ -23,14 +23,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _colorMixer: function(valueChange) {
         // value change is true if data in the field is changed, false if its a change in checkbox
-        if(! valueChange) {
-          for(var index in this.engine.derivative) {
+        if (!valueChange) {
+          for (var index in this.engine.derivative) {
             this.engine.createDerivative(this.allTiles[index]);
           }
         }
 
-        if(! this.undoRedoActive) {
-          var data  = this.createObject();
+        if (!this.undoRedoActive) {
+          var data = this.createObject();
           this.addToUndoRedo(data);
           this._trigger("updateWells", null, data);
         }
@@ -41,9 +41,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addUnitData: function(e) {
         // This method add/change data when unit of some numeric field is changed
-        if(this.allSelectedObjects) {
+        if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
-          for(var objectIndex = 0;  objectIndex < noOfSelectedObjects; objectIndex++) {
+          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var unitData = this.allSelectedObjects[objectIndex]["unitData"];
             unitData[e.target.id] = e.target.value;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
