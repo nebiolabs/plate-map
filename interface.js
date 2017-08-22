@@ -5,7 +5,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.interface = function() {
     // interface holds all the methods to put the interface in place
     return {
-      shortcuts: [], 
 
       _createInterface: function() {
         var divIdentifier = '<div></div>';
