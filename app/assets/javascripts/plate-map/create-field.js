@@ -21,9 +21,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .html("");
         $(selectField).append(emptySelection);
         // Look for all options in the json
-        for (options in selectData.options) {
-          var optionData = selectData.options[options];
-          var optionField = this._createElement("<option></option>").attr("value", optionData.name)
+        for (var option in selectData.options) {
+          var optionData = selectData.options[option];
+          var optionField = this._createElement("<option></option>").attr("value", optionData.id)
             .html(optionData.name);
           // Adding options here.
           $(selectField).append(optionField);
