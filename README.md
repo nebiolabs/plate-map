@@ -77,9 +77,7 @@ Embed code similar to the below to add the plate layout tool to your application
 			attributes: attributes,
 
 			updateWells: function(event, data) {
-				//this function should save the provided wells to the server
-				//and call either updateWellsSuccessful() or updateWellsFailed()
-				//on completion
+				//Run when data state changes
 			}
 		});
 
@@ -133,12 +131,14 @@ This function may be called at any time to load data. Well data should be passed
 		field_1: true, 
 		field_2: false
 	}, 
-	selectedAreas: { //min and max rows and columns, inclusive
-    minRow: 0, 
-    maxRow: 3, 
-    minCol: 2, 
-    maxCol: 3
-  }, 
+	selectedAreas: [ //min and max rows and columns, inclusive
+    {
+      minRow: 0, 
+      maxRow: 3, 
+      minCol: 2, 
+      maxCol: 3
+    }
+  ], 
   focalWell: { // position of current focal well
     row: 0,
     col: 2

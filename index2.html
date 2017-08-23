@@ -141,9 +141,7 @@ window.onload = function() {
     attributes: attributes,
 
     updateWells: function(event, data) {
-      //this function should save the provided wells to the server
-      //and call either updateWellsSuccessful() or updateWellsFailed()
-      //on completion
+      //data has changed
       window.plateData = data; 
       console.log(Object.keys(data.derivative).length + " wells updated"); 
     }
