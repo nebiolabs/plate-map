@@ -21,10 +21,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .html("");
         $(selectField).append(emptySelection);
         // Look for all options in the json
-        for(options in selectData.options) {
-          var optionData = selectData.options[options];
-          var optionField = this._createElement("<option></option>").attr("value", optionData.name)
-          .html(optionData.name);
+        for (var option in selectData.options) {
+          var optionData = selectData.options[option];
+          var optionField = this._createElement("<option></option>").attr("value", optionData.id)
+            .html(optionData.name);
           // Adding options here.
           $(selectField).append(optionField);
         }
@@ -35,7 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createNumericField: function(numericFieldData) {
 
         var numericField = this._createElement("<input>").addClass("plate-setup-tab-input")
-        .attr("placeholder", numericFieldData.placeholder || "").attr("id", numericFieldData.id);
+          .attr("placeholder", numericFieldData.placeholder || "").attr("id", numericFieldData.id);
 
         return numericField;
       },
@@ -43,7 +43,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createBooleanField: function(boolData) {
 
         var boolField = this._createElement("<select></select>").attr("id", boolData.id)
-        .addClass("plate-setup-tab-select-field");
+          .addClass("plate-setup-tab-select-field");
 
         var nullBool = this._createElement("<option></option>").attr("value", null).html("");
         var trueBool = this._createElement("<option></option>").attr("value", true).html("true");

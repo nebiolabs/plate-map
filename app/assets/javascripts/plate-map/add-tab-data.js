@@ -10,23 +10,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addTabData: function() {
         // Here we may need more changes becuse attributes format likely to change
-        var tabData = this.options["attributes"]["tabs"];
+        var tabData = this.options.attributes.tabs;
         var tabPointer = 0;
         var that = this;
-        for(currentTab in tabData) {
-          if(tabData[currentTab]["fields"]) {
+        for (currentTab in tabData) {
+          if (tabData[currentTab]["fields"]) {
             var fieldArray = [];
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
-            for(field in tabData[currentTab]["fields"]) {
-              if(tabData[currentTab]["fields"][field].required) {
+            for (field in tabData[currentTab]["fields"]) {
+              if (tabData[currentTab]["fields"][field].required) {
                 console.log("its required", tabData[currentTab]["fields"][field].id);
                 this.requiredFields.push(tabData[currentTab]["fields"][field].id);
               }
               var data = tabData[currentTab]["fields"][field];
               var input = this._createField(data);
 
-              if(data.id && data.type) {
+              if (data.id && data.type) {
                 this.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
               } else {
                 console.log("Plz check the format of attributes provided");
@@ -36,7 +36,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // We save the caption so that we can use it for bottom table.
               $(input).data("caption", field);
               // Adding data to the main array so that programatically we can access later
-              fieldArray[fieldArrayIndex ++] = this._createDefaultFieldForTabs();
+              fieldArray[fieldArrayIndex++] = this._createDefaultFieldForTabs();
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
               $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
               // now we are adding the field which was collected in the switch case.
@@ -52,13 +52,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             console.log("unknown format in field initialization");
           }
-          tabPointer ++;
+          tabPointer++;
         }
       },
 
       _createField: function(data) {
 
-        switch(data.type) {
+        switch (data.type) {
           case "text":
             return this._createTextField(data);
             break;
@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addTabFieldEventHandlers: function(fieldArray, fieldArrayIndex, data, input) {
 
         var that = this;
-        switch(data.type) {
+        switch (data.type) {
           case "multiselect":
             $("#" + data.id).select2({
               allowClear: true
@@ -88,7 +88,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             $("#" + data.id).on("change", function(e, generated) {
               // we check if this event is user generated event or system generated , automatic is system generated
-              if(generated != "Automatic") {
+              if (generated != "Automatic") {
                 that._addData(e);
               }
             });
@@ -122,7 +122,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
 
             $("#" + data.id).on("change", function(evt, generated) {
-              if(generated != "Automatic") {
+              if (generated != "Automatic") {
                 that._addData(evt);
               }
             });
@@ -138,7 +138,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               //console.log("Cool", evt);
               if ((evt.keyCode == 90 && evt.ctrlKey) || (evt.keyCode == 89 && evt.ctrlKey)) {
                 // Leaving it blank so that other event handler takes control.
-              }else if(evt.which != 17){
+              } else if (evt.which != 17) {
                 that._addData(evt);
               }
             });

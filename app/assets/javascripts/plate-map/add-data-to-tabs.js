@@ -9,19 +9,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addDataToTabFields: function() {
         // Configure how data is added to tab fields
         var values = this.allSelectedObjects[0]["wellData"];
-        for(var id in values) {
+        for (var id in values) {
           this._applyFieldData(id, values);
         }
         // Now changing the unit values
         var units = this.allSelectedObjects[0]["unitData"];
-        for(var unitId in units) {
+        for (var unitId in units) {
           this._applyUnitData(unitId, units);
         }
         // Now put back selected fields
         var selectedFields = this.globalSelectedAttributes;
 
-        for(var selectedFieldId in selectedFields) {
-          if(selectedFields[selectedFieldId] == true) {
+        for (var selectedFieldId in selectedFields) {
+          if (selectedFields[selectedFieldId] == true) {
             var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
             $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
           }
@@ -30,34 +30,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _applyFieldData: function(id, values) {
         // This method directly add a value to corresponding field in the tab
-        switch($("#" + id).data("type")) {
+        switch ($("#" + id).data("type")) {
 
           case "multiselect":
             $("#" + id).val(values[id]).trigger("change", "Automatic");
             // Automatic means its system generated.
-          break;
+            break;
 
           case "text":
             $("#" + id).val(values[id]);
-          break;
+            break;
 
           case "numeric":
             $("#" + id).val(values[id]);
-          break;
+            break;
 
           case "boolean":
             // select box provide bool value as text,
             // so we need a minor tweek to admit "true" and "false"
             var boolText = "";
 
-            if(values[id] == true || values[id] == "true") {
+            if (values[id] == true || values[id] == "true") {
               boolText = "true";
-            } else if(values[id] == false || values[id] == "false") {
+            } else if (values[id] == false || values[id] == "false") {
               boolText = "false";
             }
 
             $("#" + id).val(boolText).trigger("change", "Automatic");
-          break;
+            break;
         }
         // Clear previously selected checkboxes
         /*var checkBoxImage = $("#" + id).data("checkBox");
@@ -73,16 +73,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
       },
 
-      compareObjects:function(object, reference) {
+      compareObjects: function(object, reference) {
         // Compare 2 objects
-        for(var ref in reference) {
-          if(reference[ref] !== object[ref] ) {
+        for (var ref in reference) {
+          if (reference[ref] !== object[ref]) {
             return false;
           }
         }
 
-        for(var ref in object) {
-          if(object[ref] !== reference[ref]) {
+        for (var ref in object) {
+          if (object[ref] !== reference[ref]) {
             return false;
           }
         }
@@ -93,8 +93,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _clearAllFields: function(allFields) {
         // Clear all the fields
         var fakeAllFields = $.extend({}, allFields);
-        for(var field in fakeAllFields) {
-          if($("#" + field).data("type") == "boolean") {
+        for (var field in fakeAllFields) {
+          if ($("#" + field).data("type") == "boolean") {
             fakeAllFields[field] = null;
           } else {
             fakeAllFields[field] = "";

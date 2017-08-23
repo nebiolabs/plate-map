@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
         // Now handler for change in the unit.
         $("#" + data.id + "unit").on("change", function(evt, generated) {
-          if(generated != "Automatic") {
+          if (generated != "Automatic") {
             that._addUnitData(evt);
           }
         });
@@ -33,11 +33,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       */
       _addUnitDropDown: function(unitData) {
 
-        if(unitData.units) {
+        if (unitData.units) {
 
           var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
-          .addClass("plate-setup-tab-label-select-field");
-          for(unit in unitData.units) {
+            .addClass("plate-setup-tab-label-select-field");
+          for (unit in unitData.units) {
 
             var unitOption = this._createElement("<option></option>").attr("value", unitData.units[unit]).html(unitData.units[unit]);
             $(unitSelect).append(unitOption);
@@ -46,7 +46,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return unitSelect;
         }
       },
-      
+
     };
   }
 })(jQuery, fabric);
