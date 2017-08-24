@@ -29,23 +29,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.tabContainer).append(this.tabHead);
 
         var tabData = this.options.attributes.tabs;
+        var that = this;
 
-        var tabIndex = 0;
+        tabData.forEach(function (tab, tabIndex) {
+          that.allTabs[tabIndex] = that._createElement("<div></div>").addClass("plate-setup-tab");
+          $(that.allTabs[tabIndex]).data("index", tabIndex)
+            .html(tab.name);
 
-        for (var tab in tabData) {
-          this.allTabs[tabIndex++] = this._createElement("<div></div>").addClass("plate-setup-tab");
-          $(this.allTabs[tabIndex - 1]).data("index", tabIndex - 1)
-            .html(tab);
-
-          var that = this;
-
-          $(this.allTabs[tabIndex - 1]).click(function() {
+          $(that.allTabs[tabIndex]).click(function() {
             that._tabClickHandler(this);
           });
 
-          $(this.tabHead).append(this.allTabs[tabIndex - 1]);
-
-        }
+          $(that.tabHead).append(that.allTabs[tabIndex]);
+        }); 
 
         this.tabDataContainer = this._createElement("<div></div>").addClass("plate-setup-tab-data-container");
         $(this.tabContainer).append(this.tabDataContainer);

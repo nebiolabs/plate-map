@@ -20,75 +20,76 @@ Embed code similar to the below to add the plate layout tool to your application
 
 ```html
 <head>
-	<script type="text/javascript" src="javascripts/plate-layout.js"></script>
-	<script type="text/javascript">
-	window.onload = function() {
+  <script type="text/javascript" src="javascripts/plate-layout.js"></script>
+  <script type="text/javascript">
+  window.onload = function() {
 
-		//Define fields to hold data
-		var fields = {
-			Volume: {
-			  required: true,
-			  id:       'volume',
-			  name:     'Volume',
-			  type:     'numeric',
-			  placeholder: "Volume",
-			  units: {
-			    1: "uL",
-			    2: "mL"
-			  }
-			},
-			Polymerase: {
-			  required: true,
-			  id: 'pol',
-			  name: 'Polymerase',
-			  type: 'multiselect',
-			  placeHolder: "Polymerase",
-			  options: {
-			    'Taq 1': {
-			          id:   '234',
-			          name: 'Taq 1'
-			    },
-			    'Taq 2': {
-			          id:   '123',
-			          name: 'Taq 2'
-			    }
-			  }
-			}
-		}; 
+    //Define fields to hold data
+    var fields = {
+      Volume: {
+        required: true,
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        placeholder: "Volume",
+        units: {
+          1: "uL",
+          2: "mL"
+        }
+      },
+      Polymerase: {
+        required: true,
+        id: 'pol',
+        name: 'Polymerase',
+        type: 'multiselect',
+        placeHolder: "Polymerase",
+        options: {
+          'Taq 1': {
+                id:   '234',
+                name: 'Taq 1'
+          },
+          'Taq 2': {
+                id:   '123',
+                name: 'Taq 2'
+          }
+        }
+      }
+    }; 
 
-		// Define presentation attributes
-		var attributes = {
-			presets: { // Define quick pick of different combinations of checked fields
-				"preset 1": ['volume', 'pol'],
-				"preset 2": ["pol"]
-			},
-			tabs: {
-				"Settings": {
-					fields: fields 
-				}
-			}, 
-		} //attributes
+    // Define presentation attributes
+    var attributes = {
+      presets: { // Define quick pick of different combinations of checked fields
+        "preset 1": ['volume', 'pol'],
+        "preset 2": ["pol"]
+      },
+      tabs: [
+        {
+          name: "Settings",
+          fields: fields 
+        }
+      ], 
+    } //attributes
 
-		$("#my-plate-layout").plateLayOut({
+    $("#my-plate-layout").plateLayOut({
 
-			numRows: 8,
-			numCols: 12,
-			imgSrc:  "css",
-			attributes: attributes,
+      numRows: 8,
+      numCols: 12,
+      imgSrc:  "css",
+      attributes: attributes,
 
-			updateWells: function(event, data) {
-				//Run when data state changes
-			}
-		});
+      updateWells: function(event, data) {
+        //Run when data state changes
+      }
+    });
 
-		//You can trigger the load of plateData at any time, 
-		//including initializing, using the getPlates method
-		$("#my-plate-layout").plateLayOut("getPlates", plateData);
+    //You can trigger the load of plateData at any time, 
+    //including initializing, using the getPlates method
+    $("#my-plate-layout").plateLayOut("getPlates", plateData);
 
-		//You can retrieve the current state at any time using the createObject method
-		$("#my-plate-layout").plateLayOut("createObject"); 
-	}
-	</script>
+    //You can retrieve the current state at any time using the createObject method
+    $("#my-plate-layout").plateLayOut("createObject"); 
+  }
+  </script>
 </head>
 
 <body>
@@ -116,22 +117,22 @@ This function may be called at any time to load data. Well data should be passed
 
 ```js
 {
-	derivative: {
-		"0": { //row-major index of well
-			wellData: {
-				field_1: "value 1"
-				field_2: "value 2"
-			}, 
-			units: {
-				field_1unit: "value 1 unit"
-			}
-		}
-	}, 
-	checkboxes: { //activation of checkboxes
-		field_1: true, 
-		field_2: false
-	}, 
-	selectedAreas: [ //min and max rows and columns, inclusive
+  derivative: {
+    "0": { //row-major index of well
+      wellData: {
+        field_1: "value 1"
+        field_2: "value 2"
+      }, 
+      units: {
+        field_1unit: "value 1 unit"
+      }
+    }
+  }, 
+  checkboxes: { //activation of checkboxes
+    field_1: true, 
+    field_2: false
+  }, 
+  selectedAreas: [ //min and max rows and columns, inclusive
     {
       minRow: 0, 
       maxRow: 3, 

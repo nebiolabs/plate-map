@@ -59,8 +59,9 @@ window.onload = function() {
         "preset 4": [ 'volume-f4', 'dntps2']
       },
 
-      tabs: {
-        "tab 1": {
+      tabs: [
+        {
+          name: "tab 1",
           fields: {
             Volume: {
               required: true,
@@ -148,7 +149,8 @@ window.onload = function() {
           },
         },
 
-        "tab 2": {
+        {
+          name: "tab 2",
           fields: {
             dNTPs : {
               id: 'dntps',
@@ -176,7 +178,8 @@ window.onload = function() {
           }
         },
 
-        "tab 3": {
+        {
+          name: "tab 3",
           fields: {
             Volume3: {
               id:       'volume3',
@@ -207,8 +210,8 @@ window.onload = function() {
           }
         },
 
-        "tab 4": {
-
+        {
+          name: "tab 4",
           fields: {
             Volume4: {
               id:       'volume-f4',
@@ -241,7 +244,7 @@ window.onload = function() {
             }
           }
         }
-      }
+      ]
     };
 
     $("#plate-layout").plateLayOut({
