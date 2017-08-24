@@ -9,25 +9,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
       requiredFields: [],
 
       _addTabData: function() {
-        // Here we may need more changes becuse attributes format likely to change
+        // Here we may need more changes because attributes format likely to change
         var tabData = this.options.attributes.tabs;
-        var tabPointer = 0;
         var that = this;
-        for (currentTab in tabData) {
-          if (tabData[currentTab]["fields"]) {
+        tabData.forEach(function (tab, tabPointer) {
+          if (tab["fields"]) {
             var fieldArray = [];
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
-            for (field in tabData[currentTab]["fields"]) {
-              if (tabData[currentTab]["fields"][field].required) {
-                console.log("its required", tabData[currentTab]["fields"][field].id);
-                this.requiredFields.push(tabData[currentTab]["fields"][field].id);
+            for (field in tab["fields"]) {
+              if (tab["fields"][field].required) {
+                console.log("its required", tab["fields"][field].id);
+                that.requiredFields.push(tab["fields"][field].id);
               }
-              var data = tabData[currentTab]["fields"][field];
-              var input = this._createField(data);
+              var data = tab["fields"][field];
+              var input = that._createField(data);
 
               if (data.id && data.type) {
-                this.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
+                that.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
               } else {
                 console.log("Plz check the format of attributes provided");
               }
@@ -36,24 +35,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // We save the caption so that we can use it for bottom table.
               $(input).data("caption", field);
               // Adding data to the main array so that programatically we can access later
-              fieldArray[fieldArrayIndex++] = this._createDefaultFieldForTabs();
+              fieldArray[fieldArrayIndex++] = that._createDefaultFieldForTabs();
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
-              $(this.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
+              $(that.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
               // now we are adding the field which was collected in the switch case.
               $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
               // Adding checkbox
-              var checkBoxImage = this._addCheckBox(fieldArray, fieldArrayIndex, data);
+              var checkBoxImage = that._addCheckBox(fieldArray, fieldArrayIndex, data);
               // Here we add the checkImage reference to input so now Input knows which is its checkbox..!!
               $(input).data("checkBox", checkBoxImage);
-              this._addTabFieldEventHandlers(fieldArray, fieldArrayIndex, data, input);
+              that._addTabFieldEventHandlers(fieldArray, fieldArrayIndex, data, input);
             }
 
-            this.allDataTabs[tabPointer]["fields"] = fieldArray;
+            that.allDataTabs[tabPointer]["fields"] = fieldArray;
           } else {
             console.log("unknown format in field initialization");
           }
-          tabPointer++;
-        }
+        });
       },
 
       _createField: function(data) {
