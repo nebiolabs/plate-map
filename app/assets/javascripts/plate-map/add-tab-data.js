@@ -67,6 +67,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return this._createNumericField(data);
             break;
 
+          case "select":
+            return this._createSelectField(data);
+            break;
+
           case "multiselect":
             return this._createMultiSelectField(data);
             break;
@@ -81,6 +85,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         switch (data.type) {
+          case "select":
           case "multiselect":
             $("#" + data.id).select2({
               allowClear: true

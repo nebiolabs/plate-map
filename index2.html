@@ -64,30 +64,55 @@ window.onload = function() {
           required: true,
           id: 'pol',
           name: 'Polymerase',
-          type: 'multiselect',
+          type: 'select',
           placeHolder: "Polymerase",
-          options: {
-              'Taq 1':  {
-                    id:   '234',
-                    name: 'Taq 1'
-                },
-              'Taq 2':  {
-                    id:   '123',
-                    name: 'Taq 2'
-                },
-                'Taq 3':  {
-                    id:   '3',
-                    name: 'Taq 3'
-                },
-                'Taq 4':  {
-                    id:   '4',
-                    name: 'Taq 4'
-                },
-                'Taq 5':  {
-                    id:   '5',
-                    name: 'Taq 5'
-                }
-          }
+          options: [
+            {
+              id:   '234',
+              name: 'Taq 1'
+            },
+            {
+              id:   '123',
+              name: 'Taq 2'
+            },
+            {
+              id:   '3',
+              name: 'Taq 3'
+            },
+            {
+              id:   '4',
+              name: 'Taq 4'
+            },
+            {
+              id:   '5',
+              name: 'Taq 5'
+            }
+          ]
+        }, 
+        Amplicons: {
+          required: false,
+          id: 'amplicons', 
+          name: "Amplicons", 
+          type: "multiselect", 
+          placeHolder: "Amplicons", 
+          options: [
+            {
+              id: '1', 
+              name: 'Amplicon_A'
+            },
+            {
+              id: '2', 
+              name: 'Amplicon_B'
+            },
+            {
+              id: '3', 
+              name: 'Amplicon_C'
+            },
+            {
+              id: '4', 
+              name: 'Amplicon_D'
+            },
+          ]
         }
     }; 
 
@@ -111,7 +136,7 @@ window.onload = function() {
     var wells = {}; 
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
-      var pol = fields.Polymerase.options[(r < (rows/2)) ? 'Taq 1' : 'Taq 2'].id; 
+      var pol = (r < (rows/2)) ? '234' : '123'; 
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
         wells[i.toString()] = {

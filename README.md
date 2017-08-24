@@ -182,27 +182,49 @@ Name says it all, Just brought the select2 to show it.
 
 #### Multiselect
 
-Normal select box but we bring select2 to modify it. Look at the example object here.
+Selected single option using select2 dropdown.Options field lists options in order. 
 
+```js
+Polymerase: {
+  required: true,
+  id: 'pol',
+  name: 'Polymerase',
+  type: 'select',
+  placeHolder: "Polymerase",
+  options: [
+    {
+      id:   '234',
+      name: 'Taq 1'
+    },
+    {
+      id:   '123',
+      name: 'Taq 2'
+    }
+  ]
+}
 ```
+
+#### Multiselect
+
+Select multiple options using select2 picker. Options field lists options in order. 
+
+```js
 Polymerase: {
   required: true,
   id: 'pol',
   name: 'Polymerase',
   type: 'multiselect',
   placeHolder: "Polymerase",
-  options: {
-    'Taq 1': {
+  options: [
+    {
       id:   '234',
       name: 'Taq 1'
     },
-    'Taq 2': {
+    {
       id:   '123',
       name: 'Taq 2'
     }
-  }
+  ]
 }
 ```
-
-Here options are going to be the values in the dropdown.
 

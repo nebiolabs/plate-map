@@ -9,10 +9,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _addData: function(e, boolean) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
+          var v = $(e.target).val();
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var wellData = this.allSelectedObjects[objectIndex]["wellData"];
-            wellData[e.target.id] = e.target.value;
+            wellData[e.target.id] = v;
             this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
             //this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
           }

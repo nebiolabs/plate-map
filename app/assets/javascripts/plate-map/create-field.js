@@ -11,8 +11,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return this._createElement("<input>").addClass("plate-setup-tab-input").attr("id", textData.id);
       },
 
-      _createMultiSelectField: function(selectData) {
-
+      _createSelectField: function(selectData) {
+        var that = this; 
         // we create select field and add options to it later
         var selectField = this._createElement("<select></select>").attr("id", selectData.id)
           .addClass("plate-setup-tab-select-field");
@@ -21,14 +21,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .html("");
         $(selectField).append(emptySelection);
         // Look for all options in the json
-        for (var option in selectData.options) {
-          var optionData = selectData.options[option];
-          var optionField = this._createElement("<option></option>").attr("value", optionData.id)
+        selectData.options.forEach(function (optionData) {
+          var optionField = that._createElement("<option></option>").attr("value", optionData.id)
             .html(optionData.name);
           // Adding options here.
           $(selectField).append(optionField);
-        }
+        }); 
 
+        return selectField;
+      },
+
+      _createMultiSelectField: function(selectData) {
+        var that = this; 
+        // we create select field and add options to it later
+        var selectField = this._createElement("<select></select>").attr("id", selectData.id)
+          .addClass("plate-setup-tab-multiselect-field");
+        selectField.attr("multiple", "multiple"); 
+        // Look for all options in the json
+        selectData.options.forEach(function (optionData) {
+          var optionField = that._createElement("<option></option>").attr("value", optionData.id)
+            .html(optionData.name);
+          // Adding options here.
+          $(selectField).append(optionField);
+        }); 
         return selectField;
       },
 
