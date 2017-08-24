@@ -54,9 +54,9 @@ window.onload = function() {
 
       presets: {
         "preset 1": ['volume', 'pol', 'volume-master', 'volume-ampli', 'volume2'],
-        "preset 2": ['poly'],
-        "preset 3":['volume3', 'polo'],
-        "preset 4": [ 'volume-f4', 'poloo']
+        "preset 2": ['dntps'],
+        "preset 3":['volume3', 'pol2'],
+        "preset 4": [ 'volume-f4', 'dntps2']
       },
 
       tabs: {
@@ -80,31 +80,30 @@ window.onload = function() {
               required: true,
               id: 'pol',
               name: 'Polymerase',
-              type: 'multiselect',
+              type: 'select',
               placeHolder: "Polymerase",
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    },
-                    'Taq 3':  {
-                        id:   '3',
-                        name: 'Taq 3'
-                    },
-                    'Taq 4':  {
-                        id:   '4',
-                        name: 'Taq 4'
-                    },
-                    'Taq 5':  {
-                        id:   '5',
-                        name: 'Taq 5'
-                    }
-              }
+              options: [
+                {
+                  id:   '234',
+                  name: 'Taq 1'
+                },
+                {
+                  id:   '123',
+                  name: 'Taq 2'
+                },
+                {
+                  id:   '3',
+                  name: 'Taq 3'
+                },
+                {
+                  id:   '4',
+                  name: 'Taq 4'
+                },
+                {
+                  id:   '5',
+                  name: 'Taq 5'
+                }
+              ]
             },
 
             master_mix: {
@@ -152,20 +151,27 @@ window.onload = function() {
         "tab 2": {
           fields: {
             dNTPs : {
-              id: 'poly',
-              name: 'dNTPs1',
-              type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    }
-              }
+              id: 'dntps',
+              name: 'dNTPs',
+              type: 'select',
+              options: [
+                {
+                  id:   '1',
+                  name: 'Mix 1'
+                },
+                {
+                  id:   '2',
+                  name: 'Mix 2'
+                },
+                {
+                  id:   '3',
+                  name: 'Mix 3'
+                },
+                {
+                  id:   '4',
+                  name: 'Mix 4'
+                }
+              ]
             }
           }
         },
@@ -184,20 +190,19 @@ window.onload = function() {
             },
 
             Polymerase2: {
-              id: 'polo',
+              id: 'pol2',
               name: 'Polymerase2',
-              type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    }
-              }
+              type: 'select',
+              options: [
+                {
+                  id:   '234',
+                  name: 'Taq 1'
+                },
+                {
+                  id:   '123',
+                  name: 'Taq 2'
+                }
+              ]
             }
           }
         },
@@ -212,28 +217,27 @@ window.onload = function() {
             },
 
             dNTPs2 : {
-              id: 'poloo',
+              id: 'dntps2',
               name: 'dNTPs2',
               type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'cola'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'pepsi'
-                    },
-                    'Taq 3':  {
-                          id:   '3',
-                          name: 'fanta'
-                      },
-                    'Taq 4':  {
-                          id:   '4',
-                          name: 'redbull'
-                      }
-              }
+              options: [
+                {
+                  id:   '1',
+                  name: 'Mix 1'
+                },
+                {
+                  id:   '2',
+                  name: 'Mix 2'
+                },
+                {
+                  id:   '3',
+                  name: 'Mix 3'
+                }, 
+                {
+                  id: "redbull", 
+                  name: "Redbull"
+                }
+              ]
             }
           }
         }
@@ -254,7 +258,7 @@ window.onload = function() {
     });
 
     // Okay this could be the data user gets from the server.
-      var data = '{"derivative":{"0":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"1":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"12":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"13":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"18":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"19":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"20":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"21":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"30":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"31":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"32":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"33":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"42":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"43":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"44":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"45":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"51":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"52":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"54":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"55":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"56":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"57":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"59":{"selectedValues":{"volume-master":"7"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"7","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"63":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"64":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"78":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"79":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"81":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"82":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"91":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"5","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"93":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"94":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}}},"checkboxes":{"volume":true,"volume-master":true,"volume-buff":true},"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
+      var data = '{"derivative":{"0":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"1":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"12":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"13":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"18":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"19":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"20":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"21":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"30":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"31":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"32":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"33":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"42":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"43":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"44":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"45":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"51":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"52":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"54":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"55":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"56":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"57":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":"redbull"}},"59":{"selectedValues":{"volume-master":"7"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"7","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"63":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"64":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"78":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"79":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"81":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"82":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"91":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"5","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"93":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}},"94":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","dntps":"","volume3":"","pol2":"","volume-f4":"","dntps2":""}}},"checkboxes":{"volume":true,"volume-master":true,"volume-buff":true},"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
 
       $("#demo").click(function() {
       // Now we trigger getPlates along with the data. the implementation of getPlates is in load-plate.js

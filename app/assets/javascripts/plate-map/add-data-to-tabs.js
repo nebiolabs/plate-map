@@ -32,6 +32,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // This method directly add a value to corresponding field in the tab
         switch ($("#" + id).data("type")) {
 
+          case "select":
           case "multiselect":
             $("#" + id).val(values[id]).trigger("change", "Automatic");
             // Automatic means its system generated.
