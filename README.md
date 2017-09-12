@@ -128,10 +128,10 @@ This function may be called at any time to load data. Well data should be passed
       }
     }
   }, 
-  checkboxes: { //activation of checkboxes
-    field_1: true, 
-    field_2: false
-  }, 
+  checkboxes: [ //activation of checkboxes
+    "field_1", 
+    "field_2"
+  ], 
   selectedAreas: [ //min and max rows and columns, inclusive
     {
       minRow: 0, 

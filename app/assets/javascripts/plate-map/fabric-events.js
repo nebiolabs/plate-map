@@ -210,34 +210,45 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Here we look for the values on the well and apply it to tabs.
         if (this.allSelectedObjects.length === 1) {
           // Incase there is only one well selected.
-          this._addDataToTabFields();
-        } else if (this.allSelectedObjects.length > 1) {
-          // Here we check if all the values are same
-          // if yes apply those values to tabs
-          // else show empty value in tabs
-          // we take first tile as reference object
           var referenceTile = this.allSelectedObjects[0];
           var referenceFields = referenceTile["wellData"];
           var referenceUnits = referenceTile["unitData"];
-          var wellD = this.engine.getSelectedValues(referenceTile) || $.extend({}, true, referenceTile["wellData"]);
-          var equalWellData = true;
-          var equalUnitData = true;
-          //var equalSelectData = true;
-          // Looking for same well data
-          // Correct this
+          this._addDataToTabFields(referenceFields, referenceUnits);
+        } else if (this.allSelectedObjects.length > 1) {
+          // Here we determine the shared values among all selected objects
+
+          var referenceTile = this.allSelectedObjects[0];
+          var referenceFields = $.extend(true, {}, referenceTile["wellData"]);
+          var referenceUnits = $.extend(true, {}, referenceTile["unitData"]);
+
           for (var i = 0; i < this.allSelectedObjects.length; i++) {
-
-            equalWellData = this.compareObjects(this.allSelectedObjects[i]["wellData"], referenceFields);
-            equalUnitData = this.compareObjects(this.allSelectedObjects[i]["unitData"], referenceUnits);
-
-            if (!equalWellData || !equalUnitData) {
-
-              this._clearAllFields(referenceFields);
-              return true;
+            var tile = this.allSelectedObjects[i]
+            var fields = tile["wellData"]; 
+            var units = tile["unitData"]; 
+            for (var field in referenceFields) {
+              var unitField = field + "unit"; 
+              if (Array.isArray(referenceFields[field])) {
+                var refArr = referenceFields[field]; 
+                var agrArr = []; 
+                for (var j = 0; j < refArr.length; j++) {
+                  var v = refArr[j]; 
+                  if ($.inArray(v, fields[field]) >= 0) {
+                    agrArr.push(v); 
+                  }
+                }
+                referenceFields[field] = agrArr; 
+              } else {
+                if (referenceFields[field] != fields[field] || referenceUnits[unitField] != units[unitField]) {
+                  referenceFields[field] = null; 
+                  if (unitField in referenceUnits) {
+                    referenceUnits[unitField] = null; 
+                  }
+                }
+              }
             }
           }
 
-          this._addDataToTabFields();
+          this._addDataToTabFields(referenceFields, referenceUnits);
         }
       },
 

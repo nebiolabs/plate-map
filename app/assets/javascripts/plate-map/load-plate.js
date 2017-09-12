@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.engine.derivative = $.extend(true, {}, derivativeData.derivative);
 
-        if ($.isEmptyObject(derivativeData.checkboxes)) {
+        if (!derivativeData.checkboxes.length) {
           this._colorMixer(true);
         } else {
           this.loadCheckboxes(derivativeData.checkboxes);
@@ -38,22 +38,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       loadCheckboxes: function(checkboxes) {
-
-        var checkBoxImage;
-
-        for (var checkbox in checkboxes) {
-          checkBoxImage = $("#" + checkbox).data("checkBox");
-          $(checkBoxImage).data("clicked", false).trigger("click", true);
+        for (var i = 0; i < checkboxes.length; i++) {
+          var checkbox = checkboxes[i]; 
+          var checkBoxImage = $("#" + checkboxes[i]).data("checkBox");
+          checkBoxImage.data("clicked", false).trigger("click", true);
         }
       },
 
       clearCheckBoxes: function() {
-
-        var checkBoxImage;
-
-        for (var checkbox in this.globalSelectedAttributes) {
-          checkBoxImage = $("#" + checkbox).data("checkBox");
-          $(checkBoxImage).data("clicked", true).trigger("click", true);
+       for (var i = 0; i <  this.globalSelectedAttributes.length; i++) {
+          var checkbox = this.globalSelectedAttributes[i]; 
+          var checkBoxImage = $("#" + checkbox).data("checkBox");
+          checkBoxImage.data("clicked", true).trigger("click", true);
         }
       }
 
