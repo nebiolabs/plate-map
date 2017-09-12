@@ -3,8 +3,8 @@
     <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.css" media="all" rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.js"></script>
 
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
@@ -68,23 +68,23 @@ window.onload = function() {
           placeHolder: "Polymerase",
           options: [
             {
-              id:   '234',
+              id:   234,
               name: 'Taq 1'
             },
             {
-              id:   '123',
+              id:   123,
               name: 'Taq 2'
             },
             {
-              id:   '3',
+              id:   3,
               name: 'Taq 3'
             },
             {
-              id:   '4',
+              id:   4,
               name: 'Taq 4'
             },
             {
-              id:   '5',
+              id:   5,
               name: 'Taq 5'
             }
           ]
@@ -97,19 +97,19 @@ window.onload = function() {
           placeHolder: "Amplicons", 
           options: [
             {
-              id: '1', 
+              id: 'A', 
               name: 'Amplicon_A'
             },
             {
-              id: '2', 
+              id: 'B', 
               name: 'Amplicon_B'
             },
             {
-              id: '3', 
+              id: 'C', 
               name: 'Amplicon_C'
             },
             {
-              id: '4', 
+              id: 'D', 
               name: 'Amplicon_D'
             },
           ]
@@ -137,16 +137,17 @@ window.onload = function() {
     var wells = {}; 
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
-      var pol = (r < (rows/2)) ? '234' : '123'; 
+      var pol = (r < (rows/2)) ? 234 : 123; 
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
         wells[i.toString()] = {
-          units: {
+          unitData: {
             volumeunit:'unit1',
           },
           wellData: {
-            volume: volume.toString(),
-            pol: pol
+            volume: volume,
+            pol: pol, 
+            amplicons: []
           }
         }; 
         if ((c % 2) > 0) {
@@ -156,7 +157,7 @@ window.onload = function() {
     }
     return {
       derivative: wells, 
-      checkboxes: {volume:true, pol: true}, 
+      checkboxes: ["volume", "pol"], 
     }; 
   }
 

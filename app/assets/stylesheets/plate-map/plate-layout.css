@@ -250,14 +250,6 @@
   padding-top: 3px;
 }
 
-.plate-setup-bottom-container {
-  width: 1024px;
-  height: 208px;
-  background-color: #e1e1e1;
-  overflow: scroll;
-  font-family: 'Roboto', sans-serif;
-}
-
 .plate-setup-tab-default-field {
   width: 303px;
   height: 50px;
@@ -315,48 +307,44 @@
   margin-top: 26px;
 }
 
-.plate-setup-bottom-row {
-  width: 100%;
-  height: 33px;
+.plate-setup-bottom-container {
+  background-color: #e1e1e1;
+  width: 1024px;
+  height: 208px;
+  overflow: auto;
 }
 
-.plate-setup-bottom-single-field {
-  width: 150px;
-  height: 33px;
-  float: left;
-  border-right: solid #c2c2c2 1px;
-}
-
-.plate-setup-bottom-single-field-data {
-  width: 140px;
-  height: 33px;
-  float: left;
-  border-right: solid #c2c2c2 1px;
-  padding-left: 10px;
+.plate-setup-bottom-table {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
-}
-
-.plate-setup-bottom-row-data {
+  border-collapse: collapse;
   width: 100%;
-  height: 33px;
-  background-color: white;
-  border-bottom: solid #c2c2c2 1px;
 }
 
-.plate-setup-bottom-row-seperate {
-  border-bottom: solid #c2c2c2 1px;
-}
-
-.plate-setup-bottom-single-field div {
-  margin-top: 5px;
-  margin-left: 10px;
+.plate-setup-bottom-table th {
+  border: solid #c2c2c2 1px;
+  padding: 5px 10px;
   font-weight: bold;
   font-size: 12px;
+  text-align: left;
+}
+
+.plate-setup-bottom-table td {
+  border: solid #c2c2c2 1px;
+  padding: 5px 10px;
+  background-color: white;
+}
+
+.plate-setup-bottom-id {
+  width: 60px;
 }
 
 .plate-setup-container-outer {
   width: 1024px;
   height: 768px;
   float: left;
+}
+
+input.invalid {
+  background-color: pink;
 }

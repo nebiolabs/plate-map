@@ -19,14 +19,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Adding an empty option at the first
         var emptySelection = this._createElement("<option></option>").attr("value", "")
           .html("");
-        $(selectField).append(emptySelection);
+        selectField.append(emptySelection);
+        var optMap = {}; 
         // Look for all options in the json
         selectData.options.forEach(function (optionData) {
+          optMap[optionData.id] = optionData; 
           var optionField = that._createElement("<option></option>").attr("value", optionData.id)
             .html(optionData.name);
           // Adding options here.
-          $(selectField).append(optionField);
+          selectField.append(optionField);
         }); 
+        selectField.data("optionMap", optMap); 
 
         return selectField;
       },
@@ -38,12 +41,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-multiselect-field");
         selectField.attr("multiple", "multiple"); 
         // Look for all options in the json
+        var optMap = {}; 
         selectData.options.forEach(function (optionData) {
+          optMap[optionData.id] = optionData; 
           var optionField = that._createElement("<option></option>").attr("value", optionData.id)
             .html(optionData.name);
           // Adding options here.
-          $(selectField).append(optionField);
+          selectField.append(optionField);
         }); 
+        selectField.data("optionMap", optMap); 
+        
         return selectField;
       },
 

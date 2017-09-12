@@ -17,7 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fieldArray = [];
             var fieldArrayIndex = 0;
             // Now we look for fields in the json
-            for (field in tab["fields"]) {
+            for (var field in tab["fields"]) {
               if (tab["fields"][field].required) {
                 console.log("its required", tab["fields"][field].id);
                 that.requiredFields.push(tab["fields"][field].id);
@@ -26,9 +26,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var input = that._createField(data);
 
               if (data.id && data.type) {
-                that.allWellData[data.id] = (data.type == "boolean") ? "NULL" : "";
+                that.allWellData[data.id] = null;
               } else {
-                console.log("Plz check the format of attributes provided");
+                console.log("Please check the format of attributes provided");
               }
               // we save type so that it can be used when we update data on selecting a tile
               $(input).data("type", data.type);
@@ -84,49 +84,81 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         switch (data.type) {
           case "select":
-          case "multiselect":
-            $("#" + data.id).select2({
+            input.select2({
               allowClear: true
             });
 
-            $("#" + data.id).on("change", function(e, generated) {
+            input.on("change", function(e, generated) {
               // we check if this event is user generated event or system generated , automatic is system generated
               if (generated != "Automatic") {
-                that._addData(e);
+                var v = e.val || null; 
+                if (v) {
+                  var optMap = input.data("optionMap"); 
+                  v = optMap[v].id; 
+                }
+                that._addData(e.target.id, v);
+              }
+            });
+            break
+          case "multiselect":
+            input.select2({
+              allowClear: true
+            });
+
+            input.on("change", function(e, generated) {
+              // we check if this event is user generated event or system generated , automatic is system generated
+              if (generated != "Automatic") {
+                var v = e.val; 
+                if (v.length) {
+                  var optMap = input.data("optionMap"); 
+                  v = v.map(function (v) {return optMap[v].id;})
+                }
+                that._addData(e.target.id, v);
               }
             });
             break
 
           case "numeric":
-            // Adding prevention for non numeric keys, its basic. need to improve.
-            // We use keyup and keydown combination to get only numbers saved in the object
-            $(input).keydown(function(evt) {
-              var charCode = (evt.which) ? evt.which : evt.keyCode;
-              if (charCode != 190 && charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57)) {
-                return false;
+            $(input).on("input", function(e, generated) {
+              if (generated != "Automatic") {
+                var v = this.value.trim();
+                if (v == "") {
+                  v = null; 
+                } else {
+                  v = Number(v); 
+                }
+                if (isNaN(v)) {
+                  //flag field as invalid
+                  $(this).addClass("invalid"); 
+                } else {
+                  $(this).removeClass("invalid"); 
+                  that._addData(e.target.id, v); 
+                }
               }
             });
 
-            $(input).keyup(function(evt) {
-              var charCode = (evt.which) ? evt.which : evt.keyCode;
-              if (!(charCode != 190 && charCode != 8 && charCode != 0 && (charCode < 48 || charCode > 57))) {
-                that._addData(evt);
-              }
-            });
             // Now add the label which shows unit.
             var unitDropdownField = this._addUnitDataField(fieldArray, fieldArrayIndex, data);
             fieldArray[fieldArrayIndex - 1].unit = unitDropdownField;
             break;
 
           case "boolean":
-            $("#" + data.id).select2({
+            input.select2({
               allowClear: true,
               minimumResultsForSearch: -1
             });
 
-            $("#" + data.id).on("change", function(evt, generated) {
+            input.on("change", function(e, generated) {
               if (generated != "Automatic") {
-                that._addData(evt);
+                var v = this.value; 
+                if (v == "") {
+                  v = null; 
+                } else if (v == "true") {
+                  v = true; 
+                } else {
+                  v = false; 
+                }
+                that._addData(e.target.id, v);
               }
             });
             break;
@@ -135,16 +167,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // we use keyup instead of blur. Blur fires event but canvas fire event even faster
             // so most likely our targeted tile changed, and value added to wrong tile.
 
-
-            $("#" + data.id).keyup(function(evt) {
-              evt.preventDefault();
-              //console.log("Cool", evt);
-              if ((evt.keyCode == 90 && evt.ctrlKey) || (evt.keyCode == 89 && evt.ctrlKey)) {
-                // Leaving it blank so that other event handler takes control.
-              } else if (evt.which != 17) {
-                that._addData(evt);
+            $(input).on("input", function(e, generated) {
+              if (generated != "Automatic") {
+                var v = this.value.trim();
+                if (v == "") {
+                  v = null; 
+                }
+                that._addData(e.target.id, v); 
               }
             });
+
+
+            /*$("#" + data.id).keyup(function(e) {
+              e.preventDefault();
+              //console.log("Cool", e);
+              if ((e.keyCode == 90 && e.ctrlKey) || (e.keyCode == 89 && e.ctrlKey)) {
+                // Leaving it blank so that other event handler takes control.
+              } else if (e.which != 17) {
+                that._addData(evt);
+              }
+            });*/
             break;
         }
       },

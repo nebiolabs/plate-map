@@ -18,56 +18,50 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         createDerivative: function(tile) {
 
-          var selectedValues = this.getSelectedValues(tile);
-          var attrs = $.extend(true, {}, THIS.globalSelectedAttributes);
-          var units = this.getUnits(tile);
-          var data = $.extend(true, {}, tile.wellData);
+          var wellData = $.extend(true, {}, tile.wellData);
+          var unitData = $.extend(true, {}, tile.unitData); 
 
           this.derivative[tile.index] = {
-            "selectedValues": selectedValues,
-            "attrs": attrs,
-            "units": units,
-            "wellData": data
+            "wellData": wellData, 
+            "unitData": unitData
           };
-        },
-
-        getSelectedValues: function(tile) {
-
-          var data = {};
-          for (var attr in THIS.globalSelectedAttributes) {
-            if (tile["wellData"][attr] && tile["wellData"][attr] != "NULL") {
-              data[attr] = tile["wellData"][attr];
-            }
-          }
-
-          return data;
-        },
-
-        getUnits: function(tile) {
-
-          var data = {};
-          for (var attr in THIS.globalSelectedAttributes) {
-            if (tile.unitData[attr + "unit"]) {
-              data[attr + "unit"] = tile.unitData[attr + "unit"];
-            }
-          }
-
-          return data;
         },
 
         searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 2;
-          var derivativeCopy = JSON.parse(JSON.stringify(this.derivative)); //$.extend(true, {}, this.derivative);
+          var derivativeJson = {}
+          for (var idx in this.derivative) {
+            var data = this.derivative[idx]; 
+            var wellData = {}; 
+            var unitData = {}; 
+            for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
+              var attr = THIS.globalSelectedAttributes[i]; 
+              var unitAttr = attr + "unit"; 
+              if (data.wellData[attr] != null) {
+                wellData[attr] = data.wellData[attr];
+              }
+              if (data.unitData[unitAttr] != null) {
+                unitData[unitAttr] = data.unitData[unitAttr];
+              }
+            }
+            if ($.isEmptyObject(wellData)) {
+              derivativeJson[idx] = null; 
+            } else {
+              derivativeJson[idx] = JSON.stringify({"wellData": wellData, "unitData": unitData}); 
+            }
+          }
 
-          while (!$.isEmptyObject(derivativeCopy)) {
+          while (!$.isEmptyObject(derivativeJson)) {
+            var keys = Object.keys(derivativeJson).map(function (k) {return parseFloat(k, 10);});
+            keys.sort(function (a, b) {return a-b;}); 
 
-            var refDerivativeIndex = Object.keys(derivativeCopy)[0];
-            var referenceDerivative = derivativeCopy[refDerivativeIndex];
+            var refDerivativeIndex = keys[0];
+            var referenceDerivative = derivativeJson[refDerivativeIndex];
             var arr = [];
 
-            if ($.isEmptyObject(referenceDerivative.selectedValues)) {
+            if (!referenceDerivative) {
               // if no checked box has value, push it to first spot
               if (this.stackUpWithColor[1]) {
                 this.stackUpWithColor[1].push(refDerivativeIndex);
@@ -75,20 +69,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 this.stackUpWithColor[1] = [refDerivativeIndex];
               }
 
-              delete derivativeCopy[refDerivativeIndex];
+              delete derivativeJson[refDerivativeIndex];
             } else {
-              // if cheked boxes have values
-              for (data in derivativeCopy) {
-                if (THIS.compareObjects(referenceDerivative.selectedValues, derivativeCopy[data].selectedValues)) {
-                  if (THIS.compareObjects(referenceDerivative.units, derivativeCopy[data].units)) {
-                    arr.push(data);
-                    this.stackUpWithColor[this.stackPointer] = arr;
-                    delete derivativeCopy[data];
-                  }
+              // if checked boxes have values
+              for (var i = 0; i < keys.length; i++) {
+                var idx = keys[i]; 
+                if (referenceDerivative == derivativeJson[idx]) {
+                  arr.push(idx);
+                  this.stackUpWithColor[this.stackPointer] = arr;
+                  delete derivativeJson[idx];
                 }
               }
-              // here u cud add applyColors , its a different implementation, but might be a performer.
-              if (data.length > 0)
+              if (arr.length > 0)
                 this.stackPointer++;
             }
           }
@@ -103,22 +95,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           THIS.addBottomTableHeadings();
 
-          for (color in this.stackUpWithColor) {
+          for (var color = 1; color < this.stackPointer; color++) {
+            var arr = this.stackUpWithColor[color];
+            if (arr) {
+              THIS.addBottomTableRow(color, arr);
 
-            THIS.addBottomTableRow(color, this.stackUpWithColor[color]);
+              for (var tileIndex in arr) {
 
-            for (tileIndex in this.stackUpWithColor[color]) {
-
-              this.wholeNoTiles++;
-              tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
-              if (!tile.circle) {
-                THIS.addCircle(tile, color, this.stackPointer);
-              } else {
-                THIS.setGradient(tile.circle, color, this.stackPointer);
+                this.wholeNoTiles++;
+                tile = THIS.allTiles[this.stackUpWithColor[color][tileIndex]];
+                if (!tile.circle) {
+                  THIS.addCircle(tile, color, this.stackPointer);
+                } else {
+                  THIS.setGradient(tile.circle, color, this.stackPointer);
+                }
+                // Checks if all the required fields are filled
+                this.wholePercentage = this.wholePercentage + this.checkCompletion(tile.wellData, tile);
+                this.checkForValidData(tile);
               }
-              // Checks if all the required fields are filled
-              this.wholePercentage = this.wholePercentage + this.checkCompletion(tile.wellData, tile);
-              this.checkForValidData(tile);
             }
           }
 
@@ -134,7 +128,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         checkForValidData: function(tile) {
 
           for (var wellIndex in tile.wellData) {
-            if (tile.wellData[wellIndex] != "" && tile.wellData[wellIndex] != "NULL") {
+            if (tile.wellData[wellIndex] != null) {
               //If the well has some value just be there;
               return true;
             }
@@ -150,7 +144,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var fill = length;
           tile.circleCenter.radius = 10 * scale;
           for (var i = 0; i < length; i++) {
-            if (wellData[THIS.requiredFields[i]] == "" || wellData[THIS.requiredFields[i]] == "NULL") {
+            if (wellData[THIS.requiredFields[i]] == null) {
               tile.circleCenter.radius = 14 * scale;
               fill--;
               continue;
@@ -164,7 +158,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         findCommonValues: function(option) {
           // Find common values in number of Objects.
           // When we copy different wells together we only take common values.
-          var reference = JSON.parse(JSON.stringify(THIS.allSelectedObjects[0][option])); //$.extend(true, {}, THIS.allSelectedObjects[0][option]);
+          var reference = $.extend(true, {}, THIS.allSelectedObjects[0][option]);
 
           THIS.allSelectedObjects.filter(function(element, index) {
             for (var key in reference) {

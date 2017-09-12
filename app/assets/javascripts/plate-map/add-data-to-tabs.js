@@ -6,25 +6,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     return {
 
-      _addDataToTabFields: function() {
+      _addDataToTabFields: function(values, units) {
         // Configure how data is added to tab fields
-        var values = this.allSelectedObjects[0]["wellData"];
         for (var id in values) {
           this._applyFieldData(id, values);
         }
         // Now changing the unit values
-        var units = this.allSelectedObjects[0]["unitData"];
         for (var unitId in units) {
           this._applyUnitData(unitId, units);
         }
         // Now put back selected fields
-        var selectedFields = this.globalSelectedAttributes;
-
-        for (var selectedFieldId in selectedFields) {
-          if (selectedFields[selectedFieldId] == true) {
-            var checkBoxImage = $("#" + selectedFieldId).data("checkBox");
-            $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
-          }
+        for (var i = 0; i <  this.globalSelectedAttributes.length; i++) {
+          var checkbox = this.globalSelectedAttributes[i]; 
+          var checkBoxImage = $("#" + checkbox).data("checkBox");
+          $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
         }
       },
 
@@ -72,37 +67,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _applyUnitData: function(unitId, units) {
         // Method to add unit data to the tabs.
         $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
-      },
-
-      compareObjects: function(object, reference) {
-        // Compare 2 objects
-        for (var ref in reference) {
-          if (reference[ref] !== object[ref]) {
-            return false;
-          }
-        }
-
-        for (var ref in object) {
-          if (object[ref] !== reference[ref]) {
-            return false;
-          }
-        }
-
-        return true;
-      },
-
-      _clearAllFields: function(allFields) {
-        // Clear all the fields
-        var fakeAllFields = $.extend({}, allFields);
-        for (var field in fakeAllFields) {
-          if ($("#" + field).data("type") == "boolean") {
-            fakeAllFields[field] = null;
-          } else {
-            fakeAllFields[field] = "";
-          }
-          this._applyFieldData(field, fakeAllFields);
-        }
-      },
+      }
 
     }
   }
