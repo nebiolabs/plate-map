@@ -53,13 +53,24 @@ window.onload = function() {
     var volume_units = ["m/s", "Nm"];
     var attributes = {
 
-      presets: {
-        "preset 1": ['volume', 'pol', 'volume-master', 'volume-ampli', 'volume2'],
-        "preset 2": ['dntps'],
-        "preset 3":['volume3', 'pol2'],
-        "preset 4": [ 'volume-f4', 'dntps2']
-      },
-
+      presets: [
+        {
+          "title": "P1",
+          "fields": ['volume', 'pol', 'volume-master', 'volume-ampli', 'volume2']
+        },
+        {
+          "title": "P2",
+          "fields": ['dntps']
+        },
+        {
+          "title": "P3",
+          "fields": ['volume3', 'pol2']
+        },
+        {
+          "title": "P4",
+          "fields": [ 'volume-f4', 'dntps2']
+        },
+      ], 
       tabs: [
         {
           name: "tab 1",

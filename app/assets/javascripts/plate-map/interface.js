@@ -40,7 +40,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._createTabAtRight();
         this._createTabs();
 
-        this._placePresetCaption();
         this._placePresetTabs();
         // Bottom of the screen
         this._bottomScreen();

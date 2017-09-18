@@ -115,10 +115,16 @@ window.onload = function() {
     }; 
 
   var attributes = {
-    presets: {
-      "preset 1": ['volume', 'pol'],
-      "preset 2": ["volume"]
-    },
+    presets: [
+      {
+        title: "Pol/Vol", 
+        fields: ["volume", "pol"]
+      },
+      {
+        title: "Vol", 
+        fields: ["volume"]
+      }
+    ],
     tabs: [
       {
         name: "Settings",
