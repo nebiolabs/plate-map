@@ -208,25 +208,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _applyValuesToTabs: function() {
         // re write this method so that everytime it doesn't have to run full
         // Here we look for the values on the well and apply it to tabs.
-        if (this.allSelectedObjects.length === 1) {
+        if (this.allSelectedObjects.length) {
           // Incase there is only one well selected.
-          var referenceTile = this.allSelectedObjects[0];
-          var referenceFields = referenceTile["wellData"];
-          var referenceUnits = referenceTile["unitData"];
-          this._addDataToTabFields(referenceFields, referenceUnits);
-        } else if (this.allSelectedObjects.length > 1) {
-          // Here we determine the shared values among all selected objects
-
           var referenceTile = this.allSelectedObjects[0];
           var referenceFields = $.extend(true, {}, referenceTile["wellData"]);
           var referenceUnits = $.extend(true, {}, referenceTile["unitData"]);
-
-          for (var i = 0; i < this.allSelectedObjects.length; i++) {
+          for (var i = 1; i < this.allSelectedObjects.length; i++) {
             var tile = this.allSelectedObjects[i]
             var fields = tile["wellData"]; 
             var units = tile["unitData"]; 
             for (var field in referenceFields) {
-              var unitField = field + "unit"; 
               if (Array.isArray(referenceFields[field])) {
                 var refArr = referenceFields[field]; 
                 var agrArr = []; 
@@ -238,16 +229,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field] || referenceUnits[unitField] != units[unitField]) {
+                if (referenceFields[field] != fields[field] || referenceUnits[field] != units[field]) {
                   referenceFields[field] = null; 
-                  if (unitField in referenceUnits) {
-                    referenceUnits[unitField] = null; 
+                  if (field in referenceUnits) {
+                    referenceUnits[field] = null; 
                   }
                 }
               }
             }
           }
-
           this._addDataToTabFields(referenceFields, referenceUnits);
         }
       },

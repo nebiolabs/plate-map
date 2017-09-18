@@ -25,20 +25,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _applyFieldData: function(id, values) {
         // This method directly add a value to corresponding field in the tab
-        switch ($("#" + id).data("type")) {
+        var input = $("#" + id)
+        switch (input.data("type")) {
 
           case "select":
           case "multiselect":
-            $("#" + id).val(values[id]).trigger("change", "Automatic");
+            input.val(values[id]).trigger("change", "Automatic");
             // Automatic means its system generated.
             break;
 
           case "text":
-            $("#" + id).val(values[id]);
+            input.val(values[id]);
             break;
 
           case "numeric":
-            $("#" + id).val(values[id]);
+            input.val(values[id]);
             break;
 
           case "boolean":
@@ -52,21 +53,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
               boolText = "false";
             }
 
-            $("#" + id).val(boolText).trigger("change", "Automatic");
+            input.val(boolText).trigger("change", "Automatic");
             break;
         }
-        // Clear previously selected checkboxes
-        /*var checkBoxImage = $("#" + id).data("checkBox");
-
-        if($(checkBoxImage).data("clicked")) {
-          $(checkBoxImage).attr("src", this.imgSrc + "/dont.png");
-          $(checkBoxImage).data("clicked", false);
-        }*/
       },
 
-      _applyUnitData: function(unitId, units) {
+      _applyUnitData: function(fieldId, units) {
         // Method to add unit data to the tabs.
-        $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
+        var unitId = this.unitFieldId(fieldId); 
+        $("#" + unitId).val(units[fieldId]).trigger("change", "Automatic");
       }
 
     }
