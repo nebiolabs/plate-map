@@ -13,38 +13,38 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         this.overLayTextContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-text-container");
-        $(this.overLayTextContainer).html("Completion Percentage:");
-        $(this.overLayContainer).append(this.overLayTextContainer);
+        this.overLayTextContainer.html("Completion Percentage:");
+        this.overLayContainer.append(this.overLayTextContainer);
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
-        $(this.overLayContainer).append(this.overLayButtonContainer);
+        this.overLayContainer.append(this.overLayButtonContainer);
 
         this.clearCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.clearCriteriaButton).text("Clear");
-        $(this.overLayButtonContainer).append(this.clearCriteriaButton);
+        this.clearCriteriaButton.text("Clear");
+        this.overLayButtonContainer.append(this.clearCriteriaButton);
 
         this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.copyCriteriaButton).text("Copy");
-        $(this.overLayButtonContainer).append(this.copyCriteriaButton);
+        this.copyCriteriaButton.text("Copy");
+        this.overLayButtonContainer.append(this.copyCriteriaButton);
 
         this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        $(this.pasteCriteriaButton).text("Paste");
-        $(this.overLayButtonContainer).append(this.pasteCriteriaButton);
+        this.pasteCriteriaButton.text("Paste");
+        this.overLayButtonContainer.append(this.pasteCriteriaButton);
 
-        $(this.clearCriteriaButton).click(function(evt) {
+        this.clearCriteriaButton.click(function(evt) {
           that.clearCriteria();
         });
 
-        $(this.copyCriteriaButton).click(function(evt) {
+        this.copyCriteriaButton.click(function(evt) {
           that.copyCriteria();
         });
 
-        $(this.pasteCriteriaButton).click(function(evt) {
+        this.pasteCriteriaButton.click(function(evt) {
           that.pasteCriteria();
         });
 
       },
 
-      clearCriteria: function(dontCallMixer) {
+      clearCriteria: function() {
 
         if (this.allSelectedObjects) {
 
@@ -69,13 +69,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               delete tile.circleCenter;
               delete tile.circleText;
             }
-
           }
 
-          if (!dontCallMixer) {
-            this._colorMixer(true);
-          }
-
+          this._colorMixer(true);
+          this.decideSelectedFields();
         } else {
           alert("Please select any well");
         }

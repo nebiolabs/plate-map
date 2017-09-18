@@ -23,28 +23,42 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 that.requiredFields.push(tab["fields"][field].id);
               }
               var data = tab["fields"][field];
-              var input = that._createField(data);
 
-              if (data.id && data.type) {
-                that.allWellData[data.id] = null;
-              } else {
-                console.log("Please check the format of attributes provided");
+              var autoId = 1;
+              if (!data.id) {
+                data.id = "Auto" + autoId++; 
+                console.log("Field autoassigned id " + data.id);
               }
+              if (!data.type) {
+                data.type = "text";
+                console.log("Field " + data.id + " autoassigned type " + data.type);
+              }
+
+              that.allWellData[data.id] = null;
+              var input = that._createField(data);
               // we save type so that it can be used when we update data on selecting a tile
-              $(input).data("type", data.type);
+              input.data("type", data.type);
               // We save the caption so that we can use it for bottom table.
-              $(input).data("caption", field);
+              input.data("caption", field);
               // Adding data to the main array so that programatically we can access later
-              fieldArray[fieldArrayIndex++] = that._createDefaultFieldForTabs();
-              $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-name").html(data.name);
-              $(that.allDataTabs[tabPointer]).append(fieldArray[fieldArrayIndex - 1]);
+              var field = that._createDefaultFieldForTabs();
+              fieldArray.push(field); 
+
+              field.find(".plate-setup-tab-name").html(data.name);
+              $(that.allDataTabs[tabPointer]).append(field);
               // now we are adding the field which was collected in the switch case.
-              $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").html(input);
+              field.find(".plate-setup-tab-field-container").html(input);
+
+              // Adding unit
+              if (data.type == "numeric" && data.units && data.units.length) {
+                var unitInput = that._addUnitDropDown(field, data);
+                that.allUnitData[data.id + "unit"] = unitInput.val();
+              }
+
               // Adding checkbox
-              var checkBoxImage = that._addCheckBox(fieldArray, fieldArrayIndex, data);
-              // Here we add the checkImage reference to input so now Input knows which is its checkbox..!!
-              $(input).data("checkBox", checkBoxImage);
-              that._addTabFieldEventHandlers(fieldArray, fieldArrayIndex, data, input);
+              var checkBoxImage = that._addCheckBox(field, data);
+              input.data("checkBox", checkBoxImage);
+              that._addTabFieldEventHandlers(data, input);
             }
 
             that.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -79,7 +93,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _addTabFieldEventHandlers: function(fieldArray, fieldArrayIndex, data, input) {
+      _addTabFieldEventHandlers: function(data, input) {
 
         var that = this;
         switch (data.type) {
@@ -136,10 +150,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
             });
-
-            // Now add the label which shows unit.
-            var unitDropdownField = this._addUnitDataField(fieldArray, fieldArrayIndex, data);
-            fieldArray[fieldArrayIndex - 1].unit = unitDropdownField;
             break;
 
           case "boolean":
@@ -177,16 +187,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             });
 
-
-            /*$("#" + data.id).keyup(function(e) {
-              e.preventDefault();
-              //console.log("Cool", e);
-              if ((e.keyCode == 90 && e.ctrlKey) || (e.keyCode == 89 && e.ctrlKey)) {
-                // Leaving it blank so that other event handler takes control.
-              } else if (e.which != 17) {
-                that._addData(evt);
-              }
-            });*/
             break;
         }
       },

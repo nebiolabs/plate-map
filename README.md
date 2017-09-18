@@ -32,10 +32,8 @@ Embed code similar to the below to add the plate layout tool to your application
         name:     'Volume',
         type:     'numeric',
         placeholder: "Volume",
-        units: {
-          1: "uL",
-          2: "mL"
-        }
+        units: ["uL", "mL"], 
+        defaultUnit: "uL"
       },
       Polymerase: {
         required: true,
@@ -159,7 +157,9 @@ Text field are the normal and basic text field which holds a text value inside. 
 
 #### Numeric
 
-When we have numeric data which has some unit we use numeric data type. Sometime we should be using volume like quantities, So we provide an extra field to hand over units too.
+Numeric fields only allow numeric values. If a non-numeric value is entered, the field will be rendered in red and not save the value. 
+
+Numeric fields may optionally allow for units. You can specify the default unit if desired, otherwise the first unit will be used. 
 
 ```js
 Volume: {
@@ -168,10 +168,8 @@ Volume: {
   name:     'Volume',
   type:     'numeric',
   placeholder: "Volume",
-  units: {
-    1: "uL",
-    2: "mL"
-  }
+  units: ["uL", "mL"], 
+  defaultUnit: "uL"
 }
 ```
 

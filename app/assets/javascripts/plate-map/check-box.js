@@ -9,13 +9,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
       checkBoxes: [], 
       globalSelectedAttributes: [],
 
-      _addCheckBox: function(fieldArray, fieldArrayIndex, data) {
-
+      _addCheckBox: function(field, data) {
         var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
-          .data("clicked", false).data("linkedFieldId", data.id);
-        $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-left-side").html(checkImage);
+          .data("clicked", false); 
+        checkImage.data("linkedFieldId", data.id);
+        field.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
-        fieldArray[fieldArrayIndex - 1].checkbox = checkImage;
+        field.checkbox = checkImage;
         this.checkBoxes.push(checkImage); 
         return checkImage;
       },

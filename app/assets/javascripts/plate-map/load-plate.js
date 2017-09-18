@@ -33,7 +33,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       loadDataToCircles: function(circleData) {
 
         for (var index in circleData) {
-          this.allTiles[index].wellData = $.extend(true, {}, circleData[index].wellData);
+          var tile = this.allTiles[index]; 
+          var data = circleData[index]; 
+          tile.wellData = $.extend(true, {}, tile.wellData, data.wellData);
+          tile.unitData = $.extend(true, {}, tile.unitData, data.unitData);
         }
       },
 

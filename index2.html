@@ -55,10 +55,8 @@ window.onload = function() {
           name:     'Volume',
           type:     'numeric',
           placeholder: "Volume",
-          units: {
-            1: "uL",
-            2: "mL"
-          }
+          units: ["uL", "mL"], 
+          defaultUnit: "uL"
         },
         Polymerase: {
           required: true,
@@ -140,12 +138,18 @@ window.onload = function() {
       var pol = (r < (rows/2)) ? 234 : 123; 
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
+        var v = volume;
+        var vunit = "mL";
+        if (v < 1) {
+          v *= 1000;
+          vunit = "uL";
+        }
         wells[i.toString()] = {
           unitData: {
-            volumeunit:'unit1',
+            volumeunit:vunit,
           },
           wellData: {
-            volume: volume,
+            volume: v,
             pol: pol, 
             amplicons: []
           }
