@@ -6,15 +6,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     return {
 
-      _addUnitDataField: function(fieldArray, fieldArrayIndex, data) {
+      _addUnitFieldEventHandlers: function(field, data) {
 
         var that = this;
         var unitDropDown = this._addUnitDropDown(data);
-        $(fieldArray[fieldArrayIndex - 1]).find(".plate-setup-tab-field-container").append(unitDropDown);
+        field.find(".plate-setup-tab-field-container").append(unitDropDown);
+        unitDropDown.select2();
 
-        $("#" + data.id + "unit").select2({
-
-        });
+        $("#" + data.id + "unit").select2();
         // Now add data to allUnitData
         this.allUnitData[data.id + "unit"] = $("#" + data.id + "unit").val();
         // Now handler for change in the unit.
@@ -27,24 +26,38 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return unitDropDown;
       },
 
-      /*
-        Dynamically making the dropdown and returning it.
-        select2 can be applyed only after dropdown has been added to DOM.
-      */
-      _addUnitDropDown: function(unitData) {
+      _addUnitDropDown(field, data) {
+        var unitDropDown = this._createUnitDropDown(data);
+        unitDropDown.data("linkedFieldId", data.id);
+        field.find(".plate-setup-tab-field-container").append(unitDropDown);
+        unitDropDown.select2({}); 
 
-        if (unitData.units) {
+        this._applyUnitDropDownHandler(unitDropDown); 
+        field.unit = unitDropDown;
+        return unitDropDown;
+      }, 
 
-          var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
-            .addClass("plate-setup-tab-label-select-field");
-          for (var i = 0; i < unitData.units.length; i++) {
-            var unit = unitData.units[i];
-            var unitOption = this._createElement("<option></option>").attr("value", unit).html(unit);
-            $(unitSelect).append(unitOption);
+      _applyUnitDropDownHandler(unitDropDown) {
+        var that = this; 
+        unitDropDown.on("change", function(evt, generated) {
+          if (generated != "Automatic") {
+            that._addUnitData(evt);
           }
+        });
+      },
 
-          return unitSelect;
+      _createUnitDropDown: function(unitData) {
+        var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
+          .addClass("plate-setup-tab-label-select-field");
+        for (var i = 0; i < unitData.units.length; i++) {
+          var unit = unitData.units[i];
+          var unitOption = this._createElement("<option></option>").attr("value", unit).text(unit);
+          if (unit == unitData.defaultUnit) {
+            unitOption.prop("selected", true);
+          }
+          unitSelect.append(unitOption);
         }
+        return unitSelect;
       },
 
     };
