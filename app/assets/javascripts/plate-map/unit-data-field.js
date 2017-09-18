@@ -37,9 +37,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var unitSelect = this._createElement("<select></select>").attr("id", unitData.id + "unit")
             .addClass("plate-setup-tab-label-select-field");
-          for (unit in unitData.units) {
-
-            var unitOption = this._createElement("<option></option>").attr("value", unitData.units[unit]).html(unitData.units[unit]);
+          for (var i = 0; i < unitData.units.length; i++) {
+            var unit = unitData.units[i];
+            var unitOption = this._createElement("<option></option>").attr("value", unit).html(unit);
             $(unitSelect).append(unitOption);
           }
 
