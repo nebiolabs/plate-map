@@ -214,13 +214,14 @@
   position: absolute;
   top: 512px;
   margin-left: 32px;
+  text-align: center;
 }
 
 /* line 188, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-prest-tab {
+  display: inline-block;
   width: 66px;
   height: 20px;
-  float: left;
   background-color: white;
   border: solid 1px #e1e1e1;
   border-top-left-radius: 2px;
@@ -234,10 +235,13 @@
 
 /* line 204, ../../app/assets/stylesheets/plate-layout.css.scss */
 .plate-setup-prest-tab-selected {
+  display: inline-block;
   width: 66px;
   height: 20px;
-  float: left;
   background-color: #e1e1e1;
+  border: solid 1px #e1e1e1;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
   font-size: 11px;
