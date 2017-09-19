@@ -13,7 +13,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         if (presets && presets.length) {
           this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container")
-            .html("Well Attribute Tabs");
+            .html("Checkbox presets");
           this.tabContainer.append(this.wellAttrContainer);
 
           this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
