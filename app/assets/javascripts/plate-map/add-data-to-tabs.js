@@ -19,9 +19,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _applyFieldData: function(id, values) {
         // This method directly add a value to corresponding field in the tab
-        var field = $("#" + id); 
+        var input = $("#" + id); 
         var v = values[id]; 
-        switch (field.data("type")) {
+        switch (input.data("type")) {
           case "boolean":
             if (v == true || v == "true") {
               v = "true";
@@ -32,20 +32,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           case "select":
           case "multiselect":
-            field.val(v).trigger("change", "Automatic");
+            input.val(values[id]).trigger("change", "Automatic");
             // Automatic means its system generated.
             break;
 
           case "text":
           case "numeric":
-            field.val(v);
+            input.val(v);
             break;
         }
       },
 
-      _applyUnitData: function(unitId, units) {
+      _applyUnitData: function(fieldId, units) {
         // Method to add unit data to the tabs.
-        $("#" + unitId).val(units[unitId]).trigger("change", "Automatic");
+        var unitId = this.unitFieldId(fieldId); 
+        $("#" + unitId).val(units[fieldId]).trigger("change", "Automatic");
       }
 
     }

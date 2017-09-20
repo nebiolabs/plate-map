@@ -52,7 +52,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // Adding unit
               if (data.type == "numeric" && data.units && data.units.length) {
                 var unitInput = that._addUnitDropDown(field, data);
-                that.allUnitData[data.id + "unit"] = unitInput.val();
+                that.allUnitData[data.id] = unitInput.val();
               }
 
               // Adding checkbox
