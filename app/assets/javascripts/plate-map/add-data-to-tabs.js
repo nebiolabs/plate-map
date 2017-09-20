@@ -15,19 +15,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for (var unitId in units) {
           this._applyUnitData(unitId, units);
         }
-        // Now put back selected fields
-        for (var i = 0; i <  this.globalSelectedAttributes.length; i++) {
-          var checkbox = this.globalSelectedAttributes[i]; 
-          var checkBoxImage = $("#" + checkbox).data("checkBox");
-          $(checkBoxImage).attr("src", this.imgSrc + "/do.png").data("clicked", true);
-        }
       },
 
       _applyFieldData: function(id, values) {
         // This method directly add a value to corresponding field in the tab
-        var input = $("#" + id)
+        var input = $("#" + id); 
+        var v = values[id]; 
         switch (input.data("type")) {
-
+          case "boolean":
+            if (v == true || v == "true") {
+              v = "true";
+            } else if (v == false || v == "false") {
+              v = "false";
+            } else {
+              v = null; 
+            }
           case "select":
           case "multiselect":
             input.val(values[id]).trigger("change", "Automatic");
@@ -35,25 +37,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             break;
 
           case "text":
-            input.val(values[id]);
-            break;
-
           case "numeric":
-            input.val(values[id]);
-            break;
-
-          case "boolean":
-            // select box provide bool value as text,
-            // so we need a minor tweek to admit "true" and "false"
-            var boolText = "";
-
-            if (values[id] == true || values[id] == "true") {
-              boolText = "true";
-            } else if (values[id] == false || values[id] == "false") {
-              boolText = "false";
-            }
-
-            input.val(boolText).trigger("change", "Automatic");
+            input.val(v);
             break;
         }
       },

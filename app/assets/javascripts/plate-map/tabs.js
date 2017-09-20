@@ -82,13 +82,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _placePresetCaption: function() {
-        // This method add place above preset.
-        this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container")
-          .html("Well Attribute Tabs");
-        $(this.tabContainer).append(this.wellAttrContainer);
-      },
-
       _createDefaultFieldForTabs: function() {
         // Creates html outline for a new field
         var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
