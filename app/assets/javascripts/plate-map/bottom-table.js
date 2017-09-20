@@ -58,7 +58,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               break;
             case "numeric":
               text = data.toString(); 
-              var unit = tile.unitData[attr + "unit"]; 
+              var unit = tile.unitData[attr]; 
               if (unit != null) {
                 text += " " + unit; 
               }

@@ -38,12 +38,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var unitData = {}; 
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
               var attr = THIS.globalSelectedAttributes[i]; 
-              var unitAttr = attr + "unit"; 
               if (data.wellData[attr] != null) {
                 wellData[attr] = data.wellData[attr];
               }
-              if (data.unitData[unitAttr] != null) {
-                unitData[unitAttr] = data.unitData[unitAttr];
+              if (data.unitData[attr] != null) {
+                unitData[attr] = data.unitData[attr];
               }
             }
             if ($.isEmptyObject(wellData)) {

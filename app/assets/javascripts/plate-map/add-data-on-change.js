@@ -44,9 +44,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var unitData = this.allSelectedObjects[objectIndex]["unitData"];
-            unitData[e.target.id] = e.target.value;
-            this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
+            var obj = this.allSelectedObjects[objectIndex]; 
+            var field = $(e.target).data("linkedFieldId"); 
+            obj.unitData[field] = e.target.value;
+            this.engine.createDerivative(obj);
           }
           this._colorMixer(true);
         }
