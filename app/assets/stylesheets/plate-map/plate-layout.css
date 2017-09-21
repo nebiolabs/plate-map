@@ -267,8 +267,7 @@
 }
 
 .plate-setup-tab-label-select-field, .plate-setup-tab-unit {
-  flex: 2 1 auto;
-  width: 60px;
+  width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
   height: 28px;
