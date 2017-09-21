@@ -62,7 +62,7 @@
 window.onload = function() {
 
   $(function() {
-    var volume_units = ["m/s", "Nm"];
+    var volume_units = ["mL", "uL", "nL"];
     var attributes = {
 
       presets: [
@@ -93,7 +93,8 @@ window.onload = function() {
               name:     'Volume',
               type:     'numeric',
               placeholder: "Volume",
-              units: volume_units
+              units: volume_units,
+              defaultUnit: "uL"
             },
 
             Polymerase: {
@@ -147,13 +148,13 @@ window.onload = function() {
               units: volume_units
             },
 
-            Volume2: {
-              id:       'volume2',
-              name:     'Volume2',
+            conc: {
+              id:       'conc',
+              name:     'Concentration',
               type:     'numeric',
-              units:    volume_units,
-              defaultUnit: "Nm",
-              placeholder: "Volume",
+              units:    ["ng/uL"],
+              defaultUnit: "ng/uL",
+              placeholder: "Conc.",
             }
           },
         },

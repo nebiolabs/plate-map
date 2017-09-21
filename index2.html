@@ -50,9 +50,6 @@
     <div id="my-plate-layout" class="plate-setup-container-outer">
       Loading plate layout ... !
     </div>
-    <div id="demo" style="width: 100px;height: 100px;float: right;">
-      <button type="button" id="Load" value="load data" style="width: 80px;height: 30px;">Load Data</button>
-    </div>
   </body>
 </html>
 
@@ -70,7 +67,7 @@ window.onload = function() {
           options: [
             {
               id:   234,
-              name: 'Taq 1'
+              name: 'Taq 1, processive enzyme with long name'
             },
             {
               id:   123,
@@ -99,13 +96,13 @@ window.onload = function() {
           units: ["uL", "mL"], 
           defaultUnit: "uL"
         },
-        dilution_factor: {
+        conc: {
           required: true,
-          id:       'dilution_factor',
-          name:     'Dilution Factor',
+          id:       'conc',
+          name:     'Concentration',
           type:     'numeric',
-          placeholder: "Factor",
-          defaultUnit: "x"
+          placeholder: "Conc.",
+          defaultUnit: "ng/ul (final)"
         },
         amplicons: {
           required: false,

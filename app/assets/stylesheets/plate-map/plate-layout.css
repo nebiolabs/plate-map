@@ -251,31 +251,25 @@
   display: flex;
 }
 
-.plate-setup-tab-input {
+.plate-setup-tab-input, .plate-setup-tab-select-field, .plate-setup-tab-multiselect-field {
   height: 28px;
-  flex: 2;
+  flex: 1 1 auto;
+  width: 90px;
 }
 
-.plate-setup-tab-select-field {
-  height: 31px;
-  flex: 2;
-}
-
-.plate-setup-tab-multiselect-field {
-  height: 31px;
-  flex: 2;
-}
-
-.plate-setup-tab-label-select-field {
-  max-width: 90px;
+.plate-setup-tab-label-select-field, .plate-setup-tab-unit {
+  flex: 0 1 auto;
+  width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 28px;
+  box-sizing: border-box;
   padding-left: 5px;
 }
 
 .plate-setup-tab-unit {
   font-family: 'Roboto', sans-serif;
   line-height: 26px;
-  height: 28px;
-  padding-left: 5px;
   color: #444;
   white-space: nowrap;
 }
