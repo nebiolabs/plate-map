@@ -19,6 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             _fixRowAndColumn: function() {
                 var scale = this.scaleFactor;
+                var spacing = this.spacing * scale;
 
                 // For column
                 for (var i = 1; i <= this.numCols; i++) {
@@ -26,9 +27,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         fill: 'black',
                         originX: 'center',
                         originY: 'center',
-                        fontSize: 12,
+                        fontSize: 14 * scale,
                         top: 10 * scale,
-                        left: i * this.spacing * scale,
+                        left: i * spacing,
                         fontFamily: "Roboto",
                         selectable: false,
                         fontWeight: "400"
@@ -44,9 +45,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         fill: 'black',
                         originX: 'center',
                         originY: 'center',
-                        fontSize: 12,
+                        fontSize: 14 * scale,
                         left: 5 * scale,
-                        top: (i + 1) * this.spacing * scale,
+                        top: (i + 1) * spacing,
                         fontFamily: "Roboto",
                         selectable: false,
                         fontWeight: "400"
@@ -59,6 +60,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             _putCircles: function() {
                 var scale = this.scaleFactor;
+                var spacing = this.spacing * scale;
                 var rowCount = this.numRows;
                 var colCount = this.numCols;
                 var tileCounter = 0;
@@ -66,10 +68,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
                     for (var j = 0; j < colCount; j++) {
                         var tile = new fabric.Circle({
-                            width: this.spacing * scale,
-                            height: this.spacing * scale,
-                            left: (j + 1) * this.spacing * scale,
-                            top: (i + 1) * this.spacing * scale,
+                            width: spacing,
+                            height: spacing,
+                            left: (j + 1) * spacing,
+                            top: (i + 1) * spacing,
                             radius: 22 * scale,
                             originX: 'center',
                             originY: 'center',
@@ -98,10 +100,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         });
 
                         var highlight = new fabric.Rect({
-                            width: this.spacing * scale,
-                            height: this.spacing * scale,
-                            left: (j + 1) * this.spacing * scale,
-                            top: (i + 1) * this.spacing * scale,
+                            width: spacing,
+                            height: spacing,
+                            left: (j + 1) * spacing,
+                            top: (i + 1) * spacing,
                             originX: 'center',
                             originY: 'center',
                             fill: "rgba(0,0,0,0.4)",

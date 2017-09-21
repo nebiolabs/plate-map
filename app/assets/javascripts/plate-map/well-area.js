@@ -147,10 +147,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _coordsToWell: function(coord) {
         //Convert a coordinate to a well
         var scale = this.scaleFactor;
+        var spacing = this.spacing * scale;
         var cols = this.numCols;
         var rows = this.numRows;
-        var colWidth = this.spacing * scale;
-        var rowHeight = this.spacing * scale;
+        var colWidth = spacing;
+        var rowHeight = spacing;
         var colMargin = colWidth / 2;
         var rowMargin = rowHeight / 2;
 
@@ -170,8 +171,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _wellToCoords: function(well, center) {
         //Convert a well to a coordinate
         var scale = this.scaleFactor;
-        var colWidth = this.spacing * scale;
-        var rowHeight = this.spacing * scale;
+        var spacing = this.spacing * scale;
+        var colWidth = spacing;
+        var rowHeight = spacing;
         var colMargin = colWidth / 2;
         var rowMargin = rowHeight / 2;
 
@@ -191,8 +193,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _areaToRect: function(area) {
         //Convert area to rectangle
         var scale = this.scaleFactor;
-        var colWidth = this.spacing * scale;
-        var rowHeight = this.spacing * scale;
+        var spacing = this.spacing * scale;
+        var colWidth = spacing;
+        var rowHeight = spacing;
         var colMargin = colWidth / 2;
         var rowMargin = rowHeight / 2;
 
@@ -212,8 +215,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var cols = this.numCols;
         var rows = this.numRows;
         var scale = this.scaleFactor;
-        var colWidth = this.spacing * scale;
-        var rowHeight = this.spacing * scale;
+        var spacing = this.spacing * scale;
+        var colWidth = spacing;
+        var rowHeight = spacing;
         var colMargin = colWidth / 2;
         var rowMargin = rowHeight / 2;
 
