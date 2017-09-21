@@ -17,7 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomRow = this._createElement("<tr></tr>");
 
         var singleField = this._createElement("<th></th>")
-          .text("Plate ID");
+          .text("Color");
         this.bottomRow.prepend(singleField);
         // Now we append all the captions at the place.
         this.bottomTable.empty(); 
