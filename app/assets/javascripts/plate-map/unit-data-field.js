@@ -48,7 +48,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return unitSelect;
       },
 
-      unitFieldId(fieldId) {
+      unitFieldId: function(fieldId) {
         return fieldId + "_unit";
       }
     };

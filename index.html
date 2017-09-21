@@ -1,12 +1,24 @@
 <html>
   <head>
     <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
 
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
     <script src="app/assets/javascripts/plate-map/fabric.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
