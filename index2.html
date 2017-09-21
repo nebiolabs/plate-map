@@ -49,16 +49,7 @@
 window.onload = function() {
 
   var fields = {
-        Volume: {
-          required: true,
-          id:       'volume',
-          name:     'Volume',
-          type:     'numeric',
-          placeholder: "Volume",
-          units: ["uL", "mL"], 
-          defaultUnit: "uL"
-        },
-        Polymerase: {
+        polymerase: {
           required: true,
           id: 'pol',
           name: 'Polymerase',
@@ -87,7 +78,24 @@ window.onload = function() {
             }
           ]
         }, 
-        Amplicons: {
+        volume: {
+          required: true,
+          id:       'volume',
+          name:     'Volume',
+          type:     'numeric',
+          placeholder: "Volume",
+          units: ["uL", "mL"], 
+          defaultUnit: "uL"
+        },
+        dilution_factor: {
+          required: true,
+          id:       'dilution_factor',
+          name:     'Dilution Factor',
+          type:     'numeric',
+          placeholder: "Factor",
+          defaultUnit: "x"
+        },
+        amplicons: {
           required: false,
           id: 'amplicons', 
           name: "Amplicons", 

@@ -50,9 +50,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
               field.find(".plate-setup-tab-field-container").html(input);
 
               // Adding unit
-              if (data.type == "numeric" && data.units && data.units.length) {
-                var unitInput = that._addUnitDropDown(field, data);
-                that.allUnitData[data.id] = unitInput.val();
+              if (data.type == "numeric") {
+                if (data.units) {
+                  if (data.units.length > 1) {
+                    var unitInput = that._addUnitDropDown(field, data);
+                    that.allUnitData[data.id] = unitInput.val();
+                  } else if (data.units.length == 1) {
+                    that._addFixedUnit(field, data.units[0]);
+                    that.allUnitData[data.id] = data.units[0]; 
+                  }
+                } else if (data.defaultUnit) {
+                  that._addFixedUnit(field, data.defaultUnit);
+                  that.allUnitData[data.id] = data.defaultUnit; 
+                }
               }
 
               // Adding checkbox
