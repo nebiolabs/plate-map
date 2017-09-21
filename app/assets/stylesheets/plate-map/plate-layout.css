@@ -171,6 +171,7 @@
   right: 0;
   position: absolute;
   background-color: white;
+  overflow: auto;
 }
 
 .plate-setup-well-attr-container {
