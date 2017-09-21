@@ -10,7 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       globalSelectedAttributes: [],
 
       _addCheckBox: function(field, data) {
-        var checkImage = $("<img>").attr("src", this.imgSrc + "/dont.png").addClass("plate-setup-tab-check-box")
+        var checkImage = $("<img>").attr("src", '<%= image_url('plate-map/dont.png') %>').addClass("plate-setup-tab-check-box")
           .data("clicked", false); 
         checkImage.data("linkedFieldId", data.id);
         field.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
@@ -46,9 +46,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkImage.data("clicked", clicked);
           if (clicked) {
             gsa.push(fieldId);
-            checkImage.attr("src", this.imgSrc + "/do.png");
+            checkImage.attr("src", '<%= image_url('plate-map/do.png') %>');
           } else {
-            checkImage.attr("src", this.imgSrc + "/dont.png");
+            checkImage.attr("src", '<%= image_url('plate-map/dont.png') %>');
           }
         }
         this.globalSelectedAttributes = gsa; 
@@ -56,7 +56,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._colorMixer(false); 
       }, 
 
-      setCheckboxes: function(fieldIds,) {
+      setCheckboxes: function(fieldIds) {
         var gsa = []; 
         for (var i = 0; i < this.checkBoxes.length; i++) {
           var checkImage = this.checkBoxes[i];
@@ -65,9 +65,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkImage.data("clicked", clicked);
           if (clicked) {
             gsa.push(fieldId);
-            checkImage.attr("src", this.imgSrc + "/do.png");
+            checkImage.attr("src", '<%= image_url('plate-map/do.png') %>');
           } else {
-            checkImage.attr("src", this.imgSrc + "/dont.png");
+            checkImage.attr("src", '<%= image_url('plate-map/dont.png') %>');
           }
         }
         this.globalSelectedAttributes = gsa; 
