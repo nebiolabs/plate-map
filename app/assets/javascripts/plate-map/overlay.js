@@ -22,24 +22,40 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.clearCriteriaButton.text("Clear");
         this.overLayButtonContainer.append(this.clearCriteriaButton);
 
-        this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        this.copyCriteriaButton.text("Copy");
-        this.overLayButtonContainer.append(this.copyCriteriaButton);
-
-        this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
-        this.pasteCriteriaButton.text("Paste");
-        this.overLayButtonContainer.append(this.pasteCriteriaButton);
-
         this.clearCriteriaButton.click(function(evt) {
           that.clearCriteria();
         });
+
+        this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.copyCriteriaButton.text("Copy");
+        this.overLayButtonContainer.append(this.copyCriteriaButton);
 
         this.copyCriteriaButton.click(function(evt) {
           that.copyCriteria();
         });
 
+        this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.pasteCriteriaButton.text("Paste");
+        this.overLayButtonContainer.append(this.pasteCriteriaButton);
+
         this.pasteCriteriaButton.click(function(evt) {
           that.pasteCriteria();
+        });
+
+        this.undoButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.undoButton.text("Undo");
+        this.overLayButtonContainer.append(this.undoButton);
+
+        this.undoButton.click(function(evt) {
+          that.callUndo();
+        });
+
+        this.redoButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.redoButton.text("Redo");
+        this.overLayButtonContainer.append(this.redoButton);
+
+        this.redoButton.click(function(evt) {
+          that.callRedo();
         });
 
       },

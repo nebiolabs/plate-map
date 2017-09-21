@@ -8,31 +8,103 @@ $.widget("DNA.plateLayOut", {
 
   allTiles: [], // All tiles containes all thise circles in the canvas
 
-  _create: function() {
-    function rowKey(i) {
-      var c1 = i % 26;
-      var c2 = (i - c1) / 26;
-      var code = String.fromCharCode(65 + c1);
-      if (c2 > 0) {
-        code = String.fromCharCode(64 + c2) + code
+  addressToLoc: function (layoutAddress) {
+    var m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase())
+    if (m) {
+      var row_v = m[1]; 
+      var col = parseInt(m[2])-1;
+      var row; 
+      for (var i = 0; i < row_v.length; i++) {
+        var c = row_v.charCodeAt(i) - 65; 
+        if (i) {
+            row += 1;
+            row *= 26; 
+            row += c ; 
+        } else {
+            row = c;
+        }
       }
-      return code;
-    };
+      return {
+        r: row, 
+        c: col
+      };
+    } else {
+      throw layoutAddress + " not a proper layout address"; 
+    }
+  },
 
-    this.numRows = parseInt(this.options.numRows || 8);
-    this.numCols = parseInt(this.options.numCols || 12);
-    this.rowIndex = [];
-    for (var i = 0; i < this.numRows; i++) {
-      this.rowIndex.push(rowKey(i));
+  locToIndex: function (loc, dimensions) {
+    if (!dimensions) {
+      dimensions = this.dimensions;
+    }
+    if (loc.r < 0) {
+      t
+    }
+    if (!(loc.r >= 0 && loc.r < dimensions.rows)) {
+      throw "Row index " + (loc.r + 1) + " invalid"; 
+    }
+    if (!(loc.c >= 0 && loc.c < dimensions.cols)) {
+      throw "Column index " + (loc.c + 1) + " invalid"; 
+    }
+    return loc.r*dimensions.cols + loc.c; 
+  },
+
+  addressToIndex: function (layoutAddress, dimensions) {
+    var loc = this.addressToLoc(layoutAddress); 
+    return locToIndex(loc, dimensions); 
+  }, 
+
+  _rowKey: function (i) {
+    var c1 = i % 26;
+    var c2 = (i - c1) / 26;
+    var code = String.fromCharCode(65 + c1);
+    if (c2 > 0) {
+      code = String.fromCharCode(64 + c2) + code;
+    }
+    return code;
+  }, 
+
+  indexToLoc: function (index, dimensions) {
+    if (!dimensions) {
+      dimensions = this.dimensions;
     }
 
+    if (index >= dimensions.rows * dimensions.cols) {
+      throw "Index too high: " + index.toString(10); 
+    }
+    var loc = {}; 
+    loc.c = index % dimensions.cols;
+    loc.r = (index - loc.c) / dimensions.cols;
 
-    // This is a little hack, so that we get the text of the outer container of the widget
-    this.options.created = function(event, data) {
-      data.target = (event.target.id) ? "#" + event.target.id : "." + event.target.className;
+    return loc; 
+  },
+
+  locToAddress: function (loc) {
+    return this._rowKey(loc.r) + (loc.c + 1).toString(10);
+  },
+
+  indexToAddress: function (index, dimensions) {
+    var loc = this.indexToLoc(index, dimensions); 
+    return locToAddress(loc); 
+  },
+
+  getDimensions: function () {
+    return $.extend(true, {}, this.dimensions);
+  },
+
+  _create: function() {
+    var rows = parseInt(this.options.numRows || 8);
+    var cols = parseInt(this.options.numCols || 12);
+    this.dimensions = {
+      rows: rows,
+      cols: cols
     };
+    this.rowIndex = [];
+    for (var i = 0; i < rows; i++) {
+      this.rowIndex.push(this._rowKey(i));
+    }
 
-    this._trigger("created", null, this);
+    this.target = (this.element[0].id) ? "#" + this.element[0].id : "." + this.element[0].className;
 
     // Import classes from other files.. Here we import it using extend and add it to this
     // object. internally we add to widget.DNA.getPlates.prototype.
@@ -47,6 +119,8 @@ $.widget("DNA.plateLayOut", {
     this.imgSrc = this.options.imgSrc || "assets";
 
     this._createInterface();
+
+    this._trigger("created", null, this);
 
     return this;
   },

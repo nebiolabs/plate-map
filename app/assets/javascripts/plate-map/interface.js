@@ -15,12 +15,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.topLeft = this._createElement(divIdentifier).addClass("plate-setup-top-left");
         this.topRight = this._createElement(divIdentifier).addClass("plate-setup-top-right");
 
-        this.menuContainer = this._createElement(divIdentifier).addClass("plate-setup-menu-container");
         this.overLayContainer = this._createElement(divIdentifier).addClass("plate-setup-overlay-container");
         this.canvasContainer = this._createElement(divIdentifier).addClass("plate-setup-canvas-container");
-
-        this._createMenu();
-        $(this.topLeft).append(this.menuContainer);
 
         this._createOverLay();
         $(this.topLeft).append(this.overLayContainer);

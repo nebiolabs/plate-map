@@ -37,7 +37,6 @@
     <script src="app/assets/javascripts/plate-map/fabric-events.js"></script>
     <script src="app/assets/javascripts/plate-map/interface.js"></script>
     <script src="app/assets/javascripts/plate-map/load-plate.js"></script>
-    <script src="app/assets/javascripts/plate-map/menu.js"></script>
     <script src="app/assets/javascripts/plate-map/overlay.js"></script>
     <script src="app/assets/javascripts/plate-map/preset.js"></script>
     <script src="app/assets/javascripts/plate-map/redo.js"></script>
@@ -52,6 +51,51 @@
     </div>
   </body>
 </html>
+
+<style>
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2000; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+}
+
+#applyDialog .modal-content {
+  width: 350px;
+}
+
+.modal-content > * {
+  width: 100%;
+}
+
+.dialog-buttons {
+  margin-top: 10px;
+  display: inline-block;
+  text-align: right;
+}
+
+.dialog-buttons button {
+  margin-left: 4px;
+}
+</style>
 
 <script type="text/javascript">
 // Wait for all the script load from the loader.js and fire up
@@ -153,8 +197,9 @@ window.onload = function() {
   window.plateData = {}; 
 
   function makeNewPlate(obj) {
-    var rows = obj.numRows; 
-    var cols = obj.numCols; 
+    var d = $("#my-plate-layout").plateLayOut("getDimensions"); 
+    var rows = d.rows; 
+    var cols = d.cols; 
     var wells = {}; 
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
@@ -198,9 +243,12 @@ window.onload = function() {
       //data has changed
       window.plateData = data; 
       console.log(Object.keys(data.derivative).length + " wells updated"); 
+    }, 
+    created: function (event, data) {
+      console.log("Created");
     }
   });
-  window.plateData = makeNewPlate($("#my-plate-layout").data().DNAPlateLayOut); 
+  window.plateData = makeNewPlate(); 
   $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
 
 }

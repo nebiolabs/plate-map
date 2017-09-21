@@ -20,9 +20,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             _fixRowAndColumn: function() {
                 var scale = this.scaleFactor;
                 var spacing = this.spacing * scale;
+                var cols = this.dimensions.cols;
+                var rows = this.dimensions.rows;
 
                 // For column
-                for (var i = 1; i <= this.numCols; i++) {
+                for (var i = 1; i <= cols; i++) {
                     var tempFabricText = new fabric.IText(i.toString(), {
                         fill: 'black',
                         originX: 'center',
@@ -30,7 +32,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         fontSize: 14 * scale,
                         top: 10 * scale,
                         left: i * spacing,
-                        fontFamily: "Roboto",
+                        fontFamily: '"Roboto", Arial, sans-serif',
                         selectable: false,
                         fontWeight: "400"
                     });
@@ -39,34 +41,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
 
                 // for row
-                var i = 0;
-                while (this.rowIndex[i]) {
-                    var tempFabricText = new fabric.IText(this.rowIndex[i], {
+                for (var i = 1; i <= rows; i++) {
+                    var tempFabricText = new fabric.IText(this.rowIndex[i-1], {
                         fill: 'black',
                         originX: 'center',
                         originY: 'center',
                         fontSize: 14 * scale,
                         left: 5 * scale,
-                        top: (i + 1) * spacing,
-                        fontFamily: "Roboto",
+                        top: i * spacing,
+                        fontFamily: '"Roboto", Arial, sans-serif',
                         selectable: false,
                         fontWeight: "400"
                     });
 
                     this.mainFabricCanvas.add(tempFabricText);
-                    i++;
                 }
             },
 
             _putCircles: function() {
                 var scale = this.scaleFactor;
                 var spacing = this.spacing * scale;
-                var rowCount = this.numRows;
-                var colCount = this.numCols;
+                var cols = this.dimensions.cols;
+                var rows = this.dimensions.rows;
                 var tileCounter = 0;
-                for (var i = 0; i < rowCount; i++) {
+                for (var i = 0; i < rows; i++) {
 
-                    for (var j = 0; j < colCount; j++) {
+                    for (var j = 0; j < cols; j++) {
                         var tile = new fabric.Circle({
                             width: spacing,
                             height: spacing,
