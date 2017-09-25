@@ -67,9 +67,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var boolField = this._createElement("<select></select>").attr("id", boolData.id)
           .addClass("plate-setup-tab-select-field");
 
-        var nullBool = this._createElement("<option></option>").attr("value", null).html("");
-        var trueBool = this._createElement("<option></option>").attr("value", true).html("true");
-        var falseBool = this._createElement("<option></option>").attr("value", false).html("false");
+        var nullBool = this._createElement("<option></option>").attr("value", "").html("");
+        var trueBool = this._createElement("<option></option>").attr("value", "true").html("true");
+        var falseBool = this._createElement("<option></option>").attr("value", "false").html("false");
 
         $(boolField).append(nullBool).append(trueBool).append(falseBool);
 
