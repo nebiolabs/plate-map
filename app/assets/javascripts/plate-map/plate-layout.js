@@ -51,7 +51,7 @@ $.widget("DNA.plateLayOut", {
 
   addressToIndex: function (layoutAddress, dimensions) {
     var loc = this.addressToLoc(layoutAddress); 
-    return locToIndex(loc, dimensions); 
+    return this.locToIndex(loc, dimensions); 
   }, 
 
   _rowKey: function (i) {
@@ -85,7 +85,7 @@ $.widget("DNA.plateLayOut", {
 
   indexToAddress: function (index, dimensions) {
     var loc = this.indexToLoc(index, dimensions); 
-    return locToAddress(loc); 
+    return this.locToAddress(loc); 
   },
 
   getDimensions: function () {
