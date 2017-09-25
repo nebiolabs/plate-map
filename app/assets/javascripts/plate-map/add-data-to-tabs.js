@@ -32,7 +32,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           case "select":
           case "multiselect":
-            input.val(values[id]).trigger("change", "Automatic");
+            input.val(v).trigger("change", "Automatic");
             // Automatic means its system generated.
             break;
 

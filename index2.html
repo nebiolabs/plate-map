@@ -127,6 +127,13 @@ window.onload = function() {
               name: 'Amplicon_D'
             },
           ]
+        }, 
+        on_ice: {
+          required: true, 
+          id: "on_ice", 
+          name: "On Ice", 
+          type: "boolean", 
+          placeHolder: "On Ice"
         }
     }; 
 
@@ -159,6 +166,7 @@ window.onload = function() {
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
       var pol = (r < (rows/2)) ? 234 : 123; 
+      var on_ice = Boolean(r % 2);
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
         var v = volume;
@@ -174,7 +182,8 @@ window.onload = function() {
           wellData: {
             volume: v,
             pol: pol, 
-            amplicons: []
+            amplicons: [], 
+            on_ice: on_ice
           }
         }; 
         if ((c % 2) > 0) {
