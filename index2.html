@@ -1,12 +1,24 @@
 <html>
   <head>
     <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
 
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
     <script src="app/assets/javascripts/plate-map/fabric.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
@@ -35,11 +47,8 @@
     <script src="app/assets/javascripts/plate-map/unit-data-field.js"></script>
   </head>
   <body>
-    <div id="my-plate-layout" class="plate-setup-container-outer">
+    <div id="my-plate-layout" class="plate-setup-container">
       Loading plate layout ... !
-    </div>
-    <div id="demo" style="width: 100px;height: 100px;float: right;">
-      <button type="button" id="Load" value="load data" style="width: 80px;height: 30px;">Load Data</button>
     </div>
   </body>
 </html>
@@ -49,16 +58,7 @@
 window.onload = function() {
 
   var fields = {
-        Volume: {
-          required: true,
-          id:       'volume',
-          name:     'Volume',
-          type:     'numeric',
-          placeholder: "Volume",
-          units: ["uL", "mL"], 
-          defaultUnit: "uL"
-        },
-        Polymerase: {
+        polymerase: {
           required: true,
           id: 'pol',
           name: 'Polymerase',
@@ -67,7 +67,7 @@ window.onload = function() {
           options: [
             {
               id:   234,
-              name: 'Taq 1'
+              name: 'Taq 1, processive enzyme with long name'
             },
             {
               id:   123,
@@ -87,7 +87,24 @@ window.onload = function() {
             }
           ]
         }, 
-        Amplicons: {
+        volume: {
+          required: true,
+          id:       'volume',
+          name:     'Volume',
+          type:     'numeric',
+          placeholder: "Volume",
+          units: ["uL", "mL"], 
+          defaultUnit: "uL"
+        },
+        conc: {
+          required: true,
+          id:       'conc',
+          name:     'Concentration',
+          type:     'numeric',
+          placeholder: "Conc.",
+          defaultUnit: "ng/ul (final)"
+        },
+        amplicons: {
           required: false,
           id: 'amplicons', 
           name: "Amplicons", 
@@ -111,6 +128,13 @@ window.onload = function() {
               name: 'Amplicon_D'
             },
           ]
+        }, 
+        on_ice: {
+          required: true, 
+          id: "on_ice", 
+          name: "On Ice", 
+          type: "boolean", 
+          placeHolder: "On Ice"
         }
     }; 
 
@@ -142,6 +166,7 @@ window.onload = function() {
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
       var pol = (r < (rows/2)) ? 234 : 123; 
+      var on_ice = Boolean(r % 2);
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
         var v = volume;
@@ -157,7 +182,8 @@ window.onload = function() {
           wellData: {
             volume: v,
             pol: pol, 
-            amplicons: []
+            amplicons: [], 
+            on_ice: on_ice
           }
         }; 
         if ((c % 2) > 0) {

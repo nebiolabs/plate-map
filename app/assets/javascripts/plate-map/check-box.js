@@ -10,7 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       globalSelectedAttributes: [],
 
       _addCheckBox: function(field, data) {
-        var checkImage = $("<img>").attr("src", '<%= image_url('plate-map/dont.png') %>').addClass("plate-setup-tab-check-box")
+        var checkImage = $("<img>").attr("src", this._assets.dontImg).addClass("plate-setup-tab-check-box")
           .data("clicked", false); 
         checkImage.data("linkedFieldId", data.id);
         field.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
@@ -46,9 +46,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkImage.data("clicked", clicked);
           if (clicked) {
             gsa.push(fieldId);
-            checkImage.attr("src", '<%= image_url('plate-map/do.png') %>');
+            checkImage.attr("src", this._assets.doImg);
           } else {
-            checkImage.attr("src", '<%= image_url('plate-map/dont.png') %>');
+            checkImage.attr("src", this._assets.dontImg);
           }
         }
         this.globalSelectedAttributes = gsa; 
@@ -65,9 +65,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           checkImage.data("clicked", clicked);
           if (clicked) {
             gsa.push(fieldId);
-            checkImage.attr("src", '<%= image_url('plate-map/do.png') %>');
+            checkImage.attr("src", this._assets.doImg);
           } else {
-            checkImage.attr("src", '<%= image_url('plate-map/dont.png') %>');
+            checkImage.attr("src", this._assets.dontImg);
           }
         }
         this.globalSelectedAttributes = gsa; 

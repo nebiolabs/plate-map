@@ -21,7 +21,6 @@ $.widget("DNA.plateLayOut", {
 
     this.numRows = parseInt(this.options.numRows || 8);
     this.numCols = parseInt(this.options.numCols || 12);
-    this.scaleFactor = Math.min(8 / this.numRows, 12 / this.numCols);
     this.rowIndex = [];
     for (var i = 0; i < this.numRows; i++) {
       this.rowIndex.push(rowKey(i));

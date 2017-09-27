@@ -1,3 +1,4 @@
+//= require plate-map/assets
 //= require plate-map/plate-layout
 //= require plate-map/fabric
 //= require plate-map/add-data-on-change

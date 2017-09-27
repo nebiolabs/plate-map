@@ -6,6 +6,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     return {
 
+      _addFixedUnit: function(field, unit) {
+        var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
+        unitText.text(unit);
+        field.find(".plate-setup-tab-field-container").append(unitText);
+        return unitText; 
+      },
+
       _addUnitDropDown: function(field, data) {
         var unitDropDown = this._createUnitDropDown(data);
         unitDropDown.data("linkedFieldId", data.id);

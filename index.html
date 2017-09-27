@@ -1,12 +1,24 @@
 <html>
   <head>
     <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.4/select2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
 
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
     <script src="app/assets/javascripts/plate-map/fabric.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
@@ -36,7 +48,7 @@
   </head>
 
   <body>
-    <div id="my-plate-layout" class="plate-setup-container-outer">
+    <div id="my-plate-layout" class="plate-setup-container">
       Loading plate layout ... !
     </div>
     <div id="demo" style="width: 100px;height: 100px;float: right;">
@@ -50,7 +62,7 @@
 window.onload = function() {
 
   $(function() {
-    var volume_units = ["m/s", "Nm"];
+    var volume_units = ["mL", "uL", "nL"];
     var attributes = {
 
       presets: [
@@ -81,7 +93,8 @@ window.onload = function() {
               name:     'Volume',
               type:     'numeric',
               placeholder: "Volume",
-              units: volume_units
+              units: volume_units,
+              defaultUnit: "uL"
             },
 
             Polymerase: {
@@ -135,13 +148,22 @@ window.onload = function() {
               units: volume_units
             },
 
-            Volume2: {
-              id:       'volume2',
-              name:     'Volume2',
+            conc: {
+              id:       'conc',
+              name:     'Concentration',
               type:     'numeric',
-              units:    volume_units,
-              defaultUnit: "Nm",
-              placeholder: "Volume",
+              units:    ["ng/uL"],
+              defaultUnit: "ng/uL",
+              placeholder: "Conc.",
+            }, 
+
+            conc2: {
+              id:       'conc2',
+              name:     'Concentration 2',
+              type:     'numeric',
+              units:    ["ng/uL (final)", "U/uL (final)"],
+              defaultUnit: "ng/uL (final)",
+              placeholder: "Conc.",
             }
           },
         },
