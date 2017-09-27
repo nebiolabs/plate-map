@@ -1,13 +1,53 @@
 <html>
-<link href="css/plate-layout.css" media="all" rel="stylesheet">
-<link href="css/select2.css" media="all" rel="stylesheet">
-<script src="plate-layout.js"></script>
+  <head>
+    <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
+
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
+    <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/apply-well-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/bottom-table.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas-circles.js"></script>
+    <script src="app/assets/javascripts/plate-map/check-box.js"></script>
+    <script src="app/assets/javascripts/plate-map/color-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-canvas-elements.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-field.js"></script>
+    <script src="app/assets/javascripts/plate-map/engine.js"></script>
+    <script src="app/assets/javascripts/plate-map/well-area.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric-events.js"></script>
+    <script src="app/assets/javascripts/plate-map/interface.js"></script>
+    <script src="app/assets/javascripts/plate-map/load-plate.js"></script>
+    <script src="app/assets/javascripts/plate-map/overlay.js"></script>
+    <script src="app/assets/javascripts/plate-map/preset.js"></script>
+    <script src="app/assets/javascripts/plate-map/redo.js"></script>
+    <script src="app/assets/javascripts/plate-map/tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/unit-data-field.js"></script>
+  </head>
   <body>
-    <div id="my-plate-layout" class="plate-setup-container-outer">
+    <div id="my-plate-layout" class="plate-setup-container">
       Loading plate layout ... !
-    </div>
-    <div id="demo" style="width: 100px;height: 100px;float: right;">
-      <button type="button" id="Load" value="load data" style="width: 80px;height: 30px;">Load Data</button>
     </div>
   </body>
 </html>
@@ -17,78 +57,133 @@
 window.onload = function() {
 
   var fields = {
-        Volume: {
+        polymerase: {
+          required: true,
+          id: 'pol',
+          name: 'Polymerase',
+          type: 'select',
+          placeHolder: "Polymerase",
+          options: [
+            {
+              id:   234,
+              name: 'Taq 1, processive enzyme with long name'
+            },
+            {
+              id:   123,
+              name: 'Taq 2'
+            },
+            {
+              id:   3,
+              name: 'Taq 3'
+            },
+            {
+              id:   4,
+              name: 'Taq 4'
+            },
+            {
+              id:   5,
+              name: 'Taq 5'
+            }
+          ]
+        }, 
+        volume: {
           required: true,
           id:       'volume',
           name:     'Volume',
           type:     'numeric',
           placeholder: "Volume",
-          units: {
-            1: "uL",
-            2: "mL"
-          }
+          units: ["uL", "mL"], 
+          defaultUnit: "uL"
         },
-        Polymerase: {
+        conc: {
           required: true,
-          id: 'pol',
-          name: 'Polymerase',
-          type: 'multiselect',
-          placeHolder: "Polymerase",
-          options: {
-              'Taq 1':  {
-                    id:   '234',
-                    name: 'Taq 1'
-                },
-              'Taq 2':  {
-                    id:   '123',
-                    name: 'Taq 2'
-                },
-                'Taq 3':  {
-                    id:   '3',
-                    name: 'Taq 3'
-                },
-                'Taq 4':  {
-                    id:   '4',
-                    name: 'Taq 4'
-                },
-                'Taq 5':  {
-                    id:   '5',
-                    name: 'Taq 5'
-                }
-          }
+          id:       'conc',
+          name:     'Concentration',
+          type:     'numeric',
+          placeholder: "Conc.",
+          defaultUnit: "ng/ul (final)"
+        },
+        amplicons: {
+          required: false,
+          id: 'amplicons', 
+          name: "Amplicons", 
+          type: "multiselect", 
+          placeHolder: "Amplicons", 
+          options: [
+            {
+              id: 'A', 
+              name: 'Amplicon_A'
+            },
+            {
+              id: 'B', 
+              name: 'Amplicon_B'
+            },
+            {
+              id: 'C', 
+              name: 'Amplicon_C'
+            },
+            {
+              id: 'D', 
+              name: 'Amplicon_D'
+            },
+          ]
+        }, 
+        on_ice: {
+          required: true, 
+          id: "on_ice", 
+          name: "On Ice", 
+          type: "boolean", 
+          placeHolder: "On Ice"
         }
     }; 
 
   var attributes = {
-    presets: {
-      "preset 1": ['volume', 'pol'],
-      "preset 2": ["volume"]
-    },
-    tabs: {
-      "Settings": {
+    presets: [
+      {
+        title: "Pol/Vol", 
+        fields: ["volume", "pol"]
+      },
+      {
+        title: "Vol", 
+        fields: ["volume"]
+      }
+    ],
+    tabs: [
+      {
+        name: "Settings",
         fields: fields 
       }
-    }, 
+    ], 
   }; //attributes
 
   window.plateData = {}; 
 
   function makeNewPlate(obj) {
-    var rows = obj.numRows; 
-    var cols = obj.numCols; 
+    var d = $("#my-plate-layout").plateLayOut("getDimensions"); 
+    var rows = d.rows; 
+    var cols = d.cols; 
     var wells = {}; 
     for (var r = 0; r < rows; r++) {
       var volume = 100; 
-      var pol = (r < (rows/2)) ? 'Taq 1' : 'Taq 2'; 
+      var pol = (r < (rows/2)) ? 234 : 123; 
+      var on_ice = Boolean(r % 2);
       for (var c = 0; c < cols; c++) {
         var i = r*cols + c; 
+        var v = volume;
+        var vunit = "mL";
+        if (v < 1) {
+          v *= 1000;
+          vunit = "uL";
+        }
         wells[i.toString()] = {
-          units: {
-            volumeunit:'unit1',
+          unitData: {
+            volume:vunit,
           },
           wellData: {
-            volume: volume.toString(),
-            pol: pol
+            volume: v,
+            pol: pol, 
+            amplicons: [], 
+            on_ice: on_ice
           }
         }; 
         if ((c % 2) > 0) {
@@ -98,25 +193,26 @@ window.onload = function() {
     }
     return {
       derivative: wells, 
-      checkboxes: {volume:true, pol: true}, 
+      checkboxes: ["volume", "pol"], 
     }; 
   }
 
   $("#my-plate-layout").plateLayOut({
     numRows: 8,
     numCols: 12,
-    imgSrc: "css",
+    imgSrc: "app/assets/images/plate-map",
     attributes: attributes,
 
     updateWells: function(event, data) {
-      //this function should save the provided wells to the server
-      //and call either updateWellsSuccessful() or updateWellsFailed()
-      //on completion
+      //data has changed
       window.plateData = data; 
       console.log(Object.keys(data.derivative).length + " wells updated"); 
+    }, 
+    created: function (event, data) {
+      console.log("Created");
     }
   });
-  window.plateData = makeNewPlate($("#my-plate-layout").data().DNAPlateLayOut); 
+  window.plateData = makeNewPlate(); 
   $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
 
 }

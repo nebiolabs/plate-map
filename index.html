@@ -1,9 +1,53 @@
 <html>
-<link href="css/plate-layout.css" media="all" rel="stylesheet">
-<link href="css/select2.css" media="all" rel="stylesheet">
-<script src="plate-layout.js"></script>
+  <head>
+    <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
+
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
+    <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/apply-well-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/bottom-table.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas-circles.js"></script>
+    <script src="app/assets/javascripts/plate-map/check-box.js"></script>
+    <script src="app/assets/javascripts/plate-map/color-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-canvas-elements.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-field.js"></script>
+    <script src="app/assets/javascripts/plate-map/engine.js"></script>
+    <script src="app/assets/javascripts/plate-map/well-area.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric-events.js"></script>
+    <script src="app/assets/javascripts/plate-map/interface.js"></script>
+    <script src="app/assets/javascripts/plate-map/load-plate.js"></script>
+    <script src="app/assets/javascripts/plate-map/overlay.js"></script>
+    <script src="app/assets/javascripts/plate-map/preset.js"></script>
+    <script src="app/assets/javascripts/plate-map/redo.js"></script>
+    <script src="app/assets/javascripts/plate-map/tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/unit-data-field.js"></script>
+  </head>
+
   <body>
-    <div id="plate-layout" class="plate-setup-container-outer">
+    <div id="my-plate-layout" class="plate-setup-container">
       Loading plate layout ... !
     </div>
     <div id="demo" style="width: 100px;height: 100px;float: right;">
@@ -17,160 +61,171 @@
 window.onload = function() {
 
   $(function() {
+    var volume_units = ["mL", "uL", "nL"];
     var attributes = {
 
-      presets: {
-        "preset 1": ['volume', 'pol', 'volume-master', 'volume-ampli', 'volume2'],
-        "preset 2": ['poly'],
-        "preset 3":['volume3', 'polo'],
-        "preset 4": [ 'volume-f4', 'poloo']
-      },
-
-      tabs: {
-        "tab 1": {
+      presets: [
+        {
+          "title": "P1",
+          "fields": ['volume', 'pol', 'volume-master', 'volume-ampli', 'volume2']
+        },
+        {
+          "title": "P2",
+          "fields": ['dntps']
+        },
+        {
+          "title": "P3",
+          "fields": ['volume3', 'pol2']
+        },
+        {
+          "title": "P4",
+          "fields": [ 'volume-f4', 'dntps2']
+        },
+      ], 
+      tabs: [
+        {
+          name: "tab 1",
           fields: {
             Volume: {
               required: true,
               id:       'volume',
               name:     'Volume',
               type:     'numeric',
-              //units:    'volume_units', //optional
               placeholder: "Volume",
-
-              units: {
-                1: "m/s",
-                2: "Nm"
-              }
+              units: volume_units,
+              defaultUnit: "uL"
             },
 
             Polymerase: {
               required: true,
               id: 'pol',
               name: 'Polymerase',
-              type: 'multiselect',
+              type: 'select',
               placeHolder: "Polymerase",
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    },
-                    'Taq 3':  {
-                        id:   '3',
-                        name: 'Taq 3'
-                    },
-                    'Taq 4':  {
-                        id:   '4',
-                        name: 'Taq 4'
-                    },
-                    'Taq 5':  {
-                        id:   '5',
-                        name: 'Taq 5'
-                    }
-              }
+              options: [
+                {
+                  id:   '234',
+                  name: 'Taq 1'
+                },
+                {
+                  id:   '123',
+                  name: 'Taq 2'
+                },
+                {
+                  id:   '3',
+                  name: 'Taq 3'
+                },
+                {
+                  id:   '4',
+                  name: 'Taq 4'
+                },
+                {
+                  id:   '5',
+                  name: 'Taq 5'
+                }
+              ]
             },
 
             master_mix: {
               required: true,
               id:       'volume-master',
               name:     'master mix concentration factor',
-              type:     'text',
-              units:    'volume_units' //optional
+              type:     'text'
             },
 
             Amplicons: {
               required: true,
               id:       'volume-ampli',
               name:     'Amplicons',
-              type:     'boolean',
-              units:    'volume_units' //optional
+              type:     'boolean'
             },
 
             Buffer: {
               id:       'volume-buff',
               name:     'Buffer',
               type:     'numeric',
-
-              units: {
-                1: "m/s",
-                2: "Nm"
-              }
+              units: volume_units
             },
 
-            Volume2: {
-              id:       'volume2',
-              name:     'Volume2',
+            conc: {
+              id:       'conc',
+              name:     'Concentration',
               type:     'numeric',
-              //units:    'volume_units', //optional
-              placeholder: "Volume",
+              units:    ["ng/uL"],
+              defaultUnit: "ng/uL",
+              placeholder: "Conc.",
+            }, 
 
-              units: {
-                1: "m/s",
-                2: "Nm"
-              }
+            conc2: {
+              id:       'conc2',
+              name:     'Concentration 2',
+              type:     'numeric',
+              units:    ["ng/uL (final)", "U/uL (final)"],
+              defaultUnit: "ng/uL (final)",
+              placeholder: "Conc.",
             }
           },
         },
 
-        "tab 2": {
+        {
+          name: "tab 2",
           fields: {
             dNTPs : {
-              id: 'poly',
-              name: 'dNTPs1',
-              type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    }
-              }
+              id: 'dntps',
+              name: 'dNTPs',
+              type: 'select',
+              options: [
+                {
+                  id:   "1",
+                  name: 'Mix 1'
+                },
+                {
+                  id:   "2",
+                  name: 'Mix 2'
+                },
+                {
+                  id:   "3",
+                  name: 'Mix 3'
+                },
+                {
+                  id:   "4",
+                  name: 'Mix 4'
+                }
+              ]
             }
           }
         },
 
-        "tab 3": {
+        {
+          name: "tab 3",
           fields: {
             Volume3: {
               id:       'volume3',
               name:     'Volume3',
               type:     'numeric',
-
-              units: {
-                1: "m/s",
-                2: "Nm"
-              }
+              units: volume_units
             },
 
             Polymerase2: {
-              id: 'polo',
+              id: 'pol2',
               name: 'Polymerase2',
-              type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'Taq 1'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'Taq 2'
-                    }
-              }
+              type: 'select',
+              options: [
+                {
+                  id:   "234",
+                  name: 'Taq 1'
+                },
+                {
+                  id:   "123",
+                  name: 'Taq 2'
+                }
+              ]
             }
           }
         },
 
-        "tab 4": {
-
+        {
+          name: "tab 4",
           fields: {
             Volume4: {
               id:       'volume-f4',
@@ -179,38 +234,37 @@ window.onload = function() {
             },
 
             dNTPs2 : {
-              id: 'poloo',
+              id: 'dntps2',
               name: 'dNTPs2',
               type: 'multiselect',
-
-              options: {
-                  'Taq 1':  {
-                        id:   '234',
-                        name: 'cola'
-                    },
-                  'Taq 2':  {
-                        id:   '123',
-                        name: 'pepsi'
-                    },
-                    'Taq 3':  {
-                          id:   '3',
-                          name: 'fanta'
-                      },
-                    'Taq 4':  {
-                          id:   '4',
-                          name: 'redbull'
-                      }
-              }
+              options: [
+                {
+                  id:   '1',
+                  name: 'Mix 1'
+                },
+                {
+                  id:   '2',
+                  name: 'Mix 2'
+                },
+                {
+                  id:   '3',
+                  name: 'Mix 3'
+                }, 
+                {
+                  id: "redbull", 
+                  name: "Redbull"
+                }
+              ]
             }
           }
         }
-      }
+      ]
     };
 
-    $("#plate-layout").plateLayOut({
+    $("#my-plate-layout").plateLayOut({
       numRows: 8,
       numCols: 12,
-      imgSrc: "css",
+      imgSrc: "app/assets/images/plate-map",
       attributes:       attributes,
 
       updateWells: function(event, data) {
@@ -221,15 +275,15 @@ window.onload = function() {
     });
 
     // Okay this could be the data user gets from the server.
-      var data = '{"derivative":{"0":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"1":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"12":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"13":{"selectedValues":{"volume":"2"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"2","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"18":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"19":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"20":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"21":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"30":{"selectedValues":{"volume":"45","volume-buff":"4"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"4","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"31":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"32":{"selectedValues":{"volume":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"45","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"33":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"42":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"43":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"44":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"45":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"51":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"52":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"54":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"55":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"56":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"57":{"selectedValues":{"volume":"56"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"56","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":"redbull"}},"59":{"selectedValues":{"volume-master":"7"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"7","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"63":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"64":{"selectedValues":{"volume-buff":"45"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"45","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"78":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"79":{"selectedValues":{"volume-buff":"66"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"66","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"81":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"82":{"selectedValues":{"volume-buff":"77"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"77","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"91":{"selectedValues":{},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"Taq 5","volume-master":"","volume-ampli":"NULL","volume-buff":"","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"93":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}},"94":{"selectedValues":{"volume-buff":"9"},"attrs":{"volume":true,"volume-master":true,"volume-buff":true},"units":{"volumeunit":"m/s","volume-buffunit":"m/s"},"wellData":{"volume":"","pol":"","volume-master":"","volume-ampli":"NULL","volume-buff":"9","volume2":"","poly":"","volume3":"","polo":"","volume-f4":"","poloo":""}}},"checkboxes":{"volume":true,"volume-master":true,"volume-buff":true},"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
+      var data = '{"derivative":{"0":{"unitData":{"volume":"m/s"},"wellData":{"volume":2}},"1":{"unitData":{"volume":"Nm","volume-buff":"m/s"},"wellData":{"volume":2}},"12":{"unitData":{"volume":"NJ","volume-buff":"m/s"},"wellData":{"volume":2}},"13":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":2}},"18":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"volume-buff":4,"dntps2":"redbull"}},"19":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"20":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"21":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"30":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"volume-buff":4,"dntps2":"redbull"}},"31":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"32":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"33":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"42":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"43":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"44":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"45":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"51":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"52":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"54":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"55":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"56":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":56,"dntps2":"redbull"}},"57":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":56,"dntps2":"redbull"}},"59":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-master":7}},"63":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"64":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"78":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":66}},"79":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":66}},"81":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":77}},"82":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":77}},"91":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"pol":"5"}},"93":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":9}},"94":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":9}}},"checkboxes":["volume", "volume-master","volume-buff"],"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
 
       $("#demo").click(function() {
       // Now we trigger getPlates along with the data. the implementation of getPlates is in load-plate.js
-      $("#plate-layout").trigger("getPlates",data);
+      $("#my-plate-layout").trigger("getPlates",data);
     })
     // This is another way to use getPlates..
 
-    //$("#plate-layout").plateLayOut("getPlates", data);
+    //$("#my-plate-layout").plateLayOut("getPlates", data);
   });
 
 }

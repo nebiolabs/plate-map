@@ -20,77 +20,74 @@ Embed code similar to the below to add the plate layout tool to your application
 
 ```html
 <head>
-	<script type="text/javascript" src="javascripts/plate-layout.js"></script>
-	<script type="text/javascript">
-	window.onload = function() {
+  <script type="text/javascript" src="javascripts/plate-layout.js"></script>
+  <script type="text/javascript">
+  window.onload = function() {
 
-		//Define fields to hold data
-		var fields = {
-			Volume: {
-			  required: true,
-			  id:       'volume',
-			  name:     'Volume',
-			  type:     'numeric',
-			  placeholder: "Volume",
-			  units: {
-			    1: "uL",
-			    2: "mL"
-			  }
-			},
-			Polymerase: {
-			  required: true,
-			  id: 'pol',
-			  name: 'Polymerase',
-			  type: 'multiselect',
-			  placeHolder: "Polymerase",
-			  options: {
-			    'Taq 1': {
-			          id:   '234',
-			          name: 'Taq 1'
-			    },
-			    'Taq 2': {
-			          id:   '123',
-			          name: 'Taq 2'
-			    }
-			  }
-			}
-		}; 
+    //Define fields to hold data
+    var fields = {
+      Volume: {
+        required: true,
+        id:       'volume',
+        name:     'Volume',
+        type:     'numeric',
+        placeholder: "Volume",
+        units: ["uL", "mL"], 
+        defaultUnit: "uL"
+      },
+      Polymerase: {
+        required: true,
+        id: 'pol',
+        name: 'Polymerase',
+        type: 'multiselect',
+        placeHolder: "Polymerase",
+        options: {
+          'Taq 1': {
+                id:   '234',
+                name: 'Taq 1'
+          },
+          'Taq 2': {
+                id:   '123',
+                name: 'Taq 2'
+          }
+        }
+      }
+    }; 
 
-		// Define presentation attributes
-		var attributes = {
-			presets: { // Define quick pick of different combinations of checked fields
-				"preset 1": ['volume', 'pol'],
-				"preset 2": ["pol"]
-			},
-			tabs: {
-				"Settings": {
-					fields: fields 
-				}
-			}, 
-		} //attributes
+    // Define presentation attributes
+    var attributes = {
+      presets: { // Define quick pick of different combinations of checked fields
+        "preset 1": ['volume', 'pol'],
+        "preset 2": ["pol"]
+      },
+      tabs: [
+        {
+          name: "Settings",
+          fields: fields 
+        }
+      ], 
+    } //attributes
 
-		$("#my-plate-layout").plateLayOut({
+    $("#my-plate-layout").plateLayOut({
 
-			numRows: 8,
-			numCols: 12,
-			imgSrc:  "css",
-			attributes: attributes,
+      numRows: 8,
+      numCols: 12,
+      imgSrc:  "css",
+      attributes: attributes,
 
-			updateWells: function(event, data) {
-				//this function should save the provided wells to the server
-				//and call either updateWellsSuccessful() or updateWellsFailed()
-				//on completion
-			}
-		});
+      updateWells: function(event, data) {
+        //Run when data state changes
+      }
+    });
 
-		//You can trigger the load of plateData at any time, 
-		//including initializing, using the getPlates method
-		$("#my-plate-layout").plateLayOut("getPlates", plateData);
+    //You can trigger the load of plateData at any time, 
+    //including initializing, using the getPlates method
+    $("#my-plate-layout").plateLayOut("getPlates", plateData);
 
-		//You can retrieve the current state at any time using the createObject method
-		$("#my-plate-layout").plateLayOut("createObject"); 
-	}
-	</script>
+    //You can retrieve the current state at any time using the createObject method
+    $("#my-plate-layout").plateLayOut("createObject"); 
+  }
+  </script>
 </head>
 
 <body>
@@ -118,27 +115,29 @@ This function may be called at any time to load data. Well data should be passed
 
 ```js
 {
-	derivative: {
-		"0": { //row-major index of well
-			wellData: {
-				field_1: "value 1"
-				field_2: "value 2"
-			}, 
-			units: {
-				field_1unit: "value 1 unit"
-			}
-		}
-	}, 
-	checkboxes: { //activation of checkboxes
-		field_1: true, 
-		field_2: false
-	}, 
-	selectedAreas: { //min and max rows and columns, inclusive
-    minRow: 0, 
-    maxRow: 3, 
-    minCol: 2, 
-    maxCol: 3
+  derivative: {
+    "0": { //row-major index of well
+      wellData: {
+        field_1: "value 1"
+        field_2: "value 2"
+      }, 
+      units: {
+        field_1unit: "value 1 unit"
+      }
+    }
   }, 
+  checkboxes: [ //activation of checkboxes
+    "field_1", 
+    "field_2"
+  ], 
+  selectedAreas: [ //min and max rows and columns, inclusive
+    {
+      minRow: 0, 
+      maxRow: 3, 
+      minCol: 2, 
+      maxCol: 3
+    }
+  ], 
   focalWell: { // position of current focal well
     row: 0,
     col: 2
@@ -158,7 +157,9 @@ Text field are the normal and basic text field which holds a text value inside. 
 
 #### Numeric
 
-When we have numeric data which has some unit we use numeric data type. Sometime we should be using volume like quantities, So we provide an extra field to hand over units too.
+Numeric fields only allow numeric values. If a non-numeric value is entered, the field will be rendered in red and not save the value. 
+
+Numeric fields may optionally allow for units. You can specify the default unit if desired, otherwise the first unit will be used. 
 
 ```js
 Volume: {
@@ -167,10 +168,8 @@ Volume: {
   name:     'Volume',
   type:     'numeric',
   placeholder: "Volume",
-  units: {
-    1: "uL",
-    2: "mL"
-  }
+  units: ["uL", "mL"], 
+  defaultUnit: "uL"
 }
 ```
 
@@ -182,27 +181,49 @@ Name says it all, Just brought the select2 to show it.
 
 #### Multiselect
 
-Normal select box but we bring select2 to modify it. Look at the example object here.
+Selected single option using select2 dropdown.Options field lists options in order. 
 
+```js
+Polymerase: {
+  required: true,
+  id: 'pol',
+  name: 'Polymerase',
+  type: 'select',
+  placeHolder: "Polymerase",
+  options: [
+    {
+      id:   '234',
+      name: 'Taq 1'
+    },
+    {
+      id:   '123',
+      name: 'Taq 2'
+    }
+  ]
+}
 ```
+
+#### Multiselect
+
+Select multiple options using select2 picker. Options field lists options in order. 
+
+```js
 Polymerase: {
   required: true,
   id: 'pol',
   name: 'Polymerase',
   type: 'multiselect',
   placeHolder: "Polymerase",
-  options: {
-    'Taq 1': {
+  options: [
+    {
       id:   '234',
       name: 'Taq 1'
     },
-    'Taq 2': {
+    {
       id:   '123',
       name: 'Taq 2'
     }
-  }
+  ]
 }
 ```
-
-Here options are going to be the values in the dropdown.
 
