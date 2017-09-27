@@ -8,7 +8,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _areasToTiles: function(areas) {
         //Convert areas to tiles
-        var cols = this.numCols;
+        var cols = this.dimensions.cols;
         var that = this;
         return areas.reduce(function(tiles, area) {
           if (area) {
@@ -148,8 +148,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         //Convert a coordinate to a well
         var scale = this.scaleFactor;
         var spacing = this.spacing * scale;
-        var cols = this.numCols;
-        var rows = this.numRows;
+        var cols = this.dimensions.cols;
+        var rows = this.dimensions.rows;
         var colWidth = spacing;
         var rowHeight = spacing;
         var colMargin = colWidth / 2;
@@ -199,21 +199,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var colMargin = colWidth / 2;
         var rowMargin = rowHeight / 2;
 
-        var rowCount = area.maxRow - area.minRow + 1;
-        var colCount = area.maxCol - area.minCol + 1;
+        var rows = area.maxRow - area.minRow + 1;
+        var cols = area.maxCol - area.minCol + 1;
 
         return {
           top: area.minRow * rowHeight + rowMargin,
           left: area.minCol * colWidth + colMargin,
-          height: rowCount * rowHeight,
-          width: colCount * colWidth
+          height: rows * rowHeight,
+          width: cols * colWidth
         }
       },
 
       _rectToArea: function(rect) {
         //Convert a rectangular region to an area
-        var cols = this.numCols;
-        var rows = this.numRows;
+        var cols = this.dimensions.cols;
+        var rows = this.dimensions.rows;
         var scale = this.scaleFactor;
         var spacing = this.spacing * scale;
         var colWidth = spacing;

@@ -17,7 +17,6 @@
 //= require plate-map/fabric-events
 //= require plate-map/interface
 //= require plate-map/load-plate
-//= require plate-map/menu
 //= require plate-map/overlay
 //= require plate-map/preset
 //= require plate-map/redo

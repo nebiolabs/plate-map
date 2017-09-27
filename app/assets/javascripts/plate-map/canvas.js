@@ -23,8 +23,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var w = this.canvasContainer.width(); 
         var h = this.canvasContainer.height(); 
         this.scaleFactor = Math.min(
-           h / (this.numRows + 0.5), 
-           w / (this.numCols + 0.5)) / this.spacing;
+           h / (this.dimensions.rows + 0.5), 
+           w / (this.dimensions.cols + 0.5)) / this.spacing;
 
         this.mainFabricCanvas = new fabric.Canvas('DNAcanvas', {
             backgroundColor: '#f5f5f5',
