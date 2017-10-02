@@ -8,12 +8,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       allTabs: [],
 
-      allWellData: {}, // We create this array so that it contains all the field ids and value
-      //of everything in tabs
+      defaultWell: {
+        wellData: {}, 
+        unitData: {}
+      },
+
       allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
       // Settings as a whole. its very usefull, when we have units for a specific field.
       // it goes like tabs-> individual field-> units and checkbox
-      allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
 
       _createTabAtRight: function() {
         this.tabContainer = this._createElement("<div></div>").addClass("plate-setup-tab-container");

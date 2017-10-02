@@ -45,7 +45,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomForFirstTime();
 
         var that = this;
-        $(document).keyup(function(e) {
+        this._setShortcuts();
+        $(document.body).keyup(function(e) {
           that._handleShortcuts(e);
         });
 
@@ -53,8 +54,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _createElement: function(element) {
-
         return $(element);
+      },
+
+      _setShortcuts: function () {
+        var that = this; 
+        window.addEventListener("cut", function (e) {
+          if (document.activeElement == document.body) {
+            that.copyCriteria();
+            that.clearCriteria();
+            e.preventDefault();
+          }
+        });
+        window.addEventListener("copy", function (e) {
+          if (document.activeElement == document.body) {
+            that.copyCriteria();
+            e.preventDefault();
+          }
+        });
+        window.addEventListener("paste", function (e) {
+          if (document.activeElement == document.body) {
+            that.pasteCriteria();
+            e.preventDefault();
+          }
+        });
       },
 
       _handleShortcuts: function(e) {
@@ -62,24 +85,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (e.keyCode == 46) {
             this.clearCriteria();
             e.preventDefault();
-          } else if (e.ctrlKey) {
+          } else if (e.ctrlKey || e.metaKey) {
             if (e.keyCode == 90) {
-              // it says that we have undo/redo action is going on.
-              this.callUndo();
+              if (e.shiftKey) {
+                this.redo();
+              } else {
+                this.undo();
+              }
               e.preventDefault();
             } else if (e.keyCode == 89) {
-              // it says that we have undo/redo action is going on.
-              this.callRedo();
-              e.preventDefault();
-            } else if (e.keyCode == 67) {
-              this.copyCriteria();
-              e.preventDefault();
-            } else if (e.keyCode == 86) {
-              this.pasteCriteria();
-              e.preventDefault();
-            } else if (e.keyCode == 88) {
-              this.copyCriteria();
-              this.clearCriteria();
+              this.redo();
               e.preventDefault();
             }
           }

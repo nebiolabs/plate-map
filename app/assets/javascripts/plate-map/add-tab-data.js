@@ -34,7 +34,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 console.log("Field " + data.id + " autoassigned type " + data.type);
               }
 
-              that.allWellData[data.id] = null;
+              that.defaultWell.wellData[data.id] = null;
               var input = that._createField(data);
               // we save type so that it can be used when we update data on selecting a tile
               input.data("type", data.type);
@@ -54,14 +54,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 if (data.units) {
                   if (data.units.length > 1) {
                     var unitInput = that._addUnitDropDown(field, data);
-                    that.allUnitData[data.id] = unitInput.val();
+                    input.data("units", data.units);
+                    that.defaultWell.unitData[data.id] = unitInput.val();
                   } else if (data.units.length == 1) {
                     that._addFixedUnit(field, data.units[0]);
-                    that.allUnitData[data.id] = data.units[0]; 
+                    input.data("units", data.units);
+                    that.defaultWell.unitData[data.id] = data.units[0]; 
                   }
                 } else if (data.defaultUnit) {
                   that._addFixedUnit(field, data.defaultUnit);
-                  that.allUnitData[data.id] = data.defaultUnit; 
+                  input.data("units", [data.defaultUnit]);
+                  that.defaultWell.unitData[data.id] = data.defaultUnit; 
                 }
               }
 
@@ -115,7 +118,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             input.on("change", function(e, generated) {
               // we check if this event is user generated event or system generated , automatic is system generated
               if (generated != "Automatic") {
-                var v = e.val || null; 
+                var v = this.value || null; 
                 if (v) {
                   var optMap = input.data("optionMap"); 
                   v = optMap[v].id; 
@@ -132,10 +135,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             input.on("change", function(e, generated) {
               // we check if this event is user generated event or system generated , automatic is system generated
               if (generated != "Automatic") {
-                var v = e.val; 
+                var v = this.value; 
                 if (v.length) {
                   var optMap = input.data("optionMap"); 
                   v = v.map(function (v) {return optMap[v].id;})
+                } else {
+                  v = null; 
                 }
                 that._addData(e.target.id, v);
               }
@@ -143,7 +148,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             break
 
           case "numeric":
-            $(input).on("input", function(e, generated) {
+            input.on("input", function(e, generated) {
               if (generated != "Automatic") {
                 var v = this.value.trim();
                 if (v == "") {
@@ -156,7 +161,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   $(this).addClass("invalid"); 
                 } else {
                   $(this).removeClass("invalid"); 
-                  that._addData(e.target.id, v); 
+                  var u_input = $("#" + that.unitFieldId(e.target.id));
+                  var u = null; 
+                  if (u_input.length == 1) {
+                    u = u_input.val();
+                  }
+                  that._addData(e.target.id, v, u); 
                 }
               }
             });

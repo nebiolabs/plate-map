@@ -43,10 +43,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _applyUnitData: function(fieldId, units) {
+      _applyUnitData: function(id, units) {
         // Method to add unit data to the tabs.
-        var unitId = this.unitFieldId(fieldId); 
-        $("#" + unitId).val(units[fieldId]).trigger("change", "Automatic");
+        var unitId = this.unitFieldId(id); 
+        $("#" + unitId).val(units[id]).trigger("change", "Automatic");
       }
 
     }

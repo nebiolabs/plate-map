@@ -17,6 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var unitDropDown = this._createUnitDropDown(data);
         unitDropDown.data("linkedFieldId", data.id);
         field.find(".plate-setup-tab-field-container").append(unitDropDown);
+        $("#" + data.id).data("units", data.units); 
         unitDropDown.select2({}); 
 
         this._applyUnitDropDownHandler(unitDropDown); 
@@ -28,7 +29,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this; 
         unitDropDown.on("change", function(evt, generated) {
           if (generated != "Automatic") {
-            that._addUnitData(evt);
+            var linkedInput = $("#" + unitDropDown.data("linkedFieldId"));
+            linkedInput.trigger("input");
           }
         });
       },

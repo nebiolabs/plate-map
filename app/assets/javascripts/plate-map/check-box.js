@@ -53,10 +53,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         this.globalSelectedAttributes = gsa; 
         this._clearPresetSelection(); 
-        this._colorMixer(false); 
+        this._colorMixer(); 
       }, 
 
       setCheckboxes: function(fieldIds) {
+        fieldIds = fieldIds || []; 
         var gsa = []; 
         for (var i = 0; i < this.checkBoxes.length; i++) {
           var checkImage = this.checkBoxes[i];
@@ -72,7 +73,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         this.globalSelectedAttributes = gsa; 
         this._clearPresetSelection(); 
-        this._colorMixer(false); 
+        this._colorMixer(); 
       },
 
     };

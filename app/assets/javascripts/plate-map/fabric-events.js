@@ -108,34 +108,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       setSelection: function(areas, focalWell) {
-        if (!areas) {
-          areas = []
-        }
-        if (areas.length) {
-          var area = areas[areas.length - 1];
-          if (focalWell && !this._wellInArea(focalWell, area)) {
-            focalWell = null;
-          }
-          if (!focalWell) {
-            focalWell = {
-              row: area.minRow,
-              col: area.minCol
-            };
-          }
-        } else {
-          if (!focalWell) {
-            focalWell = {
-              row: 0,
-              col: 0
-            };
-          }
-          areas = [this._wellToArea(focalWell)];
-        }
-        this.focalWell = focalWell;
         this.selectedAreas = areas;
+        this.focalWell = focalWell;
         this.allSelectedObjects = this._areasToTiles(areas);
         this._setSelectedTiles();
         this._setFocalWellRect(this.focalWell)
+        document.activeElement.blur();
       },
 
       _setFocalWellRect: function(well) {
@@ -178,45 +156,68 @@ var plateLayOutWidget = plateLayOutWidget || {};
         })
       },
 
-      decideSelectedFields: function() {
-        // Update presets for selection
-        this._addPreset();
-        this._applyValuesToTabs();
-        //this.mainFabricCanvas.bringToFront(this.overLay);
+      _getSelectedWells: function () {
+        var that = this; 
+        return this.allSelectedObjects.map(function (tile) {
+          var well = that.engine.derivative[tile.index];
+          if (!well) {
+            well = that.defaultWell; 
+          }
+          return well; 
+        }); 
       },
 
-      _addPreset: function() {
-        //Update preset values with selected objects
-        if (this.allSelectedObjects && this.previousPreset) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-
-            var currentObj = this.allSelectedObjects[objectIndex];
-            if ($.isEmptyObject(currentObj["selectedWellAttributes"])) {
-              // It says we haven't added any manual selection yet
-              var currentSelected = this.allSelectedObjects[objectIndex]["selectedWellAttributes"];
-              var presetCount = this.presetSettings[this.previousPreset].length;
-              for (var i = 0; i < presetCount; i++) {
-                currentSelected[this.presetSettings[this.previousPreset][i]] = true;
+      _getCommonFields: function (wells) {
+        if (wells.length) {
+          var referenceWell = wells[0];
+          var referenceFields = $.extend(true, {}, referenceWell.wellData);
+          var referenceUnits = $.extend(true, {}, referenceWell.unitData);
+          for (var i = 1; i < wells.length; i++) {
+            var well = wells[i];
+            var fields = well.wellData;
+            var units = well.unitData;  
+            for (var field in referenceFields) {
+              if (Array.isArray(referenceFields[field])) {
+                var refArr = referenceFields[field]; 
+                var agrArr = []; 
+                for (var j = 0; j < refArr.length; j++) {
+                  var v = refArr[j]; 
+                  if ($.inArray(v, fields[field]) >= 0) {
+                    agrArr.push(v); 
+                  }
+                }
+                referenceFields[field] = agrArr; 
+              } else {
+                if (referenceFields[field] != fields[field] || referenceUnits[field] != units[field]) {
+                  delete referenceFields[field]; 
+                  if (field in referenceUnits) {
+                    delete referenceUnits[field]; 
+                  }
+                }
               }
             }
           }
+          return {
+            wellData: referenceFields, 
+            unitData: referenceUnits
+          }
+        } else {
+          return {
+            wellData: {}, 
+            unitData: {}
+          }; 
         }
-      },
+      }, 
 
-      _applyValuesToTabs: function() {
-        // re write this method so that everytime it doesn't have to run full
-        // Here we look for the values on the well and apply it to tabs.
-        if (this.allSelectedObjects.length) {
-          // Incase there is only one well selected.
-          var referenceTile = this.allSelectedObjects[0];
-          var referenceFields = $.extend(true, {}, referenceTile["wellData"]);
-          var referenceUnits = $.extend(true, {}, referenceTile["unitData"]);
-          for (var i = 1; i < this.allSelectedObjects.length; i++) {
-            var tile = this.allSelectedObjects[i]
-            var fields = tile["wellData"]; 
-            var units = tile["unitData"]; 
+      _getCommonWell: function (wells) {
+        if (wells.length) {
+          var referenceWell = wells[0];
+          var referenceFields = $.extend(true, {}, referenceWell.wellData);
+          var referenceUnits = $.extend(true, {}, referenceWell.unitData);
+          for (var i = 1; i < wells.length; i++) {
+            var well = wells[i];
+            var fields = well.wellData;
+            var units = well.unitData;  
             for (var field in referenceFields) {
               if (Array.isArray(referenceFields[field])) {
                 var refArr = referenceFields[field]; 
@@ -238,8 +239,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             }
           }
-          this._addDataToTabFields(referenceFields, referenceUnits);
+          for (var field in referenceUnits) {
+            if (referenceUnits[field] == null) {
+              referenceUnits[field] = this.defaultWell.unitData[field];
+            }
+          }
+          return {
+            wellData: referenceFields, 
+            unitData: referenceUnits
+          }
+        } else {
+          return this.defaultWell; 
         }
+      }, 
+
+      decideSelectedFields: function() {
+        var wells = this._getSelectedWells(); 
+        var well = this._getCommonWell(wells); 
+        this._addDataToTabFields(well.wellData, well.unitData);
       },
 
     };

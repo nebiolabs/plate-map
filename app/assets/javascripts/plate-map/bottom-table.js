@@ -39,35 +39,36 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       tileAttrText: function (tile, attr) {
         var text = ""; 
-        var data = tile.wellData[attr];
-        if (data == "") {
+        var well = this.engine.derivative[tile.index];
+        var data = well.wellData[attr];
+        if (data === "") {
           data = null; 
         }
         if (data != null) {
-          var field = $("#" + attr); 
-          switch (field.data("type")) {
+          var input = $("#" + attr); 
+          switch (input.data("type")) {
             case "select":
-              var optMap = field.data("optionMap");
+              var optMap = input.data("optionMap");
               text = optMap[data].name; 
               break; 
             case "multiselect":
               if (data.length > 0) {
-                var optMap = field.data("optionMap");
+                var optMap = input.data("optionMap");
                 text = data.map(function (v) {return optMap[v].name}).join("; "); 
               }
               break;
             case "numeric":
               text = data.toString(); 
-              var unit = tile.unitData[attr]; 
-              if (unit != null) {
-                text += " " + unit; 
-              }
               break; 
             case "text":
             case "boolean":
               text = data.toString(); 
               break; 
           }
+        }
+        var unit = well.unitData[attr]; 
+        if (unit != null) {
+          text += " " + unit; 
         }
         return text; 
       }, 

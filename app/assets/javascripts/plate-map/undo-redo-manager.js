@@ -10,20 +10,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       actionPointer: null,
 
-      addToUndoRedo: function(derivative) {
+      addToUndoRedo: function(data) {
 
-        if (this.actionPointer != null && this.actionPointer < (this.undoRedoArray.length - 1)) {
-          this.undoRedoArray.splice(this.actionPointer + 1, this.undoRedoArray.length);
+        if (this.actionPointer != null) {
+          var i = this.actionPointer + 1; 
+          if (i < this.undoRedoArray.length) {
+            this.undoRedoArray.splice(i, this.undoRedoArray.length - i);
+          }
         }
         this.actionPointer = null;
-        this.undoRedoArray.push($.extend(true, {}, derivative));
-
+        this.undoRedoArray.push($.extend(true, {}, data));
       },
 
       _configureUndoRedoArray: function() {
 
         var data = {
-          checkboxes: {},
+          checkboxes: [],
           derivative: {},
           selectedAreas: [{
             minRow: 0,
@@ -37,30 +39,42 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
+        this.undoRedoArray = []; 
+        this.actionPointer = null; 
         this.undoRedoArray.push($.extend({}, data));
       },
 
-      callUndo: function() {
-
-        this.undoRedoActive = true;
-        if (this.actionPointer == null) {
-          this.actionPointer = this.undoRedoArray.length - 2;
-          this.undo(this.actionPointer);
-        } else {
-          this.actionPointer = (this.actionPointer) ? this.actionPointer - 1 : 0;
-          this.undo(this.actionPointer);
-        }
+      undo: function() {
+        console.log("undo");
+        return this.shiftUndoRedo(-1); 
       },
 
-      callRedo: function() {
+      redo: function() {
+        console.log("redo");
+        return this.shiftUndoRedo(1); 
+      }, 
 
-        this.undoRedoActive = true;
-        if (this.actionPointer != null && this.actionPointer < this.undoRedoArray.length - 1) {
-          this.actionPointer = this.actionPointer + 1;
-          this.redo(this.actionPointer);
-        } else if (this.actionPointer == this.undoRedoArray.length - 1) {
-          this.undoRedoActive = false;
+      shiftUndoRedo: function (pointerDiff) {
+        var pointer = this.actionPointer;
+        if (pointer == null) {
+          pointer = this.undoRedoArray.length - 1; 
         }
+        pointer += pointerDiff; 
+        return this.setUndoRedo(pointer); 
+      }, 
+
+      setUndoRedo: function (pointer) {
+        if (pointer < 0) {
+          return false; 
+        }
+        if (pointer >= this.undoRedoArray.length) {
+          return false; 
+        }
+        this.undoRedoActive = true; 
+        this.setData(this.undoRedoArray[pointer]);
+        this.actionPointer = pointer; 
+        this.undoRedoActive = false;
+        return true; 
       }
     }
   };

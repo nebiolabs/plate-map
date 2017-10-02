@@ -146,17 +146,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _coordsToWell: function(coord) {
         //Convert a coordinate to a well
-        var scale = this.scaleFactor;
-        var spacing = this.spacing * scale;
         var cols = this.dimensions.cols;
         var rows = this.dimensions.rows;
-        var colWidth = spacing;
-        var rowHeight = spacing;
-        var colMargin = colWidth / 2;
-        var rowMargin = rowHeight / 2;
 
-        var x = (coord.x - colMargin) / colWidth;
-        var y = (coord.y - rowMargin) / rowHeight;
+        var w = this.sizes.spacing; 
+        var m = this.sizes.label_spacing; 
+
+        var x = (coord.x - m) / w;
+        var y = (coord.y - m) / w;
 
         var row = this._coordIndex(y, rows);
         var col = this._coordIndex(x, cols);
@@ -164,24 +161,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return {
           row: row,
           col: col,
-          index: col + row * cols
         };
       },
 
       _wellToCoords: function(well, center) {
         //Convert a well to a coordinate
-        var scale = this.scaleFactor;
-        var spacing = this.spacing * scale;
-        var colWidth = spacing;
-        var rowHeight = spacing;
-        var colMargin = colWidth / 2;
-        var rowMargin = rowHeight / 2;
-
-        var x = well.col * colWidth + colMargin;
-        var y = well.row * rowHeight + rowMargin;
+        var w = this.sizes.spacing; 
+        var m = this.sizes.label_spacing; 
+        var x = well.col * w + m;
+        var y = well.row * w + m;
         if (center) {
-          x = x + colMargin;
-          y = y + rowMargin;
+          var hw = w/2;
+          x = x + hw;
+          y = y + hw;
         }
 
         return {
@@ -192,39 +184,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _areaToRect: function(area) {
         //Convert area to rectangle
-        var scale = this.scaleFactor;
-        var spacing = this.spacing * scale;
-        var colWidth = spacing;
-        var rowHeight = spacing;
-        var colMargin = colWidth / 2;
-        var rowMargin = rowHeight / 2;
-
         var rows = area.maxRow - area.minRow + 1;
         var cols = area.maxCol - area.minCol + 1;
 
+        var w = this.sizes.spacing; 
+        var m = this.sizes.label_spacing; 
+
         return {
-          top: area.minRow * rowHeight + rowMargin,
-          left: area.minCol * colWidth + colMargin,
-          height: rows * rowHeight,
-          width: cols * colWidth
+          top: area.minRow * w + m,
+          left: area.minCol * w + m,
+          height: rows * w,
+          width: cols * w
         }
       },
 
       _rectToArea: function(rect) {
         //Convert a rectangular region to an area
-        var cols = this.dimensions.cols;
         var rows = this.dimensions.rows;
-        var scale = this.scaleFactor;
-        var spacing = this.spacing * scale;
-        var colWidth = spacing;
-        var rowHeight = spacing;
-        var colMargin = colWidth / 2;
-        var rowMargin = rowHeight / 2;
+        var cols = this.dimensions.cols;
 
-        var left = (rect.left - colMargin) / colWidth;
-        var top = (rect.top - rowMargin) / rowHeight;
-        var height = rect.height / rowHeight;
-        var width = rect.width / colWidth;
+        var w = this.sizes.spacing; 
+        var m = this.sizes.label_spacing; 
+
+        var left = (rect.left - m) / w;
+        var top = (rect.top - m) / w;
+        var height = rect.height / w;
+        var width = rect.width / w;
         var right = left + width;
         var bottom = top + height;
 
