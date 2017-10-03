@@ -29,7 +29,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.topSection).append(this.topRight);
 
         $(this.container).append(this.topSection);
-        $(this.element).html(this.container);
+        $(this.element).append(this.container);
 
         this._initiateFabricCanvas();
 

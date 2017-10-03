@@ -11,7 +11,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var that = this;
         this.overLayTextContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-text-container");
-        this.overLayTextContainer.html("Completion Percentage:");
+        this.overLayTextContainer.text("Completion Percentage:");
         this.overLayContainer.append(this.overLayTextContainer);
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
         this.overLayContainer.append(this.overLayButtonContainer);

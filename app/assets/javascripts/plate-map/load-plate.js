@@ -70,112 +70,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
       }, 
 
-      sanitizeValue: function (id, value) {
-        var v = value; 
-        if (v === "") {
-          v = null; 
-        }
-        if (v != null) {
-          var input = $("#" + id);
-          switch (input.data("type")) {
-            case "select":
-              var optMap = input.data("optionMap");
-              if (v in optMap) {
-                v = optMap[v].id; 
-              } else {
-                throw "Invalid value " + value + " for select field " + id; 
-              }
-              break; 
-            case "multiselect":
-              if (v && v.length) {
-                var optMap = input.data("optionMap");
-                v = v.map(function (opt_id) {
-                  if (opt_id in opt_map) {
-                    return opt_map[opt_id].id;
-                  } else {
-                    throw "Invalid value " + opt_id + " for multiselect field " + id; 
-                  }
-                }); 
-              } else {
-                v = null; 
-              }
-              break;
-            case "numeric":
-              v = Number(v); 
-              if (isNaN(v)) {
-                throw "Invalid value " + value + " for numeric field " + id; 
-              }
-              break; 
-            case "text":
-              v = String(v);
-              break;
-            case "boolean":
-              v = String(v).toLowerCase();
-              if (v == "true" || v == "1") {
-                v = true; 
-              } else if (v == "false" || v == "0") {
-                v = false; 
-              } else if (v == "" || v == "null") {
-                v = null; 
-              } else {
-                throw "Invalic value " + value + " for boolean field " + id; 
-              }
-              break; 
-          }
-        }
-        if (v == null) {
-          return this.defaultWell.wellData[id]; 
-        } else {
-          return v; 
-        }
-      }, 
-
-      sanitizeUnit: function (id, value) {
-        var v = value; 
-        if (v === "") {
-          v = null; 
-        }
-        if (v != null) {
-          var input = $("#" + id);
-          var units = input.data("units"); 
-          if (units && units.length) {
-            for (var i = 0; i < units.length; i++) {
-              if (v == units[i]) {
-                return units[i]; 
-              }
-            }
-            throw "Invalid unit " + value + " for field " + id; 
-          } else {
-            throw "No units specified for field " + id; 
-          }
-        }
-        if (v == null) {
-          return this.defaultWell.wellData[id]; 
-        } else {
-          return v; 
-        }
-      }, 
-
       sanitizeWell: function (well) {
         var newWell = {
           wellData: {}, 
           unitData: {}
         }
-        for (var prop in this.defaultWell.wellData) {
-          newWell.wellData[prop] = this.sanitizeValue(prop, well.wellData[prop]); 
-        }
-        for (var prop in this.defaultWell.unitData) {
-          newWell.unitData[prop] = this.sanitizeUnit(prop, well.unitData[prop]); 
+        for (var i = 0; i < this.fieldList.length; i++) {
+          var field = this.fieldList[i];
+          newWell.wellData[field.id] = field.parseValue(well.wellData[field.id]); 
+          if (field.hasUnits) {
+            newWell.unitData[field.id] = field.parseUnit(well.unitData[field.id]); 
+          }
         }
         return newWell; 
       }, 
 
       setData: function(data) {
-
         this.engine.derivative = $.extend(true, {}, data.derivative);
         this.setCheckboxes(data.checkboxes); 
         this.setSelection(data.selectedAreas, data.focalWell);
-
         this._colorMixer();
         this.decideSelectedFields();
         this.mainFabricCanvas.renderAll();

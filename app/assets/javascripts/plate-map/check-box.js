@@ -6,18 +6,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // For those check boxes associated with every field in the tab
     return {
 
-      checkBoxes: [], 
       globalSelectedAttributes: [],
 
       _addCheckBox: function(field, data) {
         var checkImage = $("<img>").attr("src", this._assets.dontImg).addClass("plate-setup-tab-check-box")
           .data("clicked", false); 
         checkImage.data("linkedFieldId", data.id);
-        field.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
+        field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
         field.checkbox = checkImage;
-        this.checkBoxes.push(checkImage); 
-        return checkImage;
       },
 
       _applyCheckboxHandler: function(checkBoxImage) {
@@ -36,19 +33,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       changeCheckboxes: function (changes) {
         var gsa = []; 
-        for (var i = 0; i < this.checkBoxes.length; i++) {
-          var checkImage = this.checkBoxes[i];
-          var fieldId = checkImage.data("linkedFieldId"); 
-          var clicked = checkImage.data("clicked");
-          if (fieldId in changes) {
-            clicked = Boolean(changes[fieldId]);
-          }
-          checkImage.data("clicked", clicked);
-          if (clicked) {
-            gsa.push(fieldId);
-            checkImage.attr("src", this._assets.doImg);
-          } else {
-            checkImage.attr("src", this._assets.dontImg);
+        for (var i = 0; i < this.fieldList.length; i++) {
+          var field = this.fieldList[i]; 
+          if (field.checkbox) {
+            var checkImage = field.checkbox;
+            var fieldId = checkImage.data("linkedFieldId"); 
+            var clicked = checkImage.data("clicked");
+            if (fieldId in changes) {
+              clicked = Boolean(changes[fieldId]);
+            }
+            checkImage.data("clicked", clicked);
+            if (clicked) {
+              gsa.push(fieldId);
+              checkImage.attr("src", this._assets.doImg);
+            } else {
+              checkImage.attr("src", this._assets.dontImg);
+            }
           }
         }
         this.globalSelectedAttributes = gsa; 
@@ -59,16 +59,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
       setCheckboxes: function(fieldIds) {
         fieldIds = fieldIds || []; 
         var gsa = []; 
-        for (var i = 0; i < this.checkBoxes.length; i++) {
-          var checkImage = this.checkBoxes[i];
-          var fieldId = checkImage.data("linkedFieldId"); 
-          var clicked = fieldIds.indexOf(fieldId) >= 0;
-          checkImage.data("clicked", clicked);
-          if (clicked) {
-            gsa.push(fieldId);
-            checkImage.attr("src", this._assets.doImg);
-          } else {
-            checkImage.attr("src", this._assets.dontImg);
+        for (var i = 0; i < this.fieldList.length; i++) {
+          var field = this.fieldList[i]; 
+          if (field.checkbox) {
+            var checkImage = field.checkbox;
+            var fieldId = checkImage.data("linkedFieldId"); 
+            var clicked = fieldIds.indexOf(fieldId) >= 0;
+            checkImage.data("clicked", clicked);
+            if (clicked) {
+              gsa.push(fieldId);
+              checkImage.attr("src", this._assets.doImg);
+            } else {
+              checkImage.attr("src", this._assets.dontImg);
+            }
           }
         }
         this.globalSelectedAttributes = gsa; 

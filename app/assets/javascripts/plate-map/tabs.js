@@ -36,7 +36,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         tabData.forEach(function (tab, tabIndex) {
           that.allTabs[tabIndex] = that._createElement("<div></div>").addClass("plate-setup-tab");
           $(that.allTabs[tabIndex]).data("index", tabIndex)
-            .html(tab.name);
+            .text(tab.name);
 
           $(that.allTabs[tabIndex]).click(function() {
             that._tabClickHandler(this);
@@ -82,22 +82,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             .css("z-index", 0);
           $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
         }
-      },
-
-      _createDefaultFieldForTabs: function() {
-        // Creates html outline for a new field
-        var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        var nameContainer = this._createElement("<div></div>").addClass("plate-setup-tab-name");
-        var fieldContainer = this._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
-        $(wrapperDivRightSide).append(nameContainer);
-        $(wrapperDivRightSide).append(fieldContainer);
-        $(wrapperDiv).append(wrapperDivLeftSide);
-        $(wrapperDiv).append(wrapperDivRightSide);
-
-        return wrapperDiv;
       }
     };
   }

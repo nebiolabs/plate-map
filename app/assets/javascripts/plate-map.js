@@ -19,4 +19,3 @@
 //= require plate-map/preset
 //= require plate-map/tabs
 //= require plate-map/undo-redo-manager
-//= require plate-map/unit-data-field

@@ -12,9 +12,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         derivative: {},
         stackUpWithColor: {},
         stackPointer: 2,
-        currentPercentage: 0,
-        wholePercentage: 0,
-        wholeNoTiles: 0,
 
         wellEmpty: function (well) {
           for (var prop in well.wellData) {
@@ -85,9 +82,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         applyColors: function() {
 
-          this.wholeNoTiles = 0;
-          this.currentPercentage = 0;
-          this.wholePercentage = 0;
+          var wholeNoTiles = 0;
+          var wholePercentage = 0;
 
           THIS.addBottomTableHeadings();
 
@@ -108,34 +104,38 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var well = this.derivative[index]; 
                 THIS.setTileColor(tile, color, this.stackPointer); 
                 // Checks if all the required fields are filled
-                this.wholePercentage = this.wholePercentage + this.checkCompletion(well.wellData, tile);
+                var completion = this.checkCompletion(well.wellData, tile);
+                THIS.setTileComplete(tile, completion == 1); 
+                wholePercentage = wholePercentage + completion;
               }
             }
           }
 
-          this.wholePercentage = Math.floor(this.wholePercentage / this.wholeNoTiles);
+          wholePercentage = Math.floor(100 * wholePercentage / wholeNoTiles);
 
-          if (!isNaN(this.wholePercentage)) {
-            $(THIS.overLayTextContainer).text("Completion Percentage: " + this.wholePercentage + "%");
+          if (isNaN(wholePercentage)) {
+            THIS.overLayTextContainer.text("Completion Percentage: 0%");
           } else {
-            $(THIS.overLayTextContainer).text("Completion Percentage: 0%");
+            THIS.overLayTextContainer.text("Completion Percentage: " + this.wholePercentage + "%");
           }
         },
 
         checkCompletion: function(wellData, tile) {
-          var length = THIS.requiredFields.length;
-          var fill = length;
-          THIS.setTileComplete(tile, true); 
-          for (var i = 0; i < length; i++) {
-            if (wellData[THIS.requiredFields[i]] == null) {
-              THIS.setTileComplete(tile, false); 
-              fill--;
-              continue;
+          var req = 0; 
+          var fill = 0; 
+          for (var i = 0; i < THIS.fieldList.length; i++) {
+            var field = THIS.fieldList[i]; 
+            if (field.required) {
+              req++; 
+              if (wellData[field.id] != null) {
+                fill++; 
+              }
             }
           }
-          if (fill != length) return ((fill) / length) * 100;
-
-          return 100;
+          if (req == fill) {
+            return 1; 
+          }
+          return fill / req;
         }
       }
     }

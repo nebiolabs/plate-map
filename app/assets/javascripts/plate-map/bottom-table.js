@@ -27,9 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         for (var i = 0; i <  this.globalSelectedAttributes.length; i++) {
           var attr = this.globalSelectedAttributes[i]; 
-          var field = $("#" + attr); 
-          var fieldName = field.data("caption");
-          var singleField = this._createElement("<th></th>").text(fieldName);
+          var field = this.fieldMap[attr]; 
+          var singleField = this._createElement("<th></th>").text(field.name);
           this.bottomRow.append(singleField);
           this.rowCounter = this.rowCounter + 1;
         }
@@ -38,39 +37,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       tileAttrText: function (tile, attr) {
-        var text = ""; 
         var well = this.engine.derivative[tile.index];
-        var data = well.wellData[attr];
-        if (data === "") {
-          data = null; 
-        }
-        if (data != null) {
-          var input = $("#" + attr); 
-          switch (input.data("type")) {
-            case "select":
-              var optMap = input.data("optionMap");
-              text = optMap[data].name; 
-              break; 
-            case "multiselect":
-              if (data.length > 0) {
-                var optMap = input.data("optionMap");
-                text = data.map(function (v) {return optMap[v].name}).join("; "); 
-              }
-              break;
-            case "numeric":
-              text = data.toString(); 
-              break; 
-            case "text":
-            case "boolean":
-              text = data.toString(); 
-              break; 
-          }
-        }
-        var unit = well.unitData[attr]; 
-        if (unit != null) {
-          text += " " + unit; 
-        }
-        return text; 
+        var field = this.fieldMap[attr]; 
+        return field.getText(well.wellData[attr], well.unitData[attr]); 
       }, 
 
       addBottomTableRow: function(color, singleStack) {
