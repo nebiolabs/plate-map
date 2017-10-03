@@ -318,7 +318,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         if (units.length) {
-          input.data("units", units); 
+          field.units = units; 
+          field.hasUnits = true; 
+          field.defaultUnit = defaultUnit; 
           that.defaultWell.unitData[id] = defaultUnit;
           if (units.length == 1) {
             var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
@@ -379,8 +381,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setValue = function (v) {
           input.val(v); 
         };
-
-        field.hasUnits = units.length > 0; 
 
         field.parseUnit = function (unit) {
           if (unit == null) {
