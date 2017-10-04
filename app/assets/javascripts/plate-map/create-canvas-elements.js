@@ -222,16 +222,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.setTileVisible(tile, true);
         tile.colorIndex = parseInt(color); 
         tile.circleText.text = String(tile.colorIndex - 1);
-        var colorStops = {
-          0: "#ffc100",
-          1: "#ff6a00"
-        };
+        var colorStops = this.colorPairs[0];
 
-        if (stackPointer <= (this.colorPairs.length / 2) + 1) {
-          colorStops = {
-            0: this.valueToColor[color],
-            1: this.colorPairObject[this.valueToColor[color]]
-          };
+        if (stackPointer <= this.colorPairs.length) {
+          colorStops = this.colorPairs[color];
           tile.circleText.setVisible(false);
         }
 

@@ -48,8 +48,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
 
-        if (this.engine.stackPointer <= (this.colorPairs.length / 2) + 1) {
-          plateIdDiv.css("background", "-webkit-linear-gradient(left, " + this.valueToColor[color] + " , " + this.colorPairObject[this.valueToColor[color]] + ")");
+        if (this.engine.stackPointer <= this.colorPairs.length) {
+          var colorStops = this.colorPairs[color];
+          plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         } else {
           plateIdDiv.text(color);
         }
@@ -72,10 +73,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // This is executed for the very first time.. !
         var row = this._createElement("<tr></tr>");
 
-        var colorStops = {
-          0: this.colorPairs[0],
-          1: this.colorPairs[1]
-        };
+        var colorStops = this.colorPairs[0];
         var plateIdDiv = this._createElement("<td></td>");
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
