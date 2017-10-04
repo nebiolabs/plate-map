@@ -25,7 +25,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
-          this.stackPointer = 2;
+          this.stackPointer = 1;
           var derivativeJson = {}
           for (var idx in this.derivative) {
             var data = this.derivative[idx]; 
@@ -57,10 +57,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             if (!referenceDerivative) {
               // if no checked box has value, push it to first spot
-              if (this.stackUpWithColor[1]) {
-                this.stackUpWithColor[1].push(refDerivativeIndex);
+              if (this.stackUpWithColor[0]) {
+                this.stackUpWithColor[0].push(refDerivativeIndex);
               } else {
-                this.stackUpWithColor[1] = [refDerivativeIndex];
+                this.stackUpWithColor[0] = [refDerivativeIndex];
               }
 
               delete derivativeJson[refDerivativeIndex];

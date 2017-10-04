@@ -302,8 +302,17 @@
   background-color: white;
 }
 
+.plate-setup-color-text {
+  font-size: 12;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 0px 5px;
+  background-color: white;
+}
+
 .plate-setup-bottom-id {
-  width: 60px;
+  width: 40px;
+  text-align: center;
 }
 
 input.invalid {

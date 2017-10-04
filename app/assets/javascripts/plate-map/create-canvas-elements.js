@@ -193,6 +193,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: top,
           left: left,
           fill: 'black',
+          fontFamily: '"Roboto", Arial, sans-serif',
           fontSize: this.sizes.text_size,
           lockScalingX: true,
           lockScalingY: true,
@@ -221,12 +222,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
       setTileColor: function(tile, color, stackPointer) {
         this.setTileVisible(tile, true);
         tile.colorIndex = parseInt(color); 
-        tile.circleText.text = String(tile.colorIndex - 1);
+        tile.circleText.text = String(tile.colorIndex);
         var colorStops = this.colorPairs[0];
 
         if (stackPointer <= this.colorPairs.length) {
           colorStops = this.colorPairs[color];
-          tile.circleText.setVisible(false);
+          // tile.circleText.setVisible(false);
         }
 
         tile.circle.setGradient("fill", {

@@ -48,12 +48,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
 
-        if (this.engine.stackPointer <= this.colorPairs.length) {
-          var colorStops = this.colorPairs[color];
-          plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
-        } else {
-          plateIdDiv.text(color);
+        var colorStops = this.colorPairs[0];
+        if (color < this.colorPairs.length) {
+          colorStops = this.colorPairs[color];
         }
+        plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
+        var numberText = this._createElement("<span/>");
+        numberText.addClass("plate-setup-color-text");
+        numberText.text(color);
+        plateIdDiv.append(numberText);
 
         row.append(plateIdDiv);
 
