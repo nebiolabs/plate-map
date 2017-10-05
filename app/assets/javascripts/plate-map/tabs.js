@@ -8,12 +8,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       allTabs: [],
 
-      allWellData: {}, // We create this array so that it contains all the field ids and value
-      //of everything in tabs
+      defaultWell: {
+        wellData: {}, 
+        unitData: {}
+      },
+
       allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
       // Settings as a whole. its very usefull, when we have units for a specific field.
       // it goes like tabs-> individual field-> units and checkbox
-      allUnitData: {}, // Unit data saves all the units available in the tabs. now it contains id and value.
 
       _createTabAtRight: function() {
         this.tabContainer = this._createElement("<div></div>").addClass("plate-setup-tab-container");
@@ -34,7 +36,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         tabData.forEach(function (tab, tabIndex) {
           that.allTabs[tabIndex] = that._createElement("<div></div>").addClass("plate-setup-tab");
           $(that.allTabs[tabIndex]).data("index", tabIndex)
-            .html(tab.name);
+            .text(tab.name);
 
           $(that.allTabs[tabIndex]).click(function() {
             that._tabClickHandler(this);
@@ -80,22 +82,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             .css("z-index", 0);
           $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
         }
-      },
-
-      _createDefaultFieldForTabs: function() {
-        // Creates html outline for a new field
-        var wrapperDiv = this._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        var wrapperDivRightSide = this._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        var nameContainer = this._createElement("<div></div>").addClass("plate-setup-tab-name");
-        var fieldContainer = this._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
-        $(wrapperDivRightSide).append(nameContainer);
-        $(wrapperDivRightSide).append(fieldContainer);
-        $(wrapperDiv).append(wrapperDivLeftSide);
-        $(wrapperDiv).append(wrapperDivRightSide);
-
-        return wrapperDiv;
       }
     };
   }

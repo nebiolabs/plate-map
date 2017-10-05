@@ -4,10 +4,8 @@
 //= require plate-map/add-data-on-change
 //= require plate-map/add-data-to-tabs
 //= require plate-map/add-tab-data
-//= require plate-map/apply-well-data
 //= require plate-map/bottom-table
 //= require plate-map/canvas
-//= require plate-map/canvas-circles
 //= require plate-map/check-box
 //= require plate-map/color-manager
 //= require plate-map/create-canvas-elements
@@ -19,8 +17,5 @@
 //= require plate-map/load-plate
 //= require plate-map/overlay
 //= require plate-map/preset
-//= require plate-map/redo
 //= require plate-map/tabs
-//= require plate-map/undo
 //= require plate-map/undo-redo-manager
-//= require plate-map/unit-data-field

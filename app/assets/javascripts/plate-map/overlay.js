@@ -7,13 +7,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // 'completion percentage' annd 'copy Criteria' button etc ...
     return {
 
-      copyCriteria: {},
-
       _createOverLay: function() {
 
         var that = this;
         this.overLayTextContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-text-container");
-        this.overLayTextContainer.html("Completion Percentage:");
+        this.overLayTextContainer.text("Completion Percentage:");
         this.overLayContainer.append(this.overLayTextContainer);
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
         this.overLayContainer.append(this.overLayButtonContainer);
@@ -47,7 +45,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.overLayButtonContainer.append(this.undoButton);
 
         this.undoButton.click(function(evt) {
-          that.callUndo();
+          that.undo();
         });
 
         this.redoButton = this._createElement("<button />").addClass("plate-setup-button");
@@ -55,120 +53,40 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.overLayButtonContainer.append(this.redoButton);
 
         this.redoButton.click(function(evt) {
-          that.callRedo();
+          that.redo();
         });
 
       },
 
       clearCriteria: function() {
-
         if (this.allSelectedObjects) {
-
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-
             var tile = this.allSelectedObjects[objectIndex];
-            // Restore the original data.
-            tile["wellData"] = $.extend(true, {}, this.allWellData);
-            tile["unitData"] = $.extend(true, {}, this.allUnitData);
-            tile["selectedWellAttributes"] = {};
-
-            if (tile.circle) {
-              // that works like a charm, we remove circle from canvas and delete the reference from
-              // tile/well object.
-              this.mainFabricCanvas.remove(tile.circle);
-              this.mainFabricCanvas.remove(tile.circleCenter);
-              this.mainFabricCanvas.remove(tile.circleText);
-
+            if (tile.index in this.engine.derivative) {
               delete this.engine.derivative[tile.index];
-              delete tile.circle;
-              delete tile.circleCenter;
-              delete tile.circleText;
             }
           }
 
-          this._colorMixer(true);
+          this._colorMixer();
           this.decideSelectedFields();
         } else {
           alert("Please select any well");
         }
-
-      },
-
-      clearCriteriaForAll: function(selectedObjects) {
-
-        //this._deselectSelected();
-
-        for (var objectIndex in this.engine.derivative) {
-
-          var tile = this.allTiles[objectIndex];
-          tile["wellData"] = $.extend(true, {}, this.allWellData);
-          tile["unitData"] = $.extend(true, {}, this.allUnitData);
-          tile["selectedWellAttributes"] = {};
-
-          if (tile.circle) {
-            this.mainFabricCanvas.remove(tile.circle);
-            this.mainFabricCanvas.remove(tile.circleCenter);
-            this.mainFabricCanvas.remove(tile.circleText);
-
-            delete tile.circle;
-            //delete tile.circleCenter;
-            //delete tile.circleText;
-          }
-
-        }
-
-        this.mainFabricCanvas.remove(this.dynamicRect);
-        this.mainFabricCanvas.remove(this.dynamicSingleRect);
-
-        this.engine.derivative = {};
-
-      },
-
-      clearSingleCriteria: function(tile) {
-
-        // Restore the original data.
-        tile["wellData"] = $.extend(true, {}, this.allWellData);
-        tile["unitData"] = $.extend(true, {}, this.allUnitData);
-        tile["selectedWellAttributes"] = {};
-
-        if (tile.circle) {
-
-          // that works like a charm, we remove circle from canvas and delete the reference from
-          // tile/well object.
-          this.mainFabricCanvas.remove(tile.circle);
-          this.mainFabricCanvas.remove(tile.circleCenter);
-          this.mainFabricCanvas.remove(tile.circleText);
-
-          delete this.engine.derivative[tile.index];
-          delete tile.circle;
-          //delete tile.circleCenter;
-          //delete tile.circleText;
-        }
-
       },
 
       copyCriteria: function() {
-
         if (this.allSelectedObjects) {
-          this.commonWell = this.engine.findCommonValues("wellData");
-          this.commonUnit = this.engine.findCommonValues("unitData");
+          var wells = this._getSelectedWells(); 
+          this.commonWell = this._getCommonFields(wells); 
         } else {
           alert("Please select any well.");
         }
       },
 
       pasteCriteria: function() {
-
         if (this.commonWell) {
-          this.allSelectedObjects.filter(function(element, index) {
-
-            this.allTiles[element.index].wellData = $.extend(true, {}, this.commonWell);
-            this.allTiles[element.index].unitData = $.extend(true, {}, this.commonUnit);
-            this.engine.createDerivative(this.allTiles[element.index]);
-
-          }, this);
-          this._colorMixer(true);
+          this._addAllData(this.commonWell);
           this.decideSelectedFields();
           this.mainFabricCanvas.renderAll();
         }

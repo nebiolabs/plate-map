@@ -27,9 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         for (var i = 0; i <  this.globalSelectedAttributes.length; i++) {
           var attr = this.globalSelectedAttributes[i]; 
-          var field = $("#" + attr); 
-          var fieldName = field.data("caption");
-          var singleField = this._createElement("<th></th>").text(fieldName);
+          var field = this.fieldMap[attr]; 
+          var singleField = this._createElement("<th></th>").text(field.name);
           this.bottomRow.append(singleField);
           this.rowCounter = this.rowCounter + 1;
         }
@@ -38,38 +37,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       tileAttrText: function (tile, attr) {
-        var text = ""; 
-        var data = tile.wellData[attr];
-        if (data == "") {
-          data = null; 
-        }
-        if (data != null) {
-          var field = $("#" + attr); 
-          switch (field.data("type")) {
-            case "select":
-              var optMap = field.data("optionMap");
-              text = optMap[data].name; 
-              break; 
-            case "multiselect":
-              if (data.length > 0) {
-                var optMap = field.data("optionMap");
-                text = data.map(function (v) {return optMap[v].name}).join("; "); 
-              }
-              break;
-            case "numeric":
-              text = data.toString(); 
-              var unit = tile.unitData[attr]; 
-              if (unit != null) {
-                text += " " + unit; 
-              }
-              break; 
-            case "text":
-            case "boolean":
-              text = data.toString(); 
-              break; 
-          }
-        }
-        return text; 
+        var well = this.engine.derivative[tile.index];
+        var field = this.fieldMap[attr]; 
+        return field.getText(well.wellData[attr], well.unitData[attr]); 
       }, 
 
       addBottomTableRow: function(color, singleStack) {
@@ -78,11 +48,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
 
-        if (this.engine.stackPointer <= (this.colorPairs.length / 2) + 1) {
-          plateIdDiv.css("background", "-webkit-linear-gradient(left, " + this.valueToColor[color] + " , " + this.colorPairObject[this.valueToColor[color]] + ")");
-        } else {
-          plateIdDiv.text(color);
+        var numberText = this._createElement("<span/>");
+        numberText.addClass("plate-setup-color-text");
+        numberText.text(color);
+        plateIdDiv.append(numberText);
+
+        if (color > 0) {
+          color = ((color - 1) % (this.colorPairs.length -1)) + 1;
         }
+        var colorStops = this.colorPairs[color];
+
+        plateIdDiv.css("background", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
 
         row.append(plateIdDiv);
 
@@ -102,10 +78,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // This is executed for the very first time.. !
         var row = this._createElement("<tr></tr>");
 
-        var colorStops = {
-          0: this.colorPairs[0],
-          1: this.colorPairs[1]
-        };
+        var colorStops = this.colorPairs[0];
         var plateIdDiv = this._createElement("<td></td>");
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);

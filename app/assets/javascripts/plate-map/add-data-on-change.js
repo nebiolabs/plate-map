@@ -6,60 +6,96 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object is invoked when something in the tab fields change
     return {
 
-      _addData: function(id, v) {
+      _addData: function(id, v, u) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var wellData = this.allSelectedObjects[objectIndex]["wellData"];
-            wellData[id] = v;
-            this.engine.createDerivative(this.allSelectedObjects[objectIndex]);
-            //this.engine.checkForValidData(this.allSelectedObjects[objectIndex]);
+            var tile = this.allSelectedObjects[objectIndex]; 
+            var well; 
+            if (v == null) {
+              if (tile.index in this.engine.derivative) {
+                well = this.engine.derivative[tile.index];
+                well.wellData[id] = null;
+                if (id in well.unitData) {
+                  well.unitData[id] = this.defaultWell.unitData[id]; 
+                }
+                
+                var empty = this.engine.wellEmpty(well); 
+                if (empty) {
+                  delete this.engine.derivative[tile.index];
+                }
+              }
+            } else {
+              if (tile.index in this.engine.derivative) {
+                well = this.engine.derivative[tile.index];
+              } else {
+                well = $.extend(true, {}, this.defaultWell); 
+                this.engine.derivative[tile.index] = well; 
+              }
+              well.wellData[id] = v; 
+              if (id in well.unitData) {
+                well.unitData[id] = u || this.defaultWell.unitData[id]; 
+              }
+            }
           }
 
-          this._colorMixer(true);
+          this._colorMixer();
         }
       },
 
-      _colorMixer: function(valueChange) {
-        // value change is true if data in the field is changed, false if its a change in checkbox
-        if (!valueChange) {
-          for (var index in this.engine.derivative) {
-            this.engine.createDerivative(this.allTiles[index]);
+      _addAllData: function(data) {
+        // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
+        if (this.allSelectedObjects) {
+          var noOfSelectedObjects = this.allSelectedObjects.length;
+          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
+            var tile = this.allSelectedObjects[objectIndex]; 
+            if (tile.index in this.engine.derivative) {
+              well = this.engine.derivative[tile.index];
+            } else {
+              well = $.extend(true, {}, this.defaultWell); 
+              this.engine.derivative[tile.index] = well; 
+            }
+            for (var id in data.wellData) {
+              var v = data.wellData[id];
+              well.wellData[id] = v; 
+              if (id in data.unitData) {
+                var u = data.unitData[id];
+                well.unitData[id] = u || this.defaultWell.unitData[id]; 
+              }
+            }
+            var empty = this.engine.wellEmpty(well); 
+            if (empty) {
+              delete this.engine.derivative[tile.index];
+            }
           }
+          this._colorMixer();
         }
+      },
 
+      _colorMixer: function() {
         if (!this.undoRedoActive) {
           var data = this.createObject();
           this.addToUndoRedo(data);
           this._trigger("updateWells", null, data);
         }
 
-        this.engine.searchAndStack().applyColors();
+        this.engine.searchAndStack(); 
+        this.engine.applyColors();
         this.mainFabricCanvas.renderAll();
       },
 
-      _addUnitData: function(e) {
-        // This method add/change data when unit of some numeric field is changed
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var obj = this.allSelectedObjects[objectIndex]; 
-            var field = $(e.target).data("linkedFieldId"); 
-            obj.unitData[field] = e.target.value;
-            this.engine.createDerivative(obj);
-          }
-          this._colorMixer(true);
-        }
-      },
-
       createObject: function() {
+        var derivative = $.extend(true, {}, this.engine.derivative); 
+        var checkboxes = this.globalSelectedAttributes.slice(); 
+        var selectedAreas = this.selectedAreas.slice(); 
+        var focalWell = this.focalWell; 
 
         var data = {
-          "derivative": this.engine.derivative,
-          "checkboxes": this.globalSelectedAttributes,
-          "selectedAreas": this.selectedAreas,
-          "focalWell": this.focalWell
+          "derivative": derivative,
+          "checkboxes": checkboxes,
+          "selectedAreas": selectedAreas,
+          "focalWell": focalWell
         };
 
         return data;

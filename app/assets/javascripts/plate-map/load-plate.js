@@ -7,36 +7,92 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // Remember THIS points to plateLayOutWidget and 'this' points to engine
     return {
 
-      getPlates: function(data) {
+      getPlates: function (data) {
+        //sanitize input
+        var derivative = {}; 
+        for (var index in data.derivative) {
+          var well = data.derivative[index]; 
+          derivative[index] = this.sanitizeWell(well); 
+        }; 
 
-        var derivativeData = data;
+        var checkboxes = data.checkboxes || []; 
+        var selection = this.sanitizeAreas(data.selectedAreas, data.focalWell); 
 
-        this.clearCriteriaForAll(derivativeData.selectedObjects);
+        var sanitized = {
+          "derivative": derivative,
+          "checkboxes": checkboxes,
+          "selectedAreas": selection.selectedAreas,
+          "focalWell": selection.focalWell
+        }; 
 
-        this.loadDataToCircles(derivativeData.derivative);
+        this.setData(sanitized); 
+      }, 
 
-        this.engine.derivative = $.extend(true, {}, derivativeData.derivative);
+      sanitizeAreas: function (selectedAreas, focalWell) {
+        var that = this; 
+        var rows = this.dimensions.rows;
+        var cols = this.dimensions.cols;
 
-        if (derivativeData.checkboxes && derivativeData.checkboxes.length) {
-          this.setCheckboxes(derivativeData.checkboxes);
-        } else {
-          this.setCheckboxes([]); 
+        if (!selectedAreas) {
+          selectedAreas = [];
         }
+        if (selectedAreas.length) {
+          selectedAreas = selectedAreas.map(function (area) {
+            return {
+              minCol: that._coordIndex(Math.min(area.minCol, area.maxCol), cols), 
+              minRow: that._coordIndex(Math.min(area.minRow, area.maxRow), rows), 
+              maxCol: that._coordIndex(Math.max(area.minCol, area.maxCol), cols), 
+              maxRow: that._coordIndex(Math.max(area.minRow, area.maxRow), rows)
+            }; 
+          }); 
+          var area = selectedAreas[selectedAreas.length - 1];
+          if (focalWell && !this._wellInArea(focalWell, area)) {
+            focalWell = null;
+          }
+          if (!focalWell) {
+            focalWell = {
+              row: area.minRow,
+              col: area.minCol
+            };
+          }
+        } else {
+          if (!focalWell) {
+            focalWell = {
+              row: 0,
+              col: 0
+            };
+          }
+          selectedAreas = [this._wellToArea(focalWell)];
+        }
+        return {
+          selectedAreas: selectedAreas, 
+          focalWell: focalWell
+        };
+      }, 
 
-        this.setSelection(derivativeData.selectedAreas, derivativeData.focalWell);
+      sanitizeWell: function (well) {
+        var newWell = {
+          wellData: {}, 
+          unitData: {}
+        }
+        for (var i = 0; i < this.fieldList.length; i++) {
+          var field = this.fieldList[i];
+          newWell.wellData[field.id] = field.parseValue(well.wellData[field.id]); 
+          if (field.hasUnits) {
+            newWell.unitData[field.id] = field.parseUnit(well.unitData[field.id]); 
+          }
+        }
+        return newWell; 
+      }, 
+
+      setData: function(data) {
+        this.engine.derivative = $.extend(true, {}, data.derivative);
+        this.setCheckboxes(data.checkboxes); 
+        this.setSelection(data.selectedAreas, data.focalWell);
+        this._colorMixer();
         this.decideSelectedFields();
         this.mainFabricCanvas.renderAll();
       },
-
-      loadDataToCircles: function(circleData) {
-
-        for (var index in circleData) {
-          var tile = this.allTiles[index]; 
-          var data = circleData[index]; 
-          tile.wellData = $.extend(true, {}, tile.wellData, data.wellData);
-          tile.unitData = $.extend(true, {}, tile.unitData, data.unitData);
-        }
-      }
 
     }
   }

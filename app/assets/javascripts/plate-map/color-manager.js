@@ -5,81 +5,58 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.colorManager = function() {
 
     return {
-      // See these are color pairs for the gradient.
-      // We leave the first color blank to make calculation easier.
-      colorPairs: ["#e10404", "#500000", "#f8666c", "#970e10", "#ff9600", "#ff3600", "#ffc100", "#ff6a00",
-        "#ffd5ed", "#ffb1df", "#ffe735", "#ffaa0e", "#fff77a", "#ffe021", "#dbfa89", "#bcf61f",
-        "#a9eac9", "#2eb146", "#376a00", "#254800", "#84f0ff", "#5feaff", "#2ea2be", "#113d55",
-        "#003d7d", "#001021", "#a316e7", "#750edb", "#a70075", "#5e0040", "#ee11ee", "#c803c8",
-        "#5c5c5c", "#423a42", "#a3a3a3", "#6f6f6f"
-      ],
-
-      colorPairObject: {
-        "#e10404": "#500000",
-        "#f8666c": "#970e10",
-        "#ff9600": "#ff3600",
-        "#ffc100": "#ff6a00",
-        "#ffd5ed": "#ffb1df",
-        "#ffe735": "#ffaa0e",
-        "#fff77a": "#ffe021",
-        "#dbfa89": "#bcf61f",
-        "#a9eac9": "#2eb146",
-        "#376a00": "#254800",
-        "#84f0ff": "#5feaff",
-        "#2ea2be": "#113d55",
-        "#003d7d": "#001021",
-        "#a316e7": "#750edb",
-        "#a70075": "#5e0040",
-        "#ee11ee": "#c803c8",
-        "#5c5c5c": "#423a42",
-        "#a3a3a3": "#6f6f6f"
-      },
-
-      colorIndexValues: {
-        "#e10404": 1,
-        "#f8666c": 2,
-        "#ff9600": 3,
-        "#ffc100": 4,
-        "#ffd5ed": 5,
-        "#ffe735": 6,
-        "#fff77a": 7,
-        "#dbfa89": 8,
-        "#a9eac9": 9,
-        "#376a00": 10,
-        "#84f0ff": 11,
-        "#2ea2be": 12,
-        "#003d7d": 13,
-        "#a316e7": 14,
-        "#a70075": 15,
-        "#ee11ee": 16,
-        "#5c5c5c": 17,
-        "#a3a3a3": 18
-      },
-
-      valueToColor: {
-        1: "#e10404",
-        2: "#f8666c",
-        3: "#ff9600",
-        4: "#ffc100",
-        5: "#ffd5ed",
-        6: "#ffe735",
-        7: "#fff77a",
-        8: "#dbfa89",
-        9: "#a9eac9",
-        10: "#376a00",
-        11: "#84f0ff",
-        12: "#2ea2be",
-        13: "#003d7d",
-        14: "#a316e7",
-        15: "#a70075",
-        16: "#ee11ee",
-        17: "#5c5c5c",
-        18: "#a3a3a3"
-      },
-
-      getColor: function() {
-        console.log("Wow");
-      }
+        // See these are color pairs for the gradient.
+      colorPairs: [
+        ["#e6e6e6", "#808080"],
+        ["#66e8ff", "#0082c8"],
+        ["#ff7fb1", "#e6194b"],
+        ["#a2ffb1", "#3cb44b"],
+        ["#f784ff", "#911eb4"],
+        ["#ffe897", "#f58231"],
+        ["#6666ff", "#0000FF"],
+        ["#ffff7f", "#ffe119"],
+        ["#acffff", "#46f0f0"],
+        ["#ff98ff", "#f032e6"],
+        ["#ffffa2", "#d2f53c"],
+        ["#ffffff", "#fabebe"],
+        ["#66e6e6", "#008080"],
+        ["#ffffff", "#e6beff"],
+        ["#ffd48e", "#aa6e28"],
+        ["#e66666", "#800000"],
+        ["#ffffff", "#aaffc3"],
+        ["#e6e666", "#808000"],
+        ["#ffffff", "#ffd8b1"],
+        ["#66a9ef", "#004389"],
+        ["#ff6672", "#a7000c"],
+        ["#66db72", "#00750c"],
+        ["#b866db", "#520075"],
+        ["#ffa966", "#b64300"],
+        ["#ffff66", "#c0a200"],
+        ["#6dffff", "#07b1b1"],
+        ["#ff66ff", "#b100a7"],
+        ["#f9ff66", "#93b600"],
+        ["#ffe5e5", "#bb7f7f"],
+        ["#66a7a7", "#004141"],
+        ["#ffe5ff", "#a77fc0"],
+        ["#d19566", "#6b2f00"],
+        ["#ffffef", "#c0bb89"],
+        ["#d1ffea", "#6bc084"],
+        ["#a7a766", "#414100"],
+        ["#ffffd8", "#c09972"],
+        ["#a5ffff", "#3fc1ff"],
+        ["#ffbef0", "#ff588a"],
+        ["#e1fff0", "#7bf38a"],
+        ["#ffc3ff", "#d05df3"],
+        ["#ffffd6", "#ffc170"],
+        ["#a5a5ff", "#3f3fff"],
+        ["#ffffbe", "#ffff58"],
+        ["#ebffff", "#85ffff"],
+        ["#ffd7ff", "#ff71ff"],
+        ["#a5ffff", "#3fbfbf"],
+        ["#ffffcd", "#e9ad67"],
+        ["#ffa5a5", "#bf3f3f"],
+        ["#ffffa5", "#bfbf3f"]
+      ]
     }
   }
 
