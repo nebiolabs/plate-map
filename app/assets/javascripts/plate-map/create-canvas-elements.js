@@ -223,12 +223,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.setTileVisible(tile, true);
         tile.colorIndex = parseInt(color); 
         tile.circleText.text = String(tile.colorIndex);
-        var colorStops = this.colorPairs[0];
 
-        if (stackPointer <= this.colorPairs.length) {
-          colorStops = this.colorPairs[color];
-          // tile.circleText.setVisible(false);
+        if (color > 0) {
+          color = ((color - 1) % (this.colorPairs.length -1)) + 1;
         }
+        var colorStops = this.colorPairs[color];
 
         tile.circle.setGradient("fill", {
           x1: 0,

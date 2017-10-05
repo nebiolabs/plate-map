@@ -5,26 +5,57 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.colorManager = function() {
 
     return {
-      // See these are color pairs for the gradient.
+        // See these are color pairs for the gradient.
       colorPairs: [
-        ["#e10404", "#500000"], // 0 empty reference value
-        ["#f8666c", "#970e10"], // 1 first in series
-        ["#ff9600", "#ff3600"],
-        ["#ffc100", "#ff6a00"],
-        ["#ffd5ed", "#ffb1df"], 
-        ["#ffe735", "#ffaa0e"], //5
-        ["#fff77a", "#ffe021"],
-        ["#dbfa89", "#bcf61f"],
-        ["#a9eac9", "#2eb146"], 
-        ["#376a00", "#254800"], 
-        ["#84f0ff", "#5feaff"], //10
-        ["#2ea2be", "#113d55"],
-        ["#003d7d", "#001021"],
-        ["#a316e7", "#750edb"],
-        ["#a70075", "#5e0040"], 
-        ["#ee11ee", "#c803c8"], //15
-        ["#5c5c5c", "#423a42"],
-        ["#a3a3a3", "#6f6f6f"]  //17
+        ["#b3b3b3", "#808080"],
+        ["#33b5fb", "#0082c8"],
+        ["#ff4c7e", "#e6194b"],
+        ["#6fe77e", "#3cb44b"],
+        ["#c451e7", "#911eb4"],
+        ["#ffb564", "#f58231"],
+        ["#3333ff", "#0000FF"],
+        ["#ffff4c", "#ffe119"],
+        ["#79ffff", "#46f0f0"],
+        ["#ff65ff", "#f032e6"],
+        ["#ffff6f", "#d2f53c"],
+        ["#fff1f1", "#fabebe"],
+        ["#33b3b3", "#008080"],
+        ["#fff1ff", "#e6beff"],
+        ["#dda15b", "#aa6e28"],
+        ["#b33333", "#800000"],
+        ["#ddfff6", "#aaffc3"],
+        ["#b3b333", "#808000"],
+        ["#ffffe4", "#ffd8b1"],
+        ["#3376bc", "#004389"],
+        ["#da333f", "#a7000c"],
+        ["#33a83f", "#00750c"],
+        ["#8533a8", "#520075"],
+        ["#e97633", "#b64300"],
+        ["#f3d533", "#c0a200"],
+        ["#3ae4e4", "#07b1b1"],
+        ["#e433da", "#b100a7"],
+        ["#c6e933", "#93b600"],
+        ["#eeb2b2", "#bb7f7f"],
+        ["#337474", "#004141"],
+        ["#dab2f3", "#a77fc0"],
+        ["#9e6233", "#6b2f00"],
+        ["#f3eebc", "#c0bb89"],
+        ["#9ef3b7", "#6bc084"],
+        ["#747433", "#414100"],
+        ["#f3cca5", "#c09972"],
+        ["#72f4ff", "#3fc1ff"],
+        ["#ff8bbd", "#ff588a"],
+        ["#aeffbd", "#7bf38a"],
+        ["#ff90ff", "#d05df3"],
+        ["#fff4a3", "#ffc170"],
+        ["#7272ff", "#3f3fff"],
+        ["#ffff8b", "#ffff58"],
+        ["#b8ffff", "#85ffff"],
+        ["#ffa4ff", "#ff71ff"],
+        ["#72f2f2", "#3fbfbf"],
+        ["#ffe09a", "#e9ad67"],
+        ["#f27272", "#bf3f3f"],
+        ["#f2f272", "#bfbf3f"]
       ]
     }
   }

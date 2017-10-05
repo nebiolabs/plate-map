@@ -313,6 +313,7 @@
 .plate-setup-bottom-id {
   width: 40px;
   text-align: center;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.3), transparent)
 }
 
 input.invalid {

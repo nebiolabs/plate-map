@@ -48,15 +48,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
 
-        var colorStops = this.colorPairs[0];
-        if (color < this.colorPairs.length) {
-          colorStops = this.colorPairs[color];
-        }
-        plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         var numberText = this._createElement("<span/>");
         numberText.addClass("plate-setup-color-text");
         numberText.text(color);
         plateIdDiv.append(numberText);
+
+        if (color > 0) {
+          color = ((color - 1) % (this.colorPairs.length -1)) + 1;
+        }
+        var colorStops = this.colorPairs[color];
+
+        plateIdDiv.css("background-color", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
 
         row.append(plateIdDiv);
 
