@@ -58,7 +58,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         var colorStops = this.colorPairs[color];
 
-        plateIdDiv.css("background-color", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
+        plateIdDiv.css("background", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
 
         row.append(plateIdDiv);
 
