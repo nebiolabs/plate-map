@@ -92,7 +92,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             THIS.setTileVisible(tile, false);
           }
 
-          for (var color = 1; color < this.stackPointer; color++) {
+          for (var color = 0; color < this.stackPointer; color++) {
             var arr = this.stackUpWithColor[color];
             if (arr) {
               THIS.addBottomTableRow(color, arr);
