@@ -6,30 +6,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // It create those fields in the tab , there is 4 types of them.
     return {
 
-      _createField: function(field, data, isMultiplex) {
+      _createField: function(field, data) {
         switch (data.type) {
           case "text":
-            this._createTextField(field, data, isMultiplex);
+            this._createTextField(field, data);
             break;
 
           case "numeric":
-            this._createNumericField(field, data, isMultiplex);
+            this._createNumericField(field, data);
             break;
 
           case "select":
-            this._createSelectField(field, data, isMultiplex);
+            this._createSelectField(field, data);
             break;
 
           case "multiselect":
-            this._createMultiSelectField(field, data, isMultiplex);
+            this._createMultiSelectField(field, data);
             break;
 
           case "boolean":
-            this._createBooleanField(field, data, isMultiplex);
+            this._createBooleanField(field, data);
             break;
 
           case "multiplexmultiselect":
-            this._createMultiplexField(field, data, isMultiplex);
+            this._createMultiplexField(field, data);
             break;
         }
       }, 
@@ -209,7 +209,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input; 
       },
 
-      _createMultiSelectField: function(field, data, isMultiplex) {
+      _createMultiSelectField: function(field, data) {
         var id = data.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
@@ -286,15 +286,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = value; 
           if (v && v.length) {
             v = v.map(function (opt) {
-              if (isMultiplex) {
-                // TODO loop through the subfields and make changes
-                return opt;
+              if (opt in optMap) {
+                return optMap[opt].id;
               } else {
-                if (opt in optMap) {
-                  return optMap[opt].id;
-                } else {
-                  throw "Invalid value " + opt + " for multiselect field " + id;
-                }
+                throw "Invalid value " + opt + " for multiselect field " + id;
               }
             }); 
           } else {
@@ -314,34 +309,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setValue = function (v) {
-          if (isMultiplex) {
-            // handling for single select box
-            var singleSelectField = field.singleSelectField;
-            var subFieldData = v;
-
-            // used to keep track of initially loaded multiplex data
-            field.detailData = subFieldData;
-
-            v = v.map(function(val){return val[id]});
-            var singleSelectOpt = v.map(function (i) {return optMap[i];});
-            singleSelectField.setOpts(singleSelectOpt);
-            if (singleSelectOpt.length > 0) {
-              var curId = singleSelectOpt[0].id;
-              var curSubField;
-              singleSelectField.setValue(curId);
-              subFieldData.forEach(function(val){
-                if (val[field.id] === curId) {
-                  curSubField = val;
-                }
-              });
-              // setvalue for subfield
-              field.subFieldList.forEach (function (subField){
-                subField.input.val(curSubField[subField.id]);
-              })
-            }
-          } else {
-            v = v || [];
-          }
+          v = v || [];
           v = v.map(function (i) {return optMap[i];});
           input.select2('data', v);
         };
@@ -369,7 +337,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input;
       },
 
-      _createNumericField: function(field, data, isMultiplex) {
+      _createNumericField: function(field, data) {
         var id = data.id; 
         var that = this; 
         var input = this._createElement("<input>").addClass("plate-setup-tab-input")
@@ -608,9 +576,57 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input;
       },
 
-      _createMultiplexField: function(field, data, multiplex) {
+      _createMultiplexField: function(field, data) {
         // make correct multiplex data
         this._createMultiSelectField(field, data, true);
+
+        // overwrite multiplex set value
+        field.setValue = function (v) {
+          if (v) {
+            // handling for single select box
+            var singleSelectField = field.singleSelectField;
+            var subFieldData = v;
+
+            // used to keep track of initially loaded multiplex data
+            field.detailData = subFieldData;
+
+            v = v.map(function(val){return val[field.id]});
+            var optMap = {};
+            singleSelectField.data.options.forEach(function(val) {
+              optMap[val.id] = val;
+            });
+            var newOptions = v.map(function (i) {return optMap[i];});
+            singleSelectField.setOpts(newOptions);
+            if (newOptions.length > 0) {
+              var curId = newOptions[0].id;
+              var curSubField;
+              singleSelectField.setValue(curId);
+              subFieldData.forEach(function(val){
+                if (val[field.id] === curId) {
+                  curSubField = val;
+                }
+              });
+              // setvalue for subfield
+              field.subFieldList.forEach (function (subField){
+                subField.input.val(curSubField[subField.id]);
+              })
+            }
+            field.input.select2('data', newOptions);
+          }
+        };
+
+        field.parseValue = function (value) {
+          var v = value;
+          if (v && v.length) {
+            v = v.map(function (opt) {
+              return opt;
+            });
+          } else {
+            v = null;
+          }
+          return v;
+        };
+
         field.getMultiplexVal = function () {
           return field.detailData;
         };

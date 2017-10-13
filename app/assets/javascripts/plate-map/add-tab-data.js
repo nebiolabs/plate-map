@@ -163,7 +163,7 @@ function createMultiplexField(autoId, data, that, tabPointer, fieldArray, checkb
     that.fieldList.push(subfield);
     that.fieldMap[subFieldData.id] = subfield;
     //true is a subfield parameter
-    that._createField(subfield, subFieldData, true);
+    that._createField(subfield, subFieldData);
 
     // overwrite subField setvalue
     subfield.onChange = function (that) {
