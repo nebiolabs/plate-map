@@ -87,7 +87,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         if (isMultiplex){
           field.root.find(".plate-setup-tab-field-container-singleSelect").append(input);
-          that.defaultWell.wellData[id] = null;
         } else {
           field.root.find(".plate-setup-tab-field-container").append(input);
           that.defaultWell.wellData[id] = null;
@@ -580,7 +579,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _createMultiplexField: function(field, data) {
         // make correct multiplex data
-        this._createMultiSelectField(field, data, true);
+        this._createMultiSelectField(field, data);
 
         // overwrite multiplex set value
         field.setValue = function (v) {
@@ -644,6 +643,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = field.getValue();
           var curData = field.getMultiplexVal();
           var curIds = [];
+          var curId = null;
           //reshape data for saveback
           if (curData) {
             curIds = curData.map(function(val){return val[field.id]});
@@ -652,6 +652,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var subFieldIds = field.subFieldList.map(function(subField) {return subField.id});
 
           var newMultiplexVal = [];
+          var selectList = [];
           if (v) {
             v.forEach(function(selectedVal) {
               if (curData){
@@ -675,7 +676,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
 
             // make data for single select options
-            var selectList = [];
             v.forEach(function(selectId){
               field.data.options.forEach(function(opt){
                 if (opt.id === selectId ) {
@@ -683,13 +683,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               });
             });
-            field.singleSelectField.setOpts(selectList);
             // set the newest selected to be the current obj
-            var curId = selectList[v.length - 1].id
-            field.singleSelectField.setValue(curId);
+            curId = selectList[v.length - 1].id;
+          }
 
-            // make current selected obj
-            // update subFields
+          field.singleSelectField.setOpts(selectList);
+          field.singleSelectField.setValue(curId);
+          // make current selected obj
+          // update subFields
+          if (newMultiplexVal.length > 0) {
             newMultiplexVal.forEach(function (val) {
               if (curId === val[field.id]) {
                 field.subFieldList.forEach(function(subField){
@@ -698,10 +700,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 })
               }
             });
-
-            field.detailData = newMultiplexVal;
-            return newMultiplexVal;
+          } else {
+            field.subFieldList.forEach(function (subField) {
+              var fieldVal = null;
+              subField.input.val(fieldVal);
+            });
           }
+
+          field.detailData = newMultiplexVal;
+          return newMultiplexVal;
         };
 
         field.getText = function (v) {
