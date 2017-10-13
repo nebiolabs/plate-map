@@ -214,6 +214,20 @@ window.onload = function() {
         if (v < 1) {
           v *= 1000;
           vunit = "uL";
+          amplicons = [{
+            amplicons:"A",
+            template_ngul:1,
+            primer_umolarity: 2,
+            probe_umolarity:3,
+            dilution_factor:4
+          },
+            {
+              amplicons:"B",
+              template_ngul:11,
+              primer_umolarity: 22,
+              probe_umolarity:33,
+              dilution_factor:44
+            }];
         }
         wells[i.toString()] = {
           unitData: {
@@ -222,20 +236,7 @@ window.onload = function() {
           wellData: {
             volume: v,
             pol: pol,
-            amplicons: [{
-              amplicons:"A",
-              template_ngul:1,
-              primer_umolarity: 2,
-              probe_umolarity:3,
-              dilution_factor:4
-            },
-              {
-                amplicons:"B",
-                template_ngul:11,
-                primer_umolarity: 22,
-                probe_umolarity:33,
-                dilution_factor:44
-              }],
+            amplicons: amplicons,
             on_ice: on_ice
           }
         };

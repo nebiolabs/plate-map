@@ -180,6 +180,8 @@ function createMultiplexField(autoId, data, that, tabPointer, fieldArray, checkb
           return curData;
         }
       });
+      //
+      mainRefField.detailData = updatedDataLs;
       that._addData(mainRefField.id, updatedDataLs);
     };
     subfield.setValue = function (v) {};

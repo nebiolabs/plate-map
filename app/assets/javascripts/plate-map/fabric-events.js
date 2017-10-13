@@ -212,17 +212,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _getCommonWell: function (wells) {
         function containsObject(obj, list) {
           var equality = [];
-          list.forEach(function(val) {
-            //evaluate val and obj
-            var evaluate = [];
-            Object.keys(val).forEach(function(listKey){
-              if (Object.keys(obj).indexOf(listKey) >= 0){
-                evaluate.push(val[listKey] === obj[listKey]);
-              }
-            })
-            equality.push(evaluate.indexOf(false) < 0);
-          });
-          return equality.indexOf(true) >= 0;
+          if (list) {
+            list.forEach(function(val) {
+              //evaluate val and obj
+              var evaluate = [];
+              Object.keys(val).forEach(function(listKey){
+                if (Object.keys(obj).indexOf(listKey) >= 0){
+                  evaluate.push(val[listKey] === obj[listKey]);
+                }
+              })
+              equality.push(evaluate.indexOf(false) < 0);
+            });
+            return equality.indexOf(true) >= 0;
+          } else {
+            return false;
+          }
         }
 
         if (wells.length) {
