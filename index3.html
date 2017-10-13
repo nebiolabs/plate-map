@@ -1,0 +1,272 @@
+<html>
+  <head>
+    <link href="app/assets/stylesheets/plate-map/plate-layout.css" media="all" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.css" media="all" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
+    
+    <script>
+      var plateLayOutWidget = plateLayOutWidget || {};
+
+      plateLayOutWidget.assets = function() {
+      return {
+        _assets: {
+          doImg: 'app/assets/images/plate-map/do.png',
+          dontImg: 'app/assets/images/plate-map/dont.png'
+        }
+      };
+      }
+    </script>
+    <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
+    <script src="app/assets/javascripts/plate-map/bottom-table.js"></script>
+    <script src="app/assets/javascripts/plate-map/canvas.js"></script>
+    <script src="app/assets/javascripts/plate-map/check-box.js"></script>
+    <script src="app/assets/javascripts/plate-map/color-manager.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-canvas-elements.js"></script>
+    <script src="app/assets/javascripts/plate-map/create-field.js"></script>
+    <script src="app/assets/javascripts/plate-map/engine.js"></script>
+    <script src="app/assets/javascripts/plate-map/well-area.js"></script>
+    <script src="app/assets/javascripts/plate-map/fabric-events.js"></script>
+    <script src="app/assets/javascripts/plate-map/interface.js"></script>
+    <script src="app/assets/javascripts/plate-map/load-plate.js"></script>
+    <script src="app/assets/javascripts/plate-map/overlay.js"></script>
+    <script src="app/assets/javascripts/plate-map/preset.js"></script>
+    <script src="app/assets/javascripts/plate-map/tabs.js"></script>
+    <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+  </head>
+  <body>
+    <div id="my-plate-layout" class="plate-setup-container">
+      Loading plate layout ... !
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+// Wait for all the script load from the loader.js and fire up
+window.onload = function() {
+
+  var fields = {
+        polymerase: {
+          required: true,
+          id: 'pol',
+          name: 'Polymerase',
+          type: 'select',
+          placeHolder: "Polymerase",
+          options: [
+            {
+              id:   234,
+              text: 'Taq 1, processive enzyme with long name'
+            },
+            {
+              id:   123,
+              text: 'Taq 2'
+            },
+            {
+              id:   3,
+              text: 'Taq 3'
+            },
+            {
+              id:   4,
+              text: 'Taq 4'
+            },
+            {
+              id:   5,
+              text: 'Taq 5'
+            }
+          ]
+        }, 
+        volume: {
+          required: true,
+          id:       'volume',
+          name:     'Volume',
+          type:     'numeric',
+          placeholder: "Volume",
+          units: ["uL", "mL"], 
+          defaultUnit: "uL"
+        },
+        conc: {
+          required: true,
+          id:       'conc',
+          name:     'Concentration',
+          type:     'numeric',
+          placeholder: "Conc.",
+          defaultUnit: "ng/ul (final)"
+        },
+        on_ice: {
+          required: true, 
+          id: "on_ice", 
+          name: "On Ice", 
+          type: "boolean", 
+          placeHolder: "On Ice"
+        }
+    };
+
+  var amplicons_field = {
+    amplicons: {
+      required: false,
+      id: 'amplicons',
+      name: "Amplicons",
+      type: "multiplexmultiselect",
+      placeHolder: "Amplicons",
+      options: [
+        {
+          id: 'A',
+          text: 'Amplicon_A'
+        },
+        {
+          id: 'B',
+          text: 'Amplicon_B'
+        },
+        {
+          id: 'C',
+          text: 'Amplicon_C'
+        },
+        {
+          id: 'D',
+          text: 'Amplicon_D'
+        }
+      ],
+      select_name: 'select a single amplicon',
+      multiplexDiv: 'selectedAmp',
+      //field names that are related to multiplexDIv
+      multiplexFields: {
+        template_ngul: {
+          required: false,
+          id: 'template_ngul',
+          name: 'template conc',
+          type: 'numeric',
+          placeHolder: "template",
+          defaultUnit: 'ng/µL (final)'
+        },
+        primer_umolarity: {
+          required: false,
+          id: 'primer_umolarity',
+          name: 'Primer conc',
+          type: 'numeric',
+          placeHolder: "Primer",
+          defaultUnit: 'uM (final)'
+        },
+        probe_umolarity: {
+          required: false,
+          id: 'probe_umolarity',
+          name: 'Probe conc',
+          type: 'numeric',
+          placeHolder: "Probe",
+          defaultUnit: 'uM (final)'
+        },
+        dilution_factor: {
+          required: false,
+          id: 'dilution_factor',
+          name: 'Dilution factor',
+          type: 'numeric',
+          placeHolder: "Dilution factor",
+          defaultUnit: 'X'
+        }
+      },
+    },
+  };
+
+  var attributes = {
+    presets: [
+      {
+        title: "Pol/Vol", 
+        fields: ["volume", "pol"]
+      },
+      {
+        title: "Vol", 
+        fields: ["volume"]
+      }
+    ],
+    tabs: [
+      {
+        name: "Settings",
+        fields: fields 
+      },
+      {
+        name: "amplicons",
+        fields: amplicons_field
+      }
+    ]
+  }; //attributes
+
+  window.plateData = {};
+
+
+  function makeNewPlate(obj) {
+    var d = $("#my-plate-layout").plateLayOut("getDimensions");
+    var rows = d.rows;
+    var cols = d.cols;
+    var wells = {};
+    for (var r = 0; r < rows; r++) {
+      var volume = 100;
+      var pol = (r < (rows/2)) ? 234 : 123;
+      var on_ice = Boolean(r % 2);
+      for (var c = 0; c < cols; c++) {
+        var i = r*cols + c;
+        var v = volume;
+        var vunit = "mL";
+        if (v < 1) {
+          v *= 1000;
+          vunit = "uL";
+        }
+        wells[i.toString()] = {
+          unitData: {
+            volume:vunit
+          },
+          wellData: {
+            volume: v,
+            pol: pol,
+            amplicons: [{
+              amplicons:"A",
+              template_ngul:1,
+              primer_umolarity: 2,
+              probe_umolarity:3,
+              dilution_factor:4
+            },
+              {
+                amplicons:"B",
+                template_ngul:11,
+                primer_umolarity: 22,
+                probe_umolarity:33,
+                dilution_factor:44
+              }],
+            on_ice: on_ice
+          }
+        };
+        if ((c % 2) > 0) {
+          volume /= 10
+        }
+      }
+    }
+    return {
+      derivative: wells,
+      checkboxes: ["volume", "pol"],
+    };
+  }
+
+  $("#my-plate-layout").plateLayOut({
+    numRows: 8,
+    numCols: 12,
+    imgSrc: "app/assets/images/plate-map",
+    attributes: attributes,
+
+    updateWells: function(event, data) {
+      //data has changed
+      window.plateData = data; 
+      console.log(Object.keys(data.derivative).length + " wells updated"); 
+    }, 
+    created: function (event, data) {
+      console.log("Created");
+    }
+  });
+  window.plateData = makeNewPlate(); 
+  $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
+
+}
+</script>

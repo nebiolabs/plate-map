@@ -6,27 +6,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // It create those fields in the tab , there is 4 types of them.
     return {
 
-      _createField: function(field, data) {
-
+      _createField: function(field, data, isMultiplex) {
         switch (data.type) {
           case "text":
-            this._createTextField(field, data);
+            this._createTextField(field, data, isMultiplex);
             break;
 
           case "numeric":
-            this._createNumericField(field, data);
+            this._createNumericField(field, data, isMultiplex);
             break;
 
           case "select":
-            this._createSelectField(field, data);
+            this._createSelectField(field, data, isMultiplex);
             break;
 
           case "multiselect":
-            this._createMultiSelectField(field, data);
+            this._createMultiSelectField(field, data, isMultiplex);
             break;
 
           case "boolean":
-            this._createBooleanField(field, data);
+            this._createBooleanField(field, data, isMultiplex);
+            break;
+
+          case "multiplexmultiselect":
+            this._createMultiplexField(field, data, isMultiplex);
             break;
         }
       }, 
@@ -66,7 +69,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return ""; 
           }
           return v; 
-        }; 
+        };
 
         input.on("input", function(e, generated) {
           var v = field.getValue();
@@ -76,15 +79,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input; 
       },
 
-      _createSelectField: function(field, data) {
+      _createSelectField: function(field, data, isMultiplex) {
         var id = data.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
 
-        field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
-
+        if (isMultiplex){
+          field.root.find(".plate-setup-tab-field-container-singleSelect").append(input);
+          that.defaultWell.wellData[id] = null;
+        } else {
+          field.root.find(".plate-setup-tab-field-container").append(input);
+          that.defaultWell.wellData[id] = null;
+        }
         var opts = {
           allowClear: true, 
           placeholder: "select", 
@@ -126,7 +133,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
         input.select2(opts); 
 
         field.parseValue = function (value) {
-          var v = value; 
+          var v = value;
+
+          if (isMultiplex) {
+            v = v.map(function(val) {
+              return val[field.id];
+            });
+
+            if (v.length > 0) {
+              v = v[0];
+            } else {
+              v = "";
+            }
+          }
+
           if (v == "") {
             v = null; 
           }
@@ -152,6 +172,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           input.select2('data', v); 
         };
 
+        field.setOpts = function (v) {
+          var newOpts = [];
+          input.data('optionMap', {});
+          if (v) {
+            input.select2('data',{});
+            v.forEach(function (opt) {
+              newOpts.push(optMap[opt.id]);
+              //input.select2('data', opt);
+            });
+
+            opts.data = newOpts;
+            input.select2(opts);
+            //input.select2('data', newOpts);
+          }
+        };
+
         field.getText = function (v) {
           if (v == null) {
             return ""; 
@@ -160,14 +196,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }; 
 
         input.on("change", function(e, generated) {
-          var v = field.getValue(); 
-          that._addData(e.target.id, v);
+          if (field.onChange){
+            field.onChange();
+          } else {
+            var v = field.getValue();
+            that._addData(e.target.id, v);
+          }
+
+
         });
 
         field.input = input; 
       },
 
-      _createMultiSelectField: function(field, data) {
+      _createMultiSelectField: function(field, data, isMultiplex) {
         var id = data.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
@@ -183,7 +225,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           allowClear: true, 
           placeholder: "select", 
           minimumResultsForSearch: 10
-        }; 
+        };
 
         var optMap = {}; 
         if (data.options) {
@@ -238,16 +280,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }; 
         }
 
-        input.select2(opts); 
+        input.select2(opts);
 
         field.parseValue = function (value) {
           var v = value; 
           if (v && v.length) {
-            v = v.map(function (opt_id) {
-              if (opt_id in optMap) {
-                return optMap[opt_id].id;
+            v = v.map(function (opt) {
+              if (isMultiplex) {
+                // TODO loop through the subfields and make changes
+                return opt;
               } else {
-                throw "Invalid value " + opt_id + " for multiselect field " + id; 
+                if (opt in optMap) {
+                  return optMap[opt].id;
+                } else {
+                  throw "Invalid value " + opt + " for multiselect field " + id;
+                }
               }
             }); 
           } else {
@@ -260,14 +307,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = input.select2('data');
           if (v.length) {
             return v.map(function (i) {
-              return i.id; 
+              return i.id;
             });
           }
-          return null; 
-        }; 
+          return null;
+        };
 
         field.setValue = function (v) {
-          v = v || []; 
+          if (isMultiplex) {
+            // handling for single select box
+            var singleSelectField = field.singleSelectField;
+            var subFieldData = v;
+
+            // used to keep track of initially loaded multiplex data
+            field.detailData = subFieldData;
+
+            v = v.map(function(val){return val[id]});
+            var singleSelectOpt = v.map(function (i) {return optMap[i];});
+            singleSelectField.setOpts(singleSelectOpt);
+            if (singleSelectOpt.length > 0) {
+              var curId = singleSelectOpt[0].id;
+              var curSubField;
+              singleSelectField.setValue(curId);
+              subFieldData.forEach(function(val){
+                if (val[field.id] === curId) {
+                  curSubField = val;
+                }
+              });
+              // setvalue for subfield
+              field.subFieldList.forEach (function (subField){
+                subField.input.val(curSubField[subField.id]);
+              })
+            }
+          } else {
+            v = v || [];
+          }
           v = v.map(function (i) {return optMap[i];});
           input.select2('data', v);
         };
@@ -280,17 +354,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return v.map(function (v) {return optMap[v].text}).join("; "); 
           }
           return ""; 
-         }; 
+         };
 
         input.on("change", function(e, generated) {
-          var v = field.getValue(); 
+          var v;
+          if (field.onchange) {
+            v = field.onchange(that);
+          } else {
+            v = field.getValue();
+          }
           that._addData(id, v);
         });
 
         field.input = input;
       },
 
-      _createNumericField: function(field, data) {
+      _createNumericField: function(field, data, isMultiplex) {
         var id = data.id; 
         var that = this; 
         var input = this._createElement("<input>").addClass("plate-setup-tab-input")
@@ -376,7 +455,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = Number(v); 
           }
           return v; 
-        }; 
+        };
 
         field.setValue = function (v) {
           input.val(v); 
@@ -428,14 +507,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }; 
 
         var changeHandler = function (e) {
-          var v = field.getValue(); 
-          if (isNaN(v)) {
-            //flag field as invalid
-            input.addClass("invalid"); 
+          if (field.onChange){
+            field.onChange(that);
           } else {
-            input.removeClass("invalid"); 
-            var u = field.getUnit();
-            that._addData(id, v, u); 
+            var v = field.getValue();
+            if (isNaN(v)) {
+              //flag field as invalid
+              input.addClass("invalid");
+            } else {
+              input.removeClass("invalid");
+              var u = field.getUnit();
+              that._addData(id, v, u);
+            }
           }
         }; 
 
@@ -518,13 +601,107 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         input.on("change", function(e) {
-          var v = field.getValue(); 
+          var v = field.getValue();
           that._addData(id, v);
         });
 
         field.input = input;
       },
 
+      _createMultiplexField: function(field, data, multiplex) {
+        // make correct multiplex data
+        this._createMultiSelectField(field, data, true);
+        field.getMultiplexVal = function () {
+          return field.detailData;
+        };
+        field.onchange = function (){
+          var v = field.getValue();
+          var curData = field.getMultiplexVal();
+
+          //reshape data for saveback
+          var curIds = curData.map(function(val){return val[field.id]});
+
+          var subFieldIds = field.subFieldList.map(function(subField) {return subField.id});
+
+          var newMultiplexVal = [];
+          if (v) {
+            v.forEach(function(selectedVal) {
+              curData.forEach(function(val) {
+                if (val[field.id] === selectedVal) {
+                  newMultiplexVal.push(val)
+                }
+              });
+
+              // cases when adding new data
+              if (curIds.indexOf(selectedVal) < 0) {
+                var newVal = {};
+                newVal[field.id] = selectedVal;
+                subFieldIds.forEach(function(fieldId) {
+                  newVal[fieldId] = null;
+                });
+                newMultiplexVal.push(newVal);
+              }
+
+            });
+
+            // make data for single select options
+            var selectList = [];
+            v.forEach(function(selectId){
+              field.data.options.forEach(function(opt){
+                if (opt.id === selectId ) {
+                  selectList.push(opt);
+                }
+              });
+            });
+            field.singleSelectField.setOpts(selectList);
+            // set the newest selected to be the current obj
+            var curId = selectList[v.length - 1].id
+            field.singleSelectField.setValue(curId);
+
+            // make current selected obj
+            // update subFields
+            newMultiplexVal.forEach(function (val) {
+              if (curId === val[field.id]) {
+                field.subFieldList.forEach(function(subField){
+                  var fieldVal = val[subField.id];
+                  subField.input.val(fieldVal);
+                })
+              }
+            });
+
+            field.detailData = newMultiplexVal;
+            return newMultiplexVal;
+          }
+        };
+        field.getText = function (v) {
+          if (v === null) {
+            return "";
+          }
+          var vCopy = Object.create(v);
+          if (vCopy.length > 0) {
+            return vCopy.map(function (vId) {
+              vId[field.id] = vId[field.id];
+              return JSON.stringify(vId)
+            }).join("; ");
+          }
+          return "";
+        };
+        // create single select field and handle on change evaluation
+        this._createSelectField(field.singleSelectField, field.singleSelectData, true);
+        field.singleSelectField.onChange = function(){
+          var v = field.singleSelectField.getValue();
+          var curData = field.getMultiplexVal();
+          curData.forEach(function (val) {
+            if (v === val[field.id]) {
+              field.subFieldList.forEach(function(subField){
+                var fieldVal = val[subField.id];
+                subField.input.val(fieldVal);
+              })
+            }
+          });
+        };
+
+      }
     };
   }
 })(jQuery, fabric);
