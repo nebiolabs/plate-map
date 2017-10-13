@@ -210,6 +210,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       _getCommonWell: function (wells) {
+        function containsObject(obj, list) {
+          var equality = [];
+          list.forEach(function(val) {
+            //evaluate val and obj
+            var evaluate = [];
+            Object.keys(val).forEach(function(listKey){
+              if (Object.keys(obj).indexOf(listKey) >= 0){
+                evaluate.push(val[listKey] === obj[listKey]);
+              }
+            })
+            equality.push(evaluate.indexOf(false) < 0);
+          });
+          return equality.indexOf(true) >= 0;
+        }
+
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell.wellData);
@@ -223,9 +238,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var refArr = referenceFields[field]; 
                 var agrArr = []; 
                 for (var j = 0; j < refArr.length; j++) {
-                  var v = refArr[j]; 
-                  if ($.inArray(v, fields[field]) >= 0) {
-                    agrArr.push(v); 
+                  var v = refArr[j];
+                  // for multiplex field
+                  if (typeof(refArr[j]) ==="object"){
+                    if (containsObject(v, fields[field])) {
+                      agrArr.push(v);
+                    }
+                  } else {
+                    if ($.inArray(v, fields[field]) >= 0) {
+                      agrArr.push(v);
+                    }
                   }
                 }
                 referenceFields[field] = agrArr; 
