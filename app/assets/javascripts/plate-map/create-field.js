@@ -28,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             this._createBooleanField(field, data);
             break;
 
-          case "multiplexmultiselect":
+          case "multiplex":
             this._createMultiplexField(field, data);
             break;
         }

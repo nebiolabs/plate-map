@@ -33,7 +33,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
 
               var field_val;
-              if (data.type === "multiplexmultiselect") {
+              if (data.type === "multiplex") {
                 field_val = that._makeMultiplexField(data, tabPointer, fieldArray);
               } else {
                 field_val = that._makeRegularField(data, tabPointer, fieldArray, true);
@@ -141,7 +141,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivRightSide);
 
         // single select
-        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text(data.select_name);
+        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text(data.selectName);
         var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
         $(wrapperDivRightSide).append(nameContainer1);
         $(wrapperDivRightSide).append(fieldContainer1);
@@ -152,7 +152,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var singleSelectData = {
           id: data.multiplexDiv,
-          name: data.select_name,
+          name: data.selectName,
           type: 'select',
           multiplexId: data.id,
           options: data.options
