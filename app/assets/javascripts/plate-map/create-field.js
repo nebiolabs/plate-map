@@ -72,8 +72,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         input.on("input", function(e, generated) {
-          var v = field.getValue();
-          that._addData(field.id, v); 
+          field.onChange();
         });
 
         field.input = input; 
@@ -197,14 +196,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }; 
 
         input.on("change", function(e, generated) {
-          if (field.onChange){
-            field.onChange();
-          } else {
-            var v = field.getValue();
-            that._addData(e.target.id, v);
-          }
-
-
+          field.onChange();
         });
 
         field.input = input; 
@@ -326,13 +318,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
          };
 
         input.on("change", function(e, generated) {
-          var v;
-          if (field.onchange) {
-            v = field.onchange(that);
-          } else {
-            v = field.getValue();
-          }
-          that._addData(id, v);
+          field.onChange();
         });
 
         field.input = input;
@@ -414,12 +400,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             throw "Invalid value " + value + " for numeric field " + id; 
           }
           return v; 
-        }; 
+        };
 
         field.getValue = function () {
           var v = input.val().trim();
           if (v == "") {
-            v = null; 
+            v = null;
           } else {
             v = Number(v); 
           }
@@ -475,28 +461,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v; 
         }; 
 
-        var changeHandler = function (e) {
-          if (field.onChange){
-            field.onChange(that);
+        input.on("input", function () {
+          var v = field.getValue();
+          if (isNaN(v)) {
+            //flag field as invalid
+            input.addClass("invalid");
           } else {
-            var v = field.getValue();
-            if (isNaN(v)) {
-              //flag field as invalid
-              input.addClass("invalid");
-            } else {
-              input.removeClass("invalid");
-              var u = field.getUnit();
-              that._addData(id, v, u);
-            }
+            input.removeClass("invalid");
           }
-        }; 
-
-        input.on("input", changeHandler);
+          field.onChange();
+        });
         if (unitInput) {
-          unitInput.on("change", changeHandler);
+          unitInput.on("change", function () {
+            field.onChange();
+          });
         }
 
         field.input = input;
+        field.unitInput = unitInput;
       },
 
       _createBooleanField: function(field, data) {
@@ -570,8 +552,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         input.on("change", function(e) {
-          var v = field.getValue();
-          that._addData(id, v);
+          field.onChange();
         });
 
         field.input = input;
@@ -598,6 +579,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var newOptions = v.map(function (i) {return optMap[i];});
             singleSelectField.setOpts(newOptions);
             if (newOptions.length > 0) {
+              singleSelectField.input.prop("disabled", false);
               var curId = newOptions[0].id;
               var curSubField;
               singleSelectField.setValue(curId);
@@ -608,6 +590,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               });
               // setvalue for subfield
               field.subFieldList.forEach (function (subField){
+                subField.input.prop("disabled", false);
                 subField.input.val(curSubField[subField.id]);
               })
             }
@@ -616,8 +599,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // when value is null
             field.input.select2('data', []);
             singleSelectField.setOpts([]);
+            singleSelectField.input.prop("disabled", true);
             // set subfield to null
             field.subFieldList.forEach (function (subField){
+              subField.input.prop("disabled", true);
               subField.input.val(null);
             })
           }
@@ -639,7 +624,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return field.detailData;
         };
 
-        field.onchange = function (){
+        field.onChange = function (){
           var v = field.getValue();
           var curData = field.getMultiplexVal();
           var curIds = [];
@@ -692,17 +677,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // make current selected obj
           // update subFields
           if (newMultiplexVal.length > 0) {
+            field.singleSelectField.input.prop("disabled", false);
             newMultiplexVal.forEach(function (val) {
               if (curId === val[field.id]) {
                 field.subFieldList.forEach(function(subField){
+                  subField.input.prop("disabled", false);
                   var fieldVal = val[subField.id];
                   subField.input.val(fieldVal);
                 })
               }
             });
           } else {
+            field.singleSelectField.input.prop("disabled", true);
             field.subFieldList.forEach(function (subField) {
               var fieldVal = null;
+              subField.input.prop("disabled", true);
               subField.input.val(fieldVal);
             });
           }
