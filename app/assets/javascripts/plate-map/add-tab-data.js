@@ -220,7 +220,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             mainRefField.detailData = updatedDataLs;
             that._addData(mainRefField.id, updatedDataLs);
           };
-          subfield.setValue = function (v) {};
+          subfield.setValue = function (v) {
+            var selectedId = subfield.mainMultiplexField.singleSelectField.getValue();
+            var multiselectField = subfield.mainMultiplexField;
+            if (multiselectField.detailData && multiselectField.detailData.length === 0) {
+                subfield.input.val(null);
+                multiselectField.singleSelectField.input.prop("disabled", true);
+                subfield.input.prop("disabled", true);
+
+            }
+          };
           subfield.setMultiplexValue = function (v) {
             subfield.input.val(v);
           };
