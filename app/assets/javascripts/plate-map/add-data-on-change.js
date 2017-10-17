@@ -7,41 +7,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
     return {
 
       _addData: function(id, v, u) {
-        // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex]; 
-            var well; 
-            if (v == null) {
-              if (tile.index in this.engine.derivative) {
-                well = this.engine.derivative[tile.index];
-                well.wellData[id] = null;
-                if (id in well.unitData) {
-                  well.unitData[id] = this.defaultWell.unitData[id]; 
-                }
-                
-                var empty = this.engine.wellEmpty(well); 
-                if (empty) {
-                  delete this.engine.derivative[tile.index];
-                }
-              }
-            } else {
-              if (tile.index in this.engine.derivative) {
-                well = this.engine.derivative[tile.index];
-              } else {
-                well = $.extend(true, {}, this.defaultWell); 
-                this.engine.derivative[tile.index] = well; 
-              }
-              well.wellData[id] = v; 
-              if (id in well.unitData) {
-                well.unitData[id] = u || this.defaultWell.unitData[id]; 
-              }
-            }
-          }
-
-          this._colorMixer();
+        var data = {
+          wellData: {}, 
+          unitData: {}
         }
+        data.wellData[id] = v; 
+        data.unitData[id] = u; 
+        this._addAllData(data); 
       },
 
       _addAllData: function(data) {
@@ -57,9 +29,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.engine.derivative[tile.index] = well; 
             }
             for (var id in data.wellData) {
-              var v = data.wellData[id];
+              var v = JSON.parse(JSON.stringify(data.wellData[id]));
               well.wellData[id] = v; 
-              if (id in data.unitData) {
+              if (id in well.unitData) {
                 var u = data.unitData[id];
                 well.unitData[id] = u || this.defaultWell.unitData[id]; 
               }

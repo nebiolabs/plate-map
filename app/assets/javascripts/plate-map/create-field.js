@@ -559,6 +559,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _createMultiplexField: function(field, data) {
+        var that = this; 
         // make correct multiplex data
         this._createMultiSelectField(field, data);
 
@@ -697,7 +698,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           field.detailData = newMultiplexVal;
-          return newMultiplexVal;
+          that._addData(field.id, newMultiplexVal);
         };
 
         field.getText = function (v) {
