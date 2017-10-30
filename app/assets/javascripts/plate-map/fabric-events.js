@@ -254,7 +254,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     }
                   }
                 }
-                referenceFields[field] = agrArr; 
+                referenceFields[field] = agrArr;
               } else {
                 if (referenceFields[field] != fields[field] || referenceUnits[field] != units[field]) {
                   referenceFields[field] = null; 
@@ -270,6 +270,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
               referenceUnits[field] = this.defaultWell.unitData[field];
             }
           }
+
+          // clean up referenceUnits
+          for (var fieldName in referenceUnits) {
+            if (Object.keys(referenceFields).indexOf(fieldName) < 0) {
+              delete referenceUnits[fieldName];
+            }
+          }
+
           return {
             wellData: referenceFields, 
             unitData: referenceUnits
