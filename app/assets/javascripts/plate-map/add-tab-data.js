@@ -78,7 +78,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       };
 
       fieldArray.push(field);
-      that.fieldList.push(field);
       that.fieldMap[data.id] = field;
 
       return field;
@@ -197,7 +196,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var subFieldData = subfield.data;
 
           fieldArray.push(subfield);
-          that.fieldList.push(subfield);
           that.fieldMap[subFieldData.id] = subfield;
           that._createField(subfield, subFieldData);
 
