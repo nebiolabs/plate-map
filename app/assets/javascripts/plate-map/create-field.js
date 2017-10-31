@@ -355,7 +355,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.units = units; 
           field.hasUnits = true; 
           field.defaultUnit = defaultUnit; 
-          that.defaultWell.unitData[id] = defaultUnit;
+          //that.defaultWell.unitData[id] = defaultUnit;
           if (units.length == 1) {
             var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
             unitText.text(defaultUnit);
@@ -399,7 +399,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (isNaN(v)) {
             throw "Invalid value " + value + " for numeric field " + id; 
           }
-          return v; 
+          if (field.parseUnit(field.getUnit())){
+            return {
+              value: v,
+              unit: field.parseUnit(field.getUnit())
+            };
+          } else {
+            return v;
+          }
         };
 
         field.getValue = function () {
@@ -413,12 +420,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setValue = function (v) {
+          if (typeof(v) === 'object' && v != null) {
+            input.val(v.value);
+            field.setUnit(v.unit);
+          } else {
+            field.setRegularValue(v);
+          }
+        };
+
+        field.setRegularValue = function (v) {
           input.val(v); 
         };
 
         field.parseUnit = function (unit) {
-          if (unit == null) {
-            return defaultUnit; 
+          if (unit == null || unit === "") {
+            return defaultUnit;
           }
           for (var i = 0; i < units.length; i++) {
             if (unit.toLowerCase() == units[i].toLowerCase()) {
@@ -447,18 +463,33 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
-        field.getText = function (v, u) {
+        // val now contains unit
+        field.getText = function (val) {
+          if (typeof(val) === 'object') {
+            var v = val.value;
+            var u = val.unit;
+            if (v == null) {
+              return "";
+            }
+            v = v.toString();
+            if (!u) {
+              u = defaultUnit;
+            }
+            if (u) {
+              v = v + " " + u;
+            }
+            return v;
+          } else {
+            return field.getRegularText(val);
+          }
+        };
+
+        field.getRegularText = function (v) {
           if (v == null) {
-            return ""; 
+            return "";
           }
-          v = v.toString(); 
-          if (!u) {
-            u = defaultUnit; 
-          }
-          if (u) {
-            v = v + " " + u; 
-          }
-          return v; 
+          v = v.toString();
+          return v;
         }; 
 
         input.on("input", function () {
@@ -568,7 +599,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var singleSelectField = field.singleSelectField;
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
-          if (v) {
+          // v[0] is used to filter out cases when v is empty array
+          if (v && v[0]) {
             // handling for single select box
             var subFieldData = v;
 
@@ -592,7 +624,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               // setvalue for subfield
               field.subFieldList.forEach (function (subField){
                 subField.input.prop("disabled", false);
-                subField.input.val(curSubField[subField.id]);
+                subField.setSubFieldValue(curSubField[subField.id]);
               })
             }
             field.input.select2('data', newOptions);
@@ -604,7 +636,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // set subfield to null
             field.subFieldList.forEach (function (subField){
               subField.input.prop("disabled", true);
-              subField.input.val(null);
+              subField.setSubFieldValue(null);
             })
           }
         };
@@ -613,8 +645,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = value;
           if (v && v.length) {
             v = v.map(function (opt) {
-              return opt;
+              var valMap = {};
+              valMap[field.id] = opt[field.id];
+              for (var subFieldId in opt) {
+                field.subFieldList.forEach(function (subField){
+                  if (subField.id === subFieldId) {
+                    valMap[subField.id] = subField.parseValue(opt[subFieldId]);
+                  }
+                });
+              }
+              return valMap;
             });
+
           } else {
             v = null;
           }
@@ -684,7 +726,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 field.subFieldList.forEach(function(subField){
                   subField.input.prop("disabled", false);
                   var fieldVal = val[subField.id];
-                  subField.input.val(fieldVal);
+                  subField.setSubFieldValue(fieldVal);
                 })
               }
             });
@@ -693,7 +735,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             field.subFieldList.forEach(function (subField) {
               var fieldVal = null;
               subField.input.prop("disabled", true);
-              subField.input.val(fieldVal);
+              subField.setSubFieldValue(fieldVal);
             });
           }
 
@@ -723,7 +765,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if (v === val[field.id]) {
               field.subFieldList.forEach(function(subField){
                 var fieldVal = val[subField.id];
-                subField.input.val(fieldVal);
+                subField.setSubFieldValue(fieldVal);
               })
             }
           });

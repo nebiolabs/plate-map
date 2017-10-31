@@ -228,6 +228,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             }
           };
+
+          subfield.setSubFieldValue = function (v) {
+            if (typeof(v) === 'object' && v != null) {
+              this.input.val(v.value);
+              subfield.setUnit(v.unit);
+            } else {
+              subfield.setRegularValue(v);
+            }
+          };
+
           subfield.setMultiplexValue = function (v) {
             subfield.input.val(v);
           };

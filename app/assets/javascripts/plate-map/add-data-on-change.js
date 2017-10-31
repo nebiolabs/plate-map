@@ -31,10 +31,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var id in data.wellData) {
               var v = JSON.parse(JSON.stringify(data.wellData[id]));
               well.wellData[id] = v; 
+              /*
               if (id in well.unitData) {
                 var u = data.unitData[id];
                 well.unitData[id] = u || this.defaultWell.unitData[id]; 
               }
+              */
             }
             var empty = this.engine.wellEmpty(well); 
             if (empty) {

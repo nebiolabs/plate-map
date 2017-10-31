@@ -141,8 +141,7 @@ window.onload = function() {
           id: 'template_ngul',
           name: 'template conc',
           type: 'numeric',
-          placeHolder: "template",
-          defaultUnit: 'ng/µL (final)'
+          placeHolder: "template"
         },
         primer_umolarity: {
           required: false,
@@ -150,6 +149,7 @@ window.onload = function() {
           name: 'Primer conc',
           type: 'numeric',
           placeHolder: "Primer",
+          units: ['uM (final)', "unit1"],
           defaultUnit: 'uM (final)'
         },
         probe_umolarity: {
@@ -211,23 +211,23 @@ window.onload = function() {
         var i = r*cols + c;
         var v = volume;
         var vunit = "mL";
+        var amplicons = [{
+          amplicons:"A",
+          template_ngul:1,
+          primer_umolarity: 2,
+          probe_umolarity:3,
+          dilution_factor:4
+        },
+          {
+            amplicons:"B",
+            template_ngul:11,
+            primer_umolarity: 22,
+            probe_umolarity:33,
+            dilution_factor:44
+          }];
         if (v < 1) {
           v *= 1000;
           vunit = "uL";
-          amplicons = [{
-            amplicons:"A",
-            template_ngul:1,
-            primer_umolarity: 2,
-            probe_umolarity:3,
-            dilution_factor:4
-          },
-            {
-              amplicons:"B",
-              template_ngul:11,
-              primer_umolarity: 22,
-              probe_umolarity:33,
-              dilution_factor:44
-            }];
         }
         wells[i.toString()] = {
           unitData: {
