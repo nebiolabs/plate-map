@@ -8,10 +8,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       globalSelectedAttributes: [],
 
-      _addCheckBox: function(field, data) {
+      _addCheckBox: function(field) {
         var checkImage = $("<img>").attr("src", this._assets.dontImg).addClass("plate-setup-tab-check-box")
           .data("clicked", false); 
-        checkImage.data("linkedFieldId", data.id);
+        checkImage.data("linkedFieldId", field.id);
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
         field.checkbox = checkImage;

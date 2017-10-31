@@ -59,7 +59,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
       var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
       var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-      var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
+      var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
       var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
       var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
 
@@ -74,7 +74,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         name: data.name,
         root: wrapperDiv,
         data: data,
-        required: data.required
+        required: data.required || false
       };
 
       fieldArray.push(field);
@@ -106,13 +106,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[data.id] = field;
+        that.fieldMap[field.id] = field;
 
         // Adding checkbox
         if (checkbox) {
-          that._addCheckBox(field, data);
+          that._addCheckBox(field);
         }
-        that._createField(field, data);
+        that._createField(field);
 
         field.onChange = function () {
           var v = field.getValue();
@@ -150,7 +150,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var singleSelectData = {
           id: data.multiplexDiv,
-          name: data.selectName,
+          name: data.selectName || "Select",
           type: 'select',
           multiplexId: data.id,
           options: data.options
@@ -171,7 +171,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           data: data,
           required: data.required,
           singleSelectField: singleSelectField,
-          singleSelectData: singleSelectData
         };
 
         fieldArray.push(field);
@@ -187,15 +186,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         field.subFieldList = subFieldList;
 
-        that._createField(field, data);
-        that._addCheckBox(field, data);
+        that._createField(field);
+        that._addCheckBox(field);
 
         subFieldList.forEach(function (subfield) {
           subfield.mainMultiplexField = field;
-          var subFieldData = subfield.data;
-
           fieldArray.push(subfield);
-          that._createField(subfield, subFieldData);
+          that._createField(subfield);
           delete that.defaultWell.wellData[subfield.id];
 
           // overwrite subField setvalue
@@ -230,7 +227,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           subfield.setMultiplexValue = function (v) {
             subfield.input.val(v);
           };
-          // that._addCheckBox(subfield, subFieldData);
+          // that._addCheckBox(subfield);
         });
 
         field.getValue = function(){

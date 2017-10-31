@@ -6,36 +6,36 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // It create those fields in the tab , there is 4 types of them.
     return {
 
-      _createField: function(field, data) {
-        switch (data.type) {
+      _createField: function(field) {
+        switch (field.data.type) {
           case "text":
-            this._createTextField(field, data);
+            this._createTextField(field);
             break;
 
           case "numeric":
-            this._createNumericField(field, data);
+            this._createNumericField(field);
             break;
 
           case "select":
-            this._createSelectField(field, data);
+            this._createSelectField(field);
             break;
 
           case "multiselect":
-            this._createMultiSelectField(field, data);
+            this._createMultiSelectField(field);
             break;
 
           case "boolean":
-            this._createBooleanField(field, data);
+            this._createBooleanField(field);
             break;
 
           case "multiplex":
-            this._createMultiplexField(field, data);
+            this._createMultiplexField(field);
             break;
         }
       }, 
 
-      _createTextField: function(field, data) {
-        var id = data.id; 
+      _createTextField: function(field) {
+        var id = field.id; 
         var that = this; 
         var input = this._createElement("<input>").attr("id", id)
           .addClass("plate-setup-tab-input");
@@ -78,8 +78,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input; 
       },
 
-      _createSelectField: function(field, data, isMultiplex) {
-        var id = data.id; 
+      _createOpts: function (config) {
+        var opts = {
+          allowClear: true, 
+          placeholder: "select", 
+          minimumResultsForSearch: 10
+        }; 
+
+        if (config.options) {
+          opts.data = config.options; 
+        } else if (config.query) {
+          var query = config.query; 
+          if (config.delay) {
+            query = this._debounce(config.delay, query); 
+          }
+          opts.query = query; 
+        } else {
+          throw "Must specify data or query";
+        }
+        return opts; 
+      },
+
+      _createSelectField: function(field, isMultiplex) {
+        var id = field.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
@@ -90,44 +111,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.root.find(".plate-setup-tab-field-container").append(input);
           that.defaultWell.wellData[id] = null;
         }
-        var opts = {
-          allowClear: true, 
-          placeholder: "select", 
-          minimumResultsForSearch: 10
-        }; 
-
-        if (data.options) {
-          //use data options
-          var optMap = {}; 
-          data.options.forEach(function (opt) {
-            optMap[opt.id] = opt;
-          })
-          input.data("optionMap", optMap); 
-          opts.data = data.options; 
-          opts.initSelection = function (element, callback) {
-            var data = element.val(); 
-            data = optMap[data];
-            callback(data);
-          };
-        } else if (data.query) {
-          var query = data.query; 
-          if (data.delay) {
-            query = this._debounce(data.delay, query);
-          }
-          //TODO initSelection must set values, 
-          // but only have ids not text available. 
-          opts.query = query; 
-        } else {
-          //Tagging style
-          opts.tags = data.tags || []; 
-          opts.initSelection = function (element, callback) {
-            var data = element.val(); 
-            var opt = {id: data, text:data};
-            optMap[opt.id] = opt; 
-            callback(opt);
-          }; 
-        }
-
+        var opts = that._createOpts(field.data); 
+        var optMap = {}; 
+        opts.data.forEach(function (opt) {
+          optMap[opt.id] = opt; 
+        });
         input.select2(opts); 
 
         field.parseValue = function (value) {
@@ -171,21 +159,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setOpts = function (v) {
-          var newOpts = [];
-          input.data('optionMap', {});
-          if (v) {
-            input.select2('data',{});
-            v.forEach(function (opt) {
-              newOpts.push(optMap[opt.id]);
-              //input.select2('data', opt);
-            });
-
-            opts.data = newOpts;
-            input.select2(opts);
-            //input.select2('data', newOpts);
-          } else {
-            input.select2();
-          }
+          input.select2('data',{});
+          opts.data = v || []; 
+          input.select2(opts); 
         };
 
         field.getText = function (v) {
@@ -202,8 +178,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input; 
       },
 
-      _createMultiSelectField: function(field, data) {
-        var id = data.id; 
+      _createMultiSelectField: function(field) {
+        var id = field.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-multiselect-field");
@@ -213,67 +189,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         that.defaultWell.wellData[id] = null;
 
         var separator = ",";
-        var opts = {
-          multiple: true,
-          allowClear: true, 
-          placeholder: "select", 
-          minimumResultsForSearch: 10
-        };
-
+        var opts = that._createOpts(field.data);
+        opts.multiple = true; 
         var optMap = {}; 
-        if (data.options) {
-          //use data options
-          data.options.forEach(function (opt) {
-            optMap[opt.id] = opt;
-          })
-          input.data("optionMap", optMap); 
-          opts.data = data.options; 
-          opts.initSelection = function (element, callback) {
-            var data = element.val(); 
-            if (data == "") {
-              dat = []; 
-            } else {
-              data = data.split(separator).map(function (k) {
-                return optMap[k];
-              })
-            }
-            callback(data);
-          };
-        } else if (data.query) {
-          var query = data.query; 
-          if (data.delay) {
-            query = this._debounce(data.delay, query);
-          }
-          //TODO initSelection must set values, 
-          // but only have ids not text available. 
-          opts.query = function (data, callback) {
-            Promise.resolve(query.apply(data)).then(function (results) {
-              for (var i = 0; i < results.length; i++) {
-                var opt = results[i]; 
-                optMap[opt.id] = opt; 
-              }
-              callback(results); 
-            });
-          }; 
-        } else {
-          //Tagging style
-          opts.tags = data.tags || []; 
-          opts.initSelection = function (element, callback) {
-            var data = element.val(); 
-            if (data == "") {
-              dat = []; 
-            } else {
-              data = data.split(separator).map(function (k) {
-                var opt = {id: data, text:data};
-                optMap[opt.id] = opt; 
-                return opt;
-              }); 
-            }
-            callback(data);
-          }; 
-        }
-
-        input.select2(opts);
+        opts.data.forEach(function (opt) {
+          optMap[opt.id] = opt; 
+        });
+        input.select2(opts); 
 
         field.parseValue = function (value) {
           var v = value; 
@@ -324,8 +246,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input;
       },
 
-      _createNumericField: function(field, data) {
-        var id = data.id; 
+      _createNumericField: function(field) {
+        var id = field.id; 
+        var data = field.data; 
         var that = this; 
         var input = this._createElement("<input>").addClass("plate-setup-tab-input")
           .attr("placeholder", data.placeholder || "").attr("id", id);
@@ -481,8 +404,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.unitInput = unitInput;
       },
 
-      _createBooleanField: function(field, data) {
-        var id = data.id; 
+      _createBooleanField: function(field) {
+        var id = field.id; 
         var that = this; 
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
@@ -558,10 +481,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.input = input;
       },
 
-      _createMultiplexField: function(field, data) {
+      _createMultiplexField: function(field) {
         var that = this; 
         // make correct multiplex data
-        this._createMultiSelectField(field, data);
+        this._createMultiSelectField(field);
 
         // overwrite multiplex set value
         field.setValue = function (v) {
@@ -715,7 +638,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return "";
         };
         // create single select field and handle on change evaluation
-        this._createSelectField(field.singleSelectField, field.singleSelectData, true);
+        this._createSelectField(field.singleSelectField, true);
         field.singleSelectField.onChange = function(){
           var v = field.singleSelectField.getValue();
           var curData = field.getMultiplexVal();
