@@ -194,7 +194,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           fieldArray.push(subfield);
           that.fieldMap[subFieldData.id] = subfield;
           that._createField(subfield, subFieldData);
-
+          delete that.defaultWell.wellData[subfield.id];
           // overwrite subField setvalue
           subfield.onChange = function () {
             var v = subfield.getValue();

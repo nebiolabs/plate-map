@@ -354,8 +354,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (units.length) {
           field.units = units; 
           field.hasUnits = true; 
-          field.defaultUnit = defaultUnit; 
-          //that.defaultWell.unitData[id] = defaultUnit;
+          field.defaultUnit = defaultUnit;
           if (units.length == 1) {
             var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
             unitText.text(defaultUnit);
