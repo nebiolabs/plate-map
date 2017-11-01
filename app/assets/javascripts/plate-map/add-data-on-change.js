@@ -55,13 +55,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var derivative = $.extend(true, {}, this.engine.derivative); 
         var checkboxes = this.globalSelectedAttributes.slice(); 
         var selectedAreas = this.selectedAreas.slice(); 
-        var focalWell = this.focalWell; 
+        var focalWell = this.focalWell;
+        var colorLocMap = {};
+        var colorLocIdxMap = this.engine.stackUpWithColor;
+        var dim = $("#my-plate-layout").plateLayOut("getDimensions");
+        for (var colorIdx in colorLocIdxMap) {
+          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
+            return $("#my-plate-layout").plateLayOut("indexToAddress", locIdx, dim);
+          })
+        }
 
         var data = {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selectedAreas,
-          "focalWell": focalWell
+          "focalWell": focalWell,
+          "colorToLoc": colorLocMap
         };
 
         return data;
