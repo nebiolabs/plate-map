@@ -6,13 +6,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object is invoked when something in the tab fields change
     return {
 
-      _addData: function(id, v, u) {
+      _addData: function(id, v) {
         var data = {
-          wellData: {}, 
-          unitData: {}
-        }
-        data.wellData[id] = v; 
-        data.unitData[id] = u; 
+          wellData: {}
+        };
+        data.wellData[id] = v;
         this._addAllData(data); 
       },
 
@@ -30,11 +28,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             for (var id in data.wellData) {
               var v = JSON.parse(JSON.stringify(data.wellData[id]));
-              well.wellData[id] = v; 
+              well.wellData[id] = v;
               /*
               if (id in well.unitData) {
                 var u = data.unitData[id];
-                well.unitData[id] = u || this.defaultWell.unitData[id]; 
+                well.unitData[id] = u || this.defaultWell.unitData[id];
               }
               */
             }

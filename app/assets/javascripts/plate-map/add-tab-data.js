@@ -117,11 +117,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.onChange = function () {
           var v = field.getValue();
-          var u = null;
-          if (field.getUnit) {
-            u = field.getUnit();
-          }
-          that._addData(field.id, v, u);
+          that._addData(field.id, field.parseValue(v));
         };
         return field;
     },
@@ -202,6 +198,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // overwrite subField setvalue
           subfield.onChange = function () {
             var v = subfield.getValue();
+            // append unit to value if exist
+            var v = subfield.parseValue(v);
             var mainRefField = subfield.mainMultiplexField;
             var singleSelect = mainRefField.singleSelectField;
             var curDataLs = mainRefField.getMultiplexVal();

@@ -465,7 +465,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         // val now contains unit
         field.getText = function (val) {
-          if (typeof(val) === 'object') {
+          if (typeof(val) === 'object' && val) {
             var v = val.value;
             var u = val.unit;
             if (v == null) {
