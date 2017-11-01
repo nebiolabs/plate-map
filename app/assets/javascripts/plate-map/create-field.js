@@ -352,6 +352,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         if (units.length) {
+          that.defaultWell.wellData[id] = {value: null, unit: defaultUnit};
           field.units = units; 
           field.hasUnits = true; 
           field.defaultUnit = defaultUnit;
@@ -387,25 +388,39 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         field.parseValue = function (value) {
-          if (value == null) {
-            return null; 
-          }
-          var v = String(value).trim(); 
-          if (v === "") {
-            return null; 
-          }
-          v = Number(value); 
-          if (isNaN(v)) {
-            throw "Invalid value " + value + " for numeric field " + id; 
-          }
-          if (field.parseUnit(field.getUnit())){
+          if (typeof(value) === 'object' && value) {
+            var v = field.parseRegularValue(value.value);
+            var u = field.parseUnit(value.unit);
             return {
               value: v,
-              unit: field.parseUnit(field.getUnit())
+              unit: u
             };
           } else {
-            return v;
+            var v = field.parseRegularValue(value);
+            if (field.parseUnit(field.getUnit())) {
+              return {
+                value: v,
+                unit: field.parseUnit(field.getUnit())
+              };
+            } else {
+              return v;
+            }
           }
+        };
+
+        field.parseRegularValue = function(value) {
+          if (value == null) {
+            return null;
+          }
+          var v = String(value).trim();
+          if (v === "") {
+            return null;
+          }
+          v = Number(value);
+          if (isNaN(v)) {
+            throw "Invalid value " + value + " for numeric field " + id;
+          }
+          return v;
         };
 
         field.getValue = function () {
@@ -419,11 +434,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setValue = function (v) {
-          if (typeof(v) === 'object' && v != null) {
+          if (typeof(v) === 'object' && v) {
             input.val(v.value);
             field.setUnit(v.unit);
           } else {
-            field.setRegularValue(v);
+            v = field.parseValue(v);
+            if (typeof(v) === 'object' && v) {
+              input.val(v.value);
+              field.setUnit(v.unit);
+            } else {
+              field.setRegularValue(v);
+            }
+
           }
         };
 

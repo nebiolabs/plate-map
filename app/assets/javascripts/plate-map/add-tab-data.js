@@ -233,6 +233,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               subfield.setUnit(v.unit);
             } else {
               subfield.setRegularValue(v);
+              if (subfield.defaultUnit){
+                subfield.setUnit(subfield.defaultUnit);
+              }
             }
           };
 
