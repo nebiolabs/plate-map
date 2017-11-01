@@ -39,7 +39,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       tileAttrText: function (tile, attr) {
         var well = this.engine.derivative[tile.index];
         var field = this.fieldMap[attr]; 
-        return field.getText(well.wellData[attr], well.unitData[attr]); 
+        return field.getText(well.wellData[attr]);
       }, 
 
       addBottomTableRow: function(color, singleStack) {

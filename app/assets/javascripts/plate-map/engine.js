@@ -29,21 +29,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var derivativeJson = {}
           for (var idx in this.derivative) {
             var data = this.derivative[idx]; 
-            var wellData = {}; 
-            var unitData = {}; 
+            var wellData = {};
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
               var attr = THIS.globalSelectedAttributes[i]; 
               if (data.wellData[attr] != null) {
                 wellData[attr] = data.wellData[attr];
-                if (data.unitData[attr] != null) {
-                  unitData[attr] = data.unitData[attr];
-                }
               }
             }
             if ($.isEmptyObject(wellData)) {
               derivativeJson[idx] = null; 
             } else {
-              derivativeJson[idx] = JSON.stringify({"wellData": wellData, "unitData": unitData}); 
+              derivativeJson[idx] = JSON.stringify({"wellData": wellData});
             }
           }
 

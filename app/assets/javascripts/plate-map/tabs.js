@@ -9,8 +9,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       allTabs: [],
 
       defaultWell: {
-        wellData: {}, 
-        unitData: {}
+        wellData: {}
       },
 
       allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements

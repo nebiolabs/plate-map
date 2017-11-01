@@ -171,11 +171,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell.wellData);
-          var referenceUnits = $.extend(true, {}, referenceWell.unitData);
           for (var i = 1; i < wells.length; i++) {
             var well = wells[i];
             var fields = well.wellData;
-            var units = well.unitData;  
             for (var field in referenceFields) {
               if (Array.isArray(referenceFields[field])) {
                 var refArr = referenceFields[field]; 
@@ -188,65 +186,80 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field] || referenceUnits[field] != units[field]) {
-                  delete referenceFields[field]; 
-                  if (field in referenceUnits) {
-                    delete referenceUnits[field]; 
-                  }
+                if (referenceFields[field] != fields[field]) {
+                  delete referenceFields[field];
                 }
               }
             }
           }
           return {
-            wellData: referenceFields, 
-            unitData: referenceUnits
+            wellData: referenceFields,
           }
         } else {
           return {
-            wellData: {}, 
-            unitData: {}
+            wellData: {}
           }; 
         }
       }, 
 
       _getCommonWell: function (wells) {
+        function containsObject(obj, list) {
+          var equality = [];
+          if (list) {
+            list.forEach(function(val) {
+              //evaluate val and obj
+              var evaluate = [];
+              Object.keys(val).forEach(function(listKey){
+                if (Object.keys(obj).indexOf(listKey) >= 0){
+                  if (typeof(val[listKey]) === 'object' && val[listKey]) {
+                    evaluate.push((val[listKey].unit === obj[listKey].unit) && (val[listKey].val === obj[listKey].val));
+                  } else {
+                    evaluate.push(val[listKey] === obj[listKey]);
+                  }
+
+                }
+              })
+              equality.push(evaluate.indexOf(false) < 0);
+            });
+            return equality.indexOf(true) >= 0;
+          } else {
+            return false;
+          }
+        }
+
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell.wellData);
-          var referenceUnits = $.extend(true, {}, referenceWell.unitData);
           for (var i = 1; i < wells.length; i++) {
             var well = wells[i];
             var fields = well.wellData;
-            var units = well.unitData;  
             for (var field in referenceFields) {
               if (Array.isArray(referenceFields[field])) {
                 var refArr = referenceFields[field]; 
                 var agrArr = []; 
                 for (var j = 0; j < refArr.length; j++) {
-                  var v = refArr[j]; 
-                  if ($.inArray(v, fields[field]) >= 0) {
-                    agrArr.push(v); 
+                  var v = refArr[j];
+                  // for multiplex field
+                  if (typeof(refArr[j]) ==="object"){
+                    if (containsObject(v, fields[field])) {
+                      agrArr.push(v);
+                    }
+                  } else {
+                    if ($.inArray(v, fields[field]) >= 0) {
+                      agrArr.push(v);
+                    }
                   }
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field] || referenceUnits[field] != units[field]) {
-                  referenceFields[field] = null; 
-                  if (field in referenceUnits) {
-                    referenceUnits[field] = null; 
-                  }
+                if (referenceFields[field] != fields[field]) {
+                  referenceFields[field] = null;
                 }
               }
             }
           }
-          for (var field in referenceUnits) {
-            if (referenceUnits[field] == null) {
-              referenceUnits[field] = this.defaultWell.unitData[field];
-            }
-          }
           return {
-            wellData: referenceFields, 
-            unitData: referenceUnits
+            wellData: referenceFields
           }
         } else {
           return this.defaultWell; 
@@ -256,7 +269,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       decideSelectedFields: function() {
         var wells = this._getSelectedWells(); 
         var well = this._getCommonWell(wells); 
-        this._addDataToTabFields(well.wellData, well.unitData);
+        this._addDataToTabFields(well.wellData);
       },
 
     };

@@ -6,42 +6,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object is invoked when something in the tab fields change
     return {
 
-      _addData: function(id, v, u) {
-        // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex]; 
-            var well; 
-            if (v == null) {
-              if (tile.index in this.engine.derivative) {
-                well = this.engine.derivative[tile.index];
-                well.wellData[id] = null;
-                if (id in well.unitData) {
-                  well.unitData[id] = this.defaultWell.unitData[id]; 
-                }
-                
-                var empty = this.engine.wellEmpty(well); 
-                if (empty) {
-                  delete this.engine.derivative[tile.index];
-                }
-              }
-            } else {
-              if (tile.index in this.engine.derivative) {
-                well = this.engine.derivative[tile.index];
-              } else {
-                well = $.extend(true, {}, this.defaultWell); 
-                this.engine.derivative[tile.index] = well; 
-              }
-              well.wellData[id] = v; 
-              if (id in well.unitData) {
-                well.unitData[id] = u || this.defaultWell.unitData[id]; 
-              }
-            }
-          }
-
-          this._colorMixer();
-        }
+      _addData: function(id, v) {
+        var data = {
+          wellData: {}
+        };
+        data.wellData[id] = v;
+        this._addAllData(data); 
       },
 
       _addAllData: function(data) {
@@ -57,12 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.engine.derivative[tile.index] = well; 
             }
             for (var id in data.wellData) {
-              var v = data.wellData[id];
-              well.wellData[id] = v; 
-              if (id in data.unitData) {
-                var u = data.unitData[id];
-                well.unitData[id] = u || this.defaultWell.unitData[id]; 
-              }
+              var v = JSON.parse(JSON.stringify(data.wellData[id]));
+              well.wellData[id] = v;
             }
             var empty = this.engine.wellEmpty(well); 
             if (empty) {
@@ -89,13 +55,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var derivative = $.extend(true, {}, this.engine.derivative); 
         var checkboxes = this.globalSelectedAttributes.slice(); 
         var selectedAreas = this.selectedAreas.slice(); 
-        var focalWell = this.focalWell; 
+        var focalWell = this.focalWell;
+        var colorLocMap = {};
+        var colorLocIdxMap = this.engine.stackUpWithColor;
+        var dim = $("#my-plate-layout").plateLayOut("getDimensions");
+        for (var colorIdx in colorLocIdxMap) {
+          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
+            return $("#my-plate-layout").plateLayOut("indexToAddress", locIdx, dim);
+          })
+        }
 
         var data = {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selectedAreas,
-          "focalWell": focalWell
+          "focalWell": focalWell,
+          "colorToLoc": colorLocMap
         };
 
         return data;
