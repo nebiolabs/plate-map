@@ -17,7 +17,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomRow = this._createElement("<tr></tr>");
 
         var singleField = this._createElement("<th></th>")
-          .text("Color");
+          .text("Group");
         this.bottomRow.prepend(singleField);
         // Now we append all the captions at the place.
         this.bottomTable.empty(); 
