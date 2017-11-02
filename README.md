@@ -179,7 +179,7 @@ see the units in the above object. Units will be a seperate dropdown and will be
 
 Name says it all, Just brought the select2 to show it.
 
-#### Multiselect
+#### Select
 
 Selected single option using select2 dropdown.Options field lists options in order. 
 
