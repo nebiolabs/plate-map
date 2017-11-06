@@ -695,6 +695,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (vCopy.length > 0) {
             return vCopy.map(function (vId) {
               vId[field.id] = vId[field.id];
+
+              // change the text for subfields to shrink amount of space
+              for (var key in vId){
+                if (typeof(vId[key]) === 'object' && vId[key]){
+                  vId[key] = vId[key].value + " " + vId[key].unit;
+                }
+              }
               return JSON.stringify(vId)
             }).join("; ");
           }
