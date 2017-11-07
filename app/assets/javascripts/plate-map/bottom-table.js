@@ -145,7 +145,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (i === 0 && j === 0){
             if (format === "csv"){
               row.push ('"Location"');
-            } else {
+            } else if (format === 'clipboard') {
               row.push ("Location");
             }
 
@@ -155,7 +155,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if (corToLocMap[parseInt(cols[j].innerText)]){
               if (format === "csv"){
                 loc = '"' + corToLocMap[parseInt(cols[j].innerText)].join(",") + '"';
-              } else {
+              } else if (format === 'clipboard') {
                 loc = corToLocMap[parseInt(cols[j].innerText)].join(",");
               }
             }
@@ -165,7 +165,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         if (format === "csv"){
           data.push(row.join(","));
-        } else {
+        } else if (format === 'clipboard') {
           data.push(row.join("\t"));
           //data.push(row);   // for text type
         }
@@ -174,7 +174,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       if (format === "csv"){
         // Download CSV file
         this.downloadCSV(data.join("\n"), 'table.csv');
-      } else {
+      } else if (format === 'clipboard'){
         //return formatTableToString(data);   // for text type
         return data.join("\n");
       }
@@ -188,7 +188,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         descriptionDiv.text("Bottom table control");
         overlayContainer.append(descriptionDiv);
 
-        var buttonContainer = $("<div>").addClass("plate-setup-overlay-button-container");
+        var buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container");
 
         // create export csv option
         var exportButton = $("<button/>").addClass("plate-setup-button");
@@ -222,11 +222,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         clipboardButton.text("Copy To Clipboard");
         buttonContainer.append(clipboardButton);
-
-        // other options
-        var exportOtherButton = $("<button/>").addClass("plate-setup-button");
-        exportOtherButton.text("Export Bottom Table");
-        buttonContainer.append(exportOtherButton);
 
         overlayContainer.append(buttonContainer);
         $(".plate-setup-bottom-container").prepend(overlayContainer);
