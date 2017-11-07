@@ -707,24 +707,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (v === null) {
             return "";
           }
-          var vCopy = Object.create(v);
-          if (vCopy.length > 0) {
-            return vCopy.map(function (vId) {
-              vId[field.id] = vId[field.id];
-              // change the text for subfields to shrink amount of space
-
-              for (var key in vId){
-                field.subFieldList.map(function (subField) {
-                  if (subField.id === key){
-                    vId[key] = subField.getText(vId[key]);
-                  }
-                });
+          return v.map(function (subV) {
+            var subText = field.subFieldList.reduce(function (text, subField) {
+              var x = subField.getText(subV[subField.id]); 
+              if (x) {
+                //x = subField.id + ':"' + x + '"'; 
+                //x = '"' + subField.name + '":"' + x + '"'; 
+                x = subField.name + ': ' + x; 
+                if (text) {
+                  text += ", " + x; 
+                } else {
+                  text = x
+                }
               }
-              return JSON.stringify(vId)
-            }).join("; ");
-          }
-          return "";
+              return text; 
+            }, ""); 
+            return "{" + subText + "}";
+          }).join("; "); 
         };
+
         // create single select field and handle on change evaluation
         this._createSelectField(field.singleSelectField, true);
         field.singleSelectField.onChange = function(){
