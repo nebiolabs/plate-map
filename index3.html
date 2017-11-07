@@ -231,11 +231,8 @@ window.onload = function() {
           vunit = "uL";
         }
         wells[i.toString()] = {
-          unitData: {
-            volume:vunit
-          },
           wellData: {
-            volume: v,
+            volume: {value:v, unit:vunit},
             pol: pol,
             amplicons: amplicons,
             on_ice: on_ice

@@ -275,7 +275,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         if (units.length) {
-          that.defaultWell.wellData[id] = {value: null, unit: defaultUnit};
           field.units = units; 
           field.hasUnits = true; 
           field.defaultUnit = defaultUnit;
@@ -311,27 +310,59 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         field.parseValue = function (value) {
-          if (typeof(value) === 'object' && value) {
-            var v = field.parseRegularValue(value.value);
-            var u = field.parseUnit(value.unit);
-            return {
-              value: v,
-              unit: u
-            };
-          } else {
-            var v = field.parseRegularValue(value);
-            if (field.parseUnit(field.getUnit())) {
-              if (units.length > 1){
-                return {
-                  value: v,
-                  unit: field.parseUnit(field.getUnit())
-                };
-              } else {
-                return v;
+          if ($.isPlainObject(value)) {
+            if (field.hasUnits) {
+              var v = field.parseRegularValue(value.value); 
+              if (v == null) {
+                return null; 
               }
+              return {
+                value: v, 
+                unit: field.parseUnit(value.unit)
+              }; 
             } else {
-              return v;
+              throw "Value must be plain numeric for numeric field " + id;
             }
+          } else {
+            if (field.hasUnits) {
+              var v = field.parseRegularValue(value); 
+              if (v == null) {
+                return null; 
+              }
+              return {
+                value: v, 
+                unit: field.defaultUnit
+              }; 
+            } else {
+              return field.parseRegularValue(value); 
+            }
+          }
+        };
+
+        field.getValue = function () {
+          var v = field.getRegularValue(); 
+          if ((v == null) || isNaN(v)) {
+            return null; 
+          }
+          if (field.hasUnits) {
+            return {
+              value: v, 
+              unit: field.getUnit()
+            }
+          }
+        };
+
+        field.setValue = function (value) {
+          if (field.hasUnits) {
+            if ($.isPlainObject(value)) {
+              field.setRegularValue(value.value)
+              field.setUnit(value.unit || field.defaultUnit); 
+            } else {
+              field.setRegularValue(value);
+              field.setUnit(field.defaultUnit)
+            }
+          } else {
+            field.setRegularValue(value); 
           }
         };
 
@@ -350,7 +381,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        field.getValue = function () {
+        field.getRegularValue = function () {
           var v = input.val().trim();
           if (v == "") {
             v = null;
@@ -358,31 +389,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = Number(v); 
           }
           return v; 
-        };
+        }
 
-        field.setValue = function (v) {
-          if (typeof(v) === 'object' && v) {
-            input.val(v.value);
-            field.setUnit(v.unit);
-          } else {
-            v = field.parseValue(v);
-            if (typeof(v) === 'object' && v) {
-              input.val(v.value);
-              field.setUnit(v.unit);
-            } else {
-              field.setRegularValue(v);
-            }
-
-          }
-        };
-
-        field.setRegularValue = function (v) {
-          input.val(v); 
+        field.setRegularValue = function (value) {
+          input.val(value); 
         };
 
         field.parseUnit = function (unit) {
           if (unit == null || unit === "") {
-            return defaultUnit;
+            return field.defaultUnit;
           }
           for (var i = 0; i < units.length; i++) {
             if (unit.toLowerCase() == units[i].toLowerCase()) {
@@ -396,18 +411,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (unitInput) {
             return unitInput.val();
           } else {
-            return defaultUnit; 
+            return field.defaultUnit; 
           }
         }; 
 
-        field.setUnit = function (u) {
+        field.setUnit = function (unit) {
           if (unitInput) {
-            if (u) {
-              u = {id: u, text:u};
-            } else {
-              u = null; 
-            }
-            unitInput.select2("data", u); 
+            unit = unit || field.defaultUnit; 
+            unit = {id: unit, text:unit};
+            unitInput.select2("data", unit); 
           }
         };
 
@@ -441,7 +453,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }; 
 
         input.on("input", function () {
-          var v = field.getValue();
+          var v = field.getRegularValue();
           if (isNaN(v)) {
             //flag field as invalid
             input.addClass("invalid");

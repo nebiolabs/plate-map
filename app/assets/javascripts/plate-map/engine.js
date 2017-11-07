@@ -94,7 +94,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               THIS.addBottomTableRow(color, arr);
 
               for (var tileIndex in arr) {
-                this.wholeNoTiles++;
+                wholeNoTiles++;
                 var index = this.stackUpWithColor[color][tileIndex]; 
                 var tile = THIS.allTiles[index];
                 var well = this.derivative[index]; 
@@ -112,7 +112,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (isNaN(wholePercentage)) {
             THIS.overLayTextContainer.text("Completion Percentage: 0%");
           } else {
-            THIS.overLayTextContainer.text("Completion Percentage: " + this.wholePercentage + "%");
+            THIS.overLayTextContainer.text("Completion Percentage: " + wholePercentage + "%");
           }
         },
 
