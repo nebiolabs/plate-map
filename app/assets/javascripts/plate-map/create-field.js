@@ -321,10 +321,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             var v = field.parseRegularValue(value);
             if (field.parseUnit(field.getUnit())) {
-              return {
-                value: v,
-                unit: field.parseUnit(field.getUnit())
-              };
+              if (units.length > 1){
+                return {
+                  value: v,
+                  unit: field.parseUnit(field.getUnit())
+                };
+              } else {
+                return v;
+              }
             } else {
               return v;
             }
@@ -382,10 +386,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           for (var i = 0; i < units.length; i++) {
             if (unit.toLowerCase() == units[i].toLowerCase()) {
-              return units[i]; 
+              return units[i];
             }
           }
-          throw "Invalid unit " + unit + " for field " + id; 
+          throw "Invalid unit " + unit + " for field " + id;
         };
 
         field.getUnit = function () {
