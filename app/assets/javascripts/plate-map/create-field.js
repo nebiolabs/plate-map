@@ -62,7 +62,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.setValue = function (v) {
           input.val(v); 
-        }; 
+        };
+
+        field.setRegularValue = field.setValue;
 
         field.getText = function (v) {
           if (v == null) {
@@ -158,6 +160,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           input.select2('data', v); 
         };
 
+        field.setRegularValue = field.setValue;
+
         field.setOpts = function (v) {
           input.select2('data',{});
           opts.data = v || []; 
@@ -228,6 +232,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           v = v.map(function (i) {return optMap[i];});
           input.select2('data', v);
         };
+
+        field.setRegularValue = field.setValue;
 
         field.getText = function (v) {
           if (v == null) {
@@ -349,6 +355,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               value: v, 
               unit: field.getUnit()
             }
+          } else {
+            return v;
           }
         };
 
@@ -534,6 +542,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           input.select2('data', v); 
         };
+
+        field.setRegularValue = field.setValue;
 
         field.getText = function (v) {
           if (v == null) {
