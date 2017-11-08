@@ -45,7 +45,7 @@
   top: 10px;
   left: 16px;
   right: 16px;
-  position: absolute;
+  position: inherit;
   background-color: #464646;
   border-radius: 2px;
   display: flex;
@@ -69,7 +69,7 @@
   flex: 1 1 auto;
 }
 
-.plate-setup-overlay-button-container {
+.plate-setup-overlay-button-container, .plate-setup-overlay-bottom-button-container {
   flex: 0 0 auto;
   display: flex;
   flex: 1 1 0;
@@ -277,6 +277,19 @@
   margin-top: 26px;
 }
 
+.plate-setup-bottom-control-container {
+  top: 10px;
+  left: 16px;
+  right: 16px;
+  background-color: #464646;
+  border-radius: 2px;
+  position: static;
+  display: flex;
+  justify-content:space-between;
+  align-items: baseline;
+  vertical-align: middle;
+}
+
 .plate-setup-bottom-container {
   top: 560px;
   left: 0;
@@ -284,8 +297,13 @@
   bottom: 0;
   position: absolute;
   background-color: #e1e1e1;
+}
+
+.plate-setup-bottom-table-container {
+  max-height: 400px;
   overflow: auto;
 }
+
 
 .plate-setup-bottom-table {
   font-family: "Roboto", Arial, sans-serif;
@@ -309,7 +327,7 @@
 }
 
 .plate-setup-color-text {
-  font-size: 12;
+  font-size: 12px;
   border: 1px solid gray;
   border-radius: 5px;
   padding: 0px 5px;

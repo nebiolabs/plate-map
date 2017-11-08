@@ -99,31 +99,6 @@ window.onload = function() {
           placeholder: "Conc.",
           defaultUnit: "ng/ul (final)"
         },
-        amplicons: {
-          required: false,
-          id: 'amplicons', 
-          name: "Amplicons", 
-          type: "multiselect", 
-          placeHolder: "Amplicons", 
-          options: [
-            {
-              id: 'A', 
-              text: 'Amplicon_A'
-            },
-            {
-              id: 'B', 
-              text: 'Amplicon_B'
-            },
-            {
-              id: 'C', 
-              text: 'Amplicon_C'
-            },
-            {
-              id: 'D', 
-              text: 'Amplicon_D'
-            },
-          ]
-        }, 
         on_ice: {
           required: true, 
           id: "on_ice", 
@@ -131,7 +106,76 @@ window.onload = function() {
           type: "boolean", 
           placeHolder: "On Ice"
         }
-    }; 
+    };
+
+  var amplicons_field = {
+    amplicons: {
+      required: true,
+      id: 'amplicons',
+      name: "Amplicons",
+      type: "multiplex",
+      placeHolder: "Amplicons",
+      options: [
+        {
+          id: 'A',
+          text: 'Amplicon_A'
+        },
+        {
+          id: 'B',
+          text: 'Amplicon_B'
+        },
+        {
+          id: 'C',
+          text: 'Amplicon_C'
+        },
+        {
+          id: 'D',
+          text: 'Amplicon_D'
+        }
+      ],
+      selectName: 'select a single amplicon',
+      multiplexDiv: 'selectedAmp',
+      //field names that are related to multiplexDIv
+      multiplexFields: {
+        template_ngul: {
+          required: true,
+          id: 'template_ngul',
+          name: 'template conc',
+          type: 'select',
+          options: [
+            {id:'a',text: "a"},
+            {id:'b',text: "b"},
+            {id:'c',text: "c"}
+            ]
+        },
+        primer_umolarity: {
+          required: true,
+          id: 'primer_umolarity',
+          name: 'Primer conc',
+          type: 'numeric',
+          placeHolder: "Primer",
+          units: ['uM (final)', "unit1"],
+          defaultUnit: 'uM (final)'
+        },
+        probe_umolarity: {
+          required: true,
+          id: 'probe_umolarity',
+          name: 'Probe conc',
+          type: 'numeric',
+          placeHolder: "Probe",
+          defaultUnit: 'uM (final)'
+        },
+        dilution_factor: {
+          required: true,
+          id: 'dilution_factor',
+          name: 'Dilution factor',
+          type: 'numeric',
+          placeHolder: "Dilution factor",
+          defaultUnit: 'X'
+        }
+      },
+    },
+  };
 
   var attributes = {
     presets: [
@@ -148,46 +192,68 @@ window.onload = function() {
       {
         name: "Settings",
         fields: fields 
+      },
+      {
+        name: "amplicons",
+        fields: amplicons_field
       }
-    ], 
+    ]
   }; //attributes
 
-  window.plateData = {}; 
+  window.plateData = {};
+
 
   function makeNewPlate(obj) {
-    var d = $("#my-plate-layout").plateLayOut("getDimensions"); 
-    var rows = d.rows; 
-    var cols = d.cols; 
-    var wells = {}; 
+    var d = $("#my-plate-layout").plateLayOut("getDimensions");
+    var rows = d.rows;
+    var cols = d.cols;
+    var wells = {};
     for (var r = 0; r < rows; r++) {
-      var volume = 100; 
-      var pol = (r < (rows/2)) ? 234 : 123; 
+      var volume = 100;
+      var pol = (r < (rows/2)) ? 234 : 123;
       var on_ice = Boolean(r % 2);
       for (var c = 0; c < cols; c++) {
-        var i = r*cols + c; 
+        var i = r*cols + c;
         var v = volume;
         var vunit = "mL";
+        var amplicons = [{
+          amplicons:"A",
+          template_ngul:'a',
+          primer_umolarity: 2,
+          probe_umolarity:3,
+          dilution_factor:4
+        },
+          {
+            amplicons:"B",
+            template_ngul:'b',
+            primer_umolarity: 22,
+            probe_umolarity:33,
+            dilution_factor:44
+          }];
         if (v < 1) {
           v *= 1000;
           vunit = "uL";
         }
         wells[i.toString()] = {
+          unitData: {
+            volume:vunit
+          },
           wellData: {
-            volume: {value:v, unit:vunit},
-            pol: pol, 
-            amplicons: [], 
+            volume: v,
+            pol: pol,
+            amplicons: amplicons,
             on_ice: on_ice
           }
-        }; 
+        };
         if ((c % 2) > 0) {
           volume /= 10
         }
       }
     }
     return {
-      derivative: wells, 
-      checkboxes: ["volume", "pol"], 
-    }; 
+      derivative: wells,
+      checkboxes: ["volume", "pol"],
+    };
   }
 
   $("#my-plate-layout").plateLayOut({

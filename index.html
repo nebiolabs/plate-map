@@ -20,7 +20,7 @@
       }
     </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
-    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="vendor/assets/javascripts/fabric.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
@@ -39,6 +39,7 @@
     <script src="app/assets/javascripts/plate-map/preset.js"></script>
     <script src="app/assets/javascripts/plate-map/tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+    <script src="vendor/assets/javascripts/clipboard.min.js"></script>
   </head>
 
   <body>
@@ -231,7 +232,7 @@ window.onload = function() {
             dNTPs2 : {
               id: 'dntps2',
               name: 'dNTPs2',
-              type: 'multiselect',
+              type: 'select',
               options: [
                 {
                   id:   '1',
@@ -270,7 +271,11 @@ window.onload = function() {
     });
 
     // Okay this could be the data user gets from the server.
-      var data = '{"derivative":{"0":{"unitData":{"volume":"m/s"},"wellData":{"volume":2}},"1":{"unitData":{"volume":"Nm","volume-buff":"m/s"},"wellData":{"volume":2}},"12":{"unitData":{"volume":"NJ","volume-buff":"m/s"},"wellData":{"volume":2}},"13":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":2}},"18":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"volume-buff":4,"dntps2":"redbull"}},"19":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"20":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"21":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"30":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"volume-buff":4,"dntps2":"redbull"}},"31":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"32":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":45,"dntps2":"redbull"}},"33":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"42":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"43":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"44":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"45":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"51":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"52":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"54":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"55":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"dntps2":"redbull"}},"56":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":56,"dntps2":"redbull"}},"57":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume":56,"dntps2":"redbull"}},"59":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-master":7}},"63":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"64":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":45}},"78":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":66}},"79":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":66}},"81":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":77}},"82":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":77}},"91":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"pol":"5"}},"93":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":9}},"94":{"unitData":{"volume":"m/s","volume-buff":"m/s"},"wellData":{"volume-buff":9}}},"checkboxes":["volume", "volume-master","volume-buff"],"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
+
+
+
+
+      var data = '{"derivative":{"0":{"wellData":{"volume":{"value":2,"unit":"uL"}}},"1":{"wellData":{"volume":{"value":2,"unit":"mL"}}},"12":{"wellData":{"volume":{"value":2,"unit":"uL"}}},"13":{"wellData":{"volume":{"value":2,"unit":"nL"}}},"18":{"wellData":{"volume":{"value":45,"unit":"uL"},"volume-buff":{"value":4,"unit":"mL"},"dntps2":"redbull"}},"19":{"wellData":{"volume":{"value":45,"unit":"uL"},"dntps2":"redbull"}},"20":{"wellData":{"volume":{"value":45,"unit":"uL"},"dntps2":"redbull"}},"21":{"wellData":{"dntps2":"redbull"}},"30":{"wellData":{"volume":{"value":45,"unit":"uL"},"volume-buff":{"value":4,"unit":"mL"},"dntps2":"redbull"}},"31":{"wellData":{"volume":{"value":45,"unit":"uL"},"dntps2":"redbull"}},"32":{"wellData":{"volume":{"value":45,"unit":"uL"},"dntps2":"redbull"}},"33":{"wellData":{"dntps2":"redbull"}},"42":{"wellData":{"dntps2":"redbull"}},"43":{"wellData":{"dntps2":"redbull"}},"44":{"wellData":{"dntps2":"redbull"}},"45":{"wellData":{"dntps2":"redbull"}},"51":{"wellData":{"volume-buff":{"value":45,"unit":"mL"}}},"52":{"wellData":{"volume-buff":{"value":45,"unit":"mL"}}},"54":{"wellData":{"dntps2":"redbull"}},"55":{"wellData":{"dntps2":"redbull"}},"56":{"wellData":{"volume":{"value":56,"unit":"uL"},"dntps2":"redbull"}},"57":{"wellData":{"volume":{"value":56,"unit":"uL"},"dntps2":"redbull"}},"59":{"wellData":{"volume-master":"7"}},"63":{"wellData":{"volume-buff":{"value":45,"unit":"mL"}}},"64":{"wellData":{"volume-buff":{"value":45,"unit":"mL"}}},"78":{"wellData":{"volume-buff":{"value":66,"unit":"mL"}}},"79":{"wellData":{"volume-buff":{"value":66,"unit":"mL"}}},"81":{"wellData":{"volume-buff":{"value":77,"unit":"mL"}}},"82":{"wellData":{"volume-buff":{"value":77,"unit":"mL"}}},"91":{"wellData":{"pol":"5"}},"93":{"wellData":{"volume-buff":{"value":9,"unit":"mL"}}},"94":{"wellData":{"volume-buff":{"value":9,"unit":"mL"}}}},"checkboxes":["volume", "volume-master","volume-buff"],"selectedAreas":[{"minRow":2, "maxRow":4, "minCol":6, "maxCol":8}]}';
 
       $("#demo").click(function() {
       // Now we trigger getPlates along with the data. the implementation of getPlates is in load-plate.js

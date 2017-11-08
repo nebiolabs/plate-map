@@ -1,6 +1,6 @@
 //= require plate-map/assets
 //= require plate-map/plate-layout
-//= require plate-map/fabric
+//= require fabric
 //= require plate-map/add-data-on-change
 //= require plate-map/add-data-to-tabs
 //= require plate-map/add-tab-data
@@ -19,3 +19,4 @@
 //= require plate-map/preset
 //= require plate-map/tabs
 //= require plate-map/undo-redo-manager
+//= require clipboard.min

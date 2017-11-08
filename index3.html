@@ -20,7 +20,7 @@
       }
     </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
-    <script src="app/assets/javascripts/plate-map/fabric.js"></script>
+    <script src="vendor/assets/javascripts/fabric.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
@@ -39,6 +39,7 @@
     <script src="app/assets/javascripts/plate-map/preset.js"></script>
     <script src="app/assets/javascripts/plate-map/tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
+    <script src="vendor/assets/javascripts/clipboard.min.js"></script>
   </head>
   <body>
     <div id="my-plate-layout" class="plate-setup-container">
@@ -109,7 +110,7 @@ window.onload = function() {
 
   var amplicons_field = {
     amplicons: {
-      required: false,
+      required: true,
       id: 'amplicons',
       name: "Amplicons",
       type: "multiplex",
@@ -137,14 +138,14 @@ window.onload = function() {
       //field names that are related to multiplexDIv
       multiplexFields: {
         template_ngul: {
-          required: false,
+          required: true,
           id: 'template_ngul',
           name: 'template conc',
           type: 'numeric',
           placeHolder: "template"
         },
         primer_umolarity: {
-          required: false,
+          required: true,
           id: 'primer_umolarity',
           name: 'Primer conc',
           type: 'numeric',
@@ -153,7 +154,7 @@ window.onload = function() {
           defaultUnit: 'uM (final)'
         },
         probe_umolarity: {
-          required: false,
+          required: true,
           id: 'probe_umolarity',
           name: 'Probe conc',
           type: 'numeric',
@@ -161,7 +162,7 @@ window.onload = function() {
           defaultUnit: 'uM (final)'
         },
         dilution_factor: {
-          required: false,
+          required: true,
           id: 'dilution_factor',
           name: 'Dilution factor',
           type: 'numeric',
@@ -230,11 +231,8 @@ window.onload = function() {
           vunit = "uL";
         }
         wells[i.toString()] = {
-          unitData: {
-            volume:vunit
-          },
           wellData: {
-            volume: v,
+            volume: {value:v, unit:vunit},
             pol: pol,
             amplicons: amplicons,
             on_ice: on_ice

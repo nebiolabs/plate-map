@@ -117,7 +117,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.onChange = function () {
           var v = field.getValue();
-          that._addData(field.id, field.parseValue(v));
+          that._addData(field.id, v);
         };
         return field;
     },
@@ -194,50 +194,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // overwrite subField setvalue
           subfield.onChange = function () {
             var v = subfield.getValue();
-            // append unit to value if exist
-            var v = subfield.parseValue(v);
             var mainRefField = subfield.mainMultiplexField;
             var singleSelect = mainRefField.singleSelectField;
-            var curDataLs = mainRefField.getMultiplexVal();
-            //update curData with the value
-            var updatedDataLs = curDataLs.map(function(curData) {
-              if (curData[mainRefField.id] === singleSelect.getValue()) {
-                curData[subfield.id] = v;
+            var curDataLs = mainRefField.detailData;
+            if (curDataLs != null) {
+              curDataLs = curDataLs.map(function(curData) {
+                if (curData[mainRefField.id] === singleSelect.getValue()) {
+                  curData[subfield.id] = v;
+                }
                 return curData;
-              } else {
-                return curData;
-              }
-            });
-            //
-            mainRefField.detailData = updatedDataLs;
-            that._addData(mainRefField.id, updatedDataLs);
-          };
-          subfield.setValue = function (v) {
-            var selectedId = subfield.mainMultiplexField.singleSelectField.getValue();
-            var multiselectField = subfield.mainMultiplexField;
-            if (multiselectField.detailData && multiselectField.detailData.length === 0) {
-                subfield.input.val(null);
-                multiselectField.singleSelectField.input.prop("disabled", true);
-                subfield.input.prop("disabled", true);
-
-            }
+              });
+            } 
+            mainRefField.detailData = curDataLs;
+            that._addData(mainRefField.id, curDataLs);
           };
 
-          subfield.setSubFieldValue = function (v) {
-            if (typeof(v) === 'object' && v != null) {
-              this.input.val(v.value);
-              subfield.setUnit(v.unit);
-            } else {
-              subfield.setRegularValue(v);
-              if (subfield.defaultUnit){
-                subfield.setUnit(subfield.defaultUnit);
-              }
-            }
-          };
-
-          subfield.setMultiplexValue = function (v) {
-            subfield.input.val(v);
-          };
           // that._addCheckBox(subfield);
         });
 

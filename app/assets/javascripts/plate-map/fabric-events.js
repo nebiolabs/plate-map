@@ -203,6 +203,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       _getCommonWell: function (wells) {
+        // for multiplex field, the obj has to be exactly the same as list (unit has to be the same too)
         function containsObject(obj, list) {
           var equality = [];
           if (list) {
@@ -211,10 +212,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var evaluate = [];
               Object.keys(val).forEach(function(listKey){
                 if (Object.keys(obj).indexOf(listKey) >= 0){
-                  if (typeof(val[listKey]) === 'object' && val[listKey]) {
-                    evaluate.push((val[listKey].unit === obj[listKey].unit) && (val[listKey].val === obj[listKey].val));
+                  var curVal = val[listKey];
+                  if (typeof(curVal) === 'object' && curVal) {
+                    if (obj[listKey]){
+                      evaluate.push((curVal.unit === obj[listKey].unit) && (curVal.value === obj[listKey].value));
+                    } else {
+                      // when obj[listKey] is null but curVal is not
+                      evaluate.push(false);
+                    }
+
                   } else {
-                    evaluate.push(val[listKey] === obj[listKey]);
+                    evaluate.push(curVal === obj[listKey]);
                   }
 
                 }
