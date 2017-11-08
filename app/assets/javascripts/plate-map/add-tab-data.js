@@ -208,31 +208,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             mainRefField.detailData = curDataLs;
             that._addData(mainRefField.id, curDataLs);
           };
-          subfield.setValue = function (v) {
-            var selectedId = subfield.mainMultiplexField.singleSelectField.getValue();
-            var multiselectField = subfield.mainMultiplexField;
-            if (multiselectField.detailData && multiselectField.detailData.length === 0) {
-                subfield.input.val(null);
-                multiselectField.singleSelectField.input.prop("disabled", true);
-                subfield.input.prop("disabled", true);
-            }
-          };
 
-          subfield.setSubFieldValue = function (v) {
-            if (typeof(v) === 'object' && v != null) {
-              this.input.val(v.value);
-              subfield.setUnit(v.unit);
-            } else {
-              subfield.setRegularValue(v);
-              if (subfield.defaultUnit){
-                subfield.setUnit(subfield.defaultUnit);
-              }
-            }
-          };
-
-          subfield.setMultiplexValue = function (v) {
-            subfield.input.val(v);
-          };
           // that._addCheckBox(subfield);
         });
 

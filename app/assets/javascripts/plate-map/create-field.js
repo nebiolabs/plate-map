@@ -64,14 +64,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           input.val(v); 
         };
 
-        field.setRegularValue = field.setValue;
-
         field.getText = function (v) {
           if (v == null) {
             return ""; 
           }
           return v; 
         };
+
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+        }; 
 
         input.on("input", function(e, generated) {
           field.onChange();
@@ -148,6 +150,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }; 
 
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+        }; 
+
         field.getValue = function () {
           var v = input.select2('data');
           return v ? v.id : null; 
@@ -159,8 +165,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           input.select2('data', v); 
         };
-
-        field.setRegularValue = field.setValue;
 
         field.setOpts = function (v) {
           input.select2('data',{});
@@ -201,6 +205,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
         input.select2(opts); 
 
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+        }; 
+
         field.parseValue = function (value) {
           var v = value; 
           if (v && v.length) {
@@ -232,8 +240,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           v = v.map(function (i) {return optMap[i];});
           input.select2('data', v);
         };
-
-        field.setRegularValue = field.setValue;
 
         field.getText = function (v) {
           if (v == null) {
@@ -314,6 +320,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             unitInput.select2(opts); 
           }
         }
+
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+          if (unitInput) {
+            unitInput.prop("disabled", bool); 
+          }
+        }; 
 
         field.parseValue = function (value) {
           if ($.isPlainObject(value)) {
@@ -503,6 +516,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         input.select2(opts);
 
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+        }; 
+
         field.parseValue = function (value) {
           if (value == null) {
             return null; 
@@ -543,8 +560,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           input.select2('data', v); 
         };
 
-        field.setRegularValue = field.setValue;
-
         field.getText = function (v) {
           if (v == null) {
             return ""; 
@@ -581,7 +596,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var newOptions = v.map(function (i) {return optMap[i];});
             singleSelectField.setOpts(newOptions);
             if (newOptions.length > 0) {
-              singleSelectField.input.prop("disabled", false);
+              singleSelectField.disabled(false);
               var curId = newOptions[0].id;
               var curSubField;
               singleSelectField.setValue(curId);
@@ -592,8 +607,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               });
               // setvalue for subfield
               field.subFieldList.forEach (function (subField){
-                subField.input.prop("disabled", false);
-                subField.setSubFieldValue(curSubField[subField.id]);
+                subField.disabled(false);
+                subField.setValue(curSubField[subField.id]);
               })
             }
             field.input.select2('data', newOptions);
@@ -601,14 +616,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // when value is null
             field.input.select2('data', []);
             singleSelectField.setOpts([]);
-            singleSelectField.input.prop("disabled", true);
+            singleSelectField.disabled(true); 
             // set subfield to null
             field.subFieldList.forEach (function (subField){
-              subField.input.prop("disabled", true);
-              subField.setSubFieldValue(null);
-            })
+              subField.disabled(true);
+              subField.setValue(null);
+            }); 
           }
         };
+
+        field.disabled = function (bool) {
+          field.input.prop("disabled", bool); 
+          field.singleSelectField.input.prop("disabled", bool); 
+          field.subFieldList.forEach (function (subField){
+            subField.input.prop("disabled", bool);
+          }); 
+        }; 
 
         field.parseValue = function (value) {
           var v = value;
@@ -689,7 +712,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 field.subFieldList.forEach(function(subField){
                   subField.input.prop("disabled", false);
                   var fieldVal = val[subField.id];
-                  subField.setSubFieldValue(fieldVal);
+                  subField.setValue(fieldVal);
                 })
               }
             });
@@ -698,7 +721,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             field.subFieldList.forEach(function (subField) {
               var fieldVal = null;
               subField.input.prop("disabled", true);
-              subField.setSubFieldValue(fieldVal);
+              subField.setValue(fieldVal);
             });
           }
 
@@ -773,7 +796,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if (v === val[field.id]) {
               field.subFieldList.forEach(function(subField){
                 var fieldVal = val[subField.id];
-                subField.setSubFieldValue(fieldVal);
+                subField.setValue(fieldVal);
               })
             }
           });
