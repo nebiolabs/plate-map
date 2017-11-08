@@ -733,6 +733,28 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }).join("; "); 
         };
 
+        field.checkCompletion = function(vals) {
+          var req = 0;
+          var fill = 0;
+          for (var subfield in field.subFieldList){
+            if (subfield.required) {
+              req ++;
+              var curVal = vals[subfield.id];
+              if (typeof(curVal) === 'object'&& curVal){
+                if (curVal.value){
+                  fill ++
+                }
+              } else if (curVal) {
+                fill ++
+              }
+            }
+          }
+          if (req == fill) {
+            return 1;
+          }
+          return fill / req;
+        };
+
         // create single select field and handle on change evaluation
         this._createSelectField(field.singleSelectField, true);
         field.singleSelectField.onChange = function(){

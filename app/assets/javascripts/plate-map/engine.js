@@ -120,12 +120,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var req = 0; 
           var fill = 0; 
           for (var i = 0; i < THIS.fieldList.length; i++) {
-            var field = THIS.fieldList[i]; 
+            var field = THIS.fieldList[i];
             if (field.required) {
-              req++; 
-              if (wellData[field.id] != null) {
-                fill++; 
+              req++;
+              if (field.data.type === "multiplex"){
+                fill = fill + field.checkCompletion(wellData[field.id]);
+              } else {
+                if (wellData[field.id] != null) {
+                  fill++;
+                }
               }
+
             }
           }
           if (req == fill) {
