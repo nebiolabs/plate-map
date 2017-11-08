@@ -196,19 +196,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var v = subfield.getValue();
             var mainRefField = subfield.mainMultiplexField;
             var singleSelect = mainRefField.singleSelectField;
-            var curDataLs = mainRefField.getMultiplexVal();
-            //update curData with the value
-            var updatedDataLs = curDataLs.map(function(curData) {
-              if (curData[mainRefField.id] === singleSelect.getValue()) {
-                curData[subfield.id] = v;
+            var curDataLs = mainRefField.detailData;
+            if (curDataLs != null) {
+              curDataLs = curDataLs.map(function(curData) {
+                if (curData[mainRefField.id] === singleSelect.getValue()) {
+                  curData[subfield.id] = v;
+                }
                 return curData;
-              } else {
-                return curData;
-              }
-            });
-            //
-            mainRefField.detailData = updatedDataLs;
-            that._addData(mainRefField.id, updatedDataLs);
+              });
+            } 
+            mainRefField.detailData = curDataLs;
+            that._addData(mainRefField.id, curDataLs);
           };
           subfield.setValue = function (v) {
             var selectedId = subfield.mainMultiplexField.singleSelectField.getValue();
@@ -217,7 +215,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 subfield.input.val(null);
                 multiselectField.singleSelectField.input.prop("disabled", true);
                 subfield.input.prop("disabled", true);
-
             }
           };
 

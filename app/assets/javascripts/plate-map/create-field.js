@@ -559,8 +559,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var singleSelectField = field.singleSelectField;
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
-          // v[0] is used to filter out cases when v is empty array
-          if (v && v[0]) {
+          if (v && v.length) {
             // handling for single select box
             var subFieldData = v;
 
@@ -623,13 +622,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        field.getMultiplexVal = function () {
-          return field.detailData;
-        };
-
         field.onChange = function (){
           var v = field.getValue();
-          var curData = field.getMultiplexVal();
+          var curData = field.detailData;
           var curIds = [];
           var curId = null;
           //reshape data for saveback
@@ -643,14 +638,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var selectList = [];
           if (v) {
             v.forEach(function(selectedVal) {
-              if (curData){
-                if (curData) {
-                  curData.forEach(function(val) {
-                    if (val[field.id] === selectedVal) {
-                      newMultiplexVal.push(val)
-                    }
-                  });
-                }
+              if (curData) {
+                curData.forEach(function(val) {
+                  if (val[field.id] === selectedVal) {
+                    newMultiplexVal.push(val)
+                  }
+                });
               }
               // cases when adding new data
               if (curIds.indexOf(selectedVal) < 0) {
@@ -700,7 +693,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           field.detailData = newMultiplexVal;
-          that._addData(field.id, newMultiplexVal);
+          if (newMultiplexVal.length == 0) {
+            that._addData(field.id, null); 
+          } else {
+            that._addData(field.id, newMultiplexVal);
+          }
         };
 
         field.getText = function (v) {
@@ -730,7 +727,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._createSelectField(field.singleSelectField, true);
         field.singleSelectField.onChange = function(){
           var v = field.singleSelectField.getValue();
-          var curData = field.getMultiplexVal();
+          var curData = field.detailData;
           curData.forEach(function (val) {
             if (v === val[field.id]) {
               field.subFieldList.forEach(function(subField){
