@@ -758,28 +758,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
 
-          /*
-          for (var subfieldId in field.subFieldList){
-            var subfield = field.subFieldList[subfieldId];
-            if (subfield.required) {
-              req ++;
-
-              for (var idx in valList){
-                var vals = valList[idx];
-                var curVal = vals[subfield.id];
-                if (typeof(curVal) === 'object'&& curVal){
-                  if (curVal.value){
-                    fill ++
-                  }
-                } else if (curVal) {
-                  fill ++
-                }
-              }
-
-
-            }
-          }
-          */
           if (req == fill) {
             return 1;
           }
