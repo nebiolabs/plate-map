@@ -733,22 +733,53 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }).join("; "); 
         };
 
-        field.checkCompletion = function(vals) {
+        field.checkCompletion = function(valList) {
           var req = 0;
           var fill = 0;
-          for (var subfield in field.subFieldList){
-            if (subfield.required) {
-              req ++;
+
+          for (var idx in valList) {
+            var vals = valList[idx];
+
+            for (var subfieldId in field.subFieldList){
+              var subfield = field.subFieldList[subfieldId];
               var curVal = vals[subfield.id];
-              if (typeof(curVal) === 'object'&& curVal){
-                if (curVal.value){
+
+              if (subfield.required) {
+                req++;
+
+                if (typeof(curVal) === 'object'&& curVal){
+                  if (curVal.value){
+                    fill ++
+                  }
+                } else if (curVal) {
                   fill ++
                 }
-              } else if (curVal) {
-                fill ++
               }
             }
           }
+
+          /*
+          for (var subfieldId in field.subFieldList){
+            var subfield = field.subFieldList[subfieldId];
+            if (subfield.required) {
+              req ++;
+
+              for (var idx in valList){
+                var vals = valList[idx];
+                var curVal = vals[subfield.id];
+                if (typeof(curVal) === 'object'&& curVal){
+                  if (curVal.value){
+                    fill ++
+                  }
+                } else if (curVal) {
+                  fill ++
+                }
+              }
+
+
+            }
+          }
+          */
           if (req == fill) {
             return 1;
           }

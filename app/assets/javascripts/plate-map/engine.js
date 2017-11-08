@@ -123,7 +123,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var field = THIS.fieldList[i];
             if (field.required) {
               req++;
-              if (field.data.type === "multiplex"){
+              if (field.checkCompletion){
                 fill = fill + field.checkCompletion(wellData[field.id]);
               } else {
                 if (wellData[field.id] != null) {
