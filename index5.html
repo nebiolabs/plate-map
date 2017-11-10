@@ -86,6 +86,7 @@
         text: 'cond4'
       }];
 
+    // TODO use unit Types as a single select filter for conditions
     var unitTypes = [
       {id: 'unitType1', name: 'pH'},
       {id: 'unitType2', name: 'Concentration'},
@@ -320,11 +321,6 @@
               dilution_factor:44
             }];
 
-
-
-
-
-
           var experimental_conditions = [{
             experimental_conditions:"A",
             raw_value:{
@@ -343,12 +339,6 @@
               },
               is_modulator: 'a'
             }];
-
-
-
-
-
-
 
           if (v < 1) {
             v *= 1000;
