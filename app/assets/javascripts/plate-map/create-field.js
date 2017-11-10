@@ -414,7 +414,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
               if (value.hasOwnProperty('unit_type_id')){
-                field.hasMultiplexUnit = true;
                 field.setMultiplexUnitOptions(value.unit_type_id);
                 value['unit'] = field.getSelectedMultiplexUnit(value);
               }
@@ -727,7 +726,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var newVal = {};
                 newVal[field.id] = selectedVal;
                 field.subFieldList.forEach(function(subfield){
-                  if (subfield.hasMultiplexUnit){
+                  // the only time when unitMap exist is when there is multiplex subfield
+                  if (subfield.data.unitMap){
+                    subfield.disabled(false);
                     field.data.options.forEach(function(opt){
                       if (opt.id === selectedVal){
                         // this wull update subfield.units to the corresponding unit list
