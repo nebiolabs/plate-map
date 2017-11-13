@@ -824,7 +824,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return "";
           }
           return v.map(function (subV) {
-            var multiplexFieldlText = field.name + ':"' + subV[field.id] + '", ';
+            // render option text
+            var multiplexFieldText;
+            for (var optId in field.data.options) {
+              var opt = field.data.options[optId];
+              if (opt.id === subV[field.id]){
+                multiplexFieldText = opt.text;
+              }
+            }
+
+            var mainFieldText = field.name + ':"' + multiplexFieldText + '", ';
 
             var subText = field.subFieldList.reduce(function (text, subField) {
               var x = subField.getText(subV[subField.id]); 
@@ -841,7 +850,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               return text; 
             }, "");
 
-            return "{" + multiplexFieldlText + subText + "}";
+            return "{" + mainFieldText + subText + "}";
           }).join("; "); 
         };
 
