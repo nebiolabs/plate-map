@@ -336,8 +336,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           field.defaultUnit = field.units[0];
 
+          var newUnits = unitOpts.map(function (curUnit) {
+            var cleanUnit = {};
+            if (curUnit.text === field.defaultUnit) {
+              // unit formatting for
+              cleanUnit.selected = true;
+            }
+            cleanUnit.id = curUnit.text;
+            cleanUnit.text = curUnit.text;
+            return cleanUnit;
+          });
+
           var opts = {
-            data: unitOpts,
+            data: newUnits,
             allowClear: false,
             minimumResultsForSearch: 10
           };
@@ -362,9 +373,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.parseValue = function (value) {
 
           if ($.isPlainObject(value)) {
-            if (value.hasOwnProperty('unit_type_id')){
+            if (field.data.hasMultiplexUnit){
               // attach a new function for multiplex unit
-              value['unit'] = field.getSelectedMultiplexUnit(value);
+              value.unit = field.getSelectedMultiplexUnit(value);
               return (value);
             }
             if (field.hasUnits) {
@@ -396,15 +407,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.getValue = function () {
-          var v = field.getRegularValue(); 
-          if ((v == null) || isNaN(v)) {
-            return null; 
-          }
-          if (field.hasUnits) {
-            return {
-              value: v, 
+          var v = field.getRegularValue();
+
+          if ((v === null) || isNaN(v)) {
+            return null;
+          } else if (field.hasUnits) {
+            var returnVal = {
+              value: v,
               unit: field.getUnit()
+            };
+
+            if (field.data.hasMultiplexUnit) {
+              // include unitTypeId and Unit Id
+              for (var unitTypeId in field.data.unitMap) {
+                var unitTypeUnits = field.data.unitMap[unitTypeId];
+                unitTypeUnits.forEach(function (unit) {
+                  if (unit.text === returnVal.unit) {
+                    returnVal['unitTypeId'] = unitTypeId;
+                    returnVal['unitId'] = unit.id;
+                  }
+                })
+              }
             }
+            return returnVal;
           } else {
             return v;
           }
@@ -413,7 +438,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setValue = function (value) {
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
-              if (value.hasOwnProperty('unit_type_id')){
+              if (field.data.hasMultiplexUnit){
                 field.setMultiplexUnitOptions(value.unit_type_id);
                 value['unit'] = field.getSelectedMultiplexUnit(value);
               }
@@ -453,7 +478,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = Number(v); 
           }
           return v; 
-        }
+        };
 
         field.setRegularValue = function (value) {
           input.val(value); 
