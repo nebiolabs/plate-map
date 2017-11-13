@@ -357,11 +357,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.getSelectedMultiplexUnit = function (value) {
           var unitOptsMap = field.data.unitMap;
-          var unitData = unitOptsMap[value.unit_type_id];
-          //convert unit_id to unit
+          var unitData = unitOptsMap[value.unitTypeId];
+          //convert unitId to unit
           var unit;
           unitData.forEach(function (curUnit) {
-            if (curUnit.id === value.unit_id) {
+            if (curUnit.id === value.unitId) {
               //set current selection
               unit = curUnit.text;
             }
@@ -423,7 +423,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var unitTypeUnits = field.data.unitMap[unit_type_id];
                 unitTypeUnits.forEach(function (unit) {
                   if (unit.text === returnVal.unit) {
-                    returnVal['unit_type_id'] = unit_type_id;
+                    returnVal['unitTypeId'] = unit_type_id;
                     returnVal['unitId'] = unit.id;
                   }
                 })
@@ -439,7 +439,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
               if (field.data.hasMultiplexUnit){
-                field.setMultiplexUnitOptions(value.unit_type_id);
+                field.setMultiplexUnitOptions(value.unitTypeId);
                 value['unit'] = field.getSelectedMultiplexUnit(value);
               }
 
@@ -757,11 +757,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     field.data.options.forEach(function(opt){
                       if (opt.id === selectedVal){
                         // this wull update subfield.units to the corresponding unit list
-                        subfield.setMultiplexUnitOptions(opt.unit_type_id);
+                        subfield.setMultiplexUnitOptions(opt.unitTypeId);
                         var val = {
                           value: null,
-                          unit_type_id: opt.unit_type_id,
-                          unit_id: subfield.units[0]
+                          unitTypeId: opt.unitTypeId,
+                          unitId: subfield.units[0]
                         };
 
                         newVal[subfield.id] = subfield.parseValue(val);
