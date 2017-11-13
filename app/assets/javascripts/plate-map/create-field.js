@@ -824,6 +824,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return "";
           }
           return v.map(function (subV) {
+            var multiplexFieldlText = field.name + ':"' + subV[field.id] + '", ';
+
             var subText = field.subFieldList.reduce(function (text, subField) {
               var x = subField.getText(subV[subField.id]); 
               if (x) {
@@ -837,8 +839,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
               return text; 
-            }, ""); 
-            return "{" + subText + "}";
+            }, "");
+
+            return "{" + multiplexFieldlText + subText + "}";
           }).join("; "); 
         };
 
