@@ -418,12 +418,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
 
             if (field.data.hasMultiplexUnit) {
-              // include unitTypeId and Unit Id
-              for (var unitTypeId in field.data.unitMap) {
-                var unitTypeUnits = field.data.unitMap[unitTypeId];
+              // include unit type id and Unit Id
+              for (var unit_type_id in field.data.unitMap) {
+                var unitTypeUnits = field.data.unitMap[unit_type_id];
                 unitTypeUnits.forEach(function (unit) {
                   if (unit.text === returnVal.unit) {
-                    returnVal['unitTypeId'] = unitTypeId;
+                    returnVal['unit_type_id'] = unit_type_id;
                     returnVal['unitId'] = unit.id;
                   }
                 })
