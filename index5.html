@@ -52,7 +52,6 @@
   // Wait for all the script load from the loader.js and fire up
   window.onload = function() {
 
-
     var units = {
       unitType1:[{id: 'unitId1', text: 'unit1'},
         {id: 'unitId2', text: 'unit2'}],
@@ -166,7 +165,6 @@
         id: 'amplicons',
         name: "Amplicons",
         type: "multiplex",
-        placeHolder: "Amplicons",
         options: [
           {
             id: 'A',
@@ -186,7 +184,6 @@
           }
         ],
         selectName: 'select a single amplicon',
-        multiplexDiv: 'selectedAmp',
         //field names that are related to multiplexDIv
         multiplexFields: {
           template_ngul: {
@@ -238,7 +235,6 @@
           placeHolder: "Experimental Conditions",
           options: conds,
           selectName: 'select a single experimental condition',
-          multiplexDiv: 'selectedExpCond',
           //field names that are related to multiplexDIv
           multiplexFields: {
             condition_amt: {

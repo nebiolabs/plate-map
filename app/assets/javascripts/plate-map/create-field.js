@@ -328,6 +328,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
+        // given the unitTypeId, clean up the unit options
         field.setMultiplexUnitOptions = function (unitType) {
           var unitOpts = field.data.unitMap[unitType];
           field.units = unitOpts.map(function (curUnit) {
@@ -355,32 +356,33 @@ var plateLayOutWidget = plateLayOutWidget || {};
           unitInput.select2(opts);
         };
 
+        // get selected unit list
         field.getSelectedMultiplexUnit = function (value) {
+
           var unitOptsMap = field.data.unitMap;
-          var unitData = unitOptsMap[value.unitTypeId];
-          //convert unitId to unit
-          var unit;
-          unitData.forEach(function (curUnit) {
+          var unitTypeList = unitOptsMap[value.unitTypeId];
+          var unitSelected;
+
+          unitTypeList.forEach(function (curUnit) {
             if (curUnit.id === value.unitId) {
-              //set current selection
-              unit = curUnit.text;
+              unitSelected = curUnit.text;
             }
           });
-          return unit;
-
+          return unitSelected;
         };
 
         field.parseValue = function (value) {
-
+          var v;
           if ($.isPlainObject(value)) {
             if (field.data.hasMultiplexUnit){
-              // attach a new function for multiplex unit
+              // parse unit for value using unitTypeId and unitId
               value.unit = field.getSelectedMultiplexUnit(value);
               return (value);
             }
+
             if (field.hasUnits) {
-              var v = field.parseRegularValue(value.value); 
-              if (v == null) {
+              v = field.parseRegularValue(value.value);
+              if (v === null) {
                 return null; 
               }
               return {
@@ -392,8 +394,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           } else {
             if (field.hasUnits) {
-              var v = field.parseRegularValue(value); 
-              if (v == null) {
+              v = field.parseRegularValue(value);
+              if (v === null) {
                 return null; 
               }
               return {
@@ -418,12 +420,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
 
             if (field.data.hasMultiplexUnit) {
-              // include unit type id and Unit Id
-              for (var unit_type_id in field.data.unitMap) {
-                var unitTypeUnits = field.data.unitMap[unit_type_id];
+              // include unitTypeId and UnitId to returnVal
+              for (var unitTypeKey in field.data.unitMap) {
+                var unitTypeUnits = field.data.unitMap[unitTypeKey];
                 unitTypeUnits.forEach(function (unit) {
                   if (unit.text === returnVal.unit) {
-                    returnVal['unitTypeId'] = unit_type_id;
+                    returnVal['unitTypeId'] = unitTypeKey;
                     returnVal['unitId'] = unit.id;
                   }
                 })
@@ -439,8 +441,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
               if (field.data.hasMultiplexUnit){
+                // update unit options
                 field.setMultiplexUnitOptions(value.unitTypeId);
-                value['unit'] = field.getSelectedMultiplexUnit(value);
+                // convert unitId to unit
+                value.unit = field.getSelectedMultiplexUnit(value);
               }
 
               field.setUnit(value.unit || field.defaultUnit);
@@ -654,21 +658,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.detailData = v;
           if (v && v.length) {
             // handling for single select box
-            var subFieldData = v;
-
-            v = v.map(function(val){return val[field.id]});
+            var mainFieldId = v.map(function(val){return val[field.id]});
             var optMap = {};
             singleSelectField.data.options.forEach(function(val) {
               optMap[val.id] = val;
             });
-            var newOptions = v.map(function (i) {return optMap[i];});
+            var newOptions = mainFieldId.map(function (i) {return optMap[i];});
             singleSelectField.setOpts(newOptions);
             if (newOptions.length > 0) {
               singleSelectField.disabled(false);
               var curId = newOptions[0].id;
               var curSubField;
               singleSelectField.setValue(curId);
-              subFieldData.forEach(function(val){
+              v.forEach(function(val){
                 if (val[field.id] === curId) {
                   curSubField = val;
                 }
@@ -733,8 +735,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             curIds = curData.map(function(val){return val[field.id]});
           }
 
-          //var subFieldIds = field.subFieldList.map(function(subField) {return subField.id});
-
           var newMultiplexVal = [];
           var selectList = [];
           if (v) {
@@ -751,19 +751,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var newVal = {};
                 newVal[field.id] = selectedVal;
                 field.subFieldList.forEach(function(subfield){
-                  // the only time when unitMap exist is when there is multiplex subfield
-                  if (subfield.data.unitMap){
+                  // special handling for subfield which has multiplexUnit
+                  if (subfield.data.hasMultiplexUnit){
                     subfield.disabled(false);
                     field.data.options.forEach(function(opt){
                       if (opt.id === selectedVal){
-                        // this wull update subfield.units to the corresponding unit list
+                        // update subfield unit options
                         subfield.setMultiplexUnitOptions(opt.unitTypeId);
                         var val = {
                           value: null,
                           unitTypeId: opt.unitTypeId,
-                          unitId: subfield.units[0]
+                          unit: subfield.units[0]
                         };
-
+                        // look up the corresponding unitId from unit
+                        subfield.data.unitMap[val.unitTypeId].forEach (function (unit) {
+                          if (unit.text === val.unit){
+                            val.unitId = unit.id;
+                          }
+                        });
                         newVal[subfield.id] = subfield.parseValue(val);
                       }
                     });
@@ -789,6 +794,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           field.singleSelectField.setOpts(selectList);
           field.singleSelectField.setValue(curId);
+
           // make current selected obj
           // update subFields
           if (newMultiplexVal.length > 0) {
@@ -838,8 +844,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var subText = field.subFieldList.reduce(function (text, subField) {
               var x = subField.getText(subV[subField.id]); 
               if (x) {
-                //x = subField.id + ':"' + x + '"'; 
-                //x = '"' + subField.name + '":"' + x + '"'; 
                 x = subField.name + ': ' + x; 
                 if (text) {
                   text += ", " + x; 
@@ -861,11 +865,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var idx in valList) {
             var vals = valList[idx];
 
-            for (var subfieldId in field.subFieldList){
-              var subfield = field.subFieldList[subfieldId];
-              var curVal = vals[subfield.id];
+            for (var subFieldId in field.subFieldList){
+              var subField = field.subFieldList[subFieldId];
+              var curVal = vals[subField.id];
 
-              if (subfield.required) {
+              if (subField.required) {
                 req++;
 
                 if (typeof(curVal) === 'object'&& curVal){
@@ -879,7 +883,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
 
-          if (req == fill) {
+          if (req === fill) {
             return 1;
           }
           return fill / req;
