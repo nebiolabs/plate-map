@@ -36,19 +36,52 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i]; 
           if (field.checkbox) {
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId"); 
-            var clicked = checkImage.data("clicked");
-            if (fieldId in changes) {
-              clicked = Boolean(changes[fieldId]);
-            }
-            checkImage.data("clicked", clicked);
-            if (clicked) {
-              gsa.push(fieldId);
-              checkImage.attr("src", this._assets.doImg);
-            } else {
-              checkImage.attr("src", this._assets.dontImg);
-            }
+          	if (field.subFieldList){
+							var that = this;
+          		var subFieldToExclude = [];
+
+          		field.subFieldList.forEach(function(subField){
+
+								var checkImage = subField.checkbox;
+								var fieldId = checkImage.data("linkedFieldId");
+								var clicked = checkImage.data("clicked");
+								if (fieldId in changes) {
+									clicked = Boolean(changes[fieldId]);
+								}
+								checkImage.data("clicked", clicked);
+								if (clicked) {
+									gsa.push(fieldId);
+									checkImage.attr("src", that._assets.doImg);
+								} else {
+									checkImage.attr("src", that._assets.dontImg);
+									subFieldToExclude.push(subField.id)
+								}
+
+							});
+
+          		// update base on check box
+							for (var wellKey in this.engine.dataForColor) {
+          			var wellData = this.engine.dataForColor[wellKey].wellData;
+								for (var fieldId in subFieldToExclude){
+									wellData[field.id].forEach(function (multiplexData){
+										delete multiplexData[subFieldToExclude[fieldId]]
+									});
+								}
+							}
+						}
+						var checkImage = field.checkbox;
+						var fieldId = checkImage.data("linkedFieldId");
+						var clicked = checkImage.data("clicked");
+						if (fieldId in changes) {
+							clicked = Boolean(changes[fieldId]);
+						}
+						checkImage.data("clicked", clicked);
+						if (clicked) {
+							gsa.push(fieldId);
+							checkImage.attr("src", this._assets.doImg);
+						} else {
+							checkImage.attr("src", this._assets.dontImg);
+						}
           }
         }
         this.globalSelectedAttributes = gsa; 
