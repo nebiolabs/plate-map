@@ -120,6 +120,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         opts.data.forEach(function (opt) {
           optMap[opt.id] = opt; 
         });
+
+        if (isMultiplex) {
+          opts.allowClear = false;
+        }
         input.select2(opts); 
 
         field.parseValue = function (value) {
