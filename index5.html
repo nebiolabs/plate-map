@@ -342,11 +342,8 @@
             vunit = "uL";
           }
           wells[i.toString()] = {
-            unitData: {
-              volume:vunit
-            },
             wellData: {
-              volume: v,
+              volume: {value: v, unit: vunit},
               pol: pol,
               amplicons: amplicons,
               experimental_conditions: experimental_conditions,

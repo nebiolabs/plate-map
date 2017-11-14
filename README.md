@@ -118,17 +118,58 @@ This function may be called at any time to load data. Well data should be passed
   derivative: {
     "0": { //row-major index of well
       wellData: {
-        field_1: "value 1"
-        field_2: "value 2"
-      }, 
-      units: {
-        field_1unit: "value 1 unit"
+        field_1: "value 1",
+        field_2: "value 2",
+        field_3: {value: xxx, unit: "unit1"},       // field with unit
+        field_4: "value 4 id",                      // single select field
+        field_5: ["value 5 id1", "value 5 id2"],    // multiselect field
+        field_6: [                                  // multiplex field with no multiplex unit sub fields
+                  {
+                    multiplex_field1: "multiplex field1 id1",
+                    subfield_1: "value 1",
+                    subfield_2: "value 2"
+                  },
+                  {
+                    multiplex_field: "multiplex field1 id2",
+                    subfield_1: "value 3"
+                    subfield_2: "value 4"
+                  }
+                 ],
+        field_7: [                                  // multiplex field with multiplex unit sub fields(subfield_4)
+                  {
+                    multiplex_field2: "multiplex field2 id1",
+                    subfield_3: "value 1",
+                    subfield_4: {
+                                    value: "value 2",           // required attribute
+                                    unit: "unit1",              // optional
+                                    unitId: "unit id 1",        // required attribute
+                                    unitTypeId: "unit type 1"   // required attribute
+                                }
+                  },
+                  {
+                    multiplex_field: "multiplex field2 id2",
+                    subfield_3: "value 3"
+                    subfield_4: {
+                                    value: "value 2",           // required attribute
+                                    unit: "unit1",              // optional
+                                    unitId: "unit id 1",        // required attribute
+                                    unitTypeId: "unit type 1"   // required attribute
+                                }
+                  }
+                 ]
+
+
       }
     }
   }, 
   checkboxes: [ //activation of checkboxes
     "field_1", 
-    "field_2"
+    "field_2",
+    "field_3",
+    "field_4",
+    "field_5",
+    "field_6",
+    "field_7",
   ], 
   selectedAreas: [ //min and max rows and columns, inclusive
     {
@@ -174,6 +215,26 @@ Volume: {
 ```
 
 see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter speed data.
+
+when numeric field is used as a sub field for multiplex field, if the numeric field has multiplex units, the set up of the field will become:
+
+```js
+condition_amt: {
+  required: false,
+  id: 'raw_value',
+  name: 'Amount',
+  type: 'numeric',
+  hasMultiplexUnit: true,
+  units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"],
+  unitMap: {
+    unit_type_1: [{id: "unit id 1", text: "unit1"}, {id: "unit id 2", text: "unit2"}],
+    unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
+    unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
+  }
+}
+```
+
+More examples at the end of the page
 
 #### Boolean Field
 
@@ -227,3 +288,122 @@ Polymerase: {
 }
 ```
 
+#### Multiplex
+
+A special field type used to handle fields which contain multiple sub fields
+
+creating a multiplex field will automatically generate a single select field with display name specified by selectName, the single select field is for user to choose one multiplex value to inspect or update. multiplexFields can be used to specify sub fields, components of multiplexFields can be any of the basic field type shown above.
+
+##### Example 1: multiplex field without sub field multiplex units
+```js
+Amplicon: {
+  required: true,
+  id: 'amplicon_id',
+  name: "Amplicon",
+  type: "multiplex",
+  selectName: 'select a single amplicon',
+  options: [
+    {
+      id: 'a',
+      text: 'amplicon_a'
+    },
+    {
+      id: 'b',
+      text: 'amplicon_b'
+    }
+  ],
+  multiplexFields: {
+    template_ngul: {
+      required: true,
+      id: 'template_ngul',
+      name: 'template conc',
+      type: 'numeric',
+      defaultUnit: 'ng/ul'
+    },
+    primer_umolarity: {
+      required: true,
+      id: 'primer_umolarity',
+      name: 'Primer conc',
+      type: 'numeric',
+      placeHolder: "Primer",
+      units: ['uM (final)', "unit1"],
+      defaultUnit: 'uM (final)'
+    },
+    probe_umolarity: {
+      required: true,
+      id: 'probe_umolarity',
+      name: 'Probe conc',
+      type: 'numeric',
+      placeHolder: "Probe",
+      defaultUnit: 'uM (final)'
+    },
+    dilution_factor: {
+      required: true,
+      id: 'dilution_factor',
+      name: 'Dilution factor',
+      type: 'numeric',
+      placeHolder: "Dilution factor",
+      defaultUnit: 'X'
+   }
+  }
+}
+```
+
+see the example above, Amplicon is a multiplex field contains sub fields: template concentration, primer concentration, probe concentration and dilution factor.
+
+##### Example 2: multiplex field with multiplex unit sub fields
+
+```js
+experimental_conditions: {
+  required: false,
+  id: 'experimental_conditions',
+  name: "Experimental Conditions",
+  type: "multiplex",
+  placeHolder: "Experimental Conditions",
+  selectName: 'select a single experimental condition',
+  options: [
+    {
+      id: "a",
+      unitTypeId: "unit_type_1",
+      text: "experimental condition1"
+    },
+    {
+      id: "b",
+      unitTypeId: "unit_type_2",
+      text: "experimental condition2"
+    },
+    {
+      id: "c",
+      unitTypeId: "unit_type_3",
+      text: "experimental condition3"
+    }
+  ],
+  multiplexFields: {
+    condition_amt: {
+      required: false,
+      id: 'raw_value',
+      name: 'Amount',
+      type: 'numeric',
+      units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"],
+      unitMap: {
+            unit_type_1: [{id: "unit id 1", text: "unit1"}, {id: "unit id 2", text: "unit2"}],
+            unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
+            unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
+
+        },
+      hasMultiplexUnit: true
+    },
+    is_modulator: {
+      required: false,
+      id: 'is_modulator',
+      name: 'Is Additive',
+      type: 'select',
+      options:[
+        {id:'a',text: 'Is Modulator'},
+        {id:'b',text: 'Not Modulator'}
+      ]
+    }
+  }
+}
+```
+Experimental conditions is a multiplex field with sub fields condition_amt and is_modulator, condition_amt is a sub field with multiplex units. In experimental_conditions field options, for each experimental condition there is a corresponding unitTypeId. unitTypeId is used to filter units upon choosing an experimental condition (eg: if the user choose experimental condition1 in the single select field, the unitTypeId for experimental condition1 is "unit_type_1", which is used to filter the unit options in condition_amt field, the condition_amt field will only have unit option ["unit1", "unit2"] after the filtering)
