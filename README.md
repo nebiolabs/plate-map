@@ -384,13 +384,11 @@ experimental_conditions: {
       id: 'raw_value',
       name: 'Amount',
       type: 'numeric',
-      units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"],
-      unitMap: {
-            unit_type_1: [{id: "unit id 1", text: "unit1"}, {id: "unit id 2", text: "unit2"}],
-            unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
-            unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
-
-        },
+      unitTypes: {
+        unit_type_1: ["unit1", "unit2"],
+        unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
+        unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
+      },
       hasMultiplexUnit: true
     },
     is_modulator: {
@@ -406,4 +404,5 @@ experimental_conditions: {
   }
 }
 ```
-Experimental conditions is a multiplex field with sub fields condition_amt and is_modulator, condition_amt is a sub field with multiplex units. In experimental_conditions field options, for each experimental condition there is a corresponding unitTypeId. unitTypeId is used to filter units upon choosing an experimental condition (eg: if the user choose experimental condition1 in the single select field, the unitTypeId for experimental condition1 is "unit_type_1", which is used to filter the unit options in condition_amt field, the condition_amt field will only have unit option ["unit1", "unit2"] after the filtering)
+
+In this case `experimental_conditions` is a multiplex field with subfields `condition_amt` and `is_modulator`. `condition_amt` is a subfield with multiplex units. In `experimental_conditions` field options, for each experimental condition there is a corresponding `unitTypeId`. `unitTypeId` is used to filter units upon choosing an experimental condition. For instance, if the user chooses option "a" in the single select field, the corresponding unitTypeId is "unit_type_1", which is used to filter the unit options in the `condition_amt` field. `condition_amt` will only have unit options `["unit1", "unit2"]` after the filtering.
