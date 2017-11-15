@@ -37,7 +37,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           this._colorMixer();
         }
-        this.engine.dataForColor = this.engine.derivative;
+        this.engine.selectedDerivative = this.engine.derivative;
       },
 
       _colorMixer: function() {

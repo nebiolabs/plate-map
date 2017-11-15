@@ -10,7 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       engine: {
 
         derivative: {},
-        dataForColor: {},
+        selectedDerivative: {},
         stackUpWithColor: {},
         stackPointer: 2,
 
@@ -29,8 +29,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.stackPointer = 1;
           var derivativeJson = {}
           //for (var idx in this.derivative) {
-					for (var idx in this.dataForColor) {
-            var data = this.dataForColor[idx];
+					for (var idx in this.selectedDerivative) {
+            var data = this.selectedDerivative[idx];
             var wellData = {};
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
               var attr = THIS.globalSelectedAttributes[i]; 
@@ -99,7 +99,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 wholeNoTiles++;
                 var index = this.stackUpWithColor[color][tileIndex]; 
                 var tile = THIS.allTiles[index];
-                var well = this.dataForColor[index];
+                var well = this.selectedDerivative[index];
                 THIS.setTileColor(tile, color, this.stackPointer); 
                 // Checks if all the required fields are filled
                 var completion = this.checkCompletion(well.wellData, tile);

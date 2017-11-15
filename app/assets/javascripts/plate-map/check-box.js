@@ -38,6 +38,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (field.checkbox) {
           	if (field.subFieldList){
 							var that = this;
+          		var subFieldToInclude = [];
           		var subFieldToExclude = [];
 
           		field.subFieldList.forEach(function(subField){
@@ -50,21 +51,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
 								}
 								checkImage.data("clicked", clicked);
 								if (clicked) {
-									gsa.push(fieldId);
 									checkImage.attr("src", that._assets.doImg);
+									subFieldToInclude.push(subField.id);
 								} else {
 									checkImage.attr("src", that._assets.dontImg);
-									subFieldToExclude.push(subField.id)
+									subFieldToExclude.push(subField.id);
 								}
+
 
 							});
 
           		// update base on check box
-							for (var wellKey in this.engine.dataForColor) {
-          			var wellData = this.engine.dataForColor[wellKey].wellData;
-								for (var fieldId in subFieldToExclude){
+							for (var wellKey in this.engine.selectedDerivative) {
+          			var wellData = this.engine.selectedDerivative[wellKey].wellData;
+
+								for (var includeId in subFieldToInclude){
+									// for each multiplex data
+									for (var idx in wellData[field.id]) {
+										wellData[field.id][idx][subFieldToInclude[includeId]] = this.engine.derivative[wellKey].wellData[field.id][idx][subFieldToInclude[includeId]];
+									}
+								}
+
+          			for (var subFieldId in subFieldToExclude){
 									wellData[field.id].forEach(function (multiplexData){
-										delete multiplexData[subFieldToExclude[fieldId]]
+										delete multiplexData[subFieldToExclude[subFieldId]];
 									});
 								}
 							}
