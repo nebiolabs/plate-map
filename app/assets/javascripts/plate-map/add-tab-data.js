@@ -147,7 +147,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
         var singleSelectData = {
-          id: data.multiplexDiv,
+          id: data.id + "SingleSelect",
           name: data.selectName || "Select",
           type: 'select',
           multiplexId: data.id,

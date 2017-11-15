@@ -120,6 +120,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         opts.data.forEach(function (opt) {
           optMap[opt.id] = opt; 
         });
+
+        if (isMultiplex) {
+          opts.allowClear = false;
+        }
         input.select2(opts); 
 
         field.parseValue = function (value) {
@@ -269,26 +273,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
         that.defaultWell.wellData[id] = null;
 
         // Adding unit
-        var units = data.units || []; 
-        var defaultUnit = data.defaultUnit || null; 
-        var unitInput = null; 
+        var units = data.units || [];
+        var defaultUnit = data.defaultUnit || null;
+        var unitInput = null;
         if (defaultUnit) {
           if (units.length) {
             if (units.indexOf(defaultUnit) < 0) {
               defaultUnit = units[0];
             }
           } else {
-            units = [defaultUnit]; 
+            units = [defaultUnit];
           }
         } else {
           if (units.length) {
-            defaultUnit = units[0]; 
+            defaultUnit = units[0];
           }
         }
 
         if (units.length) {
-          field.units = units; 
-          field.hasUnits = true; 
+          field.units = units;
+          field.hasUnits = true;
           field.defaultUnit = defaultUnit;
           if (units.length == 1) {
             var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
@@ -302,22 +306,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             var unitData = units.map(function (unit) {
               var o = {
-                id: unit, 
+                id: unit,
                 text: unit
-              }; 
+              };
               if (unit == defaultUnit) {
-                o.selected = true; 
+                o.selected = true;
               }
-              return o; 
-            }); 
+              return o;
+            });
 
             var opts = {
               data: unitData,
-              allowClear: false, 
+              allowClear: false,
               minimumResultsForSearch: 10
-            }; 
+            };
 
-            unitInput.select2(opts); 
+            unitInput.select2(opts);
           }
         }
 
@@ -326,13 +330,63 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (unitInput) {
             unitInput.prop("disabled", bool); 
           }
-        }; 
+        };
+
+        // given the unitTypeId, clean up the unit options
+        field.setMultiplexUnitOptions = function (unitType) {
+          var unitOpts = field.data.unitMap[unitType];
+          field.units = unitOpts.map(function (curUnit) {
+            return curUnit.text;
+          });
+
+          field.defaultUnit = field.units[0];
+
+          var newUnits = unitOpts.map(function (curUnit) {
+            var cleanUnit = {};
+            if (curUnit.text === field.defaultUnit) {
+              // unit formatting for
+              cleanUnit.selected = true;
+            }
+            cleanUnit.id = curUnit.text;
+            cleanUnit.text = curUnit.text;
+            return cleanUnit;
+          });
+
+          var opts = {
+            data: newUnits,
+            allowClear: false,
+            minimumResultsForSearch: 10
+          };
+          unitInput.select2(opts);
+        };
+
+        // get selected unit list
+        field.getSelectedMultiplexUnit = function (value) {
+
+          var unitOptsMap = field.data.unitMap;
+          var unitTypeList = unitOptsMap[value.unitTypeId];
+          var unitSelected;
+
+          unitTypeList.forEach(function (curUnit) {
+            if (curUnit.id === value.unitId) {
+              unitSelected = curUnit.text;
+            }
+          });
+          return unitSelected;
+        };
 
         field.parseValue = function (value) {
+          var v;
           if ($.isPlainObject(value)) {
+            if (field.data.hasMultiplexUnit){
+              // parse unit for value using unitTypeId and unitId
+              value.unit = field.getSelectedMultiplexUnit(value);
+              return (value);
+            }
+
             if (field.hasUnits) {
-              var v = field.parseRegularValue(value.value); 
-              if (v == null) {
+              v = field.parseRegularValue(value.value);
+              if (v === null) {
                 return null; 
               }
               return {
@@ -344,8 +398,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           } else {
             if (field.hasUnits) {
-              var v = field.parseRegularValue(value); 
-              if (v == null) {
+              v = field.parseRegularValue(value);
+              if (v === null) {
                 return null; 
               }
               return {
@@ -359,15 +413,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.getValue = function () {
-          var v = field.getRegularValue(); 
-          if ((v == null) || isNaN(v)) {
-            return null; 
-          }
-          if (field.hasUnits) {
-            return {
-              value: v, 
+          var v = field.getRegularValue();
+
+          if ((v === null) || isNaN(v)) {
+            return null;
+          } else if (field.hasUnits) {
+            var returnVal = {
+              value: v,
               unit: field.getUnit()
+            };
+
+            if (field.data.hasMultiplexUnit) {
+              // include unitTypeId and UnitId to returnVal
+              for (var unitTypeKey in field.data.unitMap) {
+                var unitTypeUnits = field.data.unitMap[unitTypeKey];
+                unitTypeUnits.forEach(function (unit) {
+                  if (unit.text === returnVal.unit) {
+                    returnVal['unitTypeId'] = unitTypeKey;
+                    returnVal['unitId'] = unit.id;
+                  }
+                })
+              }
             }
+            return returnVal;
           } else {
             return v;
           }
@@ -376,8 +444,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setValue = function (value) {
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
-              field.setRegularValue(value.value)
-              field.setUnit(value.unit || field.defaultUnit); 
+              if (field.data.hasMultiplexUnit){
+                // update unit options
+                field.setMultiplexUnitOptions(value.unitTypeId);
+                // convert unitId to unit
+                value.unit = field.getSelectedMultiplexUnit(value);
+              }
+
+              field.setUnit(value.unit || field.defaultUnit);
+              field.setRegularValue(value.value);
+
             } else {
               field.setRegularValue(value);
               field.setUnit(field.defaultUnit)
@@ -410,7 +486,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = Number(v); 
           }
           return v; 
-        }
+        };
 
         field.setRegularValue = function (value) {
           input.val(value); 
@@ -586,21 +662,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.detailData = v;
           if (v && v.length) {
             // handling for single select box
-            var subFieldData = v;
-
-            v = v.map(function(val){return val[field.id]});
+            var mainFieldId = v.map(function(val){return val[field.id]});
             var optMap = {};
             singleSelectField.data.options.forEach(function(val) {
               optMap[val.id] = val;
             });
-            var newOptions = v.map(function (i) {return optMap[i];});
+            var newOptions = mainFieldId.map(function (i) {return optMap[i];});
             singleSelectField.setOpts(newOptions);
             if (newOptions.length > 0) {
               singleSelectField.disabled(false);
               var curId = newOptions[0].id;
               var curSubField;
               singleSelectField.setValue(curId);
-              subFieldData.forEach(function(val){
+              v.forEach(function(val){
                 if (val[field.id] === curId) {
                   curSubField = val;
                 }
@@ -665,8 +739,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             curIds = curData.map(function(val){return val[field.id]});
           }
 
-          var subFieldIds = field.subFieldList.map(function(subField) {return subField.id});
-
           var newMultiplexVal = [];
           var selectList = [];
           if (v) {
@@ -682,8 +754,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (curIds.indexOf(selectedVal) < 0) {
                 var newVal = {};
                 newVal[field.id] = selectedVal;
-                subFieldIds.forEach(function(fieldId) {
-                  newVal[fieldId] = null;
+                field.subFieldList.forEach(function(subfield){
+                  // special handling for subfield which has multiplexUnit
+                  if (subfield.data.hasMultiplexUnit){
+                    subfield.disabled(false);
+                    field.data.options.forEach(function(opt){
+                      if (opt.id === selectedVal){
+                        // update subfield unit options
+                        subfield.setMultiplexUnitOptions(opt.unitTypeId);
+                        var val = {
+                          value: null,
+                          unitTypeId: opt.unitTypeId,
+                          unit: subfield.units[0]
+                        };
+                        // look up the corresponding unitId from unit
+                        subfield.data.unitMap[val.unitTypeId].forEach (function (unit) {
+                          if (unit.text === val.unit){
+                            val.unitId = unit.id;
+                          }
+                        });
+                        newVal[subfield.id] = subfield.parseValue(val);
+                      }
+                    });
+                  } else {
+                    newVal[subfield.id] = subfield.parseValue(null);
+                  }
                 });
                 newMultiplexVal.push(newVal);
               }
@@ -703,6 +798,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           field.singleSelectField.setOpts(selectList);
           field.singleSelectField.setValue(curId);
+
           // make current selected obj
           // update subFields
           if (newMultiplexVal.length > 0) {
@@ -737,7 +833,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (v === null) {
             return "";
           }
-
           // get subfields that is selected from the checkbox
           if (field.id in that.globalSelectedMultiplexSubfield){
 						var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
@@ -760,7 +855,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             return returnVal.join(";");
 					}
-
         };
 
         field.checkCompletion = function(valList) {
@@ -770,11 +864,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var idx in valList) {
             var vals = valList[idx];
 
-            for (var subfieldId in field.subFieldList){
-              var subfield = field.subFieldList[subfieldId];
-              var curVal = vals[subfield.id];
+            for (var subFieldId in field.subFieldList){
+              var subField = field.subFieldList[subFieldId];
+              var curVal = vals[subField.id];
 
-              if (subfield.required) {
+              if (subField.required) {
                 req++;
 
                 if (typeof(curVal) === 'object'&& curVal){
@@ -788,7 +882,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
 
-          if (req == fill) {
+          if (req === fill) {
             return 1;
           }
           return fill / req;

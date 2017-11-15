@@ -87,6 +87,19 @@
   white-space: nowrap;
 }
 
+.plate-setup-clicked-button {
+  height: 23px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 12px;
+  border: none;
+  background-color: aquamarine;
+  border-radius: 2px;
+  margin-right: 4px;
+  flex: 1 0 0;
+  white-space: nowrap;
+}
+
+
 .plate-setup-canvas-container {
   top: 52px;
   left: 16px;
@@ -249,6 +262,7 @@
   height: 28px;
   flex: 1 1 auto;
   width: 30px;
+  margin: auto;
 }
 
 .plate-setup-tab-multiselect-field {
@@ -300,7 +314,7 @@
 }
 
 .plate-setup-bottom-table-container {
-  max-height: 400px;
+  max-height: 100%;
   overflow: auto;
 }
 
