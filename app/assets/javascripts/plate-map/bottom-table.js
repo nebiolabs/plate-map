@@ -201,11 +201,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         exportButton.click(function() {
           that.exportData('csv');
 					exportButton.text("Exported");
-					setTimeout(resetExportText, 750);
+					exportButton[0].classList.remove("plate-setup-button");
+					exportButton.addClass("plate-setup-clicked-button");
+					setTimeout(resetExportText, 1000);
         });
 
         function resetExportText (){
 					exportButton.text("Export CSV");
+					exportButton[0].classList.remove("plate-setup-clicked-button");
+					exportButton.addClass("plate-setup-button");
         }
 
         // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
@@ -217,15 +221,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           text: function () {
             return that.exportData("clipboard");
           }
-        }); 
-        clipboard.on('success', function(e) {
-					clipboardButton.text("Table copied");
+        });
 
-					setTimeout(resetClipboardText, 750);
+        clipboard.on('success', function(e) {
+					clipboardButton.text("Copied as tab-delimited format");
+					clipboardButton[0].classList.remove("plate-setup-button");
+					clipboardButton.addClass("plate-setup-clicked-button");
+					setTimeout(resetClipboardText, 1000);
         });
 
         function resetClipboardText (){
 					clipboardButton.text("Copy To Clipboard");
+					clipboardButton[0].classList.remove("plate-setup-clicked-button");
+					clipboardButton.addClass("plate-setup-button");
         }
 
         clipboard.on('error', function(e) {
