@@ -300,7 +300,7 @@
 }
 
 .plate-setup-bottom-table-container {
-  max-height: 400px;
+  max-height: 100%;
   overflow: auto;
 }
 
