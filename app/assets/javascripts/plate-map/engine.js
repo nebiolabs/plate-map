@@ -27,13 +27,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.stackUpWithColor = {};
           this.stackPointer = 1;
           var derivativeJson = {}
-          for (var idx in this.derivative) {
-            var data = this.derivative[idx]; 
+          //for (var idx in this.derivative) {
+					for (var idx in this.derivative) {
+            var data = this.derivative[idx];
             var wellData = {};
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
               var attr = THIS.globalSelectedAttributes[i]; 
-              if (data.wellData[attr] != null) {
-                wellData[attr] = data.wellData[attr];
+
+              if (attr in THIS.globalSelectedMultiplexSubfield){
+                var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
+                var newMultiplexVal = [];
+                for (var multiplexIdx in data.wellData[attr]){
+								  var curMultiplexVals = data.wellData[attr][multiplexIdx];
+									var newVal = {};
+									newVal[attr] = curMultiplexVals[attr];
+								  selectedSubFields.forEach(function (subFieldId) {
+										newVal[subFieldId] = curMultiplexVals[subFieldId];
+								    /*
+								    if (curMultiplexVals[subFieldId]){
+											newVal[subFieldId] = curMultiplexVals[subFieldId];
+                    }
+                    */
+									});
+								  newMultiplexVal.push(newVal);
+                }
+                wellData[attr] = newMultiplexVal;
+              } else {
+								if (data.wellData[attr] != null) {
+									wellData[attr] = data.wellData[attr];
+								}
               }
             }
             if ($.isEmptyObject(wellData)) {
@@ -97,7 +119,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 wholeNoTiles++;
                 var index = this.stackUpWithColor[color][tileIndex]; 
                 var tile = THIS.allTiles[index];
-                var well = this.derivative[index]; 
+                var well = this.derivative[index];
                 THIS.setTileColor(tile, color, this.stackPointer); 
                 // Checks if all the required fields are filled
                 var completion = this.checkCompletion(well.wellData, tile);
