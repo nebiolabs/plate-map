@@ -846,7 +846,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 							for (var optId in field.data.options) {
 								var opt = field.data.options[optId];
 								if (opt.id === subV[field.id]){
-									subText.push (field.name + ':"' + opt.text + '", ');
+									subText.push (field.name + ':"' + opt.text);
 								}
 							}
 
