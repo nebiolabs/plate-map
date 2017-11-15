@@ -200,7 +200,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         exportButton.click(function() {
           that.exportData('csv');
+					exportButton.text("Exported");
+					setTimeout(resetExportText, 750);
         });
+
+        function resetExportText (){
+					exportButton.text("Export CSV");
+        }
 
         // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
         var clipboardButton = $("<button/>").addClass("plate-setup-button"); 
@@ -213,15 +219,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }); 
         clipboard.on('success', function(e) {
-          var msg = "Copied table to clipboard in tab-delimited format";
-          window.alert(msg);
-          console.info(msg);
+					clipboardButton.text("Table copied");
+
+					setTimeout(resetClipboardText, 750);
         });
 
+        function resetClipboardText (){
+					clipboardButton.text("Copy To Clipboard");
+        }
+
         clipboard.on('error', function(e) {
-          var msg = "Failed to copy table to clipboard: browser may be incompatible";
-          window.alert(msg);
-          console.error(msg);
+					clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
+					setTimeout(resetClipboardText, 1500);
         });
 
         overlayContainer.append(buttonContainer);
