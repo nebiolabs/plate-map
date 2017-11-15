@@ -737,23 +737,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (v === null) {
             return "";
           }
-          return v.map(function (subV) {
-            var subText = field.subFieldList.reduce(function (text, subField) {
-              var x = subField.getText(subV[subField.id]); 
-              if (x) {
-                //x = subField.id + ':"' + x + '"'; 
-                //x = '"' + subField.name + '":"' + x + '"'; 
-                x = subField.name + ': ' + x; 
-                if (text) {
-                  text += ", " + x; 
-                } else {
-                  text = x
+
+          // get subfields that is selected from the checkbox
+          if (field.id in that.globalSelectedMultiplexSubfield){
+						var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
+
+						var returnVal = [];
+
+						for (var valIdx in v) {
+						  var subV = v[valIdx];
+							var subText = [];
+							subText.push (field.name + ": " + subV[field.id]);
+              field.subFieldList.forEach(function (subField) {
+								if (checkedSubfields.indexOf(subField.id) >= 0) {
+								  var x = subField.getText(subV[subField.id]);
+									subText.push(subField.name + ": " + x);
                 }
-              }
-              return text; 
-            }, ""); 
-            return "{" + subText + "}";
-          }).join("; "); 
+
+              });
+
+							returnVal.push("{" + subText.join(", ") + "}");
+            }
+            return returnVal.join(";");
+					}
+
         };
 
         field.checkCompletion = function(valList) {

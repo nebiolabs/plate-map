@@ -83,8 +83,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       setData: function(data) {
         this.engine.derivative = $.extend(true, {}, data.derivative);
-        this.engine.selectedDerivative = JSON.parse(JSON.stringify(this.engine.derivative));
-        this.setCheckboxes(data.checkboxes); 
+        this.setCheckboxes(data.checkboxes);
         this.setSelection(data.selectedAreas, data.focalWell);
         this._colorMixer();
         this.decideSelectedFields();

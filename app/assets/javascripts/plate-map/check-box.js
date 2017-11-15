@@ -32,14 +32,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       changeCheckboxes: function (changes) {
-        var gsa = []; 
+        var gsa = [];
+        var multiplexCheckedSubField = {};
+
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i]; 
           if (field.checkbox) {
           	if (field.subFieldList){
 							var that = this;
           		var subFieldToInclude = [];
-          		var subFieldToExclude = [];
 
           		field.subFieldList.forEach(function(subField){
 
@@ -55,30 +56,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 									subFieldToInclude.push(subField.id);
 								} else {
 									checkImage.attr("src", that._assets.dontImg);
-									subFieldToExclude.push(subField.id);
 								}
-
-
 							});
-
-          		// update base on check box
-							for (var wellKey in this.engine.selectedDerivative) {
-          			var wellData = this.engine.selectedDerivative[wellKey].wellData;
-
-								for (var includeId in subFieldToInclude){
-									// for each multiplex data
-									for (var idx in wellData[field.id]) {
-										wellData[field.id][idx][subFieldToInclude[includeId]] = this.engine.derivative[wellKey].wellData[field.id][idx][subFieldToInclude[includeId]];
-									}
-								}
-
-          			for (var subFieldId in subFieldToExclude){
-									wellData[field.id].forEach(function (multiplexData){
-										delete multiplexData[subFieldToExclude[subFieldId]];
-									});
-								}
-							}
+							multiplexCheckedSubField[field.id] = subFieldToInclude;
 						}
+
 						var checkImage = field.checkbox;
 						var fieldId = checkImage.data("linkedFieldId");
 						var clicked = checkImage.data("clicked");
@@ -94,17 +76,39 @@ var plateLayOutWidget = plateLayOutWidget || {};
 						}
           }
         }
+        this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
         this.globalSelectedAttributes = gsa; 
         this._clearPresetSelection(); 
         this._colorMixer(); 
-      }, 
+      },
 
       setCheckboxes: function(fieldIds) {
         fieldIds = fieldIds || []; 
-        var gsa = []; 
+        var gsa = [];
+				var multiplexCheckedSubField = {};
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i]; 
           if (field.checkbox) {
+						if (field.subFieldList){
+							var that = this;
+							var subFieldToInclude = [];
+
+							field.subFieldList.forEach(function(subField){
+
+								var checkImage = subField.checkbox;
+								var fieldId = checkImage.data("linkedFieldId");
+								var clicked = fieldIds.indexOf(fieldId) >= 0;
+								checkImage.data("clicked", clicked);
+								if (clicked) {
+									checkImage.attr("src", that._assets.doImg);
+									subFieldToInclude.push(subField.id);
+								} else {
+									checkImage.attr("src", that._assets.dontImg);
+								}
+							});
+							multiplexCheckedSubField[field.id] = subFieldToInclude;
+						}
+
             var checkImage = field.checkbox;
             var fieldId = checkImage.data("linkedFieldId"); 
             var clicked = fieldIds.indexOf(fieldId) >= 0;
@@ -117,7 +121,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
         }
-        this.globalSelectedAttributes = gsa; 
+				this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
+        this.globalSelectedAttributes = gsa;
         this._clearPresetSelection(); 
         this._colorMixer(); 
       },

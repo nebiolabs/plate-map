@@ -37,7 +37,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           this._colorMixer();
         }
-        this.engine.selectedDerivative = this.engine.derivative;
       },
 
       _colorMixer: function() {
@@ -66,15 +65,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           })
         }
 
-        var data = {
-          "derivative": derivative,
-          "checkboxes": checkboxes,
-          "selectedAreas": selectedAreas,
-          "focalWell": focalWell,
-          "colorToLoc": colorLocMap
-        };
-
-        return data;
+        return {
+					"derivative": derivative,
+					"checkboxes": checkboxes,
+					"selectedAreas": selectedAreas,
+					"focalWell": focalWell,
+					"colorToLoc": colorLocMap
+				};
       }
 
     };
