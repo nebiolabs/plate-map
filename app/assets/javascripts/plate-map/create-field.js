@@ -842,7 +842,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 						for (var valIdx in v) {
 						  var subV = v[valIdx];
 							var subText = [];
-							subText.push (field.name + ": " + subV[field.id]);
+
+							for (var optId in field.data.options) {
+								var opt = field.data.options[optId];
+								if (opt.id === subV[field.id]){
+									subText.push (field.name + ':"' + opt.text + '", ');
+								}
+							}
+
               field.subFieldList.forEach(function (subField) {
 								if (checkedSubfields.indexOf(subField.id) >= 0) {
 								  var x = subField.getText(subV[subField.id]);
