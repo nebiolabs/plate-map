@@ -203,7 +203,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 					exportButton.text("Exported");
 					exportButton[0].classList.remove("plate-setup-button");
 					exportButton.addClass("plate-setup-clicked-button");
-					setTimeout(resetExportText, 1000);
+					setTimeout(resetExportText, 3000);
         });
 
         function resetExportText (){
@@ -227,7 +227,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 					clipboardButton.text("Copied as tab-delimited format");
 					clipboardButton[0].classList.remove("plate-setup-button");
 					clipboardButton.addClass("plate-setup-clicked-button");
-					setTimeout(resetClipboardText, 1000);
+					setTimeout(resetClipboardText, 3000);
         });
 
         function resetClipboardText (){
@@ -238,7 +238,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         clipboard.on('error', function(e) {
 					clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
-					setTimeout(resetClipboardText, 1500);
+					setTimeout(resetClipboardText, 3000);
         });
 
         overlayContainer.append(buttonContainer);
