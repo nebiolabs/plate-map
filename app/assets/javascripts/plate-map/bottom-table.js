@@ -200,7 +200,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         exportButton.click(function() {
           that.exportData('csv');
+					exportButton.text("Exported");
+					exportButton[0].classList.remove("plate-setup-button");
+					exportButton.addClass("plate-setup-clicked-button");
+					setTimeout(resetExportText, 3000);
         });
+
+        function resetExportText (){
+					exportButton.text("Export CSV");
+					exportButton[0].classList.remove("plate-setup-clicked-button");
+					exportButton.addClass("plate-setup-button");
+        }
 
         // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
         var clipboardButton = $("<button/>").addClass("plate-setup-button"); 
@@ -211,17 +221,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
           text: function () {
             return that.exportData("clipboard");
           }
-        }); 
-        clipboard.on('success', function(e) {
-          var msg = "Copied table to clipboard in tab-delimited format";
-          window.alert(msg);
-          console.info(msg);
         });
 
+        clipboard.on('success', function(e) {
+					clipboardButton.text("Copied as tab-delimited format");
+					clipboardButton[0].classList.remove("plate-setup-button");
+					clipboardButton.addClass("plate-setup-clicked-button");
+					setTimeout(resetClipboardText, 3000);
+        });
+
+        function resetClipboardText (){
+					clipboardButton.text("Copy To Clipboard");
+					clipboardButton[0].classList.remove("plate-setup-clicked-button");
+					clipboardButton.addClass("plate-setup-button");
+        }
+
         clipboard.on('error', function(e) {
-          var msg = "Failed to copy table to clipboard: browser may be incompatible";
-          window.alert(msg);
-          console.error(msg);
+					clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
+					setTimeout(resetClipboardText, 3000);
         });
 
         overlayContainer.append(buttonContainer);
