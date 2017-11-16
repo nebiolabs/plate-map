@@ -31,37 +31,90 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
       },
 
+			changeSubFieldsCheckboxes: function (field, changes){
+				var that = this;
+				var subFieldToInclude = [];
+
+				field.subFieldList.forEach(function(subField){
+					var checkImage = subField.checkbox;
+					var fieldId = checkImage.data("linkedFieldId");
+					var clicked = checkImage.data("clicked");
+					if (fieldId in changes) {
+						clicked = Boolean(changes[fieldId]);
+					}
+					checkImage.data("clicked", clicked);
+					if (clicked) {
+						checkImage.attr("src", that._assets.doImg);
+						subFieldToInclude.push(subField.id);
+					} else {
+						checkImage.attr("src", that._assets.dontImg);
+					}
+				});
+				return subFieldToInclude;
+			},
+
       changeCheckboxes: function (changes) {
-        var gsa = []; 
+        var gsa = [];
+        var multiplexCheckedSubField = {};
         for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i]; 
+          var field = this.fieldList[i];
           if (field.checkbox) {
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId"); 
-            var clicked = checkImage.data("clicked");
-            if (fieldId in changes) {
-              clicked = Boolean(changes[fieldId]);
-            }
-            checkImage.data("clicked", clicked);
-            if (clicked) {
-              gsa.push(fieldId);
-              checkImage.attr("src", this._assets.doImg);
-            } else {
-              checkImage.attr("src", this._assets.dontImg);
-            }
+          	if (field.subFieldList){
+							multiplexCheckedSubField[field.id] = this.changeSubFieldsCheckboxes(field, changes);
+						}
+
+						var checkImage = field.checkbox;
+						var fieldId = checkImage.data("linkedFieldId");
+						var clicked = checkImage.data("clicked");
+						if (fieldId in changes) {
+							clicked = Boolean(changes[fieldId]);
+						}
+						checkImage.data("clicked", clicked);
+						if (clicked) {
+							gsa.push(fieldId);
+							checkImage.attr("src", this._assets.doImg);
+						} else {
+							checkImage.attr("src", this._assets.dontImg);
+						}
           }
         }
+        this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
         this.globalSelectedAttributes = gsa; 
         this._clearPresetSelection(); 
         this._colorMixer(); 
-      }, 
+      },
+
+			setSubFieldCheckboxes: function (field, fieldIds) {
+				var that = this;
+				var subFieldToInclude = [];
+				field.subFieldList.forEach(function(subField){
+					var checkImage = subField.checkbox;
+					var fieldId = checkImage.data("linkedFieldId");
+					var clicked = fieldIds.indexOf(fieldId) >= 0;
+					checkImage.data("clicked", clicked);
+					if (clicked) {
+						checkImage.attr("src", that._assets.doImg);
+						subFieldToInclude.push(subField.id);
+					} else {
+						checkImage.attr("src", that._assets.dontImg);
+					}
+				});
+				return subFieldToInclude;
+			},
 
       setCheckboxes: function(fieldIds) {
         fieldIds = fieldIds || []; 
-        var gsa = []; 
-        for (var i = 0; i < this.fieldList.length; i++) {
+        var gsa = [];
+				var multiplexCheckedSubField = {};
+
+				for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i]; 
           if (field.checkbox) {
+						// special handling for multiplex field
+          	if (field.subFieldList){
+							multiplexCheckedSubField[field.id] = this.setSubFieldCheckboxes(field, fieldIds);
+						}
+
             var checkImage = field.checkbox;
             var fieldId = checkImage.data("linkedFieldId"); 
             var clicked = fieldIds.indexOf(fieldId) >= 0;
@@ -70,14 +123,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
               gsa.push(fieldId);
               checkImage.attr("src", this._assets.doImg);
             } else {
+
               checkImage.attr("src", this._assets.dontImg);
             }
           }
         }
-        this.globalSelectedAttributes = gsa; 
+				this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
+        this.globalSelectedAttributes = gsa;
         this._clearPresetSelection(); 
         this._colorMixer(); 
-      },
+      }
 
     };
   }

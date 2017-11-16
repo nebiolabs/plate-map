@@ -809,33 +809,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (v === null) {
             return "";
           }
-          return v.map(function (subV) {
-            // render option text
-            var multiplexFieldText;
-            for (var optId in field.data.options) {
-              var opt = field.data.options[optId];
-              if (opt.id === subV[field.id]){
-                multiplexFieldText = opt.text;
-              }
-            }
+          // get subfields that is selected from the checkbox
+          if (field.id in that.globalSelectedMultiplexSubfield){
+						var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
 
-            var mainFieldText = field.name + ':"' + multiplexFieldText + '", ';
+						var returnVal = [];
 
-            var subText = field.subFieldList.reduce(function (text, subField) {
-              var x = subField.getText(subV[subField.id]); 
-              if (x) {
-                x = subField.name + ': ' + x; 
-                if (text) {
-                  text += ", " + x; 
-                } else {
-                  text = x
+						for (var valIdx in v) {
+						  var subV = v[valIdx];
+							var subText = [];
+
+							for (var optId in field.data.options) {
+								var opt = field.data.options[optId];
+								if (opt.id === subV[field.id]){
+									subText.push (field.name + ':"' + opt.text);
+								}
+							}
+
+              field.subFieldList.forEach(function (subField) {
+								if (checkedSubfields.indexOf(subField.id) >= 0) {
+								  var x = subField.getText(subV[subField.id]);
+									subText.push(subField.name + ": " + x);
                 }
-              }
-              return text; 
-            }, "");
 
-            return "{" + mainFieldText + subText + "}";
-          }).join("; "); 
+              });
+
+							returnVal.push("{" + subText.join(", ") + "}");
+            }
+            return returnVal.join(";");
+					}
         };
 
         field.checkCompletion = function(valList) {
