@@ -78,7 +78,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       };
 
       fieldArray.push(field);
-			that._addCheckBox(field);
+      that._addCheckBox(field);
       that.fieldMap[data.id] = field;
 
       return field;

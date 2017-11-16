@@ -66,12 +66,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         return {
-					"derivative": derivative,
-					"checkboxes": checkboxes,
-					"selectedAreas": selectedAreas,
-					"focalWell": focalWell,
-					"colorToLoc": colorLocMap
-				};
+          "derivative": derivative,
+          "checkboxes": checkboxes,
+          "selectedAreas": selectedAreas,
+          "focalWell": focalWell,
+          "colorToLoc": colorLocMap
+        };
       }
 
     };
