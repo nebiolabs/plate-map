@@ -292,12 +292,12 @@
 }
 
 .plate-setup-bottom-control-container {
-  top: 10px;
-  left: 16px;
-  right: 16px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
   background-color: #464646;
-  border-radius: 2px;
-  position: static;
+  position: absolute;
   display: flex;
   justify-content:space-between;
   align-items: baseline;
@@ -314,7 +314,11 @@
 }
 
 .plate-setup-bottom-table-container {
-  max-height: 100%;
+  top: 32px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
   overflow: auto;
 }
 
