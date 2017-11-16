@@ -13,7 +13,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for (var index in data.derivative) {
           var well = data.derivative[index]; 
           derivative[index] = this.sanitizeWell(well); 
-        }; 
+        }
 
         var checkboxes = data.checkboxes || []; 
         var selection = this.sanitizeAreas(data.selectedAreas, data.focalWell); 
@@ -83,7 +83,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       setData: function(data) {
         this.engine.derivative = $.extend(true, {}, data.derivative);
-        this.setCheckboxes(data.checkboxes); 
+        this.setCheckboxes(data.checkboxes);
         this.setSelection(data.selectedAreas, data.focalWell);
         this._colorMixer();
         this.decideSelectedFields();
