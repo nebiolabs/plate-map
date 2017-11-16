@@ -337,7 +337,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setUnitOpts = function(opts) {
-          field.units = opts;
+          field.units = opts || field.units;
           field.defaultUnit = opts[0];
 
           var newUnits = opts.map(function(curUnit) {
@@ -727,7 +727,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           });
           field.subFieldList.forEach(function(subField) {
             if (subField.data.hasMultiplexUnit) {
-              subField.setUnitOpts(curOpts.unitOptions[subField.id]);
+              if (curOpts.hasOwnProperty("unitOptions")) {
+								subField.setUnitOpts(curOpts.unitOptions[subField.id]);
+              } else {
+                subField.setUnitOpts(null);
+              }
             }
           })
         };
@@ -845,7 +849,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               for (var optId in field.data.options) {
                 var opt = field.data.options[optId];
                 if (opt.id === subV[field.id]) {
-                  subText.push(field.name + ':"' + opt.text);
+                  subText.push(opt.text);
                 }
               }
 

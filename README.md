@@ -278,7 +278,7 @@ Polymerase: {
 
 A special field type used to handle fields which contain multiple sub fields
 
-creating a multiplex field will automatically generate a single select field with display name specified by selectName, the single select field is for user to choose one multiplex value to inspect or update. multiplexFields can be used to specify sub fields, components of multiplexFields can be any of the basic field type shown above.
+creating a multiplex field will automatically generate a single select field with display name `Select to edit`, the single select field is for user to choose one multiplex value to inspect or update. multiplexFields can be used to specify sub fields, components of multiplexFields can be any of the basic field type shown above.
 
 ##### Example 1: multiplex field without sub field multiplex units
 ```js
@@ -287,7 +287,6 @@ Amplicon: {
   id: 'amplicon_id',
   name: "Amplicon",
   type: "multiplex",
-  selectName: 'select a single amplicon',
   options: [
     {
       id: 'a',
@@ -346,7 +345,6 @@ experimental_conditions: {
   name: "Experimental Conditions",
   type: "multiplex",
   placeHolder: "Experimental Conditions",
-  selectName: 'select a single experimental condition',
   options: [
     {
       id: "a",

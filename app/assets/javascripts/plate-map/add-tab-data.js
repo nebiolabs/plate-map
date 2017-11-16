@@ -137,7 +137,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivRightSide);
 
         // single select
-        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text(data.selectName);
+        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
         var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
         $(wrapperDivRightSide).append(nameContainer1);
         $(wrapperDivRightSide).append(fieldContainer1);
@@ -148,7 +148,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var singleSelectData = {
           id: data.id + "SingleSelect",
-          name: data.selectName || "Select",
           type: 'select',
           multiplexId: data.id,
           options: data.options
