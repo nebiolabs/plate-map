@@ -332,58 +332,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
-        // given the unitTypeId, clean up the unit options
-        field.setMultiplexUnitOptions = function (unitType) {
-          var unitOpts = field.data.unitMap[unitType];
-          field.units = unitOpts.map(function (curUnit) {
-            return curUnit.text;
-          });
+        field.setUnitOpts = function (opts) {
+          field.units = opts;
+          field.defaultUnit = opts[0];
 
-          field.defaultUnit = field.units[0];
+					var newUnits = opts.map(function (curUnit) {
+						var cleanUnit = {};
+						if (curUnit.text === field.defaultUnit) {
+							cleanUnit.selected = true;
+						}
+						cleanUnit.id = curUnit;
+						cleanUnit.text = curUnit;
+						return cleanUnit;
+					});
 
-          var newUnits = unitOpts.map(function (curUnit) {
-            var cleanUnit = {};
-            if (curUnit.text === field.defaultUnit) {
-              // unit formatting for
-              cleanUnit.selected = true;
-            }
-            cleanUnit.id = curUnit.text;
-            cleanUnit.text = curUnit.text;
-            return cleanUnit;
-          });
-
-          var opts = {
-            data: newUnits,
-            allowClear: false,
-            minimumResultsForSearch: 10
-          };
-          unitInput.select2(opts);
-        };
-
-        // get selected unit list
-        field.getSelectedMultiplexUnit = function (value) {
-
-          var unitOptsMap = field.data.unitMap;
-          var unitTypeList = unitOptsMap[value.unitTypeId];
-          var unitSelected;
-
-          unitTypeList.forEach(function (curUnit) {
-            if (curUnit.id === value.unitId) {
-              unitSelected = curUnit.text;
-            }
-          });
-          return unitSelected;
+					var newOpts = {
+						data: newUnits,
+						allowClear: false,
+						minimumResultsForSearch: 10
+					};
+					unitInput.select2(newOpts);
         };
 
         field.parseValue = function (value) {
           var v;
           if ($.isPlainObject(value)) {
-            if (field.data.hasMultiplexUnit){
-              // parse unit for value using unitTypeId and unitId
-              value.unit = field.getSelectedMultiplexUnit(value);
-              return (value);
-            }
-
             if (field.hasUnits) {
               v = field.parseRegularValue(value.value);
               if (v === null) {
@@ -444,13 +417,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setValue = function (value) {
           if (field.hasUnits) {
             if ($.isPlainObject(value)) {
-              if (field.data.hasMultiplexUnit){
-                // update unit options
-                field.setMultiplexUnitOptions(value.unitTypeId);
-                // convert unitId to unit
-                value.unit = field.getSelectedMultiplexUnit(value);
-              }
-
               field.setUnit(value.unit || field.defaultUnit);
               field.setRegularValue(value.value);
 
@@ -674,6 +640,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var curId = newOptions[0].id;
               var curSubField;
               singleSelectField.setValue(curId);
+              // update multiplex subfield unit options
+							field.updateSubFieldUnitOpts(curId);
               v.forEach(function(val){
                 if (val[field.id] === curId) {
                   curSubField = val;
@@ -729,6 +697,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
+        field.updateSubFieldUnitOpts = function (val){
+					var curOpts;
+					field.data.options.forEach(function(opt){
+            if (opt.id === val) {
+              curOpts = opt;
+            }
+          });
+          field.subFieldList.forEach(function(subField) {
+            if (subField.data.hasMultiplexUnit) {
+              subField.setUnitOpts(curOpts.unitOptions[subField.id]);
+            }
+          })
+        };
+
         field.onChange = function (){
           var v = field.getValue();
           var curData = field.detailData;
@@ -754,25 +736,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (curIds.indexOf(selectedVal) < 0) {
                 var newVal = {};
                 newVal[field.id] = selectedVal;
+
+								field.updateSubFieldUnitOpts(selectedVal);
                 field.subFieldList.forEach(function(subfield){
                   // special handling for subfield which has multiplexUnit
                   if (subfield.data.hasMultiplexUnit){
                     subfield.disabled(false);
                     field.data.options.forEach(function(opt){
                       if (opt.id === selectedVal){
-                        // update subfield unit options
-                        subfield.setMultiplexUnitOptions(opt.unitTypeId);
                         var val = {
                           value: null,
-                          unitTypeId: opt.unitTypeId,
                           unit: subfield.units[0]
                         };
-                        // look up the corresponding unitId from unit
-                        subfield.data.unitMap[val.unitTypeId].forEach (function (unit) {
-                          if (unit.text === val.unit){
-                            val.unitId = unit.id;
-                          }
-                        });
                         newVal[subfield.id] = subfield.parseValue(val);
                       }
                     });
@@ -780,6 +755,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     newVal[subfield.id] = subfield.parseValue(null);
                   }
                 });
+
                 newMultiplexVal.push(newVal);
               }
             });
@@ -897,6 +873,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._createSelectField(field.singleSelectField, true);
         field.singleSelectField.onChange = function(){
           var v = field.singleSelectField.getValue();
+					field.updateSubFieldUnitOpts(v);
           var curData = field.detailData;
           curData.forEach(function (val) {
             if (v === val[field.id]) {
