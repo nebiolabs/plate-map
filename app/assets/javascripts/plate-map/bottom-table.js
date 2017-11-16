@@ -188,7 +188,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var overlayContainer = $("<div>").addClass("plate-setup-bottom-control-container");
 
         var descriptionDiv = $("<div>").addClass("plate-setup-overlay-text-container");
-        descriptionDiv.text("Bottom table control");
+        descriptionDiv.text("Color groups");
         overlayContainer.append(descriptionDiv);
 
         var buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container");
