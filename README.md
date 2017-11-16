@@ -139,22 +139,12 @@ This function may be called at any time to load data. Well data should be passed
                   {
                     multiplex_field2: "multiplex field2 id1",
                     subfield_3: "value 1",
-                    subfield_4: {
-                                    value: "value 2",           // required attribute
-                                    unit: "unit1",              // optional
-                                    unitId: "unit id 1",        // required attribute
-                                    unitTypeId: "unit type 1"   // required attribute
-                                }
+                    subfield_4: {value: "value 2", unit: "unit1"}    // numeric field with multiplex units
                   },
                   {
                     multiplex_field: "multiplex field2 id2",
-                    subfield_3: "value 3"
-                    subfield_4: {
-                                    value: "value 2",           // required attribute
-                                    unit: "unit1",              // optional
-                                    unitId: "unit id 1",        // required attribute
-                                    unitTypeId: "unit type 1"   // required attribute
-                                }
+                    subfield_3: "value 3",
+                    subfield_4: {value: "value 2", unit: "unit1"}    // numeric field with multiplex units
                   }
                  ]
 
@@ -225,15 +215,11 @@ condition_amt: {
   name: 'Amount',
   type: 'numeric',
   hasMultiplexUnit: true,
-  units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"],
-  unitMap: {
-    unit_type_1: [{id: "unit id 1", text: "unit1"}, {id: "unit id 2", text: "unit2"}],
-    unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
-    unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
-  }
+  units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
 }
 ```
 
+Note that `units` attribute is a list of all the possible options for `condition_amt` field.
 More examples at the end of the page
 
 #### Boolean Field
@@ -364,17 +350,17 @@ experimental_conditions: {
   options: [
     {
       id: "a",
-      unitTypeId: "unit_type_1",
+      unitOptions: {raw_value: ["unit1", "unit2"]},
       text: "experimental condition1"
     },
     {
       id: "b",
-      unitTypeId: "unit_type_2",
+      unitOptions: {raw_value: ["unit3", "unit4"]},
       text: "experimental condition2"
     },
     {
       id: "c",
-      unitTypeId: "unit_type_3",
+      unitOptions: {raw_value: ["unit5", "unit6"]},
       text: "experimental condition3"
     }
   ],
@@ -384,11 +370,7 @@ experimental_conditions: {
       id: 'raw_value',
       name: 'Amount',
       type: 'numeric',
-      unitTypes: {
-        unit_type_1: ["unit1", "unit2"],
-        unit_type_2: [{id: "unit id 3", text: "unit3"}, {id: "unit id 4", text: "unit4"}],
-        unit_type_3: [{id: "unit id 5", text: "unit5"}, {id: "unit id 6", text: "unit6"}]
-      },
+      units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
       hasMultiplexUnit: true
     },
     is_modulator: {
@@ -405,4 +387,4 @@ experimental_conditions: {
 }
 ```
 
-In this case `experimental_conditions` is a multiplex field with subfields `condition_amt` and `is_modulator`. `condition_amt` is a subfield with multiplex units. In `experimental_conditions` field options, for each experimental condition there is a corresponding `unitTypeId`. `unitTypeId` is used to filter units upon choosing an experimental condition. For instance, if the user chooses option "a" in the single select field, the corresponding unitTypeId is "unit_type_1", which is used to filter the unit options in the `condition_amt` field. `condition_amt` will only have unit options `["unit1", "unit2"]` after the filtering.
+In this case `experimental_conditions` is a multiplex field with subfields `condition_amt` and `is_modulator`. `condition_amt` is a subfield with multiplex units. In `experimental_conditions` field options, for each experimental condition there is a corresponding `unitOptions`. `unitOptions` is used to filter units upon choosing an experimental condition. For instance, if the user chooses option "a" in the single select field, the corresponding list of unit options for subfield id `raw_value` will be `["unit1", "unit2"]` , which is used to filter the unit options in the `condition_amt` field. `condition_amt` will only have unit options `["unit1", "unit2"]` after the filtering.
