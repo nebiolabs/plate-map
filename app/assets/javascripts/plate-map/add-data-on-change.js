@@ -64,13 +64,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return $("#my-plate-layout").plateLayOut("indexToAddress", locIdx, dim);
           })
         }
+        var requiredField = this.requiredField;
 
         return {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selectedAreas,
           "focalWell": focalWell,
-          "colorToLoc": colorLocMap
+          "colorToLoc": colorLocMap,
+          "requiredField": requiredField
         };
       }
 

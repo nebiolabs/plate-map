@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Here we may need more changes because attributes format likely to change
         var tabData = this.options.attributes.tabs;
         var that = this;
+        this.requiredField = [];
         tabData.forEach(function (tab, tabPointer) {
           if (tab["fields"]) {
             var tabFields = tab["fields"];
@@ -37,7 +38,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 field_val = that._makeMultiplexField(data, tabPointer, fieldArray);
               } else {
                 field_val = that._makeRegularField(data, tabPointer, fieldArray, true);
-              };
+              }
             }
 
             that.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -106,6 +107,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           required: data.required
         };
 
+        if (field.required) {
+          that.requiredField.push(field.id);
+        }
+
         fieldArray.push(field);
         that.fieldList.push(field);
         that.fieldMap[field.id] = field;
@@ -157,8 +162,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           id: singleSelectData.id,
           name: singleSelectData.name,
           root: wrapperDiv,
-          data: singleSelectData,
-          required: singleSelectData.required
+          data: singleSelectData
         };
 
         var field = {
@@ -167,7 +171,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           root: wrapperDiv,
           data: data,
           required: data.required,
-          singleSelectField: singleSelectField,
+          singleSelectField: singleSelectField
         };
 
         fieldArray.push(field);
@@ -176,11 +180,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var subFieldList = [];
         //create subfields
+        var requiredSubField = [];
         for (var subFieldKey in data.multiplexFields) {
           var subFieldData = data.multiplexFields[subFieldKey];
           var subField = that._makeSubField(subFieldData, tabPointer, fieldArray);
           subFieldList.push(subField);
+
+          // stores required  subField
+          if (subFieldData.required) {
+            requiredSubField.push(subFieldData.id);
+          }
         }
+
+        //store required field
+        if (field.required) {
+          this.requiredField.push ({
+            multiplexId: field.id,
+            subFields: requiredSubField
+          });
+        }
+
         field.subFieldList = subFieldList;
 
         that._createField(field);
