@@ -14,7 +14,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._addAllData(data); 
       },
 
-      _addAllData: function(data) {
+
+      _addAllData: function(data, multiple) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
@@ -27,7 +28,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
               this.engine.derivative[tile.index] = well; 
             }
             for (var id in data.wellData) {
-              var v = JSON.parse(JSON.stringify(data.wellData[id]));
+              var v;
+              if (multiple) {
+                var curData = data.wellData[id];
+                var preData = well.wellData[id];
+                var newDt = this._getMultiData(preData, curData, id);
+                // need to replace newData
+                v = JSON.parse(JSON.stringify(newDt));
+              } else {
+                v = JSON.parse(JSON.stringify(data.wellData[id]));
+              }
               well.wellData[id] = v;
             }
             var empty = this.engine.wellEmpty(well); 
@@ -38,6 +48,54 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this._colorMixer();
         }
       },
+
+
+      _addMultiData: function(id, added, removed) {
+        var data = {
+          wellData: {}
+        };
+        data.wellData[id] = {
+          added: added,
+          removed: removed
+        };
+        this._addAllData(data, 1);
+      },
+
+
+      _getMultiData: function(preData, curData, fieldId) {
+        var addNew = curData.added;
+        var removed = curData.removed;
+        /*
+        var preDt= preData.map(function(subFieldData) {
+          return {
+            id: subFieldData[fieldId],
+            data: subFieldData
+          }
+        });
+        */
+        if (addNew) {
+          if (preData){
+            if (preData.indexOf(addNew.id) < 0) {
+              preData.push(addNew.id);
+            }
+          } else {
+            preData = [];
+            preData.push(addNew.id);
+          }
+
+        }
+
+        if (removed) {
+          var index = preData.indexOf(removed.id)
+          if (index >= 0) {
+            preData.splice(index, -1);
+          }
+        }
+
+        return preData
+      },
+
+
 
       _colorMixer: function() {
         if (!this.undoRedoActive) {

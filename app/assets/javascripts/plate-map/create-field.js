@@ -259,8 +259,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return "";
         };
 
+        field.multiOnChange = function (added, removed) {
+          //var v = field.getValue();
+          that._addMultiData(field.id, added, removed);
+        };
+
         input.on("change", function(e, generated) {
-          field.onChange();
+          var added = e.added;
+          var removed = e.removed;
+          //field.onChange();
+          field.multiOnChange(added, removed);
         });
 
         field.input = input;
