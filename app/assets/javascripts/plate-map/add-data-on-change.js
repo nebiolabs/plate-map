@@ -62,33 +62,62 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
 
+
       _getMultiData: function(preData, curData, fieldId) {
         var addNew = curData.added;
         var removed = curData.removed;
-        /*
-        var preDt= preData.map(function(subFieldData) {
-          return {
-            id: subFieldData[fieldId],
-            data: subFieldData
-          }
-        });
-        */
         if (addNew) {
           if (preData){
-            if (preData.indexOf(addNew.id) < 0) {
+            if (addNew.value) {
+              var add = true;
+              for (var listIdx in preData) {
+                var multiplexData = preData[listIdx];
+                if (multiplexData[fieldId] === addNew.id) {
+                  add = false;
+                  preData = preData.map(function(val) {
+                    if (val[fieldId] === addNew.id) {
+                      for (var subFieldId in val) {
+                        if (addNew.value[subFieldId]) {
+                          val[subFieldId] = addNew.value[subFieldId];
+                        }
+                      }
+                    }
+                    return val;
+                  })
+                }
+              }
+              if (add) {
+                preData.push(addNew.value);
+              }
+            } else if (preData.indexOf(addNew.id) < 0) {
               preData.push(addNew.id);
             }
           } else {
             preData = [];
-            preData.push(addNew.id);
+            if (addNew.value) {
+              preData.push(addNew.value);
+            } else if (addNew.id){
+              preData.push(addNew.id);
+            }
           }
-
         }
 
         if (removed) {
-          var index = preData.indexOf(removed.id)
-          if (index >= 0) {
-            preData.splice(index, -1);
+          var removeIndex;
+          // for multiplex field
+          if (removed.value) {
+            for (var listIdx in preData) {
+              var multiplexData = preData[listIdx];
+              if (multiplexData[fieldId] === removed.id) {
+                removeIndex = listIdx;
+              }
+            }
+            preData.splice(removeIndex, -1);
+          } else {
+            removeIndex = preData.indexOf(removed.id);
+            if (removeIndex >= 0) {
+              preData.splice(removeIndex, -1);
+            }
           }
         }
 

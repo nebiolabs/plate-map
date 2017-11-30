@@ -744,7 +744,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
           })
         };
 
-        field.onChange = function() {
+        field.multiOnChange = function(added, removed) {
+          var changeId;
+          if (added) {
+            changeId = added.id;
+          }
+
+          if (removed) {
+            changeId = removed.id;
+          }
+
+          var changedValue = {};
+          changedValue[field.id] = changeId;
+
+          for (var subFieldName in field.data.multiplexFields) {
+            var subFieldId = field.data.multiplexFields[subFieldName].id;
+            changedValue[subFieldId] = null;
+          }
+
+          if (added) {
+            added = {
+              id: changeId,
+              value: changedValue
+            };
+          }
+
+          if (removed) {
+            removed = {
+              id : changeId,
+              value: removed = changedValue
+            };
+          }
+
+          that._addMultiData(field.id, added, removed);
+
+          // need to remove code
           var v = field.getValue();
           var curData = field.detailData;
           var curIds = [];
@@ -832,12 +866,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
           }
 
+
           field.detailData = newMultiplexVal;
+          /*
           if (newMultiplexVal.length == 0) {
             that._addData(field.id, null);
           } else {
             that._addData(field.id, newMultiplexVal);
           }
+          */
+
+
         };
 
         field.getText = function(v) {
@@ -910,6 +949,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.singleSelectField.onChange = function() {
           var v = field.singleSelectField.getValue();
           field.updateSubFieldUnitOpts(v);
+
+
+
           var curData = field.detailData;
           curData.forEach(function(val) {
             if (v === val[field.id]) {

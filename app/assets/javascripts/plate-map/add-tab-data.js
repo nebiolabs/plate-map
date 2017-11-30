@@ -196,8 +196,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var v = subfield.getValue();
             var mainRefField = subfield.mainMultiplexField;
             var singleSelect = mainRefField.singleSelectField;
+            //var curDataLs = mainRefField.detailData;
+            var curVal = {};
+            curVal[mainRefField.id] = singleSelect.getValue();
+            //append subfields
+            curVal[subfield.id] = v;
+            var returnVal = {
+              id: singleSelect.getValue(),
+              value: curVal
+            };
+
+            that._addMultiData(mainRefField.id, returnVal, null);
             var curDataLs = mainRefField.detailData;
-            if (curDataLs != null) {
+            if (curDataLs !== null) {
               curDataLs = curDataLs.map(function(curData) {
                 if (curData[mainRefField.id] === singleSelect.getValue()) {
                   curData[subfield.id] = v;
@@ -206,7 +217,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               });
             } 
             mainRefField.detailData = curDataLs;
-            that._addData(mainRefField.id, curDataLs);
+            //that._addData(mainRefField.id, curDataLs);
           };
 
           // that._addCheckBox(subfield);
