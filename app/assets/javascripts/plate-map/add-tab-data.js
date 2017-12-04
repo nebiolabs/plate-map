@@ -174,7 +174,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         root: wrapperDiv,
         data: data,
         required: data.required,
-        singleSelectField: singleSelectField,
+        singleSelectField: singleSelectField
       };
 
       fieldArray.push(field);
@@ -213,7 +213,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             value: curVal
           };
 
-          field._addMultiData(returnVal, null);
+          field._changeMultiFieldValue(returnVal, null);
           var curDataLs = mainRefField.detailData;
           if (curDataLs !== null) {
             curDataLs = curDataLs.map(function(curData) {
@@ -240,7 +240,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       var removeAllDataField = that._makeSubField(removeAllData, tabPointer, fieldArray);
 
-      removeAllDataField._addMultiData = function(added, removed) {
+      removeAllDataField._changeMultiFieldValue = function(added, removed) {
         var data = {
           wellData: {}
         };
@@ -267,7 +267,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             field.multiOnChange(null, {id: val})
           }
         }
-        //TODO need to think about how to refresh tab field value
+        // refresh selected fields after updating the multiplex field value
         that.decideSelectedFields();
       });
 
@@ -276,11 +276,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       that._createField(removeAllDataField);
       delete that.defaultWell.wellData[removeAllDataField.id];
 
-      removeAllDataField.multiOnChange = function (added, removed) {
-
-        //var v = field.getValue();
-        //that._addMultiData(field.id, added, removed);
-      };
+      removeAllDataField.multiOnChange = function (added, removed) {};
 
       field.removeAllField = removeAllDataField;
 
@@ -299,8 +295,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
     };
   }
 
-
-
 })(jQuery, fabric);
-
-// change it to _createXXX

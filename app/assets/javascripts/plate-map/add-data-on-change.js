@@ -6,7 +6,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object is invoked when something in the tab fields change
     return {
 
-      _addAllData: function(data, multiple) {
+      _addAllData: function(data) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
@@ -19,16 +19,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
               well = $.extend(true, {}, this.defaultWell); 
               this.engine.derivative[tile.index] = well; 
             }
-            for (var id in data.wellData) {
+            for (var id in data) {
               var v;
-              if (multiple) {
-                var curData = data.wellData[id];
+              // for fields that contains more than one value
+              if (data[id].multi) {
+                var curData = data[id];
                 var preData = well.wellData[id];
                 var newDt = this._getMultiData(preData, curData, id);
                 // need to replace newData
                 v = JSON.parse(JSON.stringify(newDt));
               } else {
-                v = JSON.parse(JSON.stringify(data.wellData[id]));
+                v = JSON.parse(JSON.stringify(data[id]));
               }
               well.wellData[id] = v;
               wells.push(well);
@@ -71,15 +72,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (add) {
                 preData.push(addNew.value);
               }
-            } else if (preData.indexOf(addNew.id) < 0) {
-              preData.push(addNew.id);
+            } else if (preData.indexOf(addNew) < 0) {
+              preData.push(addNew);
             }
           } else {
             preData = [];
             if (addNew.value) {
               preData.push(addNew.value);
-            } else if (addNew.id){
-              preData.push(addNew.id);
+            } else if (addNew){
+              preData.push(addNew);
             }
           }
         }
@@ -107,7 +108,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // remove nested element
             preData = removeListIndex(preData, removeIndex);
           } else {
-            removeIndex = preData.indexOf(removed.id);
+            removeIndex = preData.indexOf(removed);
             if (removeIndex >= 0) {
               preData = removeListIndex(preData, removeIndex);
             }

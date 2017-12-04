@@ -273,19 +273,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return "";
         };
 
-        field._addMultiData = function(added, removed) {
+        field.multiOnChange = function (added, removed) {
+          if (added) {
+            added = added.id;
+          }
+          if (removed) {
+            removed = removed.id
+          }
           var data = {
-            wellData: {}
           };
-          data.wellData[field.id] = {
+          data[field.id] = {
+            multi: true,
             added: added,
             removed: removed
           };
-          that._addAllData(data, 1);
-        };
-
-        field.multiOnChange = function (added, removed) {
-          field._addMultiData(added, removed);
+          that._addAllData(data);
         };
 
         input.on("change", function(e, generated) {
@@ -669,15 +671,47 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // make correct multiplex data
         this._createMultiSelectField(field);
 
-        field._addMultiData = function(added, removed) {
-          var data = {
-            wellData: {}
-          };
-          data.wellData[field.id] = {
+        field._changeMultiFieldValue = function(added, removed) {
+          var newSubFieldValue = {};
+          for (var subFieldName in field.data.multiplexFields) {
+            var subFieldId = field.data.multiplexFields[subFieldName].id;
+            newSubFieldValue[subFieldId] = null;
+          }
+
+          var val;
+          if (added) {
+            if (added.value) {
+              val = added.value;
+            } else {
+              newSubFieldValue[field.id] = added.id;
+              val = newSubFieldValue;
+            }
+            added = {
+              id: added.id,
+              value: val
+            };
+          }
+
+          if (removed) {
+            if (removed.value){
+              val = removed.value;
+            } else {
+              newSubFieldValue[field.id] = removed.id;
+              val = newSubFieldValue;
+            }
+            removed = {
+              id: removed.id,
+              value: val
+            };
+          }
+
+          var data = {};
+          data[field.id] = {
+            multi: true,
             added: added,
             removed: removed
           };
-          that._addAllData(data, 1);
+          that._addAllData(data);
         };
 
         // overwrite multiplex set value
@@ -779,38 +813,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.multiOnChange = function(added, removed) {
-          var changeId;
-          if (added) {
-            changeId = added.id;
-          }
+          field._changeMultiFieldValue(added, removed);
 
-          if (removed) {
-            changeId = removed.id;
-          }
-
-          var changedValue = {};
-          changedValue[field.id] = changeId;
-
-          for (var subFieldName in field.data.multiplexFields) {
-            var subFieldId = field.data.multiplexFields[subFieldName].id;
-            changedValue[subFieldId] = null;
-          }
-
-          if (added) {
-            added = {
-              id: changeId,
-              value: changedValue
-            };
-          }
-
-          if (removed) {
-            removed = {
-              id : changeId,
-              value: removed = changedValue
-            };
-          }
-
-          field._addMultiData(added, removed);
           // need to remove code
           var v = field.getValue();
           var curData = field.detailData;
