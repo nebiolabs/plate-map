@@ -229,6 +229,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
+        field.setOpts = function(v) {
+          var allOpts = field.data.options;
+          var selectedVal = [];
+          for (var id in allOpts) {
+            var curOpts = allOpts[id];
+            if (v.indexOf(curOpts["id"]) >= 0) {
+              selectedVal.push(curOpts);
+            }
+          }
+
+          opts.data = selectedVal;
+          input.select2(opts);
+        };
+
         field.getValue = function() {
           var v = input.select2('data');
           if (v.length) {
@@ -949,8 +963,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.singleSelectField.onChange = function() {
           var v = field.singleSelectField.getValue();
           field.updateSubFieldUnitOpts(v);
-
-
 
           var curData = field.detailData;
           curData.forEach(function(val) {

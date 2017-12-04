@@ -230,7 +230,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
 
               }
-            })
+            });
             equality.push(evaluate.indexOf(false) < 0);
           });
           return equality.indexOf(true) >= 0;
@@ -282,11 +282,37 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       }, 
 
+      _setSelectedWellMultiplexVal: function (wells) {
+        var multiplexFieldList = this.multiplexFieldList;
+
+        if (wells.length) {
+          multiplexFieldList.forEach(function(multiplexField) {
+            var curMultiplexVal = [];
+            wells.forEach(function (well) {
+              var wellData = well.wellData;
+              var id = multiplexField.id;
+              if (wellData[id]){
+                if (wellData[id].length > 0) {
+                  wellData[id].forEach(function (multiplexVal) {
+                    if (curMultiplexVal.indexOf(multiplexVal[id]) < 0) {
+                      curMultiplexVal.push(multiplexVal[id]);
+                    }
+                  })
+                }
+              }
+            });
+            multiplexField.removeAllField.setOpts(curMultiplexVal);
+          })
+        }
+      },
+
+
       decideSelectedFields: function() {
-        var wells = this._getSelectedWells(); 
+        var wells = this._getSelectedWells();
+        this._setSelectedWellMultiplexVal(wells);
         var well = this._getCommonWell(wells); 
         this._addDataToTabFields(well.wellData);
-      },
+      }
 
     };
   }

@@ -19,6 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
+          var wells = [];
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex]; 
             if (tile.index in this.engine.derivative) {
@@ -39,12 +40,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 v = JSON.parse(JSON.stringify(data.wellData[id]));
               }
               well.wellData[id] = v;
+              wells.push(well);
+              var well = this._getCommonWell(wells);
+              this._addDataToTabFields(well.wellData);
             }
+            // update multiplex remove all field
+            this._setSelectedWellMultiplexVal(wells);
+
             var empty = this.engine.wellEmpty(well); 
             if (empty) {
               delete this.engine.derivative[tile.index];
             }
           }
+
           this._colorMixer();
         }
       },
@@ -112,19 +120,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 removeIndex = listIdx;
               }
             }
-            preData.splice(removeIndex, -1);
+            // remove nested element
+            var newPreData = [];
+            for (var idx in preData) {
+              if (idx != removeIndex){
+                newPreData.push(preData[idx]);
+              }
+            }
+            preData = newPreData;
           } else {
             removeIndex = preData.indexOf(removed.id);
             if (removeIndex >= 0) {
-              preData.splice(removeIndex, -1);
+              //preData.splice(removeIndex, -1);
+              var newPreData = [];
+              for (var idx in preData) {
+                if (idx != removeIndex){
+                  newPreData.push(preData[idx]);
+                }
+              }
+              preData = newPreData;
             }
           }
         }
 
         return preData
       },
-
-
 
       _colorMixer: function() {
         if (!this.undoRedoActive) {
