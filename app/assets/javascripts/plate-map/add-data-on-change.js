@@ -41,18 +41,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               well.wellData[id] = v;
               wells.push(well);
-              var well = this._getCommonWell(wells);
-              this._addDataToTabFields(well.wellData);
             }
-            // update multiplex remove all field
-            this._setSelectedWellMultiplexVal(wells);
-
-            var empty = this.engine.wellEmpty(well); 
+            var empty = this.engine.wellEmpty(well);
             if (empty) {
               delete this.engine.derivative[tile.index];
             }
           }
 
+          //var well = this._getCommonWell(wells);
+          //this._addDataToTabFields(well.wellData);
+          // update multiplex remove all field
+          this._setSelectedWellMultiplexVal(wells);
           this._colorMixer();
         }
       },

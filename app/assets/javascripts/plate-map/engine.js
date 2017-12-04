@@ -14,12 +14,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         stackPointer: 2,
 
         wellEmpty: function (well) {
+          var isEmptyList = true;
           for (var prop in well.wellData) {
-            if (well.wellData[prop] != null) {
-              return false;  
+            if (well.wellData[prop]){
+              if (typeof(well.wellData[prop]) === "object"){
+                if (well.wellData[prop].length > 0) {
+                  isEmptyList = false;
+                }
+              }
+            } else {
+              if (well.wellData[prop] != null) {
+                isEmptyList = false;
+              }
             }
+
           }
-          return true; 
+          return isEmptyList;
         },
 
         searchAndStack: function() {
