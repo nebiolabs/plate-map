@@ -273,9 +273,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return "";
         };
 
+        field._addMultiData = function(added, removed) {
+          var data = {
+            wellData: {}
+          };
+          data.wellData[field.id] = {
+            added: added,
+            removed: removed
+          };
+          that._addAllData(data, 1);
+        };
+
         field.multiOnChange = function (added, removed) {
-          //var v = field.getValue();
-          that._addMultiData(field.id, added, removed);
+          field._addMultiData(added, removed);
         };
 
         input.on("change", function(e, generated) {
@@ -592,7 +602,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               text: v
             });
           }
-        }
+        };
 
         input.select2(opts);
 
@@ -658,6 +668,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         // make correct multiplex data
         this._createMultiSelectField(field);
+
+        field._addMultiData = function(added, removed) {
+          var data = {
+            wellData: {}
+          };
+          data.wellData[field.id] = {
+            added: added,
+            removed: removed
+          };
+          that._addAllData(data, 1);
+        };
 
         // overwrite multiplex set value
         field.setValue = function(v) {
@@ -733,7 +754,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
               return valMap;
             });
-
           } else {
             v = null;
           }
@@ -790,8 +810,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
           }
 
-          that._addMultiData(field.id, added, removed);
-
+          field._addMultiData(added, removed);
           // need to remove code
           var v = field.getValue();
           var curData = field.detailData;
@@ -823,22 +842,35 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 field.updateSubFieldUnitOpts(selectedVal);
                 field.subFieldList.forEach(function(subfield) {
                   // special handling for subfield which has multiplexUnit
-                  if (subfield.data.hasMultiplexUnit) {
-                    subfield.disabled(false);
-                    field.data.options.forEach(function(opt) {
-                      if (opt.id === selectedVal) {
-                        var val = {
-                          value: null,
-                          unit: subfield.units[0]
-                        };
-                        newVal[subfield.id] = subfield.parseValue(val);
+                  if (subfield.hasUnits) {
+                    if (subfield.data.hasMultiplexUnit) {
+                      subfield.disabled(false);
+                      field.data.options.forEach(function(opt) {
+                        if (opt.id === selectedVal) {
+                          var val = {
+                            value: null,
+                            unit: subfield.units[0]
+                          };
+                          newVal[subfield.id] = subfield.parseValue(val);
+                        }
+                      });
+                    } else {
+                      if (subfield.data.units) {
+                        if (subfield.data.units.length > 1){
+                          subfield.disabled(false);
+                        }
                       }
-                    });
-                  } else {
+                      var val = {
+                        value: null,
+                        unit: subfield.defaultUnit
+                      };
+                      newVal[subfield.id] = subfield.parseValue(val);
+                    }
+                  }
+                   else {
                     newVal[subfield.id] = subfield.parseValue(null);
                   }
                 });
-
                 newMultiplexVal.push(newVal);
               }
             });
@@ -880,17 +912,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
           }
 
-
           field.detailData = newMultiplexVal;
-          /*
-          if (newMultiplexVal.length == 0) {
-            that._addData(field.id, null);
-          } else {
-            that._addData(field.id, newMultiplexVal);
-          }
-          */
-
-
         };
 
         field.getText = function(v) {
@@ -900,27 +922,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // get subfields that is selected from the checkbox
           if (field.id in that.globalSelectedMultiplexSubfield) {
             var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
-
             var returnVal = [];
-
             for (var valIdx in v) {
               var subV = v[valIdx];
               var subText = [];
-
               for (var optId in field.data.options) {
                 var opt = field.data.options[optId];
                 if (opt.id === subV[field.id]) {
                   subText.push(opt.text);
                 }
               }
-
               field.subFieldList.forEach(function(subField) {
                 if (checkedSubfields.indexOf(subField.id) >= 0) {
                   var x = subField.getText(subV[subField.id]);
                   subText.push(subField.name + ": " + x);
                 }
               });
-
               returnVal.push("{" + subText.join(", ") + "}");
             }
             return returnVal.join(";");
@@ -930,17 +947,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.checkCompletion = function(valList) {
           var req = 0;
           var fill = 0;
-
           for (var idx in valList) {
             var vals = valList[idx];
-
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               var curVal = vals[subField.id];
-
               if (subField.required) {
                 req++;
-
                 if (typeof(curVal) === 'object' && curVal) {
                   if (curVal.value) {
                     fill++

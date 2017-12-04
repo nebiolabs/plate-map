@@ -6,15 +6,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // This object is invoked when something in the tab fields change
     return {
 
-      _addData: function(id, v) {
-        var data = {
-          wellData: {}
-        };
-        data.wellData[id] = v;
-        this._addAllData(data); 
-      },
-
-
       _addAllData: function(data, multiple) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
         if (this.allSelectedObjects) {
@@ -48,27 +39,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
 
-          //var well = this._getCommonWell(wells);
-          //this._addDataToTabFields(well.wellData);
-          // update multiplex remove all field
-          this._setSelectedWellMultiplexVal(wells);
           this._colorMixer();
         }
+        // update multiplex remove all field
+        this._setSelectedWellMultiplexVal(wells);
       },
-
-
-      _addMultiData: function(id, added, removed) {
-        var data = {
-          wellData: {}
-        };
-        data.wellData[id] = {
-          added: added,
-          removed: removed
-        };
-        this._addAllData(data, 1);
-      },
-
-
 
       _getMultiData: function(preData, curData, fieldId) {
         var addNew = curData.added;
@@ -109,6 +84,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
+        var removeListIndex = function(preData, removeIndex) {
+          var newPreData = [];
+          for (var idx in preData) {
+            if (parseInt(idx) !== parseInt(removeIndex)){
+              newPreData.push(preData[idx]);
+            }
+          }
+          return newPreData;
+        };
+
         if (removed) {
           var removeIndex;
           // for multiplex field
@@ -120,28 +105,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             }
             // remove nested element
-            var newPreData = [];
-            for (var idx in preData) {
-              if (idx != removeIndex){
-                newPreData.push(preData[idx]);
-              }
-            }
-            preData = newPreData;
+            preData = removeListIndex(preData, removeIndex);
           } else {
             removeIndex = preData.indexOf(removed.id);
             if (removeIndex >= 0) {
-              //preData.splice(removeIndex, -1);
-              var newPreData = [];
-              for (var idx in preData) {
-                if (idx != removeIndex){
-                  newPreData.push(preData[idx]);
-                }
-              }
-              preData = newPreData;
+              preData = removeListIndex(preData, removeIndex);
             }
           }
         }
-
         return preData
       },
 
@@ -179,7 +150,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "colorToLoc": colorLocMap
         };
       }
-
     };
   }
-})(jQuery, fabric)
+})(jQuery, fabric);

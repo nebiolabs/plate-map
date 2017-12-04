@@ -121,7 +121,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.onChange = function () {
           var v = field.getValue();
-          that._addData(field.id, v);
+          var data = {
+            wellData: {}
+          };
+          data.wellData[field.id] = v;
+          that._addAllData(data);
         };
         return field;
     },
@@ -209,7 +213,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             value: curVal
           };
 
-          that._addMultiData(mainRefField.id, returnVal, null);
+          field._addMultiData(returnVal, null);
           var curDataLs = mainRefField.detailData;
           if (curDataLs !== null) {
             curDataLs = curDataLs.map(function(curData) {
@@ -236,9 +240,21 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       var removeAllDataField = that._makeSubField(removeAllData, tabPointer, fieldArray);
 
+      removeAllDataField._addMultiData = function(added, removed) {
+        var data = {
+          wellData: {}
+        };
+
+        data.wellData[field.id] = {
+          added: added,
+          removed: removed
+        };
+
+        that._addAllData(data, 1);
+      };
 
       var bottonContainer = $("<div>");
-      var deleteAllButton = $("<button/>").addClass("plate-setup-button");
+      var deleteAllButton = $("<button/>");
       deleteAllButton.text("delete");
       bottonContainer.append(deleteAllButton);
 
@@ -249,26 +265,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var idx in valToRemove) {
             var val = valToRemove[idx];
             field.multiOnChange(null, {id: val})
-            /*
-            var data = {};
-            data['wellData'] = {};
-            data['wellData'][field.id] = {};
-            data['wellData'][field.id]['added'] = null;
-            data['wellData'][field.id]['removed'] = {
-              id: val,
-              all: true,
-              value: true
-            };
-
-            that._addAllData(data, 1);
-            */
           }
         }
+        //TODO need to think about how to refresh tab field value
+        that.decideSelectedFields();
       });
 
       removeAllDataField.root.append(bottonContainer);
-
-
 
       that._createField(removeAllDataField);
       delete that.defaultWell.wellData[removeAllDataField.id];
