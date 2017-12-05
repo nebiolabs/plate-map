@@ -221,11 +221,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     // when obj[listKey] is null but curVal is not
                     evaluate.push(false);
                   }
-
                 } else {
                   evaluate.push(curVal === obj[listKey]);
                 }
-
               }
             });
             equality.push(evaluate.indexOf(false) < 0);
@@ -237,9 +235,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _getCommonWell: function (wells) {
-        // for multiplex field, the obj has to be exactly the same as list (unit has to be the same too)
-
-
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell.wellData);
@@ -279,7 +274,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       }, 
 
-      _setSelectedWellMultiplexVal: function (wells) {
+      _getAllMultipleVal: function (wells) {
         var multipleFieldList = this.multipleFieldList;
         if (wells.length) {
           multipleFieldList.forEach(function(multiplexField) {
@@ -304,7 +299,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                         curMultipleVal[multipleVal] = 1;
                       }
                     }
-
                   })
                 }
               }
@@ -314,14 +308,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-
       decideSelectedFields: function() {
         var wells = this._getSelectedWells();
-        this._setSelectedWellMultiplexVal(wells);
+        this._getAllMultipleVal(wells);
         var well = this._getCommonWell(wells); 
         this._addDataToTabFields(well.wellData);
       }
-
     };
   }
 })(jQuery, fabric);

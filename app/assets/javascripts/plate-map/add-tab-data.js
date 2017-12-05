@@ -156,7 +156,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
-
         var singleSelectData = {
           id: data.id + "SingleSelect",
           type: 'select',
@@ -193,7 +192,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           subFieldList.push(subField);
         }
         field.subFieldList = subFieldList;
-
         that._createField(field);
         that._addCheckBox(field);
 
@@ -266,24 +264,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivLeftSide);
         $(wrapperDiv).append(wrapperDivRightSide);
 
-
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
-
-        /*
-        deleteButton.click(function(evt) {
-          var valMap = field.curToRemoveVal;
-          var valToRemove = Object.keys(valMap);
-          if (valToRemove){
-            for (var idx in valToRemove) {
-              var val = valToRemove[idx];
-              field.multiOnChange(null, {id: val})
-            }
-          }
-
-          // refresh selected fields after updating the multiplex field value
-          that.decideSelectedFields();
-        });
-        */
 
         createPopUp(field, deleteButton);
 
@@ -330,7 +311,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               // refresh selected fields after updating the multiplex field value
               that.decideSelectedFields();
-
               dialogDiv.hide();
               $('#applyDialog').remove();
 
@@ -345,7 +325,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             dialogDiv.show();
 
             window.onclick = function(event) {
-
               if (event.target == dialogDiv[0]) {
                 dialogDiv.hide();
                 $('#applyDialog').remove();
