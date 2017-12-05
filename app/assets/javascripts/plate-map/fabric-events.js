@@ -198,13 +198,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             }
           }
-          return {
-            wellData: referenceFields,
-          }
+          return referenceFields
+
         } else {
-          return {
-            wellData: {}
-          }; 
+          return {};
         }
       },
 

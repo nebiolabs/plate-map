@@ -287,6 +287,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             added: added,
             removed: removed
           };
+
           that._addAllData(data);
         };
 

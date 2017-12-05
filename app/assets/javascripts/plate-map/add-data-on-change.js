@@ -21,13 +21,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             for (var id in data) {
               var v;
-              // for fields that contains more than one value
-              if (data[id].multi) {
-                var curData = data[id];
-                var preData = well.wellData[id];
-                var newDt = this._getMultiData(preData, curData, id);
-                // need to replace newData
-                v = JSON.parse(JSON.stringify(newDt));
+              if (data[id]) {
+                if (data[id].multi){
+                  var curData = data[id];
+                  var preData = well.wellData[id];
+                  var newDt = this._getMultiData(preData, curData, id);
+                  // need to replace newData
+                  v = JSON.parse(JSON.stringify(newDt));
+                } else {
+                  v = JSON.parse(JSON.stringify(data[id]));
+                }
               } else {
                 v = JSON.parse(JSON.stringify(data[id]));
               }
