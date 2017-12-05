@@ -111,9 +111,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // remove nested element
             preData = removeListIndex(preData, removeIndex);
           } else {
-            removeIndex = preData.indexOf(removed);
-            if (removeIndex >= 0) {
-              preData = removeListIndex(preData, removeIndex);
+            if (preData){
+              removeIndex = preData.indexOf(removed);
+              if (removeIndex >= 0) {
+                preData = removeListIndex(preData, removeIndex);
+              }
             }
           }
         }

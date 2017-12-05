@@ -275,10 +275,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.multiOnChange = function (added, removed) {
           if (added) {
-            added = added.id;
+            added = added.id.toString();
           }
           if (removed) {
-            removed = removed.id
+            removed = removed.id.toString();
           }
           var data = {
           };

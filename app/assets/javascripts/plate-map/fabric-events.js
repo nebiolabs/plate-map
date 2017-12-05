@@ -280,25 +280,36 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       _setSelectedWellMultiplexVal: function (wells) {
-        var multiplexFieldList = this.multiplexFieldList;
-
+        var multipleFieldList = this.multipleFieldList;
         if (wells.length) {
-          multiplexFieldList.forEach(function(multiplexField) {
-            var curMultiplexVal = [];
+          multipleFieldList.forEach(function(multiplexField) {
+            var curMultipleVal = {};
             wells.forEach(function (well) {
               var wellData = well.wellData;
               var id = multiplexField.id;
               if (wellData[id]){
                 if (wellData[id].length > 0) {
-                  wellData[id].forEach(function (multiplexVal) {
-                    if (curMultiplexVal.indexOf(multiplexVal[id]) < 0) {
-                      curMultiplexVal.push(multiplexVal[id]);
+                  wellData[id].forEach(function (multipleVal) {
+                    if (typeof(multipleVal) === 'object') {
+                      if (multipleVal[id] in curMultipleVal) {
+                        curMultipleVal[multipleVal[id]] ++;
+                      } else {
+                        curMultipleVal[multipleVal[id]] = 1;
+                      }
+                    } else {
+                      if (multipleVal in curMultipleVal) {
+                        curMultipleVal[multipleVal] ++;
+
+                      } else {
+                        curMultipleVal[multipleVal] = 1;
+                      }
                     }
+
                   })
                 }
               }
             });
-            multiplexField.removeAllField.setOpts(curMultiplexVal);
+            multiplexField.curToRemoveVal = curMultipleVal;
           })
         }
       },

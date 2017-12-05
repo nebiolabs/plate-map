@@ -361,3 +361,33 @@
 input.invalid {
   background-color: pink;
 }
+
+.plate-setup-remove-all-container {
+  display: inline-block;
+  flex-basis: 50px;
+  padding: 0 5px;
+  position: absolute;
+  margin: 0 1px;
+  height: 20px;
+  background-color: white;
+  border: solid 1px #e1e1e1;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 10px;
+  text-align: center;
+}
+
+.plate-setup-remove-all-button {
+  height: 23px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 12px;
+  border: none;
+  background-color: white;
+  border-radius: 2px;
+  margin-right: 4px;
+  flex: 1 0 0;
+  white-space: nowrap;
+  border: outset;
+  position: absolute;
+}

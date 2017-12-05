@@ -39,6 +39,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   multiplexFieldArray.push(field_val);
                 } else {
                   field_val = that._makeRegularField(data, tabPointer, fieldArray, true);
+                  if (data.type === "multiselect") {
+                    multiplexFieldArray.push(field_val);
+                  }
                 };
               }
 
@@ -47,7 +50,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               console.log("unknown format in field initialization");
             }
           });
-          that.multiplexFieldList = multiplexFieldArray;
+          that.multipleFieldList = multiplexFieldArray;
       },
 
       _makeSubField: function (data, tabPointer, fieldArray) {
@@ -120,12 +123,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           field.onChange = function () {
             var v = field.getValue();
-            var data = {
-              wellData: {}
-            };
-            data.wellData[field.id] = v;
+            var data = {};
+            data[field.id] = v;
             that._addAllData(data);
           };
+          if (data.type === "multiselect"){
+            field.removeAllSelectedVal = function() {
+              var valToRemove = field.curToRemoveVal;
+              if (valToRemove){
+                for (var idx in valToRemove) {
+                  var val = valToRemove[idx];
+                  field.multiOnChange(null, {id: val})
+                }
+              }
+            };
+
+            that._createDeleteButton(field, tabPointer);
+          }
           return field;
       },
 
@@ -151,6 +165,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivRightSide);
 
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
+
 
         var singleSelectData = {
           id: data.id + "SingleSelect",
@@ -238,65 +253,46 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return null;
         };
 
-        // add remove all field
-        var removeAllDataField = that._makeRemoveAllField(field, tabPointer, fieldArray);
-        field.removeAllField = removeAllDataField;
-        
+        that._createDeleteButton(field, tabPointer);
+
         return field;
       },
 
-      _makeRemoveAllField: function(field, tabPointer, fieldArray) {
+      _createDeleteButton: function(field, tabPointer){
         var that = this;
-        var data = field.data;
-        // make multiselect subfield for removeALl
-        var removeAllData = {
-          id: data.id + "RemoveALl",
-          name: data.name + " remove all",
-          options: data.options,
-          type: "multiselect"
-        };
+        var obj = $('#my-plate-layout');
+        var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
 
-        var removeAllDataField = that._makeSubField(removeAllData, tabPointer, fieldArray);
+        deleteButton.text("Delete " + field.name + " in all selected wells");
 
-        removeAllDataField._changeMultiFieldValue = function(added, removed) {
-          var data = {
-            wellData: {}
-          };
+        var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
 
-          data.wellData[field.id] = {
-            added: added,
-            removed: removed
-          };
+        var buttonContainer = that._createElement("<div></div>").addClass("plate-setup-remove-all-button-container");
+        buttonContainer.append(deleteButton);
 
-          that._addAllData(data, 1);
-        };
+        $(wrapperDivRightSide).append(buttonContainer);
+        $(wrapperDiv).append(wrapperDivLeftSide);
+        $(wrapperDiv).append(wrapperDivRightSide);
 
-        var bottonContainer = $("<div>");
-        var deleteAllButton = $("<button/>");
-        deleteAllButton.text("delete");
-        bottonContainer.append(deleteAllButton);
 
-        deleteAllButton.click(function(){
-          var valToRemove = removeAllDataField.getValue();
-          var fieldId = field.id;
+        $(that.allDataTabs[tabPointer]).append(wrapperDiv);
+
+        deleteButton.click(function(evt) {
+          var valMap = field.curToRemoveVal;
+          var valToRemove = Object.keys(valMap);
           if (valToRemove){
             for (var idx in valToRemove) {
               var val = valToRemove[idx];
               field.multiOnChange(null, {id: val})
             }
           }
+
           // refresh selected fields after updating the multiplex field value
           that.decideSelectedFields();
         });
-
-        removeAllDataField.root.append(bottonContainer);
-
-        that._createField(removeAllDataField);
-        delete that.defaultWell.wellData[removeAllDataField.id];
-
-        removeAllDataField.multiOnChange = function (added, removed) {};
-        return removeAllDataField;
-      },
+      }
 
     }
   }
