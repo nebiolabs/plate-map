@@ -375,40 +375,46 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var tr;
           var th;
 
-          var data = [field.name, "Count", "Delete"]; //Added because it was missing... no idea what the original should have been
-
+          var colName = [field.name, "Counts", "Delete"]; //Added because it was missing... no idea what the original should have been
           tableArea = that._createElement("<div></div>");
           table = document.createElement('table');
           thead = document.createElement('thead');
           tr = document.createElement('tr');
 
-          for (var i = 0; i < data.length; i++) {
-            var headerTxt = document.createTextNode(data[i]);
-            th = document.createElement('th');
-            th.appendChild(headerTxt);
-            tr.appendChild(th);
-            thead.appendChild(tr);
+          var optKeys = Object.keys(optionMap);
+          if (optKeys.length > 0){
+            tableArea.append($("<p/>").text("List of " + field.name + " in selected wells, choose items to delete and click the delete button below"));
+
+            for (var i = 0; i < colName.length; i++) {
+              var headerTxt = document.createTextNode(colName[i]);
+              th = document.createElement('th');
+              th.appendChild(headerTxt);
+              tr.appendChild(th);
+              thead.appendChild(tr);
+            }
+
+            table.appendChild(thead);
+            for (var idx in optKeys) {
+              var optId = optKeys[idx];
+              tr = document.createElement('tr');
+              tr.appendChild(document.createElement('td'));
+              tr.appendChild(document.createElement('td'));
+              tr.appendChild(document.createElement('td'));
+
+              var checkbox = document.createElement("INPUT"); //Added for checkbox
+              checkbox.type = "checkbox"; //Added for checkbox
+              checkbox.id = "checkBoxId" + idx;
+
+              tr.cells[0].appendChild(document.createTextNode(optId));
+              tr.cells[1].appendChild(document.createTextNode(optionMap[optId]));
+              tr.cells[2].appendChild(checkbox); //Added for checkbox
+
+              table.appendChild(tr);
+            }
+          } else {
+            table = $("<p/>").text("No " + field.name + " in the selected wells");
           }
 
-          table.appendChild(thead);
-
-          for (var idx in Object.keys(optionMap)) {
-            var optId = Object.keys(optionMap)[idx];
-            tr = document.createElement('tr');
-            tr.appendChild(document.createElement('td'));
-            tr.appendChild(document.createElement('td'));
-            tr.appendChild(document.createElement('td'));
-
-            var checkbox = document.createElement("INPUT"); //Added for checkbox
-            checkbox.type = "checkbox"; //Added for checkbox
-            checkbox.id = "checkBoxId" + idx;
-
-            tr.cells[0].appendChild(document.createTextNode(optId));
-            tr.cells[1].appendChild(document.createTextNode(optionMap[optId]));
-            tr.cells[2].appendChild(checkbox); //Added for checkbox
-
-            table.appendChild(tr);
-          }
           tableArea.append(table);
           return {
             tabelDiv: tableArea,
