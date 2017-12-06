@@ -357,8 +357,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var colName = [field.name, "Counts", "Delete"]; //Added because it was missing... no idea what the original should have been
           tableArea = that._createElement("<div></div>");
           table = document.createElement('table');
+          table.id = "popOutTable";
           thead = document.createElement('thead');
           tr = document.createElement('tr');
+
+
+          table.className = "plate-popout-table";
+          tr.className = "plate-popout-tr";
+
+
+
 
           var optKeys = Object.keys(optionMap);
           if (optKeys.length > 0){
@@ -367,6 +375,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var i = 0; i < colName.length; i++) {
               var headerTxt = document.createTextNode(colName[i]);
               th = document.createElement('th');
+              th.className = "plate-popout-th";
               th.appendChild(headerTxt);
               tr.appendChild(th);
               thead.appendChild(tr);
@@ -376,6 +385,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var idx in optKeys) {
               var optId = optKeys[idx];
               tr = document.createElement('tr');
+              tr.className = "plate-popout-tr";
               tr.appendChild(document.createElement('td'));
               tr.appendChild(document.createElement('td'));
               tr.appendChild(document.createElement('td'));
@@ -395,6 +405,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           tableArea.append(table);
+
           return {
             tabelDiv: tableArea,
             optionMap: optionMap
