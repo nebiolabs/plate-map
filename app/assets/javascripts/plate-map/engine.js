@@ -14,28 +14,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
         stackPointer: 2,
 
         wellEmpty: function (well) {
-          var isEmptyList = true;
           for (var prop in well.wellData) {
             var curVal = well.wellData[prop];
             if (curVal) {
               if (Array.isArray(curVal)) {
                 if (curVal.length > 0) {
-                  isEmptyList = false;
+                  return false;
                 }
               } else {
-                isEmptyList = false;
+                return false;
               }
             }
           }
-          return isEmptyList;
+          return true;
         },
 
         searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 1;
-          var derivativeJson = {}
-          //for (var idx in this.derivative) {
+          var derivativeJson = {};
           for (var idx in this.derivative) {
             var data = this.derivative[idx];
             var wellData = {};
@@ -51,11 +49,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   newVal[attr] = curMultiplexVals[attr];
                   selectedSubFields.forEach(function (subFieldId) {
                     newVal[subFieldId] = curMultiplexVals[subFieldId];
-                    /*
-                    if (curMultiplexVals[subFieldId]){
-                      newVal[subFieldId] = curMultiplexVals[subFieldId];
-                    }
-                    */
                   });
                   newMultiplexVal.push(newVal);
                 }
@@ -148,15 +141,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         checkCompletion: function(wellData, tile) {
           var req = 0; 
-          var fill = 0; 
+          var fill = 0;
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
-
             if (field.checkMultiplexCompletion){
               // also apply color
               var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
               if (multiplexStatus.include) {
-                fill = fill + multiplexStatus.fill/multiplexStatus.req;
+                fill += multiplexStatus.completionPct;
                 req++;
               }
             } else {
@@ -167,7 +159,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
             }
-
           }
           if (req === fill) {
             return 1; 
@@ -176,24 +167,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         applyFieldColor: function(wells) {
+          var that = this;
           var req = 0;
           var fill = 0;
-
           var fieldData = {};
           THIS.fieldList.forEach(function(field){
             fieldData[field.id] = [];
           });
-
           wells.forEach(function(well){
-            for (fieldId in fieldData) {
-              if (fieldId in well.wellData) {
-                fieldData[fieldId].push(well.wellData[fieldId]);
-              } else {
-                fieldData[fieldId].push(null);
+            if (!THIS.engine.wellEmpty(well)){
+              for (fieldId in fieldData) {
+                if (fieldId in well.wellData) {
+                  fieldData[fieldId].push(well.wellData[fieldId]);
+                } else {
+                  fieldData[fieldId].push(null);
+                }
               }
             }
           });
-
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
             if (field.applyMultiplexSubFieldColor){
@@ -212,8 +203,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                       color = "red";
                     }
                   }
-
-                })
+                });
                 field.root.find(".plate-setup-tab-name").css("background", color);
               }
             }

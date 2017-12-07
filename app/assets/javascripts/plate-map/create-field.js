@@ -952,15 +952,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.checkMultiplexCompletion = function(valList) {
-          var req = 0;
-          var fill = 0;
+          var valCount = 0;
+          var completionPct = 0;
           var include = false;
 
-          function getSubfieldStatus (vals, req, fill) {
+          function getSubfieldStatus (vals) {
+            var req = 0;
+            var fill = 0;
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               var curVal = vals[subField.id];
               if (subField.required) {
+                include = true;
                 req++;
                 if (typeof(curVal) === 'object' && curVal) {
                   if (curVal.value) {
@@ -971,36 +974,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
             }
-            return {
-              req: req,
-              fill: fill
-            };
+            return fill/req;
           }
 
           // for cases has value in multiplex field
           if (valList.length > 0) {
-            if (field.required) {
-              req++;
-              fill++;
-              include = true;
-            }
             for (var idx in valList) {
+              valCount++;
               var vals = valList[idx];
-              var status = getSubfieldStatus (vals, req, fill);
-              req = status.req;
-              fill = status.fill;
+              completionPct += getSubfieldStatus(vals);
             }
           }  else {
             if (field.required) {
-              req++;
               include = true;
+              valCount = 1;
             }
           }
 
           return {
             include: include,
-            req: req,
-            fill: fill
+            completionPct: completionPct/valCount
           };
         };
 
@@ -1028,20 +1021,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
           function updateSubFieldColorMap (vals) {
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
+              // loop through each well's multiplexval list
               for (var multiplexIdx in vals) {
                 var curVal = vals[multiplexIdx][subField.id];
                 if (subField.required) {
                   if (typeof(curVal) === 'object' && curVal) {
                     if (!curVal.value) {
                       subFieldColorMap[subField.id].color.push("red");
+                    } else {
+                      subFieldColorMap[subField.id].color.push("white");
                     }
                   } else if (!curVal) {
                     subFieldColorMap[subField.id].color.push("red");
+                  } else {
+                    subFieldColorMap[subField.id].color.push("white");
                   }
                 }
               }
-
-
             }
           }
 
@@ -1061,7 +1057,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (field.required) {
                 field.root.find(".plate-setup-tab-name").css("background", "red");
               }
-
               updateSubFieldColorMap(multiplexVals);
             });
 
@@ -1082,6 +1077,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               field.root.find(".plate-setup-tab-name").css("background", "red");
               setSubfieldColor("red");
             } else {
+              field.root.find(".plate-setup-tab-name").css("background", "white");
               setSubfieldColor("white");
             }
           }

@@ -12,7 +12,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var noOfSelectedObjects = this.allSelectedObjects.length;
           var wells = [];
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex]; 
+            var tile = this.allSelectedObjects[objectIndex];
+            var well;
             if (tile.index in this.engine.derivative) {
               well = this.engine.derivative[tile.index];
             } else {
@@ -25,7 +26,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 if (data[id].multi){
                   var curData = data[id];
                   var preData = well.wellData[id];
-                  var newDt = this._getMultiData(preData, curData, id);
+                  var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
                   // need to replace newData
                   v = JSON.parse(JSON.stringify(newDt));
                 } else {
@@ -50,7 +51,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.engine.applyFieldColor(wells);
       },
 
-      _getMultiData: function(preData, curData, fieldId) {
+      _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
         var addNew = curData.added;
         var removed = curData.removed;
         if (addNew) {
@@ -59,13 +60,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
               var add = true;
               for (var listIdx in preData) {
                 var multiplexData = preData[listIdx];
+                // for cases when the add new data exist in well
                 if (multiplexData[fieldId] === addNew.id) {
                   add = false;
+                  // update subfield value
                   preData = preData.map(function(val) {
                     if (val[fieldId] === addNew.id) {
                       for (var subFieldId in val) {
-                        if (addNew.value[subFieldId]) {
-                          val[subFieldId] = addNew.value[subFieldId];
+                        // over write previous data if only one well is selected
+                        if (subFieldId in addNew.value && subFieldId !== fieldId){
+                          if (noOfSelectedObjects === 1) {
+                            val[subFieldId] = addNew.value[subFieldId];
+                          } else if (addNew.value[subFieldId]) {
+                            val[subFieldId] = addNew.value[subFieldId];
+                          }
                         }
                       }
                     }
