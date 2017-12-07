@@ -671,6 +671,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         // make correct multiplex data
         this._createMultiSelectField(field);
+        // overwrite default well for multiplex field
+        that.defaultWell.wellData[field.id] = [];
 
         field._changeMultiFieldValue = function(added, removed) {
           var newSubFieldValue = {};
@@ -949,11 +951,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
-        field.checkCompletion = function(valList) {
+        field.checkMultiplexCompletion = function(valList) {
           var req = 0;
           var fill = 0;
-          for (var idx in valList) {
-            var vals = valList[idx];
+          var include = false;
+
+          function getSubfieldStatus (vals, req, fill) {
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               var curVal = vals[subField.id];
@@ -961,19 +964,127 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 req++;
                 if (typeof(curVal) === 'object' && curVal) {
                   if (curVal.value) {
-                    fill++
+                    fill++;
                   }
                 } else if (curVal) {
-                  fill++
+                  fill++;
                 }
+              }
+            }
+            return {
+              req: req,
+              fill: fill
+            };
+          }
+
+          // for cases has value in multiplex field
+          if (valList.length > 0) {
+            if (field.required) {
+              req++;
+              fill++;
+              include = true;
+            }
+            for (var idx in valList) {
+              var vals = valList[idx];
+              var status = getSubfieldStatus (vals, req, fill);
+              req = status.req;
+              fill = status.fill;
+            }
+          }  else {
+            if (field.required) {
+              req++;
+              include = true;
+            }
+          }
+
+          return {
+            include: include,
+            req: req,
+            fill: fill
+          };
+        };
+
+        // valList contains all of the vals for selected val
+        field.applyMultiplexSubFieldColor = function(valList){
+          function containNonEmptyVal (valList) {
+            for (var wellIdx in valList){
+              var wellVal = valList[wellIdx];
+              if (wellVal.length > 0) {
+                return true;
+              }
+            }
+            return false
+          }
+
+          function setSubfieldColor (color) {
+            for (var subFieldId in field.subFieldList) {
+              var subField = field.subFieldList[subFieldId];
+              if (subField.required) {
+                subField.root.find(".plate-setup-tab-name").css("background", color);
               }
             }
           }
 
-          if (req === fill) {
-            return 1;
+          function updateSubFieldColorMap (vals) {
+            for (var subFieldId in field.subFieldList) {
+              var subField = field.subFieldList[subFieldId];
+              for (var multiplexIdx in vals) {
+                var curVal = vals[multiplexIdx][subField.id];
+                if (subField.required) {
+                  if (typeof(curVal) === 'object' && curVal) {
+                    if (!curVal.value) {
+                      subFieldColorMap[subField.id].color.push("red");
+                    }
+                  } else if (!curVal) {
+                    subFieldColorMap[subField.id].color.push("red");
+                  }
+                }
+              }
+
+
+            }
           }
-          return fill / req;
+
+          var subFieldColorMap = {};
+          field.subFieldList.forEach(function(subField){
+            if (subField.required) {
+              subFieldColorMap[subField.id] = {
+                field: subField,
+                color: []
+              };
+            }
+          });
+
+          // in the range of valList, if one value in that field is not satisfied, replace the color to red
+          if (containNonEmptyVal(valList)) {
+            valList.forEach(function(multiplexVals) {
+              if (field.required) {
+                field.root.find(".plate-setup-tab-name").css("background", "red");
+              }
+
+              updateSubFieldColorMap(multiplexVals);
+            });
+
+            var mainFieldColor = "white";
+            for (var subFieldId in subFieldColorMap){
+              var subFieldMap = subFieldColorMap[subFieldId];
+              if (subFieldMap.color.indexOf('red') >= 0) {
+                subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "red");
+                mainFieldColor = "red"
+              } else {
+                subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "white");
+              }
+            }
+            field.root.find(".plate-setup-tab-name").css("background", mainFieldColor);
+
+          }  else {
+            if (field.required) {
+              field.root.find(".plate-setup-tab-name").css("background", "red");
+              setSubfieldColor("red");
+            } else {
+              setSubfieldColor("white");
+            }
+          }
         };
 
         // create single select field and handle on change evaluation

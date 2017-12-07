@@ -151,22 +151,73 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var fill = 0; 
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
-            if (field.required) {
-              req++;
-              if (field.checkCompletion){
-                fill = fill + field.checkCompletion(wellData[field.id]);
-              } else {
-                if (wellData[field.id] != null) {
+
+            if (field.checkMultiplexCompletion){
+              // also apply color
+              var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
+              if (multiplexStatus.include) {
+                fill = fill + multiplexStatus.fill/multiplexStatus.req;
+                req++;
+              }
+            } else {
+              if (field.required) {
+                req++;
+                if (wellData[field.id] !== null) {
                   fill++;
                 }
               }
-
             }
+
           }
-          if (req == fill) {
+          if (req === fill) {
             return 1; 
           }
           return fill / req;
+        },
+
+        applyFieldColor: function(wells) {
+          var req = 0;
+          var fill = 0;
+
+          var fieldData = {};
+          THIS.fieldList.forEach(function(field){
+            fieldData[field.id] = [];
+          });
+
+          wells.forEach(function(well){
+            for (fieldId in fieldData) {
+              if (fieldId in well.wellData) {
+                fieldData[fieldId].push(well.wellData[fieldId]);
+              } else {
+                fieldData[fieldId].push(null);
+              }
+            }
+          });
+
+          for (var i = 0; i < THIS.fieldList.length; i++) {
+            var field = THIS.fieldList[i];
+            if (field.applyMultiplexSubFieldColor){
+              field.applyMultiplexSubFieldColor(fieldData[field.id]);
+            } else {
+              if (field.required) {
+                var color = "white";
+                fieldData[field.id].forEach(function(val){
+                  // for multiselect
+                  if (val instanceof Array) {
+                    if (val.length === 0) {
+                      color = "red";
+                    }
+                  } else {
+                    if (val === null) {
+                      color = "red";
+                    }
+                  }
+
+                })
+                field.root.find(".plate-setup-tab-name").css("background", color);
+              }
+            }
+          }
         }
       }
     }

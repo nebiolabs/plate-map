@@ -253,6 +253,14 @@
   font-size: 12px;
 }
 
+.plate-setup-tab-name-missing {
+  height: 20px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 12px;
+  background: red;
+}
+
+
 .plate-setup-tab-field-container, .plate-setup-tab-field-container-singleSelect {
   width: 100%;
   display: flex;
@@ -443,7 +451,7 @@ input.invalid {
 
 .plate-popout-th {
   text-align: left;
-  background-color: aquamarine;
+  background-color: white;
   color: black;
   font-size: 12px;
   border: 1px solid black;
