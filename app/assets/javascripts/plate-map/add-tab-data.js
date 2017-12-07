@@ -338,7 +338,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         function createPopUpContent(field) {
-          var valMap = field.curToRemoveVal;
+          var valMap = field.allSelectedMultipleVal;
           var valToRemove = Object.keys(valMap);
           var optionMap = {};
 

@@ -303,7 +303,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
             });
-            multiplexField.curToRemoveVal = curMultipleVal;
+            multiplexField.allSelectedMultipleVal = curMultipleVal;
           })
         }
       },

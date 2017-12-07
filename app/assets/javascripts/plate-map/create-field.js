@@ -817,8 +817,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.multiOnChange = function(added, removed) {
           field._changeMultiFieldValue(added, removed);
-
-          // need to remove code
           var v = field.getValue();
           var curData = field.detailData;
           var curIds = [];
