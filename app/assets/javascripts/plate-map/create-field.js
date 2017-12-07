@@ -999,42 +999,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         // valList contains all of the vals for selected val
         field.applyMultiplexSubFieldColor = function(valList){
-          function containNonEmptyVal (valList) {
-            for (var wellIdx in valList){
-              var wellVal = valList[wellIdx];
-              if (wellVal.length > 0) {
-                return true;
-              }
-            }
-            return false
-          }
-
-          function setSubfieldColor (color) {
-            for (var subFieldId in field.subFieldList) {
-              var subField = field.subFieldList[subFieldId];
-              if (subField.required) {
-                subField.root.find(".plate-setup-tab-name").css("background", color);
-              }
-            }
-          }
-
           function updateSubFieldColorMap (vals) {
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               // loop through each well's multiplexval list
-              for (var multiplexIdx in vals) {
-                var curVal = vals[multiplexIdx][subField.id];
-                if (subField.required) {
-                  if (typeof(curVal) === 'object' && curVal) {
-                    if (!curVal.value) {
+              if (vals.length === 0){
+                if (field.required && subField.required){
+                  subFieldColorMap[subField.id].color.push("red");
+                }
+              } else {
+                for (var multiplexIdx in vals) {
+                  var curVal = vals[multiplexIdx][subField.id];
+                  if (subField.required) {
+                    if (typeof(curVal) === 'object' && curVal) {
+                      if (!curVal.value) {
+                        subFieldColorMap[subField.id].color.push("red");
+                      } else {
+                        subFieldColorMap[subField.id].color.push("white");
+                      }
+                    } else if (!curVal) {
                       subFieldColorMap[subField.id].color.push("red");
                     } else {
                       subFieldColorMap[subField.id].color.push("white");
                     }
-                  } else if (!curVal) {
-                    subFieldColorMap[subField.id].color.push("red");
-                  } else {
-                    subFieldColorMap[subField.id].color.push("white");
                   }
                 }
               }
@@ -1051,36 +1038,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           });
 
-          // in the range of valList, if one value in that field is not satisfied, replace the color to red
-          if (containNonEmptyVal(valList)) {
-            valList.forEach(function(multiplexVals) {
-              if (field.required) {
-                field.root.find(".plate-setup-tab-name").css("background", "red");
-              }
-              updateSubFieldColorMap(multiplexVals);
-            });
-
-            var mainFieldColor = "white";
-            for (var subFieldId in subFieldColorMap){
-              var subFieldMap = subFieldColorMap[subFieldId];
-              if (subFieldMap.color.indexOf('red') >= 0) {
-                subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "red");
-                mainFieldColor = "red"
-              } else {
-                subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "white");
-              }
-            }
-            field.root.find(".plate-setup-tab-name").css("background", mainFieldColor);
-
-          }  else {
+          valList.forEach(function(multiplexVals) {
             if (field.required) {
               field.root.find(".plate-setup-tab-name").css("background", "red");
-              setSubfieldColor("red");
+            }
+            updateSubFieldColorMap(multiplexVals);
+          });
+
+          var mainFieldColor = "white";
+          for (var subFieldId in subFieldColorMap){
+            var subFieldMap = subFieldColorMap[subFieldId];
+            if (subFieldMap.color.indexOf('red') >= 0) {
+              subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "red");
+              mainFieldColor = "red"
             } else {
-              field.root.find(".plate-setup-tab-name").css("background", "white");
-              setSubfieldColor("white");
+              subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "white");
             }
           }
+          field.root.find(".plate-setup-tab-name").css("background", mainFieldColor);
         };
 
         // create single select field and handle on change evaluation
