@@ -251,31 +251,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var obj = $('#my-plate-layout');
         var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
         deleteButton.id = field.id + "Delete";
-        deleteButton.text("Delete " + field.name + " in all selected wells");
-
+        deleteButton.text("Choose " + field.name + " to delete in all selected wells");
         var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
         var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
         var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-
         var buttonContainer = that._createElement("<div></div>").addClass("plate-setup-remove-all-button-container");
         buttonContainer.append(deleteButton);
-
         $(wrapperDivRightSide).append(buttonContainer);
         $(wrapperDiv).append(wrapperDivLeftSide);
         $(wrapperDiv).append(wrapperDivRightSide);
-
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
         createPopUp(field, deleteButton);
 
         function createPopUp(field, button) {
           var obj = $('#my-plate-layout');
-
           button.click(function(evt) {
-            if ($('#applyDialog').length == 0) {
-              $('body').append("<div id='applyDialog'><div/>");
+            if ($('#deleteDialog').length == 0) {
+              $('body').append("<div id='deleteDialog'><div/>");
             }
-            var dialogDiv = $('#applyDialog').addClass("modal");
+            var dialogDiv = $('#deleteDialog').addClass("modal");
             var dialogContent = $("<div/>").addClass("modal-content");
             dialogDiv.append(dialogContent);
 
@@ -284,50 +279,59 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end");
             dialogContent.append(buttonRow);
-            var deleteCheckedButton = $("<button>Delete Checked Items</button>");
-            buttonRow.append(deleteCheckedButton);
 
-            deleteCheckedButton.click(function() {
-              var optMap = popUpContent.optionMap;
-              var idToRemove = [];
-              for (var idx in Object.keys(optMap)) {
-                var optId = Object.keys(optMap)[idx];
-                var divId = "#"+ "checkBoxId" + idx;
-                if ($(divId)[0].checked){
-                  field.data.options.forEach(function(opt) {
-                    if (opt.text === optId){
-                      idToRemove.push(opt.id)
-                    }
-                  })
+            var valIdList = Object.keys(popUpContent.optionMap);
+            if (valIdList.length > 0){
+              // apply CSS property for table
+              $('#deleteDialog').find('table').addClass("plate-popout-table");
+              $('#deleteDialog').find('td').addClass("plate-popout-td");
+              $('#deleteDialog').find('th').addClass("plate-popout-th");
+              $('#deleteDialog').find('tr').addClass("plate-popout-tr");
+
+              var deleteCheckedButton = $("<button>Delete Checked Items</button>");
+              buttonRow.append(deleteCheckedButton);
+
+              deleteCheckedButton.click(function() {
+                var optMap = popUpContent.optionMap;
+                var idToRemove = [];
+                for (var idx in Object.keys(optMap)) {
+                  var optId = Object.keys(optMap)[idx];
+                  var divId = "#"+ "checkBoxId" + idx;
+                  if ($(divId)[0].checked){
+                    field.data.options.forEach(function(opt) {
+                      if (opt.text === optId){
+                        idToRemove.push(opt.id)
+                      }
+                    })
+                  }
                 }
-              }
 
-              if (idToRemove.length > 0){
-                for (var idx in idToRemove) {
-                  var val = idToRemove[idx];
-                  field.multiOnChange(null, {id: val})
+                if (idToRemove.length > 0){
+                  for (var idx in idToRemove) {
+                    var val = idToRemove[idx];
+                    field.multiOnChange(null, {id: val})
+                  }
                 }
-              }
 
-              // refresh selected fields after updating the multiplex field value
-              that.decideSelectedFields();
-              dialogDiv.hide();
-              $('#applyDialog').remove();
-
-            });
+                // refresh selected fields after updating the multiplex field value
+                that.decideSelectedFields();
+                dialogDiv.hide();
+                $('#deleteDialog').remove();
+              });
+            }
 
             var cancelButton = $("<button>Cancel</button>");
             buttonRow.append(cancelButton);
             cancelButton.click(function () {
               dialogDiv.hide();
-              $('#applyDialog').remove();
+              $('#deleteDialog').remove();
             });
             dialogDiv.show();
 
             window.onclick = function(event) {
               if (event.target == dialogDiv[0]) {
                 dialogDiv.hide();
-                $('#applyDialog').remove();
+                $('#deleteDialog').remove();
               }
             }
           });
@@ -336,7 +340,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         function createPopUpContent(field) {
           var valMap = field.curToRemoveVal;
           var valToRemove = Object.keys(valMap);
-
           var optionMap = {};
 
           valToRemove.forEach(function(valId){
@@ -361,21 +364,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           thead = document.createElement('thead');
           tr = document.createElement('tr');
 
-
-          table.className = "plate-popout-table";
-          tr.className = "plate-popout-tr";
-
-
-
-
           var optKeys = Object.keys(optionMap);
           if (optKeys.length > 0){
-            tableArea.append($("<p/>").text("List of " + field.name + " in selected wells, choose items to delete and click the delete button below"));
+            tableArea.append($("<p/>").text(field.name + " in selected wells: choose items to delete and click the delete button below"));
 
             for (var i = 0; i < colName.length; i++) {
               var headerTxt = document.createTextNode(colName[i]);
               th = document.createElement('th');
-              th.className = "plate-popout-th";
               th.appendChild(headerTxt);
               tr.appendChild(th);
               thead.appendChild(tr);
@@ -385,7 +380,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var idx in optKeys) {
               var optId = optKeys[idx];
               tr = document.createElement('tr');
-              tr.className = "plate-popout-tr";
               tr.appendChild(document.createElement('td'));
               tr.appendChild(document.createElement('td'));
               tr.appendChild(document.createElement('td'));
@@ -403,7 +397,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             table = $("<p/>").text("No " + field.name + " in the selected wells");
           }
-
           tableArea.append(table);
 
           return {

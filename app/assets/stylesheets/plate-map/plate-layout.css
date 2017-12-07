@@ -378,19 +378,19 @@ input.invalid {
   text-align: center;
 }
 
-.plate-setup-remove-all-button {
-  height: 23px;
+.plate-setup-remove-all-button{
+  min-height: 26px;
+  display: block;
+  width: 100%;
   font-family: "Roboto", Arial, sans-serif;
-  font-size: 11px;
-  border: none;
+  font-size: 12px;
   background-color: white;
   border-radius: 2px;
   margin-right: 4px;
   flex: 1 0 0;
-  white-space: nowrap;
-  border: outset;
+  text-overflow: ellipsis;
+  text-align: left;
 }
-
 /* Modal Content */
 
 .modal {
@@ -416,7 +416,7 @@ input.invalid {
   border: 1px solid #888;
 }
 
-#applyDialog .modal-content {
+#deleteDialog .modal-content {
   width: 350px;
 }
 
@@ -443,8 +443,8 @@ input.invalid {
 
 .plate-popout-th {
   text-align: left;
-  background-color: #4CAF50;
-  color: white;
+  background-color: aquamarine;
+  color: black;
   font-size: 12px;
   border: 1px solid black;
   padding: 5px;
@@ -452,6 +452,13 @@ input.invalid {
 
 .plate-popout-tr:hover {
   background-color: #f5f5f5;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+.plate-popout-td {
+  text-align: left;
+  font-size: 10px;
   border: 1px solid black;
   padding: 5px;
 }
