@@ -247,11 +247,20 @@
   flex: 1;
 }
 
-.plate-setup-tab-name, .plate-setup-tab-name-singleSelect {
+.plate-setup-tab-name {
   height: 20px;
   font-family: "Roboto", Arial, sans-serif;
   font-size: 12px;
+  padding: 5px 0px 4px 0px;
 }
+
+.plate-setup-tab-name-singleSelect {
+  height: 20px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 12px;
+  padding: 2px 0px 0px 0px;
+}
+
 
 .plate-setup-tab-name-missing {
   height: 20px;
@@ -370,17 +379,8 @@ input.invalid {
   background-color: pink;
 }
 
-.plate-setup-remove-all-container {
-  display: inline-block;
-  flex-basis: 50px;
-  padding: 0 5px;
-  position: absolute;
-  margin: 0 1px;
-  height: 20px;
-  background-color: white;
-  border: solid 1px #e1e1e1;
-  border-radius: 2px;
-  cursor: pointer;
+.plate-setup-remove-all-button-container {
+  padding: 7px 0px 0px 0px;
   font-family: "Roboto", Arial, sans-serif;
   font-size: 10px;
   text-align: center;
@@ -398,6 +398,7 @@ input.invalid {
   flex: 1 0 0;
   text-overflow: ellipsis;
   text-align: left;
+  border-style: outset;
 }
 /* Modal Content */
 
@@ -469,4 +470,14 @@ input.invalid {
   font-size: 11px;
   border: 1px solid black;
   padding: 5px;
+}
+
+.plate-field-warning-image{
+}
+
+.pop-out-text {
+  position: absolute;
+  display: none;
+  background: #ccc;
+  border: 1px solid;
 }

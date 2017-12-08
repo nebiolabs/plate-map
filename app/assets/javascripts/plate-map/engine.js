@@ -191,20 +191,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
               field.applyMultiplexSubFieldColor(fieldData[field.id]);
             } else {
               if (field.required) {
-                var color = "white";
+                var warning = false;
                 fieldData[field.id].forEach(function(val){
                   // for multiselect
                   if (val instanceof Array) {
                     if (val.length === 0) {
-                      color = "red";
+                      warning = true;
                     }
                   } else {
                     if (val === null) {
-                      color = "red";
+                      warning = true;
                     }
                   }
                 });
-                field.root.find(".plate-setup-tab-name").css("background", color);
+                //field.root.find(".plate-setup-tab-name").css("background", color);
+
+                var img = $("<img>").attr("src", THIS._assets.warningImg).attr("id", "imgId").addClass("plate-field-warning-image");
+                //field.root.find(".plate-setup-tab-name").append('<img id="theImg" src="theImg.png" />')
+                if (warning) {
+                  field.root.find(".plate-setup-tab-name").append(img);
+
+                  var popText = $("<div/>").addClass("pop-out-text");
+                  popText.text("warning message here");
+                  field.root.find(".plate-setup-tab-name").append(popText);
+
+                  $("#imgId").hover(function(e) {
+                    popText[0].style.display = 'inline-block';
+                  }, function() {
+                    popText.hide();
+                  });
+
+                } else {
+                  if (field.root.find(".plate-field-warning-image").length > 0){
+                    field.root.find(".plate-setup-tab-name").remove(img);
+                  }
+                }
               }
             }
           }

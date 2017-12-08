@@ -146,39 +146,48 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivLeftSide);
         $(wrapperDiv).append(wrapperDivRightSide);
 
-        // single select
-        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
-        var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
-        $(wrapperDivRightSide).append(nameContainer1);
-        $(wrapperDivRightSide).append(fieldContainer1);
-        $(wrapperDiv).append(wrapperDivLeftSide);
-        $(wrapperDiv).append(wrapperDivRightSide);
 
-        $(that.allDataTabs[tabPointer]).append(wrapperDiv);
-
-        var singleSelectData = {
-          id: data.id + "SingleSelect",
-          type: 'select',
-          multiplexId: data.id,
-          options: data.options
-        };
-
-        var singleSelectField = {
-          id: singleSelectData.id,
-          name: singleSelectData.name,
-          root: wrapperDiv,
-          data: singleSelectData,
-          required: singleSelectData.required
-        };
 
         var field = {
           id: data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
-          required: data.required,
-          singleSelectField: singleSelectField
+          required: data.required
         };
+
+
+        // Add delete pop up for multiplex field
+        that._createDeleteButton(field, tabPointer);
+
+        function createSingleSelect () {
+          // single select
+          var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
+          var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
+          $(wrapperDivRightSide).append(nameContainer1);
+          $(wrapperDivRightSide).append(fieldContainer1);
+          $(wrapperDiv).append(wrapperDivLeftSide);
+          $(wrapperDiv).append(wrapperDivRightSide);
+
+          $(that.allDataTabs[tabPointer]).append(wrapperDiv);
+
+          var singleSelectData = {
+            id: data.id + "SingleSelect",
+            type: 'select',
+            multiplexId: data.id,
+            options: data.options
+          };
+
+          var singleSelectField = {
+            id: singleSelectData.id,
+            root: wrapperDiv,
+            data: singleSelectData,
+            required: singleSelectData.required
+          };
+
+          field.singleSelectField = singleSelectField;
+        }
+        createSingleSelect();
 
         fieldArray.push(field);
         that.fieldList.push(field);
@@ -240,9 +249,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return null;
         };
 
-        // Add delete pop up for multiplex field
-        that._createDeleteButton(field, tabPointer);
-
         return field;
       },
 
@@ -251,16 +257,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var obj = $('#my-plate-layout');
         var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
         deleteButton.id = field.id + "Delete";
-        deleteButton.text("Choose " + field.name + " to delete in all selected wells");
-        var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        deleteButton.text("Manage " + field.name + " ...");
+        //var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        //var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
         var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
         var buttonContainer = that._createElement("<div></div>").addClass("plate-setup-remove-all-button-container");
         buttonContainer.append(deleteButton);
         $(wrapperDivRightSide).append(buttonContainer);
-        $(wrapperDiv).append(wrapperDivLeftSide);
-        $(wrapperDiv).append(wrapperDivRightSide);
-        $(that.allDataTabs[tabPointer]).append(wrapperDiv);
+        //$(wrapperDiv).append(wrapperDivLeftSide);
+        //$(wrapperDiv).append(wrapperDivRightSide);
+        //$(that.allDataTabs[tabPointer]).append(wrapperDiv);
+        field.root.find(".plate-setup-tab-field-right-side").append(wrapperDivRightSide);
 
         createPopUp(field, deleteButton);
 
