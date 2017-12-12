@@ -953,7 +953,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var valCount = 0;
           var completionPct = 0;
           var include = false;
-
           function getSubfieldStatus (vals) {
             var req = 0;
             var fill = 0;
@@ -976,11 +975,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           // for cases has value in multiplex field
-          if (valList.length > 0) {
-            for (var idx in valList) {
-              valCount++;
-              var vals = valList[idx];
-              completionPct += getSubfieldStatus(vals);
+          if (valList) {
+            if (valList.length > 0){
+              for (var idx in valList) {
+                valCount++;
+                var vals = valList[idx];
+                completionPct += getSubfieldStatus(vals);
+              }
             }
           }  else {
             if (field.required) {
