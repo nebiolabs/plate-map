@@ -101,8 +101,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               });
               //field.root.find(".plate-setup-tab-name").css("background", color);
-
-              that.fieldWarningMsg(field, field.name + " is a required field", include);
+              that.fieldWarningMsg(field, "required field", include);
             }
           }
         }
