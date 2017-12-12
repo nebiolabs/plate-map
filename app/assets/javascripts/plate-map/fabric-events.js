@@ -311,7 +311,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       decideSelectedFields: function() {
         var wells = this._getSelectedWells();
         this._getAllMultipleVal(wells);
-        this.engine.applyFieldColor(wells);
+        this.applyFieldWarning(wells);
         var well = this._getCommonWell(wells); 
         this._addDataToTabFields(well.wellData);
       }

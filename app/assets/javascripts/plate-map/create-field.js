@@ -997,13 +997,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         // valList contains all of the vals for selected val
         field.applyMultiplexSubFieldColor = function(valList){
-          function updateSubFieldColorMap (vals) {
+          function updateSubFieldWarningMap (vals) {
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               // loop through each well's multiplexval list
               if (vals.length === 0){
                 if (field.required && subField.required){
-                  subFieldColorMap[subField.id].color.push("red");
+                  subFieldWarningMap[subField.id].warningStatus.push(true);
                 }
               } else {
                 for (var multiplexIdx in vals) {
@@ -1011,14 +1011,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   if (subField.required) {
                     if (typeof(curVal) === 'object' && curVal) {
                       if (!curVal.value) {
-                        subFieldColorMap[subField.id].color.push("red");
+                        subFieldWarningMap[subField.id].warningStatus.push(true);
                       } else {
-                        subFieldColorMap[subField.id].color.push("white");
+                        subFieldWarningMap[subField.id].warningStatus.push(false);
                       }
                     } else if (!curVal) {
-                      subFieldColorMap[subField.id].color.push("red");
+                      subFieldWarningMap[subField.id].warningStatus.push(true);
                     } else {
-                      subFieldColorMap[subField.id].color.push("white");
+                      subFieldWarningMap[subField.id].warningStatus.push(false);
                     }
                   }
                 }
@@ -1026,34 +1026,40 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
 
-          var subFieldColorMap = {};
+          var subFieldWarningMap = {};
           field.subFieldList.forEach(function(subField){
             if (subField.required) {
-              subFieldColorMap[subField.id] = {
+              subFieldWarningMap[subField.id] = {
                 field: subField,
-                color: []
+                warningStatus: []
               };
             }
           });
 
           valList.forEach(function(multiplexVals) {
-            if (field.required) {
-              field.root.find(".plate-setup-tab-name").css("background", "red");
-            }
-            updateSubFieldColorMap(multiplexVals);
+            updateSubFieldWarningMap(multiplexVals);
           });
+          // turn off main field when all subfield are filled
 
-          var mainFieldColor = "white";
-          for (var subFieldId in subFieldColorMap){
-            var subFieldMap = subFieldColorMap[subFieldId];
-            if (subFieldMap.color.indexOf('red') >= 0) {
-              subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "red");
-              mainFieldColor = "red"
+          var mainFieldStatus = [];
+          for (var subFieldId in subFieldWarningMap){
+            var subFieldMap = subFieldWarningMap[subFieldId];
+            if (subFieldMap.warningStatus.indexOf(true) >= 0) {
+              that.fieldWarningMsg(subFieldMap.field, "required subfield", true);
+              mainFieldStatus.push(true);
             } else {
-              subFieldMap.field.root.find(".plate-setup-tab-name").css("background", "white");
+              that.fieldWarningMsg(subFieldMap.field, "required subfield", false);
+              mainFieldStatus.push(false);
             }
           }
-          field.root.find(".plate-setup-tab-name").css("background", mainFieldColor);
+          var mainFieldWarning = false;
+          if (mainFieldStatus.indexOf(true) < 0) {
+            mainFieldWarning = false;
+          } else {
+            mainFieldWarning = true;
+          }
+
+          that.fieldWarningMsg(field, 'Required main field', mainFieldWarning);
         };
 
         // create single select field and handle on change evaluation

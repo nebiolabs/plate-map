@@ -473,11 +473,15 @@ input.invalid {
 }
 
 .plate-field-warning-image{
+  vertical-align: baseline;
 }
 
 .pop-out-text {
-  position: absolute;
+  position: fixed;
   display: none;
-  background: #ccc;
+  background: white;
   border: 1px solid;
+  float: left;
+  margin-top: -34px;
+  z-Index: 99999 !important;
 }
