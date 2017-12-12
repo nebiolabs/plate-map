@@ -229,6 +229,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (requiredSubField.length > 0) {
             this.requiredField.push ({
               multiplexId: field.id,
+              multiplexName: field.name,
               multiplexFieldRequired: false,
               subFields: requiredSubField
             });
