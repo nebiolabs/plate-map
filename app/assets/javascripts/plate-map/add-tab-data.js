@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // Here we may need more changes because attributes format likely to change
           var tabData = this.options.attributes.tabs;
           var that = this;
+          this.requiredField = [];
           var multiplexFieldArray = [];
           tabData.forEach(function (tab, tabPointer) {
             if (tab["fields"]) {
@@ -82,6 +83,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           data: data,
           required: data.required || false
         };
+
+        if (field.required) {
+          that.requiredField.push(field.id);
+        }
 
         fieldArray.push(field);
         that.fieldMap[data.id] = field;
@@ -156,7 +161,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           required: data.required
         };
 
-
         // Add delete pop up for multiplex field
         that._createDeleteButton(field, tabPointer);
 
@@ -195,11 +199,26 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var subFieldList = [];
         //create subfields
+        var requiredSubField = [];
         for (var subFieldKey in data.multiplexFields) {
           var subFieldData = data.multiplexFields[subFieldKey];
           var subField = that._makeSubField(subFieldData, tabPointer, fieldArray);
           subFieldList.push(subField);
+
+          // stores required  subField
+          if (subFieldData.required) {
+            requiredSubField.push(subFieldData.id);
+          }
         }
+
+        //store required field
+        if (field.required) {
+          this.requiredField.push ({
+            multiplexId: field.id,
+            subFields: requiredSubField
+          });
+        }
+
         field.subFieldList = subFieldList;
         that._createField(field);
         that._addCheckBox(field);
