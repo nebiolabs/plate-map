@@ -1046,11 +1046,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var subFieldId in subFieldWarningMap){
             var subField = subFieldWarningMap[subFieldId].field;
             if (subFieldWarningMap[subFieldId].warningStatus.indexOf(true) >= 0) {
+              var text =  subField.name + " is a required subfield for " + field.name + ", please make sure all " + field.name + " have " + subField.name;
               if (field.required){
-                that.fieldWarningMsg(subField, "required subfield for " + field.name, true);
+                that.fieldWarningMsg(subField, text, true);
                 mainFieldStatus.push(true);
               } else {
-                that.fieldWarningMsg(subField, subField.name + " is a required subfield for selected " + field.name , true);
+                that.fieldWarningMsg(subField, text, true);
                 mainFieldStatus.push(true);
               }
             } else {
