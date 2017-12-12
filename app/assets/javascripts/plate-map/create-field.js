@@ -1041,14 +1041,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           });
           // turn off main field when all subfield are filled
 
+          var requiredSubField = [];
           var mainFieldStatus = [];
           for (var subFieldId in subFieldWarningMap){
-            var subFieldMap = subFieldWarningMap[subFieldId];
-            if (subFieldMap.warningStatus.indexOf(true) >= 0) {
-              that.fieldWarningMsg(subFieldMap.field, "required subfield", true);
-              mainFieldStatus.push(true);
+            var subField = subFieldWarningMap[subFieldId].field;
+            if (subFieldWarningMap[subFieldId].warningStatus.indexOf(true) >= 0) {
+              if (field.required){
+                that.fieldWarningMsg(subField, "required subfield for " + field.name, true);
+                mainFieldStatus.push(true);
+              } else {
+                that.fieldWarningMsg(subField, subField.name + " is a required subfield for selected " + field.name , true);
+                mainFieldStatus.push(true);
+              }
             } else {
-              that.fieldWarningMsg(subFieldMap.field, "required subfield", false);
+              that.fieldWarningMsg(subField, "none", false);
               mainFieldStatus.push(false);
             }
           }
@@ -1058,8 +1064,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             mainFieldWarning = true;
           }
-
-          that.fieldWarningMsg(field, 'Required main field', mainFieldWarning);
+          var warningText;
+          if (field.required) {
+            warningText = field.name + " is a required field, please also fix missing required subfield(s) below";
+          } else {
+            warningText = field.name + " is not a required field, please fix missing required subfield(s) below or remove selected " + field.name;
+          }
+          that.fieldWarningMsg(field, warningText, mainFieldWarning);
         };
 
         // create single select field and handle on change evaluation
