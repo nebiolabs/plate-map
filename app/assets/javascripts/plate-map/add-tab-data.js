@@ -84,10 +84,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           required: data.required || false
         };
 
-        if (field.required) {
-          that.requiredField.push(field.id);
-        }
-
         fieldArray.push(field);
         that.fieldMap[data.id] = field;
 
@@ -115,6 +111,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             data: data,
             required: data.required
           };
+
+          if (field.required) {
+            that.requiredField.push(field.id);
+          }
 
           fieldArray.push(field);
           that.fieldList.push(field);
@@ -215,8 +215,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (field.required) {
           this.requiredField.push ({
             multiplexId: field.id,
+            multiplexFieldRequired: true,
             subFields: requiredSubField
           });
+        } else {
+          if (requiredSubField.length > 0) {
+            this.requiredField.push ({
+              multiplexId: field.id,
+              multiplexFieldRequired: false,
+              subFields: requiredSubField
+            });
+          }
         }
 
         field.subFieldList = subFieldList;
