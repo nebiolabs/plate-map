@@ -1002,27 +1002,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               // loop through each well's multiplexval list
-              if (vals){
-                if (vals.length === 0){
+              if (vals === null){
+                if (field.required && subField.required){
+                  subFieldWarningMap[subField.id].warningStatus.push(true);
+                }
+              } else if (typeof(vals) === "object") {
+                if (vals.length === 0) {
                   if (field.required && subField.required){
                     subFieldWarningMap[subField.id].warningStatus.push(true);
                   }
-                }
-              }
-               else {
-                for (var multiplexIdx in vals) {
-                  var curVal = vals[multiplexIdx][subField.id];
-                  if (subField.required) {
-                    if (typeof(curVal) === 'object' && curVal) {
-                      if (!curVal.value) {
+                } else {
+                  for (var multiplexIdx in vals) {
+                    var curVal = vals[multiplexIdx][subField.id];
+                    if (subField.required) {
+                      if (typeof(curVal) === 'object' && curVal) {
+                        if (!curVal.value) {
+                          subFieldWarningMap[subField.id].warningStatus.push(true);
+                        } else {
+                          subFieldWarningMap[subField.id].warningStatus.push(false);
+                        }
+                      } else if (!curVal) {
                         subFieldWarningMap[subField.id].warningStatus.push(true);
                       } else {
                         subFieldWarningMap[subField.id].warningStatus.push(false);
                       }
-                    } else if (!curVal) {
-                      subFieldWarningMap[subField.id].warningStatus.push(true);
-                    } else {
-                      subFieldWarningMap[subField.id].warningStatus.push(false);
                     }
                   }
                 }

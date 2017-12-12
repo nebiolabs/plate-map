@@ -20,7 +20,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             field.root.find(".plate-setup-tab-name").append(popText);
 
             $("#" + imgId).hover(function (e) {
-              popText[0].style.display = 'inherit';
+              popText[0].style.display = 'flex';
             }, function () {
               popText.hide();
             });
