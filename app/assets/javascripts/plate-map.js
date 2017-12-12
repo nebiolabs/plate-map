@@ -1,6 +1,7 @@
 //= require plate-map/assets
 //= require plate-map/plate-layout
 //= require fabric
+//= require plate-map/add-warning-msg
 //= require plate-map/add-data-on-change
 //= require plate-map/add-data-to-tabs
 //= require plate-map/add-tab-data

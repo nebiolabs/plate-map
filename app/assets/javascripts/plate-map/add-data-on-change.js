@@ -48,7 +48,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
         // update multiplex remove all field
         this._getAllMultipleVal(wells);
-        this.engine.applyFieldColor(wells);
+        this.applyFieldWarning(wells);
       },
 
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
