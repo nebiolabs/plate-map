@@ -1002,11 +1002,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               // loop through each well's multiplexval list
-              if (vals.length === 0){
-                if (field.required && subField.required){
-                  subFieldWarningMap[subField.id].warningStatus.push(true);
+              if (vals){
+                if (vals.length === 0){
+                  if (field.required && subField.required){
+                    subFieldWarningMap[subField.id].warningStatus.push(true);
+                  }
                 }
-              } else {
+              }
+               else {
                 for (var multiplexIdx in vals) {
                   var curVal = vals[multiplexIdx][subField.id];
                   if (subField.required) {
