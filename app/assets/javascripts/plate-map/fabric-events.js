@@ -192,14 +192,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field]) {
+                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                    delete referenceFields[field];
+                  }
+                } else if (referenceFields[field] != fields[field]) {
                   delete referenceFields[field];
                 }
               }
             }
           }
           return referenceFields
-
         } else {
           return {};
         }
