@@ -982,12 +982,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var vals = valList[idx];
                 completionPct += getSubfieldStatus(vals);
               }
-            }
-          }  else {
-            if (field.required) {
+            } else if (field.required) {
               include = true;
               valCount = 1;
             }
+          }  else if (field.required) {
+            include = true;
+            valCount = 1;
           }
 
           return {
