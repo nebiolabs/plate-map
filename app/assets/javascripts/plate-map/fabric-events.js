@@ -260,9 +260,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field]) {
+                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                    referenceFields[field] = null;
+                  }
+                } else if (referenceFields[field] != fields[field]) {
                   referenceFields[field] = null;
                 }
+
               }
             }
           }
