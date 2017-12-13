@@ -113,10 +113,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           };
 
           if (field.required) {
-            that.requiredField.push({
-              id: field.id,
-              name: field.name
-          });
+            that.requiredField.push(field.id);
           }
 
           fieldArray.push(field);
@@ -210,10 +207,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           // stores required  subField
           if (subFieldData.required) {
-            requiredSubField.push({
-              id: subField.id,
-              name: subField.name
-            });
+            requiredSubField.push(subField.id);
           }
         }
 
@@ -221,16 +215,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (field.required) {
           this.requiredField.push ({
             multiplexId: field.id,
-            multiplexName: field.name,
-            multiplexFieldRequired: true,
             subFields: requiredSubField
           });
         } else {
           if (requiredSubField.length > 0) {
             this.requiredField.push ({
               multiplexId: field.id,
-              multiplexName: field.name,
-              multiplexFieldRequired: false,
               subFields: requiredSubField
             });
           }
