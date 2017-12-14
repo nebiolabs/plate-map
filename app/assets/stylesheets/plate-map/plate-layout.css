@@ -248,18 +248,15 @@
 }
 
 .plate-setup-tab-name {
-  height: 20px;
   font-family: "Roboto", Arial, sans-serif;
   font-size: 12px;
-  padding: 3px 0px 4px 0px;
   display: inline-block
 }
 
 .plate-setup-tab-name-singleSelect {
-  height: 20px;
   font-family: "Roboto", Arial, sans-serif;
   font-size: 12px;
-  padding: 2px 0px 0px 0px;
+  margin-top: 5px;
 }
 
 
@@ -381,25 +378,21 @@ input.invalid {
 }
 
 .plate-setup-remove-all-button-container {
-  padding: 7px 0px 0px 0px;
-  font-family: "Roboto", Arial, sans-serif;
-  font-size: 10px;
-  text-align: center;
+  text-align: left;
 }
 
 .plate-setup-remove-all-button{
-  min-height: 26px;
-  display: block;
   width: 100%;
   font-family: "Roboto", Arial, sans-serif;
   font-size: 12px;
-  background-color: white;
-  border-radius: 2px;
-  margin-right: 4px;
-  flex: 1 0 0;
   text-overflow: ellipsis;
   text-align: left;
-  border-style: outset;
+  white-space: nowrap;
+  border: 1px solid #aaa;
+  border-top: none;
+  color: #444;
+  background-color: #fff;
+  background-image: linear-gradient(to top, #eee 0%, #fff 50%);
 }
 /* Modal Content */
 
@@ -426,8 +419,8 @@ input.invalid {
   border: 1px solid #888;
 }
 
-#deleteDialog .modal-content {
-  width: 350px;
+.delete-dialog .modal-content {
+  width: 550px;
 }
 
 .modal-content > * {

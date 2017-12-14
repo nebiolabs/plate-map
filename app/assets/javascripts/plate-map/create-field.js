@@ -103,43 +103,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return opts;
       },
 
-      _createSelectField: function(field, isMultiplex) {
+      _createSelectField: function(field) {
         var id = field.id;
         var that = this;
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
 
-        if (isMultiplex) {
-          field.root.find(".plate-setup-tab-field-container-singleSelect").append(input);
-        } else {
-          field.root.find(".plate-setup-tab-field-container").append(input);
-          that.defaultWell.wellData[id] = null;
-        }
+        field.root.find(".plate-setup-tab-field-container").append(input);
+        that.defaultWell.wellData[id] = null;
+
         var opts = that._createOpts(field.data);
         var optMap = {};
         opts.data.forEach(function(opt) {
           optMap[opt.id] = opt;
         });
 
-        if (isMultiplex) {
-          opts.allowClear = false;
-        }
         input.select2(opts);
 
         field.parseValue = function(value) {
           var v = value;
-
-          if (isMultiplex) {
-            v = v.map(function(val) {
-              return val[field.id];
-            });
-
-            if (v.length > 0) {
-              v = v[0];
-            } else {
-              v = "";
-            }
-          }
 
           if (v == "") {
             v = null;
@@ -299,6 +281,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         field.input = input;
+
+        that._createDeleteButton(field);
       },
 
       _createNumericField: function(field) {
@@ -674,6 +658,75 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // overwrite default well for multiplex field
         that.defaultWell.wellData[field.id] = [];
 
+        // single select
+        var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
+        var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
+        field.root.find(".plate-setup-tab-field-right-side").append(nameContainer1, fieldContainer1);
+
+        field.singleSelect = this._createElement("<input/>").attr("id", field.id + "SingleSelect")
+          .addClass("plate-setup-tab-select-field");
+
+        field.singleSelect.appendTo(fieldContainer1); 
+
+        field.singleSelectValue = function () {
+          var v = field.singleSelect.select2("data"); 
+          if (v != null) {
+            v = v.id; 
+          }
+          return v; 
+        }
+
+        var setSingleSelectOptions = function (v, selected_v) {
+          var opts = {
+            allowClear: false,
+            placeholder: "select",
+            minimumResultsForSearch: 10,
+            data: v || []
+          }
+          if (!selected_v) {
+            if (opts.data.length) {
+              selected_v = opts.data[0]; 
+            } else {
+              selected_v = null; 
+            }
+          }
+          field.singleSelect.select2('data', {}); 
+          field.singleSelect.select2(opts);
+          field.singleSelect.select2('data', selected_v);
+          field.singleSelect.prop("disabled", opts.data.length == 0); 
+        }; 
+
+        var singleSelectChange = function () {
+          var v = field.singleSelectValue(); 
+
+          field.updateSubFieldUnitOpts(v);
+
+          var curData = field.detailData || []; 
+          var curSubField = null;
+          curData.forEach(function(val) {
+            if (val[field.id] === v) {
+              curSubField = val;
+            }
+          });
+
+          if (curSubField) {
+            // setvalue for subfield
+            field.subFieldList.forEach(function(subField) {
+              subField.disabled(false);
+              subField.setValue(curSubField[subField.id]);
+            });
+          } else {
+            field.subFieldList.forEach(function(subField) {
+              subField.disabled(true);
+              subField.setValue(null);
+            });
+          }
+        };
+
+        setSingleSelectOptions([]); 
+
+        field.singleSelect.on("change", singleSelectChange);
+
         field._changeMultiFieldValue = function(added, removed) {
           var newSubFieldValue = {};
           for (var subFieldName in field.data.multiplexFields) {
@@ -717,60 +770,28 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that._addAllData(data);
         };
 
+        var multiselectSetValue = field.setValue; 
+
         // overwrite multiplex set value
         field.setValue = function(v) {
-          var singleSelectField = field.singleSelectField;
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
+          var multiselectValues = null; 
           if (v && v.length) {
-            // handling for single select box
-            var mainFieldId = v.map(function(val) {
+            multiselectValues = v.map(function(val) {
               return val[field.id]
             });
-            var optMap = {};
-            singleSelectField.data.options.forEach(function(val) {
-              optMap[val.id] = val;
-            });
-            var newOptions = mainFieldId.map(function(i) {
-              return optMap[i];
-            });
-            singleSelectField.setOpts(newOptions);
-            if (newOptions.length > 0) {
-              singleSelectField.disabled(false);
-              var curId = newOptions[0].id;
-              var curSubField;
-              singleSelectField.setValue(curId);
-
-              // update multiplex subfield unit options
-              field.updateSubFieldUnitOpts(curId);
-              v.forEach(function(val) {
-                if (val[field.id] === curId) {
-                  curSubField = val;
-                }
-              });
-              // setvalue for subfield
-              field.subFieldList.forEach(function(subField) {
-                subField.disabled(false);
-                subField.setValue(curSubField[subField.id]);
-              })
-            }
-            field.input.select2('data', newOptions);
-          } else {
-            // when value is null
-            field.input.select2('data', []);
-            singleSelectField.setOpts([]);
-            singleSelectField.disabled(true);
-            // set subfield to null
-            field.subFieldList.forEach(function(subField) {
-              subField.disabled(true);
-              subField.setValue(null);
-            });
           }
+
+          multiselectSetValue(multiselectValues); 
+          var newOptions = field.input.select2('data') || [];
+          setSingleSelectOptions(newOptions);
+          singleSelectChange(); 
         };
 
         field.disabled = function(bool) {
           field.input.prop("disabled", bool);
-          field.singleSelectField.input.prop("disabled", bool);
+          field.singleSelect.prop("disabled", bool);
           field.subFieldList.forEach(function(subField) {
             subField.input.prop("disabled", bool);
           });
@@ -820,7 +841,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = field.getValue();
           var curData = field.detailData;
           var curIds = [];
-          var curId = null;
+          var curOpt = null;
           //reshape data for saveback
           if (curData) {
             curIds = curData.map(function(val) {
@@ -889,35 +910,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
               });
             });
             // set the newest selected to be the current obj
-            curId = selectList[v.length - 1].id;
-          }
-
-          field.singleSelectField.setOpts(selectList);
-          field.singleSelectField.setValue(curId);
-
-          // make current selected obj
-          // update subFields
-          if (newMultiplexVal.length > 0) {
-            field.singleSelectField.input.prop("disabled", false);
-            newMultiplexVal.forEach(function(val) {
-              if (curId === val[field.id]) {
-                field.subFieldList.forEach(function(subField) {
-                  subField.input.prop("disabled", false);
-                  var fieldVal = val[subField.id];
-                  subField.setValue(fieldVal);
-                })
-              }
-            });
-          } else {
-            field.singleSelectField.input.prop("disabled", true);
-            field.subFieldList.forEach(function(subField) {
-              var fieldVal = null;
-              subField.input.prop("disabled", true);
-              subField.setValue(fieldVal);
-            });
+            curOpt = selectList[v.length - 1];
           }
 
           field.detailData = newMultiplexVal;
+          setSingleSelectOptions(selectList, curOpt);
+          singleSelectChange(); 
         };
 
         field.getText = function(v) {
@@ -1081,25 +1079,107 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
         };
+      },
 
-        // create single select field and handle on change evaluation
-        this._createSelectField(field.singleSelectField, true);
-        field.singleSelectField.onChange = function() {
-          var v = field.singleSelectField.getValue();
-          field.updateSubFieldUnitOpts(v);
+      _deleteDialog: function (field) {
+        var that = this;
 
-          var curData = field.detailData;
-          curData.forEach(function(val) {
-            if (v === val[field.id]) {
-              field.subFieldList.forEach(function(subField) {
-                var fieldVal = val[subField.id];
-                subField.setValue(fieldVal);
-              })
-            }
+        var valMap = field.allSelectedMultipleVal;
+        var valToRemove = Object.keys(valMap);
+
+        var dialogDiv = $("<div/>").addClass("delete-dialog modal");
+        $('body').append(dialogDiv); 
+
+        function killDialog() {
+          dialogDiv.hide();
+          dialogDiv.remove(); 
+        }
+
+        var dialogContent = $("<div/>").addClass("modal-content").appendTo(dialogDiv);
+        var tableArea = $("<div/>").appendTo(dialogContent);
+        var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end").appendTo(dialogContent);
+
+        if (valToRemove.length > 0){
+          // apply CSS property for table
+          $("<p/>").text(field.name + " in selected wells: choose items to delete and click the delete button below").appendTo(tableArea);
+
+          var table = that._deleteDialogTable(field, valMap);
+          table.appendTo(tableArea);
+          table.addClass("plate-popout-table");
+          table.find('td').addClass("plate-popout-td");
+          table.find('th').addClass("plate-popout-th");
+          table.find('tr').addClass("plate-popout-tr");
+
+          var deleteCheckedButton = $("<button>Delete Checked Items</button>");
+          buttonRow.append(deleteCheckedButton);
+
+          deleteCheckedButton.click(function() {
+            table.find("input:checked").each(function () {
+              var val = this.value;
+              field.multiOnChange(null, {id: val}); 
+            }) 
+            // refresh selected fields after updating the multiplex field value
+            that.decideSelectedFields();
+            killDialog(); 
           });
-        };
+        } else {
+          $("<p/>").text("No " + field.name + " in the selected wells").appendTo(tableArea);
+        }
 
+        var cancelButton = $("<button>Cancel</button>");
+        buttonRow.append(cancelButton);
+        cancelButton.click(killDialog);
+
+        dialogDiv.show();
+
+        window.onclick = function(event) {
+          if (event.target == dialogDiv[0]) {
+            killDialog(); 
+          }
+        }
+      }, 
+
+      _deleteDialogTable: function (field, valMap) {
+        var colName = [field.name, "Counts", "Delete"]; //Added because it was missing... no idea what the original should have been
+        var table = $('<table/>');
+        var thead = $('<thead/>').appendTo(table);
+        var tr = $('<tr/>').appendTo(thead);
+
+        tr.append(colName.map(function (text) {
+          return $('<th/>').text(text);
+        }));
+
+        var tbody = $("<tbody/>").appendTo(table); 
+
+        field.data.options.forEach(function (opt) {
+          if (opt.id in valMap) {
+            var tr = $('<tr/>').appendTo(tbody);
+            var checkbox = $("<input type='checkbox'>").prop("value", opt.id); 
+            $("<td/>").text(opt.text).appendTo(tr); 
+            $("<td/>").text(valMap[opt.id]).appendTo(tr); 
+            $("<td/>").append(checkbox).appendTo(tr); 
+          }
+        });
+
+        return table; 
+      }, 
+
+      _createDeleteButton: function (field) {
+        var that = this;
+        var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
+        deleteButton.id = field.id + "Delete";
+        deleteButton.text("Manage " + field.name + "...");
+        var buttonContainer = that._createElement("<div></div>").addClass("plate-setup-remove-all-button-container");
+        buttonContainer.append(deleteButton);
+
+        field.deleteButton = deleteButton; 
+        field.root.find(".plate-setup-tab-field-right-side").append(buttonContainer);
+
+        deleteButton.click(function () {
+          that._deleteDialog(field); 
+        }); 
       }
+
     };
   }
 })(jQuery, fabric);
