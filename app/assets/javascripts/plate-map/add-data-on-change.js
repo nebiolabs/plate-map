@@ -128,6 +128,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
         }
+        if (preData && (preData.length == 0)) {
+          preData = null; 
+        }
         return preData
       },
 
