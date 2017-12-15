@@ -224,7 +224,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (bottom < 0) {
           bottom = rows;
         }
-        if (top >= cols) {
+        if (top <= 0) {
           top = 0;
         }
 
