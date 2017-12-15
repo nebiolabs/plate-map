@@ -327,13 +327,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             field.root.find(".plate-setup-tab-field-container").append(unitInput);
 
+            var selected = null; 
             var unitData = units.map(function(unit) {
               var o = {
                 id: unit,
                 text: unit
               };
               if (unit == defaultUnit) {
-                o.selected = true;
+                selected = o;
               }
               return o;
             });
@@ -345,6 +346,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
 
             unitInput.select2(opts);
+            unitInput.select2("data", selected); 
           }
         }
 
@@ -356,18 +358,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.setUnitOpts = function(opts) {
-          field.units = opts || field.units;
-          field.defaultUnit = opts[0];
+          field.units = opts || null; 
+          field.defaultUnit = null; 
 
-          var newUnits = opts.map(function(curUnit) {
-            var cleanUnit = {};
-            if (curUnit.text === field.defaultUnit) {
-              cleanUnit.selected = true;
-            }
-            cleanUnit.id = curUnit;
-            cleanUnit.text = curUnit;
-            return cleanUnit;
-          });
+          var newUnits = []; 
+          var selected = null; 
+          if (field.units && field.units.length) {
+            field.defaultUnit = field.units[0]; 
+            newUnits = field.units.map(function(curUnit) {
+              var cleanUnit = {
+                id: curUnit, 
+                text: curUnit
+              };
+              if (curUnit == field.defaultUnit) {
+                selected = cleanUnit;
+              }
+              return cleanUnit;
+            });
+          }
 
           var newOpts = {
             data: newUnits,
@@ -375,6 +383,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             minimumResultsForSearch: 10
           };
           unitInput.select2(newOpts);
+          unitInput.select2("data", selected); 
         };
 
         field.parseValue = function(value) {
@@ -504,10 +513,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setUnit = function(unit) {
           if (unitInput) {
             unit = unit || field.defaultUnit;
-            unit = {
-              id: unit,
-              text: unit
-            };
+            if (unit != null) {
+              unit = {
+                id: unit,
+                text: unit
+              };
+            }
             unitInput.select2("data", unit);
           }
         };
@@ -827,7 +838,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           });
           field.subFieldList.forEach(function(subField) {
             if (subField.data.hasMultiplexUnit) {
-              if (curOpts.hasOwnProperty("unitOptions")) {
+              if (curOpts && curOpts.hasOwnProperty("unitOptions")) {
 								subField.setUnitOpts(curOpts.unitOptions[subField.id]);
               } else {
                 subField.setUnitOpts(null);
