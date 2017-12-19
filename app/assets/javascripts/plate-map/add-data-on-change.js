@@ -61,11 +61,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
               for (var listIdx in preData) {
                 var multiplexData = preData[listIdx];
                 // for cases when the add new data exist in well
-                if (multiplexData[fieldId] === addNew.id) {
+                if (multiplexData[fieldId].toString() === addNew.id.toString()) {
                   add = false;
                   // update subfield value
                   preData = preData.map(function(val) {
-                    if (val[fieldId] === addNew.id) {
+                    if (val[fieldId].toString() === addNew.id.toString()) {
                       for (var subFieldId in val) {
                         // over write previous data if only one well is selected
                         if (subFieldId in addNew.value && subFieldId !== fieldId){
@@ -113,7 +113,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           if (removed.value) {
             for (var listIdx in preData) {
               var multiplexData = preData[listIdx];
-              if (multiplexData[fieldId] === removed.id) {
+              if (multiplexData[fieldId].toString() === removed.id.toString()) {
                 removeIndex = listIdx;
               }
             }
