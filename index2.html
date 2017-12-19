@@ -7,6 +7,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <script>
 			var plateLayOutWidget = plateLayOutWidget || {};
 
@@ -14,13 +17,15 @@
 				return {
 					_assets: {
 						doImg: 'app/assets/images/plate-map/do.png',
-						dontImg: 'app/assets/images/plate-map/dont.png'
+						dontImg: 'app/assets/images/plate-map/dont.png',
+                        warningImg: 'app/assets/images/plate-map/warning.png'
 					}
 				};
 			}
     </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
     <script src="vendor/assets/javascripts/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-warning-msg.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
@@ -106,10 +111,10 @@
 
 		var fields = {
 			polymerase: {
-				required: true,
+				required: false,
 				id: 'pol',
 				name: 'Polymerase',
-				type: 'select',
+				type: 'multiselect',
 				placeHolder: "Polymerase",
 				options: [
 					{
@@ -135,7 +140,7 @@
 				]
 			},
 			volume: {
-				required: true,
+				required: false,
 				id:       'volume',
 				name:     'Volume',
 				type:     'numeric',
@@ -144,7 +149,7 @@
 				defaultUnit: "uL"
 			},
 			conc: {
-				required: true,
+				required: false,
 				id:       'conc',
 				name:     'Concentration',
 				type:     'numeric',
@@ -236,7 +241,7 @@
 				//field names that are related to multiplexDIv
 				multiplexFields: {
 					condition_amt: {
-						required: false,
+						required: true,
 						id: 'raw_value',
 						name: 'Amount',
 						type: 'numeric',
@@ -353,7 +358,7 @@
 
 		$("#my-plate-layout").plateLayOut({
 			numRows: 8,
-			numCols: 12,
+			numCols: 6,
 			imgSrc: "app/assets/images/plate-map",
 			attributes: attributes,
 

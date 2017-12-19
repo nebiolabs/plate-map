@@ -179,62 +179,65 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var refArr = referenceFields[field]; 
                 var agrArr = []; 
                 for (var j = 0; j < refArr.length; j++) {
-                  var v = refArr[j]; 
-                  if ($.inArray(v, fields[field]) >= 0) {
-                    agrArr.push(v); 
+                  var v = refArr[j];
+                  if (v && typeof(v) === "object") {
+                    if (this.containsObject(v, fields[field])) {
+                      agrArr.push(v);
+                    }
+                  } else {
+                    if ($.inArray(v, fields[field]) >= 0) {
+                      agrArr.push(v);
+                    }
                   }
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field]) {
+                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                    delete referenceFields[field];
+                  }
+                } else if (referenceFields[field] != fields[field]) {
                   delete referenceFields[field];
                 }
               }
             }
           }
-          return {
-            wellData: referenceFields,
-          }
+          return referenceFields
         } else {
-          return {
-            wellData: {}
-          }; 
+          return {};
         }
-      }, 
+      },
+
+      containsObject: function(obj, list) {
+        var equality = [];
+        if (list) {
+          list.forEach(function(val) {
+            //evaluate val and obj
+            var evaluate = [];
+            Object.keys(val).forEach(function(listKey){
+              if (Object.keys(obj).indexOf(listKey) >= 0){
+                var curVal = val[listKey];
+                if (typeof(curVal) === 'object' && curVal) {
+                  if (obj[listKey]){
+                    evaluate.push((curVal.unit === obj[listKey].unit) && (curVal.value === obj[listKey].value));
+                  } else {
+                    // when obj[listKey] is null but curVal is not
+                    evaluate.push(false);
+                  }
+                } else {
+                  evaluate.push(curVal === obj[listKey]);
+                }
+              }
+            });
+            equality.push(evaluate.indexOf(false) < 0);
+          });
+          return equality.indexOf(true) >= 0;
+        } else {
+          return false;
+        }
+      },
 
       _getCommonWell: function (wells) {
-        // for multiplex field, the obj has to be exactly the same as list (unit has to be the same too)
-        function containsObject(obj, list) {
-          var equality = [];
-          if (list) {
-            list.forEach(function(val) {
-              //evaluate val and obj
-              var evaluate = [];
-              Object.keys(val).forEach(function(listKey){
-                if (Object.keys(obj).indexOf(listKey) >= 0){
-                  var curVal = val[listKey];
-                  if (typeof(curVal) === 'object' && curVal) {
-                    if (obj[listKey]){
-                      evaluate.push((curVal.unit === obj[listKey].unit) && (curVal.value === obj[listKey].value));
-                    } else {
-                      // when obj[listKey] is null but curVal is not
-                      evaluate.push(false);
-                    }
-
-                  } else {
-                    evaluate.push(curVal === obj[listKey]);
-                  }
-
-                }
-              })
-              equality.push(evaluate.indexOf(false) < 0);
-            });
-            return equality.indexOf(true) >= 0;
-          } else {
-            return false;
-          }
-        }
-
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell.wellData);
@@ -249,7 +252,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   var v = refArr[j];
                   // for multiplex field
                   if (typeof(refArr[j]) ==="object"){
-                    if (containsObject(v, fields[field])) {
+                    if (this.containsObject(v, fields[field])) {
                       agrArr.push(v);
                     }
                   } else {
@@ -260,9 +263,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 referenceFields[field] = agrArr; 
               } else {
-                if (referenceFields[field] != fields[field]) {
+                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                    referenceFields[field] = null;
+                  }
+                } else if (referenceFields[field] != fields[field]) {
                   referenceFields[field] = null;
                 }
+
               }
             }
           }
@@ -274,12 +282,47 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       }, 
 
-      decideSelectedFields: function() {
-        var wells = this._getSelectedWells(); 
-        var well = this._getCommonWell(wells); 
-        this._addDataToTabFields(well.wellData);
+      _getAllMultipleVal: function (wells) {
+        var multipleFieldList = this.multipleFieldList;
+        if (wells.length) {
+          multipleFieldList.forEach(function(multiplexField) {
+            var curMultipleVal = {};
+            wells.forEach(function (well) {
+              var wellData = well.wellData;
+              var id = multiplexField.id;
+              if (wellData[id]){
+                if (wellData[id].length > 0) {
+                  wellData[id].forEach(function (multipleVal) {
+                    if (typeof(multipleVal) === 'object') {
+                      if (multipleVal[id] in curMultipleVal) {
+                        curMultipleVal[multipleVal[id]] ++;
+                      } else {
+                        curMultipleVal[multipleVal[id]] = 1;
+                      }
+                    } else {
+                      if (multipleVal in curMultipleVal) {
+                        curMultipleVal[multipleVal] ++;
+
+                      } else {
+                        curMultipleVal[multipleVal] = 1;
+                      }
+                    }
+                  })
+                }
+              }
+            });
+            multiplexField.allSelectedMultipleVal = curMultipleVal;
+          })
+        }
       },
 
+      decideSelectedFields: function() {
+        var wells = this._getSelectedWells();
+        this._getAllMultipleVal(wells);
+        this.applyFieldWarning(wells);
+        var well = this._getCommonWell(wells); 
+        this._addDataToTabFields(well.wellData);
+      }
     };
   }
 })(jQuery, fabric);

@@ -15,7 +15,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         center_radius_incomplete: 14, 
         label_size: 14, 
         label_spacing: 24, 
-        text_size: 12, 
+        text_size: 13,
         stroke: 0.5, 
         gap: 2
       }, 
@@ -207,8 +207,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
       setTileComplete: function (tile, complete) {
         if (complete) {
           tile.circleCenter.radius = this.sizes.center_radius_complete;
+          tile.circleText.fill = "black";
+          tile.circleText.fontWeight = 'normal';
         } else {
           tile.circleCenter.radius = this.sizes.center_radius_incomplete;
+          tile.circleText.fill = "red";
+          tile.circleText.fontWeight = 'bold';
         }
       }, 
 

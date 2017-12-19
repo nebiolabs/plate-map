@@ -15,19 +15,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         wellEmpty: function (well) {
           for (var prop in well.wellData) {
-            if (well.wellData[prop] != null) {
-              return false;  
+            var curVal = well.wellData[prop];
+            if (curVal) {
+              if (Array.isArray(curVal)) {
+                if (curVal.length > 0) {
+                  return false;
+                }
+              } else {
+                return false;
+              }
             }
           }
-          return true; 
+          return true;
         },
 
         searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 1;
-          var derivativeJson = {}
-          //for (var idx in this.derivative) {
+          var derivativeJson = {};
           for (var idx in this.derivative) {
             var data = this.derivative[idx];
             var wellData = {};
@@ -43,11 +49,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                   newVal[attr] = curMultiplexVals[attr];
                   selectedSubFields.forEach(function (subFieldId) {
                     newVal[subFieldId] = curMultiplexVals[subFieldId];
-                    /*
-                    if (curMultiplexVals[subFieldId]){
-                      newVal[subFieldId] = curMultiplexVals[subFieldId];
-                    }
-                    */
                   });
                   newMultiplexVal.push(newVal);
                 }
@@ -140,26 +141,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         checkCompletion: function(wellData, tile) {
           var req = 0; 
-          var fill = 0; 
+          var fill = 0;
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
-            if (field.required) {
-              req++;
-              if (field.checkCompletion){
-                fill = fill + field.checkCompletion(wellData[field.id]);
-              } else {
-                if (wellData[field.id] != null) {
+            if (field.checkMultiplexCompletion){
+              // also apply color
+              var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
+              if (multiplexStatus.include) {
+                fill += multiplexStatus.completionPct;
+                req++;
+              }
+            } else {
+              if (field.required) {
+                req++;
+                if (wellData[field.id] !== null) {
                   fill++;
                 }
               }
-
             }
           }
-          if (req == fill) {
+          if (req === fill) {
             return 1; 
           }
           return fill / req;
-        }
+        },
       }
     }
   }

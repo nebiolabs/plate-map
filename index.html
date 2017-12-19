@@ -6,21 +6,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.js"></script>
-    
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <script>
+
       var plateLayOutWidget = plateLayOutWidget || {};
 
       plateLayOutWidget.assets = function() {
       return {
         _assets: {
           doImg: 'app/assets/images/plate-map/do.png',
-          dontImg: 'app/assets/images/plate-map/dont.png'
+          dontImg: 'app/assets/images/plate-map/dont.png',
+          warningImg: 'app/assets/images/plate-map/warning.png'
         }
       };
       }
     </script>
     <script src="app/assets/javascripts/plate-map/plate-layout.js"></script>
     <script src="vendor/assets/javascripts/fabric.js"></script>
+    <script src="app/assets/javascripts/plate-map/add-warning-msg.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-on-change.js"></script>
     <script src="app/assets/javascripts/plate-map/add-data-to-tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/add-tab-data.js"></script>
@@ -40,6 +46,7 @@
     <script src="app/assets/javascripts/plate-map/tabs.js"></script>
     <script src="app/assets/javascripts/plate-map/undo-redo-manager.js"></script>
     <script src="vendor/assets/javascripts/clipboard.min.js"></script>
+
   </head>
   <body>
     <div id="my-plate-layout" class="plate-setup-container">
@@ -133,8 +140,6 @@ window.onload = function() {
           text: 'Amplicon_D'
         }
       ],
-      multiplexDiv: 'selectedAmp',
-      //field names that are related to multiplexDIv
       multiplexFields: {
         template_ngul: {
           required: true,
