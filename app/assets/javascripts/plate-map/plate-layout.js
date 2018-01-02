@@ -157,5 +157,9 @@ $.widget("DNA.plateLayOut", {
     }
 
     return textDerivative;
+  },
+
+  getWellsDifferences: function() {
+    return this.getDifferentWellsVals(this.engine.derivative);
   }
 });

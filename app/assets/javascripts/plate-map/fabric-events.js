@@ -349,12 +349,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
               for (var idx = 0; idx < curVal.length; idx ++){
                 var curMultiVal = curVal[idx];
                 if (!this.containsObject(curMultiVal, commonVal)) {
+                  newVal.push(curMultiVal);
                   if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
                     allFieldVal[fieldId].push(curMultiVal);
                   }
                 }
               }
-              diffWellVal[fieldId] = newVal;
             } else if (curVal && typeof(curVal) === "object"){
               if (commonVal && typeof(commonVal) ==="object"){
                 if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){

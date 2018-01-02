@@ -160,7 +160,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           })
         }
         var requiredField = this.requiredField;
-        var diff = this.getDifferentWellsVals(derivative);
 
         return {
           "derivative": derivative,
