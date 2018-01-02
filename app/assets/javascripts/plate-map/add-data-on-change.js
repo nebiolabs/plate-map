@@ -167,7 +167,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "selectedAreas": selectedAreas,
           "focalWell": focalWell,
           "colorToLoc": colorLocMap,
-          "requiredField": requiredField,
+          "requiredField": requiredField
         };
       }
     };

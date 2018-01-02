@@ -145,8 +145,9 @@ $.widget("DNA.plateLayOut", {
       var curWellData = derivative[idx].wellData;
       for (var fieldId in curWellData){
         var field = this.fieldMap[fieldId];
-        textFieldIdWell[field.name] = field.parseText(curWellData[fieldId]);
-        textValWell[fieldId] = field.parseText(curWellData[fieldId]);
+        var textVal = field.parseText(curWellData[fieldId]);
+        textFieldIdWell[field.name] = textVal;
+        textValWell[fieldId] = textVal;
       }
 
       textDerivative[idx] = {

@@ -1131,7 +1131,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.parseMainFieldVal = function(val) {
           var optMap = field.data.options;
-          for (var idx in optMap){
+          for (var idx = 0; idx < optMap.length; idx++){
             var curOpt = optMap[idx];
             if (curOpt.id === val){
               return curOpt.text
