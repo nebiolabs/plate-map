@@ -133,5 +133,21 @@ $.widget("DNA.plateLayOut", {
 
   addData: function() {
     alert("wow this is good");
+  },
+
+  getTextDerivative: function(){
+    var derivative = this.engine.derivative;
+    var textDerivative = {};
+    var fieldMap = this.fieldMap;
+    for (var idx in derivative){
+      var textWell = {};
+      var curWellData = derivative[idx].wellData;
+      for (var fieldId in curWellData){
+        var field = this.fieldMap[fieldId];
+        textWell[fieldId] = field.parseText(curWellData[fieldId])
+      }
+      textDerivative[idx] = {wellData: textWell};
+    }
+    return textDerivative;
   }
 });

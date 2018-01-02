@@ -75,6 +75,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.input.prop("disabled", bool);
         };
 
+        field.parseText = field.parseValue;
+
         input.on("input", function(e, generated) {
           field.onChange();
         });
@@ -163,6 +165,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return "";
           }
           return optMap[v].text;
+        };
+
+        field.parseText = function(value) {
+          var v = value;
+
+          if (v == "") {
+            v = null;
+          }
+          if (v == null) {
+            return null;
+          }
+          if (v in optMap) {
+            return optMap[v].text;
+          } else {
+            throw "Invalid text value " + value + " for select field " + id;
+          }
         };
 
         input.on("change", function(e, generated) {
@@ -271,6 +289,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           };
 
           that._addAllData(data);
+        };
+
+        field.parseText = function(value){
+          var v = value;
+          if (v && v.length) {
+            v = v.map(function(opt) {
+              if (opt in optMap) {
+                return optMap[opt].text;
+              } else {
+                throw "Invalid text value " + opt + " for multiselect field " + id;
+              }
+            });
+          } else {
+            v = null;
+          }
+          return v;
         };
 
         input.on("change", function(e, generated) {
@@ -552,6 +586,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
+        field.parseText = field.parseValue;
+
         input.on("input", function() {
           var v = field.getRegularValue();
           if (isNaN(v)) {
@@ -655,6 +691,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v.toString();
         };
 
+        field.parseText = field.parseValue;
+
         input.on("change", function(e) {
           field.onChange();
         });
@@ -685,7 +723,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = v.id; 
           }
           return v; 
-        }
+        };
 
         var setSingleSelectOptions = function (v, selected_v) {
           var opts = {
@@ -1089,6 +1127,39 @@ var plateLayOutWidget = plateLayOutWidget || {};
             warningText = field.name + " is not a required field, please fix missing required subfield(s) below or remove selected " + field.name;
           }
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
+        };
+
+        field.parseMainFieldVal = function(val) {
+          var optMap = field.data.options;
+          for (var idx in optMap){
+            var curOpt = optMap[idx];
+            if (curOpt.id === val){
+              return curOpt.text
+            }
+          }
+        };
+
+        field.parseText = function(value) {
+          var v = value;
+          var newV = [];
+          if (v && v.length) {
+            for (var idx in v){
+              var opt = v[idx];
+              var valMap = {};
+              valMap[field.name] = field.parseMainFieldVal(opt[field.id]);
+              for (var subFieldId in opt) {
+                field.subFieldList.forEach(function(subField) {
+                  if (subField.id === subFieldId) {
+                    valMap[subField.id] = subField.parseText(opt[subFieldId]);
+                  }
+                });
+              }
+              newV.push(valMap);
+            }
+          } else {
+            newV = null;
+          }
+          return newV;
         };
       },
 
