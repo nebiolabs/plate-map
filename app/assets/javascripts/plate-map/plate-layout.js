@@ -135,19 +135,26 @@ $.widget("DNA.plateLayOut", {
     alert("wow this is good");
   },
 
-  getTextDerivative: function(){
+  getTextDerivative: function() {
     var derivative = this.engine.derivative;
     var textDerivative = {};
     var fieldMap = this.fieldMap;
     for (var idx in derivative){
-      var textWell = {};
+      var textValWell = {};
+      var textFieldIdWell = {};
       var curWellData = derivative[idx].wellData;
       for (var fieldId in curWellData){
         var field = this.fieldMap[fieldId];
-        textWell[fieldId] = field.parseText(curWellData[fieldId])
+        textFieldIdWell[field.name] = field.parseText(curWellData[fieldId]);
+        textValWell[fieldId] = field.parseText(curWellData[fieldId]);
       }
-      textDerivative[idx] = {wellData: textWell};
+
+      textDerivative[idx] = {
+        textVal: textValWell,
+        textFieldVal: textFieldIdWell
+      };
     }
+
     return textDerivative;
   }
 });
