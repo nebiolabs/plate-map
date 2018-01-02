@@ -322,6 +322,76 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.applyFieldWarning(wells);
         var well = this._getCommonWell(wells); 
         this._addDataToTabFields(well.wellData);
+      },
+
+      getDifferentWellsVals: function(wellsHash) {
+        var wells = [];
+        for (var wellIdx in wellsHash){
+          wells.push(wellsHash[wellIdx]);
+        }
+        var commonWell = this._getCommonWell(wells).wellData;
+        var differentWellsVals = {};
+        var allFieldVal = {};
+        for (var fieldIdx = 0; fieldIdx < this.fieldList.length; fieldIdx++) {
+          allFieldVal[this.fieldList[fieldIdx].id] = [];
+        }
+
+        for (var wellIdx in wells){
+          var diffWellVal = {};
+          var curWellData = wells[wellIdx].wellData;
+          for (var fieldId in curWellData) {
+            var commonVal =commonWell[fieldId];
+            var curVal = curWellData[fieldId];
+            var newVal;
+            if (Array.isArray(curVal)) {
+              // get uncommonVal
+              newVal = [];
+              for (var idx = 0; idx < curVal.length; idx ++){
+                var curMultiVal = curVal[idx];
+                if (!this.containsObject(curMultiVal, commonVal)) {
+                  if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
+                    allFieldVal[fieldId].push(curMultiVal);
+                  }
+                }
+              }
+              diffWellVal[fieldId] = newVal;
+            } else if (curVal && typeof(curVal) === "object"){
+              if (commonVal && typeof(commonVal) ==="object"){
+                if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
+                  newVal = curVal;
+                  if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                    allFieldVal[fieldId].push(curVal);
+                  }
+                }
+              } else {
+                newVal = curVal;
+                if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                  allFieldVal[fieldId].push(curVal);
+                }
+              }
+            } else if (curVal !== commonVal) {
+              newVal = curVal;
+              if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                allFieldVal[fieldId].push(curVal);
+              }
+            }
+            diffWellVal[fieldId] = newVal;
+          }
+
+
+          differentWellsVals[wellIdx] = {differentVals: diffWellVal};
+        }
+
+        // clean up step for fields that are empty
+        for (var fieldId in allFieldVal) {
+          if (allFieldVal[fieldId].length === 0) {
+            for (var wellIdx in differentWellsVals){
+              delete differentWellsVals[wellIdx].differentVals[fieldId];
+            }
+          }
+        }
+
+        return differentWellsVals;
       }
     };
   }
