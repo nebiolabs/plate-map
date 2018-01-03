@@ -135,14 +135,14 @@ $.widget("DNA.plateLayOut", {
     alert("wow this is good");
   },
 
-  getTextDerivative: function() {
-    var derivative = this.engine.derivative;
+  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
+  getTextDerivative: function(wellsData) {
     var textDerivative = {};
     var fieldMap = this.fieldMap;
-    for (var idx in derivative){
+    for (var idx in wellsData){
       var textValWell = {};
       var textFieldIdWell = {};
-      var curWellData = derivative[idx].wellData;
+      var curWellData = wellsData[idx];
       for (var fieldId in curWellData){
         var field = this.fieldMap[fieldId];
         var textVal = field.parseText(curWellData[fieldId]);
@@ -159,7 +159,8 @@ $.widget("DNA.plateLayOut", {
     return textDerivative;
   },
 
-  getWellsDifferences: function() {
-    return this.getDifferentWellsVals(this.engine.derivative);
+  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
+  getWellsDifferences: function(wellsData) {
+    return this.getDifferentWellsVals(wellsData);
   }
 });

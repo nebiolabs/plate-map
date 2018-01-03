@@ -25,7 +25,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (data[id]) {
                 if (data[id].multi){
                   var curData = data[id];
-                  var preData = well.wellData[id];
+                  var preData = well[id];
                   var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
                   // need to replace newData
                   v = JSON.parse(JSON.stringify(newDt));
@@ -35,7 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               } else {
                 v = JSON.parse(JSON.stringify(data[id]));
               }
-              well.wellData[id] = v;
+              well[id] = v;
               wells.push(well);
             }
             var empty = this.engine.wellEmpty(well);

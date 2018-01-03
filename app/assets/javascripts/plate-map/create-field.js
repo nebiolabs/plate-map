@@ -41,7 +41,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-input");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         field.parseValue = function(v) {
           if (v) {
@@ -112,7 +112,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-select-field");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         var opts = that._createOpts(field.data);
         var optMap = {};
@@ -198,7 +198,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         input.attr("multiple", "multiple");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         var separator = ",";
         var opts = that._createOpts(field.data);
@@ -327,7 +327,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .attr("placeholder", data.placeholder || "").attr("id", id);
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         // Adding unit
         var units = data.units || [];
@@ -613,7 +613,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         field.root.find(".plate-setup-tab-field-container").append(input);
         var tval = {
@@ -705,7 +705,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // make correct multiplex data
         this._createMultiSelectField(field);
         // overwrite default well for multiplex field
-        that.defaultWell.wellData[field.id] = [];
+        that.defaultWell[field.id] = [];
 
         // single select
         var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");

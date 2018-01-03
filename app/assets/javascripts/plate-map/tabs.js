@@ -8,9 +8,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       allTabs: [],
 
-      defaultWell: {
-        wellData: {}
-      },
+      defaultWell: {},
 
       allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
       // Settings as a whole. its very usefull, when we have units for a specific field.

@@ -337,13 +337,11 @@
 						vunit = "uL";
 					}
 					wells[i.toString()] = {
-						wellData: {
-							volume: {value: v, unit: vunit},
-							pol: pol,
-							amplicons: amplicons,
-							experimental_conditions: experimental_conditions,
-							on_ice: on_ice
-						}
+                        volume: {value: v, unit: vunit},
+                        pol: pol,
+                        amplicons: amplicons,
+                        experimental_conditions: experimental_conditions,
+                        on_ice: on_ice
 					};
 					if ((c % 2) > 0) {
 						volume /= 10
