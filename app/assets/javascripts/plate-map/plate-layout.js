@@ -144,9 +144,15 @@ $.widget("DNA.plateLayOut", {
       var textFieldIdWell = {};
       var curWellData = wellsData[idx];
       for (var fieldId in curWellData){
-        var field = this.fieldMap[fieldId];
-        var textVal = field.parseText(curWellData[fieldId]);
-        textFieldIdWell[field.name] = textVal;
+        if (fieldId in this.fieldMap){
+          var field = this.fieldMap[fieldId];
+          var textVal = field.parseText(curWellData[fieldId]);
+          textFieldIdWell[field.name] = textVal;
+        } else {
+          // do not convert if not a field (ex: layout_address)
+          textFieldIdWell[fieldId] = curWellData[fieldId];
+        }
+
         textValWell[fieldId] = textVal;
       }
 
