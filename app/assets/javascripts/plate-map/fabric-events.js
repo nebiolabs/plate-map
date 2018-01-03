@@ -326,82 +326,88 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for (var wellIdx in wellsHash){
           wells.push(wellsHash[wellIdx]);
         }
-        var commonWell = this._getCommonWell(wells);
-        var differentWellsVals = {};
-        var allFieldVal = {};
-        for (var fieldIdx = 0; fieldIdx < this.fieldList.length; fieldIdx++) {
-          allFieldVal[this.fieldList[fieldIdx].id] = [];
-        }
+        if (wells.length > 1){
+          var commonWell = this._getCommonWell(wells);
+          var differentWellsVals = {};
+          var allFieldVal = {};
+          for (var fieldIdx = 0; fieldIdx < this.fieldList.length; fieldIdx++) {
+            allFieldVal[this.fieldList[fieldIdx].id] = [];
+          }
 
-        for (var wellIdx in wells){
-          var diffWellVal = {};
-          var curWellData = wells[wellIdx];
-          for (var fieldId in curWellData) {
-            var commonVal = commonWell[fieldId];
-            var curVal = curWellData[fieldId];
-            var newVal = null;
-            if (Array.isArray(curVal)) {
-              // get uncommonVal
-              newVal = [];
-              if (curVal[0] && typeof(curVal[0] === "object")){
-                for (var idx = 0; idx < curVal.length; idx ++){
-                  var curMultiVal = curVal[idx];
-                  if (!this.containsObject(curMultiVal, commonVal)) {
-                    newVal.push(curMultiVal);
-                    if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
-                      allFieldVal[fieldId].push(curMultiVal);
+          for (var wellIdx in wells){
+            var diffWellVal = {};
+            var curWellData = wells[wellIdx];
+            for (var fieldId in curWellData) {
+              var commonVal = commonWell[fieldId];
+              var curVal = curWellData[fieldId];
+              var newVal = null;
+              if (Array.isArray(curVal)) {
+                // get uncommonVal
+                newVal = [];
+                if (curVal[0] && typeof(curVal[0] === "object")){
+                  for (var idx = 0; idx < curVal.length; idx ++){
+                    var curMultiVal = curVal[idx];
+                    if (!this.containsObject(curMultiVal, commonVal)) {
+                      newVal.push(curMultiVal);
+                      if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
+                        allFieldVal[fieldId].push(curMultiVal);
+                      }
+                    }
+                  }
+                } else {
+                  for (var idx = 0; idx < curVal.length; idx ++){
+                    var curMultiVal = curVal[idx];
+                    if (commonVal.indexOf(curMultiVal) >= 0) {
+                      newVal.push(curMultiVal);
+                      if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
+                        allFieldVal[fieldId].push(curMultiVal);
+                      }
                     }
                   }
                 }
-              } else {
-                for (var idx = 0; idx < curVal.length; idx ++){
-                  var curMultiVal = curVal[idx];
-                  if (commonVal.indexOf(curMultiVal) >= 0) {
-                    newVal.push(curMultiVal);
-                    if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
-                      allFieldVal[fieldId].push(curMultiVal);
+
+              } else if (curVal && typeof(curVal) === "object"){
+                if (commonVal && typeof(commonVal) ==="object"){
+                  if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
+                    newVal = curVal;
+                    if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                      allFieldVal[fieldId].push(curVal);
                     }
                   }
-                }
-              }
-
-            } else if (curVal && typeof(curVal) === "object"){
-              if (commonVal && typeof(commonVal) ==="object"){
-                if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
+                } else {
                   newVal = curVal;
                   if (!this.containsObject(curVal, allFieldVal[fieldId])) {
                     allFieldVal[fieldId].push(curVal);
                   }
                 }
-              } else {
+              } else if (curVal !== commonVal) {
                 newVal = curVal;
-                if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                if (!allFieldVal[fieldId].indexOf(curVal) >= 0) {
                   allFieldVal[fieldId].push(curVal);
                 }
               }
-            } else if (curVal !== commonVal) {
-              newVal = curVal;
-              if (!allFieldVal[fieldId].indexOf(curVal) >= 0) {
-                allFieldVal[fieldId].push(curVal);
+              diffWellVal[fieldId] = newVal;
+            }
+
+
+            differentWellsVals[wellIdx] = diffWellVal;
+          }
+
+          // clean up step for fields that are empty
+          for (var fieldId in allFieldVal) {
+            if (allFieldVal[fieldId].length === 0) {
+              for (var wellIdx in differentWellsVals){
+                delete differentWellsVals[wellIdx][fieldId];
               }
             }
-            diffWellVal[fieldId] = newVal;
           }
 
-
-          differentWellsVals[wellIdx] = diffWellVal;
+          return differentWellsVals;
+        } else {
+          return {
+            0: wellsHash[0]
+          };
         }
-
-        // clean up step for fields that are empty
-        for (var fieldId in allFieldVal) {
-          if (allFieldVal[fieldId].length === 0) {
-            for (var wellIdx in differentWellsVals){
-              delete differentWellsVals[wellIdx][fieldId];
-            }
-          }
-        }
-
-        return differentWellsVals;
       }
     };
   }
