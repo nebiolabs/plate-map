@@ -337,21 +337,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var diffWellVal = {};
           var curWellData = wells[wellIdx];
           for (var fieldId in curWellData) {
-            var commonVal =commonWell[fieldId];
+            var commonVal = commonWell[fieldId];
             var curVal = curWellData[fieldId];
-            var newVal;
+            var newVal = null;
             if (Array.isArray(curVal)) {
               // get uncommonVal
               newVal = [];
-              for (var idx = 0; idx < curVal.length; idx ++){
-                var curMultiVal = curVal[idx];
-                if (!this.containsObject(curMultiVal, commonVal)) {
-                  newVal.push(curMultiVal);
-                  if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
-                    allFieldVal[fieldId].push(curMultiVal);
+              if (curVal[0] && typeof(curVal[0] === "object")){
+                for (var idx = 0; idx < curVal.length; idx ++){
+                  var curMultiVal = curVal[idx];
+                  if (!this.containsObject(curMultiVal, commonVal)) {
+                    newVal.push(curMultiVal);
+                    if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
+                      allFieldVal[fieldId].push(curMultiVal);
+                    }
+                  }
+                }
+              } else {
+                for (var idx = 0; idx < curVal.length; idx ++){
+                  var curMultiVal = curVal[idx];
+                  if (commonVal.indexOf(curMultiVal) >= 0) {
+                    newVal.push(curMultiVal);
+                    if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
+                      allFieldVal[fieldId].push(curMultiVal);
+                    }
                   }
                 }
               }
+
             } else if (curVal && typeof(curVal) === "object"){
               if (commonVal && typeof(commonVal) ==="object"){
                 if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
@@ -368,7 +381,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             } else if (curVal !== commonVal) {
               newVal = curVal;
-              if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+              if (!allFieldVal[fieldId].indexOf(curVal) >= 0) {
                 allFieldVal[fieldId].push(curVal);
               }
             }
