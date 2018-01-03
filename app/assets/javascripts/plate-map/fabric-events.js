@@ -323,15 +323,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
       // get well value differences for each well in wellsHash
       getDifferentWellsVals: function(wellsHash) {
         var wells = [];
-        for (var wellIdx in wellsHash){
-          wells.push(wellsHash[wellIdx]);
+        for (var wellId in wellsHash){
+          wells.push(wellsHash[wellId]);
         }
         var differentWellsVals = {};
         if (wells.length > 1){
           var commonWell = this._getCommonWell(wells);
           var allFieldVal = {};
-          for (var fieldIdx = 0; fieldIdx < this.fieldList.length; fieldIdx++) {
-            allFieldVal[this.fieldList[fieldIdx].id] = [];
+          for (var fieldIdx in wellsHash[0]) {
+            allFieldVal[fieldIdx] = [];
           }
 
           for (var wellIdx in wells){
