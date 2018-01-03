@@ -326,9 +326,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         for (var wellIdx in wellsHash){
           wells.push(wellsHash[wellIdx]);
         }
+        var differentWellsVals = {};
         if (wells.length > 1){
           var commonWell = this._getCommonWell(wells);
-          var differentWellsVals = {};
           var allFieldVal = {};
           for (var fieldIdx = 0; fieldIdx < this.fieldList.length; fieldIdx++) {
             allFieldVal[this.fieldList[fieldIdx].id] = [];
@@ -403,9 +403,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           return differentWellsVals;
-        } else {
+        } else if (wellsHash[0]) {
+          var well = {};
+          for (var fieldId in wellsHash[0]) {
+            var curVal = wellsHash[0][fieldId];
+            if (Array.isArray(curVal)){
+              if (curVal.length > 0) {
+                well[fieldId] = curVal
+              }
+            } else if (curVal){
+              well[fieldId] = curVal;
+            }
+          }
           return {
-            0: wellsHash[0]
+            0: well
           };
         }
       }
