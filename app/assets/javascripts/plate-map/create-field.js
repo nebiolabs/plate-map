@@ -996,6 +996,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
+        field.parseText = function(v) {
+          if (v === null) {
+            return "";
+          } else {
+            var returnVal = [];
+            for (var valIdx in v) {
+              var subV = v[valIdx];
+              var subText = [];
+              for (var optId in field.data.options) {
+                var opt = field.data.options[optId];
+                if (opt.id === subV[field.id]) {
+                  subText.push(opt.text);
+                }
+              }
+              field.subFieldList.forEach(function(subField) {
+                var x = subField.getText(subV[subField.id]);
+                if (x) {
+                  subText.push(x);
+                }
+              });
+              returnVal.push(subText);
+            }
+            return returnVal;
+          }
+        };
+
         field.checkMultiplexCompletion = function(valList) {
           var valCount = 0;
           var completionPct = 0;
@@ -1137,29 +1163,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
               return curOpt.text
             }
           }
-        };
-
-        field.parseText = function(value) {
-          var v = value;
-          var newV = [];
-          if (v && v.length) {
-            for (var idx in v){
-              var opt = v[idx];
-              var valMap = {};
-              valMap[field.name] = field.parseMainFieldVal(opt[field.id]);
-              for (var subFieldId in opt) {
-                field.subFieldList.forEach(function(subField) {
-                  if (subField.id === subFieldId) {
-                    valMap[subField.id] = subField.parseText(opt[subFieldId]);
-                  }
-                });
-              }
-              newV.push(valMap);
-            }
-          } else {
-            newV = null;
-          }
-          return newV;
         };
       },
 
