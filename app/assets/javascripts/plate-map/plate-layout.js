@@ -148,14 +148,13 @@ $.widget("DNA.plateLayOut", {
           var field = this.fieldMap[fieldId];
           var textVal = field.parseText(curWellData[fieldId]);
           textFieldIdWell[field.name] = textVal;
+          textValWell[fieldId] = textVal;
         } else {
           // do not convert if not a field (ex: layout_address)
           textFieldIdWell[fieldId] = curWellData[fieldId];
+          textValWell[fieldId] = curWellData[fieldId];
         }
-
-        textValWell[fieldId] = textVal;
       }
-
       textDerivative[idx] = {
         textVal: textValWell,
         textFieldVal: textFieldIdWell
