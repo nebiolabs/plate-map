@@ -586,7 +586,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        field.parseText = field.parseValue;
+        field.parseText = function(v){
+          var textVal = field.parseValue(v);
+          if (textVal && typeof(textVal) === "object"){
+            return textVal.value + textVal.unit;
+          } else if (textVal) {
+            return textVal
+          } else {
+            return null;
+          }
+        };
 
         input.on("input", function() {
           var v = field.getRegularValue();
