@@ -72,9 +72,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
         wells.forEach(function(well){
           if (!that.engine.wellEmpty(well)){
-            for (fieldId in fieldData) {
-              if (fieldId in well.wellData) {
-                fieldData[fieldId].push(well.wellData[fieldId]);
+            for (var fieldId in fieldData) {
+              if (fieldId in well) {
+                fieldData[fieldId].push(well[fieldId]);
               } else {
                 fieldData[fieldId].push(null);
               }

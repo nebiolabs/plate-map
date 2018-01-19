@@ -71,12 +71,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       sanitizeWell: function (well) {
-        var newWell = {
-          wellData: {}
-        };
+        var newWell = {};
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i];
-          newWell.wellData[field.id] = field.parseValue(well.wellData[field.id]);
+          newWell[field.id] = field.parseValue(well[field.id]);
         }
         return newWell; 
       }, 

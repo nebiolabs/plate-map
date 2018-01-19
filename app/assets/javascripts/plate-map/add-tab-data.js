@@ -192,7 +192,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           fieldArray.push(subfield);
           that._createField(subfield);
           that._addCheckBox(subfield);
-          delete that.defaultWell.wellData[subfield.id];
+          delete that.defaultWell[subfield.id];
           // overwrite subField setvalue
           subfield.onChange = function () {
             var v = subfield.getValue();

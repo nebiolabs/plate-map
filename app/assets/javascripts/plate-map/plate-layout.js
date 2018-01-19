@@ -133,5 +133,39 @@ $.widget("DNA.plateLayOut", {
 
   addData: function() {
     alert("wow this is good");
+  },
+
+  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
+  getTextDerivative: function(wellsData) {
+    var textDerivative = {};
+    var fieldMap = this.fieldMap;
+    for (var idx in wellsData){
+      var textValWell = {};
+      var textFieldIdWell = {};
+      var curWellData = wellsData[idx];
+      for (var fieldId in curWellData){
+        if (fieldId in this.fieldMap){
+          var field = this.fieldMap[fieldId];
+          var textVal = field.parseText(curWellData[fieldId]);
+          textFieldIdWell[field.name] = textVal;
+          textValWell[fieldId] = textVal;
+        } else {
+          // do not convert if not a field (ex: layout_address)
+          textFieldIdWell[fieldId] = curWellData[fieldId];
+          textValWell[fieldId] = curWellData[fieldId];
+        }
+      }
+      textDerivative[idx] = {
+        textVal: textValWell,
+        textFieldVal: textFieldIdWell
+      };
+    }
+
+    return textDerivative;
+  },
+
+  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
+  getWellsDifferences: function(wellsData) {
+    return this.getDifferentWellsVals(wellsData);
   }
 });

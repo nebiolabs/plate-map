@@ -197,9 +197,9 @@
 						name: 'template conc',
 						type: 'select',
 						options: [
-							{id:'a',text: "a"},
-							{id:'b',text: "b"},
-							{id:'c',text: "c"}
+							{id:'a',text: "text_a"},
+							{id:'b',text: "text_b"},
+							{id:'c',text: "text_c"}
 						]
 					},
 					primer_umolarity: {
@@ -337,13 +337,11 @@
 						vunit = "uL";
 					}
 					wells[i.toString()] = {
-						wellData: {
-							volume: {value: v, unit: vunit},
-							pol: pol,
-							amplicons: amplicons,
-							experimental_conditions: experimental_conditions,
-							on_ice: on_ice
-						}
+                        volume: {value: v, unit: vunit},
+                        pol: pol,
+                        amplicons: amplicons,
+                        experimental_conditions: experimental_conditions,
+                        on_ice: on_ice
 					};
 					if ((c % 2) > 0) {
 						volume /= 10

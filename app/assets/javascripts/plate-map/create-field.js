@@ -41,7 +41,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-input");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         field.parseValue = function(v) {
           if (v) {
@@ -74,6 +74,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.disabled = function(bool) {
           field.input.prop("disabled", bool);
         };
+
+        field.parseText = field.parseValue;
 
         input.on("input", function(e, generated) {
           field.onChange();
@@ -110,7 +112,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-select-field");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         var opts = that._createOpts(field.data);
         var optMap = {};
@@ -165,6 +167,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return optMap[v].text;
         };
 
+        field.parseText = function(value) {
+          var v = value;
+
+          if (v == "") {
+            v = null;
+          }
+          if (v == null) {
+            return null;
+          }
+          if (v in optMap) {
+            return optMap[v].text;
+          } else {
+            throw "Invalid text value " + value + " for select field " + id;
+          }
+        };
+
         input.on("change", function(e, generated) {
           field.onChange();
         });
@@ -180,7 +198,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         input.attr("multiple", "multiple");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         var separator = ",";
         var opts = that._createOpts(field.data);
@@ -273,6 +291,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that._addAllData(data);
         };
 
+        field.parseText = function(value){
+          var v = value;
+          if (v && v.length) {
+            v = v.map(function(opt) {
+              if (opt in optMap) {
+                return optMap[opt].text;
+              } else {
+                throw "Invalid text value " + opt + " for multiselect field " + id;
+              }
+            });
+          } else {
+            v = null;
+          }
+          return v;
+        };
+
         input.on("change", function(e, generated) {
           var added = e.added;
           var removed = e.removed;
@@ -293,7 +327,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .attr("placeholder", data.placeholder || "").attr("id", id);
 
         field.root.find(".plate-setup-tab-field-container").append(input);
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         // Adding unit
         var units = data.units || [];
@@ -552,6 +586,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
+        field.parseText = function(v){
+          var textVal = field.parseValue(v);
+          if (textVal && typeof(textVal) === "object"){
+            return textVal.value + textVal.unit;
+          } else if (textVal) {
+            return textVal
+          } else {
+            return null;
+          }
+        };
+
         input.on("input", function() {
           var v = field.getRegularValue();
           if (isNaN(v)) {
@@ -577,7 +622,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
         var input = this._createElement("<input/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
-        that.defaultWell.wellData[id] = null;
+        that.defaultWell[id] = null;
 
         field.root.find(".plate-setup-tab-field-container").append(input);
         var tval = {
@@ -655,6 +700,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v.toString();
         };
 
+        field.parseText = field.parseValue;
+
         input.on("change", function(e) {
           field.onChange();
         });
@@ -667,7 +714,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // make correct multiplex data
         this._createMultiSelectField(field);
         // overwrite default well for multiplex field
-        that.defaultWell.wellData[field.id] = [];
+        that.defaultWell[field.id] = [];
 
         // single select
         var nameContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
@@ -685,7 +732,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             v = v.id; 
           }
           return v; 
-        }
+        };
 
         var setSingleSelectOptions = function (v, selected_v) {
           var opts = {
@@ -958,6 +1005,32 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         };
 
+        field.parseText = function(v) {
+          if (v === null) {
+            return "";
+          } else {
+            var returnVal = [];
+            for (var valIdx in v) {
+              var subV = v[valIdx];
+              var subText = [];
+              for (var optId in field.data.options) {
+                var opt = field.data.options[optId];
+                if (opt.id === subV[field.id]) {
+                  subText.push(opt.text);
+                }
+              }
+              field.subFieldList.forEach(function(subField) {
+                var x = subField.getText(subV[subField.id]);
+                if (x) {
+                  subText.push(x);
+                }
+              });
+              returnVal.push(subText);
+            }
+            return returnVal;
+          }
+        };
+
         field.checkMultiplexCompletion = function(valList) {
           var valCount = 0;
           var completionPct = 0;
@@ -1089,6 +1162,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             warningText = field.name + " is not a required field, please fix missing required subfield(s) below or remove selected " + field.name;
           }
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
+        };
+
+        field.parseMainFieldVal = function(val) {
+          var optMap = field.data.options;
+          for (var idx = 0; idx < optMap.length; idx++){
+            var curOpt = optMap[idx];
+            if (curOpt.id === val){
+              return curOpt.text
+            }
+          }
         };
       },
 

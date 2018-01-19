@@ -239,15 +239,10 @@ window.onload = function() {
           vunit = "uL";
         }
         wells[i.toString()] = {
-          unitData: {
-            volume:vunit
-          },
-          wellData: {
-            volume: v,
-            pol: pol,
-            amplicons: amplicons,
-            on_ice: on_ice
-          }
+          volume: v,
+          pol: pol,
+          amplicons: amplicons,
+          on_ice: on_ice
         };
         if ((c % 2) > 0) {
           volume /= 10
@@ -256,7 +251,7 @@ window.onload = function() {
     }
     return {
       derivative: wells,
-      checkboxes: ["volume", "pol"],
+      checkboxes: ["volume", "pol"]
     };
   }
 

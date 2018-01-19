@@ -14,8 +14,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         stackPointer: 2,
 
         wellEmpty: function (well) {
-          for (var prop in well.wellData) {
-            var curVal = well.wellData[prop];
+          for (var prop in well) {
+            var curVal = well[prop];
             if (curVal) {
               if (Array.isArray(curVal)) {
                 if (curVal.length > 0) {
@@ -43,8 +43,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (attr in THIS.globalSelectedMultiplexSubfield){
                 var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
                 var newMultiplexVal = [];
-                for (var multiplexIdx in data.wellData[attr]){
-                  var curMultiplexVals = data.wellData[attr][multiplexIdx];
+                for (var multiplexIdx in data[attr]){
+                  var curMultiplexVals = data[attr][multiplexIdx];
                   var newVal = {};
                   newVal[attr] = curMultiplexVals[attr];
                   selectedSubFields.forEach(function (subFieldId) {
@@ -54,15 +54,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
                 wellData[attr] = newMultiplexVal;
               } else {
-                if (data.wellData[attr] != null) {
-                  wellData[attr] = data.wellData[attr];
+                if (data[attr] != null) {
+                  wellData[attr] = data[attr];
                 }
               }
             }
             if ($.isEmptyObject(wellData)) {
               derivativeJson[idx] = null; 
             } else {
-              derivativeJson[idx] = JSON.stringify({"wellData": wellData});
+              derivativeJson[idx] = JSON.stringify(wellData);
             }
           }
 
@@ -123,7 +123,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var well = this.derivative[index];
                 THIS.setTileColor(tile, color, this.stackPointer); 
                 // Checks if all the required fields are filled
-                var completion = this.checkCompletion(well.wellData, tile);
+                var completion = this.checkCompletion(well, tile);
                 THIS.setTileComplete(tile, completion == 1); 
                 wholePercentage = wholePercentage + completion;
               }
