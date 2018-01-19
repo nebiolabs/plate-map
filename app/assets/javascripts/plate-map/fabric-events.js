@@ -333,7 +333,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var fieldIdx in wellsHash[0]) {
             allFieldVal[fieldIdx] = [];
           }
-
           for (var wellIdx in wells){
             var diffWellVal = {};
             var curWellData = wells[wellIdx];
@@ -344,19 +343,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (Array.isArray(curVal)) {
                 // get uncommonVal
                 newVal = [];
-                if (curVal[0] && typeof(curVal[0] === "object")){
-                  for (var idx = 0; idx < curVal.length; idx ++){
-                    var curMultiVal = curVal[idx];
+                for (var idx = 0; idx < curVal.length; idx ++){
+                  var curMultiVal = curVal[idx];
+                  // multiplex field
+                  if (curMultiVal && typeof(curMultiVal === "object")){
                     if (!this.containsObject(curMultiVal, commonVal)) {
                       newVal.push(curMultiVal);
                       if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
                         allFieldVal[fieldId].push(curMultiVal);
                       }
                     }
-                  }
-                } else {
-                  for (var idx = 0; idx < curVal.length; idx ++){
-                    var curMultiVal = curVal[idx];
+                  } else {
                     if (commonVal.indexOf(curMultiVal) >= 0) {
                       newVal.push(curMultiVal);
                       if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
@@ -365,7 +362,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     }
                   }
                 }
-
               } else if (curVal && typeof(curVal) === "object"){
                 if (commonVal && typeof(commonVal) ==="object"){
                   if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
