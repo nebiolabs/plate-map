@@ -779,7 +779,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               subField.setValue(null);
             });
           }
-          that.readOnlyHandler();
+
+          if (that.readOnly){
+            that.readOnlyHandler();
+          }
         };
 
         setSingleSelectOptions([]); 
@@ -1204,7 +1207,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           table.find('td').addClass("plate-popout-td");
           table.find('th').addClass("plate-popout-th");
           table.find('tr').addClass("plate-popout-tr");
-          if (!that.options.readOnly) {
+          if (!that.readOnly) {
             var deleteCheckedButton = $("<button class='multiple-field-manage-delete-button'>Delete Checked Items</button>");
             buttonRow.append(deleteCheckedButton);
             deleteCheckedButton.click(function() {
@@ -1238,7 +1241,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _deleteDialogTable: function (field, valMap) {
         var that = this;
         var colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
-        if (!that.options.readOnly) {
+        if (!that.readOnly) {
           colName.push("Delete");
         }
         var table = $('<table/>');
@@ -1257,7 +1260,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var checkbox = $("<input type='checkbox'>").prop("value", opt.id); 
             $("<td/>").text(opt.text).appendTo(tr); 
             $("<td/>").text(valMap[opt.id]).appendTo(tr);
-            if (!that.options.readOnly) {
+            if (!that.readOnly) {
               $("<td/>").append(checkbox).appendTo(tr);
             }
           }

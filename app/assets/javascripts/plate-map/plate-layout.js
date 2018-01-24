@@ -169,17 +169,32 @@ $.widget("DNA.plateLayOut", {
     return this.getDifferentWellsVals(wellsData);
   },
 
-  // disable editing of fields
-  readOnlyHandler: function() {
-    if (this.options.readOnly) {
-      $("#plate-map-control-button-container-id").empty();
-      var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-      for (var i = 0; i < numericFields.length; i++) {
-        numericFields[i].disabled = true;
-      }
+  readOnly: null,
 
-      $('.multiple-field-manage-delete-button').empty();
+  isReadOnly: function(flag){
+    if (flag){
+      this.readOnly = true;
+      this.readOnlyHandler = function(){
+        $("#plate-map-control-button-container-id").css("display", "none");
+        var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+          '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+        for (var i = 0; i < numericFields.length; i++) {
+          numericFields[i].disabled = true;
+        }
+        $('.multiple-field-manage-delete-button').css("display", "none");
+      };
+    } else {
+      this.readOnly = false;
+      this.readOnlyHandler = function(){
+        $("#plate-map-control-button-container-id").css("display", "flex");
+        var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+          '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+        for (var i = 0; i < numericFields.length; i++) {
+          numericFields[i].disabled = false;
+        }
+        $('.multiple-field-manage-delete-button').css("display", "none");
+      };
     }
+    this.readOnlyHandler();
   }
 });
