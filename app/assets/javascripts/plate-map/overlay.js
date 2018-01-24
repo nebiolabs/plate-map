@@ -14,6 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.overLayTextContainer.text("Completion Percentage:");
         this.overLayContainer.append(this.overLayTextContainer);
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
+        this.overLayButtonContainer.attr("id", "plate-map-control-button-container-id");
         this.overLayContainer.append(this.overLayButtonContainer);
 
         this.clearCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");

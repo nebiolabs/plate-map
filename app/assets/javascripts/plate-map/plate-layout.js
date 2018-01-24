@@ -167,5 +167,19 @@ $.widget("DNA.plateLayOut", {
   // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
   getWellsDifferences: function(wellsData) {
     return this.getDifferentWellsVals(wellsData);
+  },
+
+  // disable editing of fields
+  readOnlyHandler: function() {
+    if (this.options.readOnly) {
+      $("#plate-map-control-button-container-id").empty();
+      var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+      for (var i = 0; i < numericFields.length; i++) {
+        numericFields[i].disabled = true;
+      }
+
+      $('.multiple-field-manage-delete-button').empty();
+    }
   }
 });

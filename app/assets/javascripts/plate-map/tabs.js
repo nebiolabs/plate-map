@@ -60,6 +60,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var previouslyClickedTabIndex = $(this.selectedTab).data("index");
           $(this.allDataTabs[previouslyClickedTabIndex]).css("z-index", 0);
+          this.readOnlyHandler();
         }
 
         $(clickedTab).addClass("plate-setup-tab-selected");
