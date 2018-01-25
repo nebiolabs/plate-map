@@ -117,7 +117,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _setFocalWellRect: function(well) {
-        if (well) {
+        var flag;
+        if (this.disableAddDeleteWell) {
+          var address = this.locToAddress({
+            r: well.row,
+            c: well.col
+          });
+          if  (this.addressAllowToEdit.indexOf(address) < 0) {
+            flag = false;
+            this.disableAllFields();
+          } else {
+            flag = true;
+            this.enableAllFields();
+          }
+        } else if (well) {
+          flag = true;
+        }
+
+
+        if (flag) {
           var rect = this._areaToRect(this._wellToArea(well));
           var strokeWidth = 2;
           if (this.focalWellRect) {
@@ -415,7 +433,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
             0: well
           };
         }
+      },
+
+      // get all wells that has data
+      getWellSetAddressWithData: function(){
+        var address = [];
+        var derivative = this.engine.derivative;
+        for (var id in derivative){
+          address.push(this.indexToAddress(id));
+        }
+        return address;
       }
+
     };
   }
 })(jQuery, fabric);

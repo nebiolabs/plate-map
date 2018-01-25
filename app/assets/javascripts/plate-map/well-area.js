@@ -16,7 +16,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
               for (var c = area.minCol; c <= area.maxCol; c++) {
                 var tile = that.allTiles[c + cols * r];
                 if (tiles.indexOf(tile) < 0) {
-                  tiles.push(tile);
+                  if (that.disableAddDeleteWell){
+                    if(that.addressAllowToEdit.indexOf(tile.address) >= 0){
+                      tiles.push(tile);
+                    }
+                  } else {
+                    tiles.push(tile);
+                  }
                 }
               }
             }

@@ -169,32 +169,52 @@ $.widget("DNA.plateLayOut", {
     return this.getDifferentWellsVals(wellsData);
   },
 
-  readOnly: null,
+  disableAllFields: function(){
+    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+    for (var i = 0; i < numericFields.length; i++) {
+      numericFields[i].disabled = true;
+    }
+  },
 
+  enableAllFields: function(){
+    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+    for (var i = 0; i < numericFields.length; i++) {
+      numericFields[i].disabled = false;
+    }
+  },
+
+  readOnly: null,
   isReadOnly: function(flag){
     if (flag){
       this.readOnly = true;
       this.readOnlyHandler = function(){
         $("#plate-map-control-button-container-id").css("display", "none");
-        var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-          '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-        for (var i = 0; i < numericFields.length; i++) {
-          numericFields[i].disabled = true;
-        }
+        this.disableAllFields();
         $('.multiple-field-manage-delete-button').css("display", "none");
       };
     } else {
       this.readOnly = false;
       this.readOnlyHandler = function(){
         $("#plate-map-control-button-container-id").css("display", "flex");
-        var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-          '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-        for (var i = 0; i < numericFields.length; i++) {
-          numericFields[i].disabled = false;
-        }
+        this.enableAllFields();
         $('.multiple-field-manage-delete-button').css("display", "none");
       };
     }
     this.readOnlyHandler();
+  },
+
+  disableAddDeleteWell: null,
+  isDisableAddDeleteWell: function(flag){
+    if (flag){
+      this.disableAddDeleteWell = true;
+      this.addressAllowToEdit = this.getWellSetAddressWithData();
+      $("#clear-id, #undo-id, #redo-id").css('display', 'none')
+    } else {
+      this.disableAddDeleteWell = false;
+      this.enableAllFields();
+    }
+    this._fabricEvents();
   }
 });
