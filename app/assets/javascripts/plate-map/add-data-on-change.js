@@ -22,7 +22,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             for (var id in data) {
               var v;
-              if (data[id]) {
+              if (data[id] !== undefined || data[id] !== null ) {
                 if (data[id].multi){
                   var curData = data[id];
                   var preData = well[id];

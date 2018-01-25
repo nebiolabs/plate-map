@@ -16,7 +16,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         wellEmpty: function (well) {
           for (var prop in well) {
             var curVal = well[prop];
-            if (curVal) {
+            if (curVal !== null || curVal !== undefined) {
               if (Array.isArray(curVal)) {
                 if (curVal.length > 0) {
                   return false;
