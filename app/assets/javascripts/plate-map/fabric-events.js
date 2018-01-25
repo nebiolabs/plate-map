@@ -299,8 +299,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _getAllMultipleVal: function (wells) {
         var multipleFieldList = this.multipleFieldList;
-        if (wells.length) {
-          multipleFieldList.forEach(function(multiplexField) {
+
+        multipleFieldList.forEach(function(multiplexField) {
+          if(wells.length) {
             var curMultipleVal = {};
             wells.forEach(function (wellData) {
               var id = multiplexField.id;
@@ -326,8 +327,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             });
             multiplexField.allSelectedMultipleVal = curMultipleVal;
-          })
-        }
+          } else {
+            multiplexField.allSelectedMultipleVal = null
+          }
+        });
       },
 
       decideSelectedFields: function() {

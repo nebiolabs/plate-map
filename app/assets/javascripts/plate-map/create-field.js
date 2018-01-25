@@ -1183,7 +1183,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
 
         var valMap = field.allSelectedMultipleVal;
-        var valToRemove = Object.keys(valMap);
+        var valToRemove;
+        if (valMap) {
+          valToRemove = Object.keys(valMap);
+        } else {
+          valToRemove = [];
+        }
+
 
         var dialogDiv = $("<div/>").addClass("delete-dialog modal");
         $('body').append(dialogDiv); 
