@@ -216,5 +216,21 @@ $.widget("DNA.plateLayOut", {
       this.enableAllFields();
     }
     this._fabricEvents();
+  },
+
+  getSelectedObject: function() {
+    var selectedAddress = [];
+    for (var i = 0; i < this.allSelectedObjects.length; i++){
+      selectedAddress.push(this.allSelectedObjects[i].address);
+    }
+    var selectedObjects = {};
+    var derivative = this.engine.derivative;
+    for (var loc in derivative){
+      var address = this.indexToAddress(loc);
+      if (selectedAddress.indexOf(address) >= 0) {
+        selectedObjects[address] = derivative[loc];
+      }
+    }
+    return selectedObjects;
   }
 });

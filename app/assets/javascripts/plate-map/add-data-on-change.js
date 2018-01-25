@@ -160,6 +160,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           })
         }
         var requiredField = this.requiredField;
+        var selectedWells;
 
         return {
           "derivative": derivative,
