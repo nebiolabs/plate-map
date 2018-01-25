@@ -232,5 +232,37 @@ $.widget("DNA.plateLayOut", {
       }
     }
     return selectedObjects;
+  },
+
+  setSelectedWell: function(addressList) {
+    var areas = [];
+    var minRow = 999;
+    var locMap = {};
+    for (var id = 0; id < addressList.length; id++){
+      var wellIdx = this.addressToIndex(addressList[id]);
+      var loc = this.indexToLoc(wellIdx);
+      areas.push({
+        minCol: loc.c,
+        minRow: loc.r,
+        maxCol: loc.c,
+        maxRow: loc.r
+      });
+      if (loc.r <= minRow) {
+        minRow = loc.r;
+        if (loc.r in locMap) {
+          locMap[loc.r].push(loc.c);
+        } else {
+          locMap[loc.r] = [loc.c];
+        }
+      }
+    }
+    var focalWell = {
+      row: minRow,
+      col: Math.min.apply(null, locMap[minRow])
+    };
+
+    this.setSelection(areas, focalWell);
+    this.mainFabricCanvas.renderAll();
   }
+
 });

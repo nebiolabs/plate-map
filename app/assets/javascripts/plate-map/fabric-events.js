@@ -112,7 +112,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.focalWell = focalWell;
         this.allSelectedObjects = this._areasToTiles(areas);
         this._setSelectedTiles();
-        this._setFocalWellRect(this.focalWell)
+        this._setFocalWellRect(this.focalWell);
         document.activeElement.blur();
       },
 
