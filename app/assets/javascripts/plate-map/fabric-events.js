@@ -118,6 +118,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _setFocalWellRect: function(well) {
         var flag;
+        // check if not allow to add or delete existing wells
         if (this.disableAddDeleteWell) {
           var address = this.locToAddress({
             r: well.row,

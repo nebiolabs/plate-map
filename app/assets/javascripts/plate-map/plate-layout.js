@@ -110,6 +110,12 @@ $.widget("DNA.plateLayOut", {
     // object. internally we add to widget.DNA.getPlates.prototype.
     // Helpers are methods which return other methods and objects.
     // add Objects to plateLayOutWidget and it will be added to this object.
+    // set read only well
+    if (this.options.readOnly){
+      this.isReadOnly(true);
+      this.readOnly = true;
+    }
+
     for (var component in plateLayOutWidget) {
       // Incase some properties has to initialize with data from options hash,
       // we provide it sending this object.
@@ -206,16 +212,24 @@ $.widget("DNA.plateLayOut", {
   },
 
   disableAddDeleteWell: null,
-  isDisableAddDeleteWell: function(flag){
+  // column_with_default_val will be used to determine empty wells, format: {field_name: default_val}
+  isDisableAddDeleteWell: function(flag, column_with_default_val){
     if (flag){
       this.disableAddDeleteWell = true;
       this.addressAllowToEdit = this.getWellSetAddressWithData();
-      $("#clear-id, #undo-id, #redo-id").css('display', 'none')
+      $("#undo-id, #redo-id").css('display', 'none')
     } else {
       this.disableAddDeleteWell = false;
       this.enableAllFields();
     }
     this._fabricEvents();
+
+    if (column_with_default_val) {
+      this.emptyWellWithDefaultVal = column_with_default_val;
+    } else {
+      this.emptyWellWithDefaultVal = null;
+    }
+
   },
 
   getSelectedObject: function() {

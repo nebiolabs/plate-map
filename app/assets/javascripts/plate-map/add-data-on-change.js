@@ -20,36 +20,78 @@ var plateLayOutWidget = plateLayOutWidget || {};
               well = $.extend(true, {}, this.defaultWell); 
               this.engine.derivative[tile.index] = well; 
             }
-            for (var id in data) {
-              var v;
-              if (data[id] !== undefined || data[id] !== null ) {
-                if (data[id].multi){
-                  var curData = data[id];
-                  var preData = well[id];
-                  var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
-                  // need to replace newData
-                  v = JSON.parse(JSON.stringify(newDt));
-                } else {
-                  v = JSON.parse(JSON.stringify(data[id]));
-                }
-              } else {
-                v = JSON.parse(JSON.stringify(data[id]));
-              }
-              well[id] = v;
-              wells.push(well);
-            }
+            var processedData = this.processWellData(data, well, noOfSelectedObjects, wells);
+            wells = processedData.wells;
+            well = processedData.well;
             var empty = this.engine.wellEmpty(well);
             if (empty) {
               delete this.engine.derivative[tile.index];
             }
           }
-
-          this._colorMixer();
         }
         // update multiplex remove all field
         this._getAllMultipleVal(wells);
         this.applyFieldWarning(wells);
+        // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
+        this._colorMixer();
       },
+
+      processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
+
+        if (!wellList){
+          wellList = [];
+        }
+        for (var id in newData) {
+          var v;
+          if (newData[id] !== undefined && newData[id] !== null ) {
+            if (newData[id].multi){
+              var curData = newData[id];
+              var preData = curWell[id];
+              var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
+              // need to replace newData
+              v = JSON.parse(JSON.stringify(newDt));
+            } else {
+              v = JSON.parse(JSON.stringify(newData[id]));
+            }
+          } else {
+            v = JSON.parse(JSON.stringify(newData[id]));
+          }
+          curWell[id] = v;
+          wellList.push(curWell);
+        }
+
+        return {
+          well: curWell,
+          wells: wellList
+        }
+      },
+
+
+      //refer to below function for set up default value for not deletable well
+      /*
+      _setDefaultVal: function(){
+        if (this.emptyWellWithDefaultVal){
+          var addressRequired = Object.assign([], this.addressAllowToEdit);
+          var derivative = this.engine.derivative;
+          for (var id in derivative){
+            var curAddress = this.indexToAddress(id);
+            if (addressRequired.indexOf(curAddress) >= 0){
+              addressRequired.splice(addressRequired.indexOf(curAddress), 1);
+            }
+          }
+          // create empty wellWithDefaultVal
+          if (addressRequired.length > 0) {
+            for(var i = 0; i < addressRequired.length; i++){
+              var newAddress = addressRequired[i];
+              var processedData = this.processWellData(this.emptyWellWithDefaultVal, this.defaultWell, 1);
+              //this.engine.derivative[this.addressToIndex(newAddress)] = processedData.well;
+            }
+            //this.setSelectedWell(addressRequired)
+            this.engine.applyColors();
+          }
+        }
+      },
+      */
 
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
         var addNew = curData.added;
