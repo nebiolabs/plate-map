@@ -174,6 +174,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var checkboxes = this.globalSelectedAttributes.slice(); 
         var selectedAreas = this.selectedAreas.slice(); 
         var focalWell = this.focalWell;
+        var selectedWells;
+
+        return {
+          "derivative": derivative,
+          "checkboxes": checkboxes,
+          "selectedAreas": selectedAreas,
+          "focalWell": focalWell
+        };
+      },
+
+      getCurrentPlate: function(){
+        var derivative = $.extend(true, {}, this.engine.derivative);
         var colorLocMap = {};
         var colorLocIdxMap = this.engine.stackUpWithColor;
         var dim = $("#my-plate-layout").plateLayOut("getDimensions");
@@ -187,13 +199,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         return {
           "derivative": derivative,
-          "checkboxes": checkboxes,
-          "selectedAreas": selectedAreas,
-          "focalWell": focalWell,
           "colorToLoc": colorLocMap,
           "requiredField": requiredField
         };
       }
+
     };
   }
 })(jQuery, fabric);
