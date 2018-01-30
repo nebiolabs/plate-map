@@ -67,7 +67,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if (tile.index in this.engine.derivative) {
               // handling for clearing well when not allowed to add or delete wells
               if (this.emptyWellWithDefaultVal) {
-                var well = this.defaultWell;
+                var well = JSON.parse(JSON.stringify(this.defaultWell));
                 var defaultValue = this.emptyWellWithDefaultVal;
                 for (var key in defaultValue){
                   well[key] = defaultValue[key];

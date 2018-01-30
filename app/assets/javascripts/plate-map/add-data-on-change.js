@@ -26,11 +26,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var empty = this.engine.wellEmpty(well);
             if (empty) {
               if (this.emptyWellWithDefaultVal) {
+                var wellCopy = JSON.parse(JSON.stringify(well));
                 var defaultValue = this.emptyWellWithDefaultVal;
                 for (var key in defaultValue){
-                  well[key] = defaultValue[key];
+                  wellCopy[key] = defaultValue[key];
                   this._applyFieldData(key, defaultValue[key]);
                 }
+                this.engine.derivative[tile.index] = wellCopy;
               } else {
                 delete this.engine.derivative[tile.index];
               }
