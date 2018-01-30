@@ -14,6 +14,8 @@ JavaScript Plate Layout provides a tool for visualizing the plate layout using a
 * Undo / redo support
 * Import plate templates
 * Plate and well completion status indication
+* Read only plate map
+* Edit only mode to disable add new wells and delete existing wells.
 
 ## Usage
 Embed code similar to the below to add the plate layout tool to your application. See Configuration Options for all available settings.
@@ -84,8 +86,8 @@ Embed code similar to the below to add the plate layout tool to your application
     //including initializing, using the getPlates method
     $("#my-plate-layout").plateLayOut("getPlates", plateData);
 
-    //You can retrieve the current state at any time using the createObject method
-    $("#my-plate-layout").plateLayOut("createObject"); 
+    //You can retrieve the current state at any time using the getCurrentPlate method
+    $("#my-plate-layout").plateLayOut("getCurrentPlate");
   }
   </script>
 </head>
@@ -175,10 +177,28 @@ This function may be called at any time to load data. Well data should be passed
   }
 }
 ```
-#### createObject()
+#### getCurrentPlate()
 This function will return the current state of the UI. The form of the data will be as documented for getPlates. 
+```js
+$("#mylayout").plateLayOut("getCurrentPlate")
+```
 
-###Data Types.
+#### isReadOnly()
+This function will disable editing of the plates, set flag to true for read only mode and set flag to false to disable read only mode
+```js
+$("#mylayout").plateLayOut("getCurrentPlate", flag)
+```
+
+
+#### isDisableAddDeleteWell()
+This function will disable adding and removing the existing wells. Set flag to true will set the current state of the plate as reference and remove the ability to add and remove wells. DefaultFields can be specified for setting default values to existing empty wells (defaultFields format: {fieldId1: val1, fieldId2: val2})
+```js
+$("#mylayout").plateLayOut("isDisableAddDeleteWell", flag, defaultFields)
+```
+
+
+
+### Data Types.
 
 We have four data types which can be used to initialize tabs in the right hand side. They are text, numeric, boolean and multichoice.
 
