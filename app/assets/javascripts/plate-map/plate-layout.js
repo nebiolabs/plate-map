@@ -181,6 +181,7 @@ $.widget("DNA.plateLayOut", {
     for (var i = 0; i < numericFields.length; i++) {
       numericFields[i].disabled = true;
     }
+    $(".plate-setup-tab-name-singleSelect").text("Select to inspect");
   },
 
   enableAllFields: function(){
@@ -189,6 +190,7 @@ $.widget("DNA.plateLayOut", {
     for (var i = 0; i < numericFields.length; i++) {
       numericFields[i].disabled = false;
     }
+    $(".plate-setup-tab-name-singleSelect").text("Select to Edit")
   },
 
   readOnly: null,
@@ -221,18 +223,15 @@ $.widget("DNA.plateLayOut", {
       this.actionPointer = 0;
       this.undoRedoArray = [];
       this.undoRedoArray.push(this.createObject());
+      if (column_with_default_val) {
+        this.emptyWellWithDefaultVal = column_with_default_val;
+      }
     } else {
       this.disableAddDeleteWell = false;
       this.enableAllFields();
-    }
-    this._fabricEvents();
-
-    if (column_with_default_val) {
-      this.emptyWellWithDefaultVal = column_with_default_val;
-    } else {
       this.emptyWellWithDefaultVal = null;
     }
-
+    this._fabricEvents();
   },
 
   getSelectedObject: function() {
