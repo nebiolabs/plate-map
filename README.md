@@ -184,14 +184,14 @@ $("#mylayout").plateLayOut("getCurrentPlate")
 ```
 
 #### isReadOnly()
-This function will disable editing of the plates, set flag to true for read only mode and set flag to false to disable read only mode
+This function will disable editing of the plates, set `flag` to true for read only mode and set `flag` to false to disable read only mode
 ```js
 $("#mylayout").plateLayOut("getCurrentPlate", flag)
 ```
 
 
 #### isDisableAddDeleteWell()
-This function will disable adding and removing the existing wells. Set flag to true will set the current state of the plate as reference and remove the ability to add and remove wells. DefaultFields can be specified for setting default values to existing empty wells (defaultFields format: {fieldId1: val1, fieldId2: val2})
+This function will disable adding and removing the existing wells. Set `flag` to true will set the current state of the plate as reference and remove the ability to add and remove wells. `defaultFields` can be specified for setting default values to existing empty wells (`defaultFields` format: `{fieldId1: val1, fieldId2: val2}`)
 ```js
 $("#mylayout").plateLayOut("isDisableAddDeleteWell", flag, defaultFields)
 ```
