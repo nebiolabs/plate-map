@@ -66,12 +66,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var tile = this.allSelectedObjects[objectIndex];
             if (tile.index in this.engine.derivative) {
               // handling for clearing well when not allowed to add or delete wells
-              if (this.emptyWellWithDefaultVal) {
+              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
                 var well = JSON.parse(JSON.stringify(this.defaultWell));
                 var defaultValue = this.emptyWellWithDefaultVal;
                 for (var key in defaultValue){
-                  well[key] = defaultValue[key];
-                  this._applyFieldData(key, defaultValue[key]);
+                  if (key in well) {
+                    well[key] = defaultValue[key];
+                    this._applyFieldData(key, defaultValue[key]);
+                  } else {
+                    console.log("Well does not contain key: " + key + ", please contact support");
+                  }
                 }
                 this.engine.derivative[tile.index] = well;
               } else {
