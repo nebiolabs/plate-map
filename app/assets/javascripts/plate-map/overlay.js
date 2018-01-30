@@ -65,7 +65,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex];
             if (tile.index in this.engine.derivative) {
-              delete this.engine.derivative[tile.index];
+              // handling for clearing well when not allowed to add or delete wells
+              if (this.emptyWellWithDefaultVal) {
+                var well = this.defaultWell;
+                var defaultValue = this.emptyWellWithDefaultVal;
+                for (var key in defaultValue){
+                  well[key] = defaultValue[key];
+                  this._applyFieldData(key, defaultValue[key]);
+                }
+                this.engine.derivative[tile.index] = well;
+              } else {
+                delete this.engine.derivative[tile.index];
+              }
             }
           }
 

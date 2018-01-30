@@ -25,7 +25,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
             well = processedData.well;
             var empty = this.engine.wellEmpty(well);
             if (empty) {
-              delete this.engine.derivative[tile.index];
+              if (this.emptyWellWithDefaultVal) {
+                var defaultValue = this.emptyWellWithDefaultVal;
+                for (var key in defaultValue){
+                  well[key] = defaultValue[key];
+                  this._applyFieldData(key, defaultValue[key]);
+                }
+              } else {
+                delete this.engine.derivative[tile.index];
+              }
             }
           }
         }
@@ -65,33 +73,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           wells: wellList
         }
       },
-
-
-      //refer to below function for set up default value for not deletable well
-      /*
-      _setDefaultVal: function(){
-        if (this.emptyWellWithDefaultVal){
-          var addressRequired = Object.assign([], this.addressAllowToEdit);
-          var derivative = this.engine.derivative;
-          for (var id in derivative){
-            var curAddress = this.indexToAddress(id);
-            if (addressRequired.indexOf(curAddress) >= 0){
-              addressRequired.splice(addressRequired.indexOf(curAddress), 1);
-            }
-          }
-          // create empty wellWithDefaultVal
-          if (addressRequired.length > 0) {
-            for(var i = 0; i < addressRequired.length; i++){
-              var newAddress = addressRequired[i];
-              var processedData = this.processWellData(this.emptyWellWithDefaultVal, this.defaultWell, 1);
-              //this.engine.derivative[this.addressToIndex(newAddress)] = processedData.well;
-            }
-            //this.setSelectedWell(addressRequired)
-            this.engine.applyColors();
-          }
-        }
-      },
-      */
 
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
         var addNew = curData.added;

@@ -217,7 +217,10 @@ $.widget("DNA.plateLayOut", {
     if (flag){
       this.disableAddDeleteWell = true;
       this.addressAllowToEdit = this.getWellSetAddressWithData();
-      $("#undo-id, #redo-id").css('display', 'none')
+      // configure undo redo action
+      this.actionPointer = 0;
+      this.undoRedoArray = [];
+      this.undoRedoArray.push(this.createObject());
     } else {
       this.disableAddDeleteWell = false;
       this.enableAllFields();
