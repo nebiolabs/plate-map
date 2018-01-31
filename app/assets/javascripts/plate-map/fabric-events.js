@@ -112,12 +112,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.focalWell = focalWell;
         this.allSelectedObjects = this._areasToTiles(areas);
         this._setSelectedTiles();
-        this._setFocalWellRect(this.focalWell)
+        this._setFocalWellRect(this.focalWell);
         document.activeElement.blur();
       },
 
       _setFocalWellRect: function(well) {
-        if (well) {
+        var flag;
+        // check if not allow to add or delete existing wells
+        if (this.disableAddDeleteWell) {
+          var address = this.locToAddress({
+            r: well.row,
+            c: well.col
+          });
+          if  (this.addressAllowToEdit.indexOf(address) < 0) {
+            flag = false;
+            this.disableAllFields();
+          } else {
+            flag = true;
+            this.enableAllFields();
+          }
+        } else if (well) {
+          flag = true;
+        }
+
+
+        if (flag) {
           var rect = this._areaToRect(this._wellToArea(well));
           var strokeWidth = 2;
           if (this.focalWellRect) {
@@ -281,8 +300,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _getAllMultipleVal: function (wells) {
         var multipleFieldList = this.multipleFieldList;
-        if (wells.length) {
-          multipleFieldList.forEach(function(multiplexField) {
+
+        multipleFieldList.forEach(function(multiplexField) {
+          if(wells.length) {
             var curMultipleVal = {};
             wells.forEach(function (wellData) {
               var id = multiplexField.id;
@@ -308,8 +328,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             });
             multiplexField.allSelectedMultipleVal = curMultipleVal;
-          })
-        }
+          } else {
+            multiplexField.allSelectedMultipleVal = null
+          }
+        });
       },
 
       decideSelectedFields: function() {
@@ -415,7 +437,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
             0: well
           };
         }
+      },
+
+      // get all wells that has data
+      getWellSetAddressWithData: function(){
+        var address = [];
+        var derivative = this.engine.derivative;
+        for (var id in derivative){
+          address.push(this.indexToAddress(id));
+        }
+        return address;
       }
+
     };
   }
 })(jQuery, fabric);

@@ -110,6 +110,12 @@ $.widget("DNA.plateLayOut", {
     // object. internally we add to widget.DNA.getPlates.prototype.
     // Helpers are methods which return other methods and objects.
     // add Objects to plateLayOutWidget and it will be added to this object.
+    // set read only well
+    if (this.options.readOnly){
+      this.isReadOnly(true);
+      this.readOnly = true;
+    }
+
     for (var component in plateLayOutWidget) {
       // Incase some properties has to initialize with data from options hash,
       // we provide it sending this object.
@@ -167,5 +173,112 @@ $.widget("DNA.plateLayOut", {
   // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
   getWellsDifferences: function(wellsData) {
     return this.getDifferentWellsVals(wellsData);
+  },
+
+  disableAllFields: function(){
+    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+    for (var i = 0; i < numericFields.length; i++) {
+      numericFields[i].disabled = true;
+    }
+    $(".plate-setup-tab-name-singleSelect").text("Select to inspect");
+  },
+
+  enableAllFields: function(){
+    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+    for (var i = 0; i < numericFields.length; i++) {
+      numericFields[i].disabled = false;
+    }
+    $(".plate-setup-tab-name-singleSelect").text("Select to Edit")
+  },
+
+  readOnly: null,
+  isReadOnly: function(flag){
+    if (flag){
+      this.readOnly = true;
+      this.readOnlyHandler = function(){
+        $("#plate-map-control-button-container-id").css("display", "none");
+        this.disableAllFields();
+        $('.multiple-field-manage-delete-button').css("display", "none");
+      };
+    } else {
+      this.readOnly = false;
+      this.readOnlyHandler = function(){
+        $("#plate-map-control-button-container-id").css("display", "flex");
+        this.enableAllFields();
+        $('.multiple-field-manage-delete-button').css("display", "none");
+      };
+    }
+    this.readOnlyHandler();
+  },
+
+  disableAddDeleteWell: null,
+  // column_with_default_val will be used to determine empty wells, format: {field_name: default_val}
+  isDisableAddDeleteWell: function(flag, column_with_default_val){
+    if (flag){
+      this.disableAddDeleteWell = true;
+      this.addressAllowToEdit = this.getWellSetAddressWithData();
+      // configure undo redo action
+      this.actionPointer = 0;
+      this.undoRedoArray = [];
+      this.undoRedoArray.push(this.createObject());
+      if (column_with_default_val) {
+        this.emptyWellWithDefaultVal = column_with_default_val;
+      }
+    } else {
+      this.disableAddDeleteWell = false;
+      this.enableAllFields();
+      this.emptyWellWithDefaultVal = null;
+    }
+    this._fabricEvents();
+  },
+
+  getSelectedObject: function() {
+    var selectedAddress = [];
+    for (var i = 0; i < this.allSelectedObjects.length; i++){
+      selectedAddress.push(this.allSelectedObjects[i].address);
+    }
+    var selectedObjects = {};
+    var derivative = this.engine.derivative;
+    for (var loc in derivative){
+      var address = this.indexToAddress(loc);
+      if (selectedAddress.indexOf(address) >= 0) {
+        selectedObjects[address] = derivative[loc];
+      }
+    }
+    return selectedObjects;
+  },
+
+  setSelectedWell: function(addressList) {
+    var areas = [];
+    var minRow = 999;
+    var locMap = {};
+    for (var id = 0; id < addressList.length; id++){
+      var wellIdx = this.addressToIndex(addressList[id]);
+      var loc = this.indexToLoc(wellIdx);
+      areas.push({
+        minCol: loc.c,
+        minRow: loc.r,
+        maxCol: loc.c,
+        maxRow: loc.r
+      });
+      if (loc.r <= minRow) {
+        minRow = loc.r;
+        if (loc.r in locMap) {
+          locMap[loc.r].push(loc.c);
+        } else {
+          locMap[loc.r] = [loc.c];
+        }
+      }
+    }
+    var focalWell = {
+      row: minRow,
+      col: Math.min.apply(null, locMap[minRow])
+    };
+
+    this.setSelection(areas, focalWell);
+    this.mainFabricCanvas.renderAll();
   }
+
 });

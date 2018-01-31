@@ -14,9 +14,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.overLayTextContainer.text("Completion Percentage:");
         this.overLayContainer.append(this.overLayTextContainer);
         this.overLayButtonContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-button-container");
+        this.overLayButtonContainer.attr("id", "plate-map-control-button-container-id");
         this.overLayContainer.append(this.overLayButtonContainer);
 
-        this.clearCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.clearCriteriaButton = this._createElement("<button />").addClass("plate-setup-button").attr('id', 'clear-id');
         this.clearCriteriaButton.text("Clear");
         this.overLayButtonContainer.append(this.clearCriteriaButton);
 
@@ -24,7 +25,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.clearCriteria();
         });
 
-        this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.copyCriteriaButton = this._createElement("<button />").addClass("plate-setup-button").attr('id', 'copy-id');
         this.copyCriteriaButton.text("Copy");
         this.overLayButtonContainer.append(this.copyCriteriaButton);
 
@@ -32,7 +33,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.copyCriteria();
         });
 
-        this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.pasteCriteriaButton = this._createElement("<button />").addClass("plate-setup-button").attr('id', 'paste-id');
         this.pasteCriteriaButton.text("Paste");
         this.overLayButtonContainer.append(this.pasteCriteriaButton);
 
@@ -40,7 +41,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.pasteCriteria();
         });
 
-        this.undoButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.undoButton = this._createElement("<button />").addClass("plate-setup-button").attr('id', 'undo-id');
         this.undoButton.text("Undo");
         this.overLayButtonContainer.append(this.undoButton);
 
@@ -48,7 +49,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.undo();
         });
 
-        this.redoButton = this._createElement("<button />").addClass("plate-setup-button");
+        this.redoButton = this._createElement("<button />").addClass("plate-setup-button").attr('id', 'redo-id');
         this.redoButton.text("Redo");
         this.overLayButtonContainer.append(this.redoButton);
 
@@ -64,7 +65,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex];
             if (tile.index in this.engine.derivative) {
-              delete this.engine.derivative[tile.index];
+              // handling for clearing well when not allowed to add or delete wells
+              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
+                var well = JSON.parse(JSON.stringify(this.defaultWell));
+                var defaultValue = this.emptyWellWithDefaultVal;
+                for (var key in defaultValue){
+                  if (key in well) {
+                    well[key] = defaultValue[key];
+                    this._applyFieldData(key, defaultValue[key]);
+                  } else {
+                    console.log("Well does not contain key: " + key + ", please contact support");
+                  }
+                }
+                this.engine.derivative[tile.index] = well;
+              } else {
+                delete this.engine.derivative[tile.index];
+              }
             }
           }
 

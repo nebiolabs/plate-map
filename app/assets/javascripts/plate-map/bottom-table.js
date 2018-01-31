@@ -127,7 +127,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       exportData: function(format) {
         var data = [];
         var rows = document.querySelectorAll("table tr");
-        var corToLocMap = $("#my-plate-layout").plateLayOut("createObject").colorToLoc;
+        var corToLocMap = $("#my-plate-layout").plateLayOut("getCurrentPlate").colorToLoc;
 
         for (var i = 0; i < rows.length; i++) {
           var row = [],
