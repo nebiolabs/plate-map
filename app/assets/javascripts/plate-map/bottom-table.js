@@ -45,15 +45,28 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       addBottomTableRow: function(color, singleStack) {
-
+        var that = this;
         var modelTile = this.allTiles[singleStack[0]];
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
-
-        var numberText = this._createElement("<span/>");
+        var numberText = this._createElement("<button/>");
         numberText.addClass("plate-setup-color-text");
         numberText.text(color);
         plateIdDiv.append(numberText);
+
+        numberText.click(function(evt){
+          var addressToSelect = singleStack.map(function(addressIdx){
+            return that.indexToAddress(addressIdx)
+          });
+          if (evt.ctrlKey) {
+            that.getSelectedAddress().forEach(function(val){
+              if (addressToSelect.indexOf(val) < 0){
+                addressToSelect.push(val);
+              }
+            })
+          }
+          that.setSelectedWell(addressToSelect);
+        });
 
         if (color > 0) {
           color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
@@ -70,7 +83,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var dataDiv = this._createElement("<td></td>").text(text);
           row.append(dataDiv);
         }
-
         this.bottomTable.append(row);
         this.adjustFieldWidth(row);
       },

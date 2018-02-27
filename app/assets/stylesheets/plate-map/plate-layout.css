@@ -65,7 +65,7 @@
   line-height: 30px;
   height: 32px;
   font-family: "Roboto", Arial, sans-serif;
-  margin: 0 8px;
+  margin: 2px 8px;
   flex: 1 1 auto;
 }
 
@@ -360,11 +360,12 @@
 }
 
 .plate-setup-color-text {
-  font-size: 12px;
-  border: 1px solid gray;
-  border-radius: 5px;
-  padding: 0px 5px;
-  background-color: white;
+  font-size: 14px;
+  border: none;
+  border-radius: 2px;
+  padding: 3px 15px;
+  background-color: WHITE;
+  margin-right: 4px;
 }
 
 .plate-setup-bottom-id {

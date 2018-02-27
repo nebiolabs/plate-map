@@ -250,6 +250,18 @@ $.widget("DNA.plateLayOut", {
     return selectedObjects;
   },
 
+  getSelectedIndex: function() {
+    return this.allSelectedObjects.map(function(selectedObj){
+        return that.addressToIndex(selectedObj.address)
+    });
+  },
+
+  getSelectedAddress: function() {
+    return this.allSelectedObjects.map(function(selectedObj){
+      return selectedObj.address;
+    });
+  },
+
   setSelectedWell: function(addressList) {
     var areas = [];
     var minRow = 999;
@@ -278,6 +290,7 @@ $.widget("DNA.plateLayOut", {
     };
 
     this.setSelection(areas, focalWell);
+    this.decideSelectedFields();
     this.mainFabricCanvas.renderAll();
   }
 
