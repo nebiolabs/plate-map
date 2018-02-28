@@ -135,7 +135,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           flag = true;
         }
 
-
         if (flag) {
           var rect = this._areaToRect(this._wellToArea(well));
           var strokeWidth = 2;

@@ -175,21 +175,9 @@ $.widget("DNA.plateLayOut", {
   },
 
   setFieldsDisabled: function(flag){
-    if (flag) {
-      var numericFields = this.tabDataContainer.find('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-      for (var i = 0; i < numericFields.length; i++) {
-        numericFields[i].disabled = true;
-      }
-      $(".plate-setup-tab-name-singleSelect").text("Select to inspect");
-    } else {
-      var numericFields = this.tabDataContainer.find('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-      for (var i = 0; i < numericFields.length; i++) {
-        numericFields[i].disabled = false;
-      }
-      $(".plate-setup-tab-name-singleSelect").text("Select to Edit")
-    }
+    this.fieldList.forEach(function(field){
+      field.disabled(flag);
+    });
   },
 
   isReadOnly: function(flag){
