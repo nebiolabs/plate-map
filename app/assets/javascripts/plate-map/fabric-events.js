@@ -126,10 +126,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           });
           if  (this.addressAllowToEdit.indexOf(address) < 0) {
             flag = false;
-            this.disableAllFields();
+            this.setFieldsDisabled(true);
           } else {
             flag = true;
-            this.enableAllFields();
+            this.setFieldsDisabled(false);
           }
         } else if (well) {
           flag = true;

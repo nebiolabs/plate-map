@@ -779,10 +779,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               subField.setValue(null);
             });
           }
-
-          if (that.readOnly){
-            that.readOnlyHandler();
-          }
+          that.readOnlyHandler();
         };
 
         setSingleSelectOptions([]); 

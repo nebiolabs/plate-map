@@ -113,7 +113,6 @@ $.widget("DNA.plateLayOut", {
     // set read only well
     if (this.options.readOnly){
       this.isReadOnly(true);
-      this.readOnly = true;
     }
 
     for (var component in plateLayOutWidget) {
@@ -175,42 +174,45 @@ $.widget("DNA.plateLayOut", {
     return this.getDifferentWellsVals(wellsData);
   },
 
-  disableAllFields: function(){
-    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-    for (var i = 0; i < numericFields.length; i++) {
-      numericFields[i].disabled = true;
+  setFieldsDisabled: function(flag){
+    if (flag) {
+      var numericFields = this.tabDataContainer.find('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+      for (var i = 0; i < numericFields.length; i++) {
+        numericFields[i].disabled = true;
+      }
+      $(".plate-setup-tab-name-singleSelect").text("Select to inspect");
+    } else {
+      var numericFields = this.tabDataContainer.find('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
+        '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
+      for (var i = 0; i < numericFields.length; i++) {
+        numericFields[i].disabled = false;
+      }
+      $(".plate-setup-tab-name-singleSelect").text("Select to Edit")
     }
-    $(".plate-setup-tab-name-singleSelect").text("Select to inspect");
   },
 
-  enableAllFields: function(){
-    var numericFields = $('.plate-setup-tab-input, .plate-setup-tab-label-select-field, ' +
-      '.plate-setup-tab-multiselect-field, .plate-setup-tab-select-field');
-    for (var i = 0; i < numericFields.length; i++) {
-      numericFields[i].disabled = false;
-    }
-    $(".plate-setup-tab-name-singleSelect").text("Select to Edit")
-  },
-
-  readOnly: null,
   isReadOnly: function(flag){
     if (flag){
       this.readOnly = true;
-      this.readOnlyHandler = function(){
-        $("#plate-map-control-button-container-id").css("display", "none");
-        this.disableAllFields();
-        $('.multiple-field-manage-delete-button').css("display", "none");
-      };
     } else {
       this.readOnly = false;
-      this.readOnlyHandler = function(){
-        $("#plate-map-control-button-container-id").css("display", "flex");
-        this.enableAllFields();
-        $('.multiple-field-manage-delete-button').css("display", "none");
-      };
     }
     this.readOnlyHandler();
+  },
+
+  readOnlyHandler: function(){
+    if (this.readOnly){
+      this.overLayButtonContainer.css("display", "none");
+      $('.multiple-field-manage-delete-button').css("display", "none");
+      this.setFieldsDisabled(true);
+    } else {
+      this.overLayButtonContainer.css("display", "flex");
+      $('.multiple-field-manage-delete-button').css("display", "none");
+      if (!this.disableAddDeleteWell) {
+        this.setFieldsDisabled(false);
+      }
+    }
   },
 
   disableAddDeleteWell: null,
@@ -228,7 +230,7 @@ $.widget("DNA.plateLayOut", {
       }
     } else {
       this.disableAddDeleteWell = false;
-      this.enableAllFields();
+      this.setFieldsDisabled(false);
       this.emptyWellWithDefaultVal = null;
     }
     this._fabricEvents();

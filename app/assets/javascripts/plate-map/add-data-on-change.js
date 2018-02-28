@@ -192,10 +192,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var derivative = $.extend(true, {}, this.engine.derivative);
         var colorLocMap = {};
         var colorLocIdxMap = this.engine.stackUpWithColor;
-        var dim = $("#my-plate-layout").plateLayOut("getDimensions");
+        var dim = this.getDimensions();
+        var that = this;
         for (var colorIdx in colorLocIdxMap) {
           colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
-            return $("#my-plate-layout").plateLayOut("indexToAddress", locIdx, dim);
+            return that.indexToAddress(locIdx, dim);
           })
         }
         var requiredField = this.requiredField;
