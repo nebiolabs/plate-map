@@ -86,9 +86,6 @@ Embed code similar to the below to add the plate layout tool to your application
     //You can trigger the load of plateData at any time, 
     //including initializing, using the getPlates method
     $("#my-plate-layout").plateLayOut("getPlates", plateData);
-
-    //You can retrieve the current state at any time using the getCurrentPlate method
-    $("#my-plate-layout").plateLayOut("getCurrentPlate");
   }
   </script>
 </head>
@@ -178,16 +175,10 @@ This function may be called at any time to load data. Well data should be passed
   }
 }
 ```
-#### getCurrentPlate()
-This function will return the current state of the UI. The form of the data will be as documented for getPlates. 
-```js
-$("#mylayout").plateLayOut("getCurrentPlate")
-```
-
 #### isReadOnly()
 This function will disable editing of the plates, set `flag` to true for read only mode and set `flag` to false to disable read only mode
 ```js
-$("#mylayout").plateLayOut("getCurrentPlate", flag)
+$("#mylayout").plateLayOut("isReadOnly", flag)
 ```
 
 #### isDisableAddDeleteWell()

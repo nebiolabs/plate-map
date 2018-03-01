@@ -139,7 +139,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       exportData: function(format) {
         var data = [];
         var rows = document.querySelectorAll("table tr");
-        var corToLocMap = this.getCurrentPlate().colorToLoc;
+
+        var colorLocMap = {};
+        var colorLocIdxMap = this.engine.stackUpWithColor;
+        var dim = this.getDimensions();
+        var that = this;
+        for (var colorIdx in colorLocIdxMap) {
+          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
+            return that.indexToAddress(locIdx, dim);
+          })
+        }
 
         for (var i = 0; i < rows.length; i++) {
           var row = [],

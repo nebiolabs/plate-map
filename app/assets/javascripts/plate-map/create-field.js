@@ -853,6 +853,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.subFieldList.forEach(function(subField) {
             subField.disabled(bool);
           });
+          if (bool) {
+            nameContainer1.text("Select to inspect");
+          } else {
+            nameContainer1.text("Select to edit");
+          }
         };
 
         field.parseValue = function(value) {

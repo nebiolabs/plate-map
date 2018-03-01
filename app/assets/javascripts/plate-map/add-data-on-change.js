@@ -178,37 +178,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var checkboxes = this.globalSelectedAttributes.slice(); 
         var selectedAreas = this.selectedAreas.slice(); 
         var focalWell = this.focalWell;
-        var selectedWells;
 
         return {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selectedAreas,
-          "focalWell": focalWell
-        };
-      },
-
-      getCurrentPlate: function(){
-        var derivative = $.extend(true, {}, this.engine.derivative);
-        var colorLocMap = {};
-        var colorLocIdxMap = this.engine.stackUpWithColor;
-        var dim = this.getDimensions();
-        var that = this;
-        for (var colorIdx in colorLocIdxMap) {
-          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
-            return that.indexToAddress(locIdx, dim);
-          })
-        }
-        var requiredField = this.requiredField;
-        var selectedWells;
-
-        return {
-          "derivative": derivative,
-          "colorToLoc": colorLocMap,
-          "requiredField": requiredField
+          "focalWell": focalWell,
+          "requiredField": this.requiredField
         };
       }
-
     };
   }
 })(jQuery, fabric);
