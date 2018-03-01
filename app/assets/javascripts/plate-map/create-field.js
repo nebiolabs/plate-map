@@ -850,9 +850,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.disabled = function(bool) {
           field.input.prop("disabled", bool);
-          field.singleSelect.prop("disabled", bool);
           field.subFieldList.forEach(function(subField) {
-            subField.input.prop("disabled", bool);
+            subField.disabled(bool);
           });
         };
 
