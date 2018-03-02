@@ -104,10 +104,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.setSelection(areas, that.focalWell);
           that.decideSelectedFields();
           that.mainFabricCanvas.renderAll();
-
           that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
-
-
         });
       },
 

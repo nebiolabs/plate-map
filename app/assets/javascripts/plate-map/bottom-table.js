@@ -66,6 +66,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             })
           }
           that.setSelectedWell(addressToSelect);
+          that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
         });
 
         if (color > 0) {
@@ -176,11 +177,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             if (i !== 0 && j === 0) {
               var loc = '';
-              if (corToLocMap[parseInt(cols[j].innerText)]) {
+              if (colorLocMap[parseInt(cols[j].innerText)]) {
                 if (format === "csv") {
-                  loc = '"' + corToLocMap[parseInt(cols[j].innerText)].join(",") + '"';
+                  loc = '"' + colorLocMap[parseInt(cols[j].innerText)].join(",") + '"';
                 } else if (format === 'clipboard') {
-                  loc = corToLocMap[parseInt(cols[j].innerText)].join(",");
+                  loc = colorLocMap[parseInt(cols[j].innerText)].join(",");
                 }
               }
               row.push(loc);
