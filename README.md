@@ -80,6 +80,10 @@ Embed code similar to the below to add the plate layout tool to your application
 
       updateWells: function(event, data) {
         //Run when data state changes
+      },
+      selectedWells: function(event, selectedWell) {
+        //output the selected wells in the console, can also add other methods upon mouse up events
+        console.log('selected: ' + selectedWell.selectedAddress);
       }
     });
 
@@ -105,6 +109,9 @@ The following callback function must be implemented by the user and provided to 
 #### updateWells(event, data)
 Anytime the user makes changes, this callback will be invoked with the current state of the data, 
 allowing the developer to respond to changes.
+
+#### selectedWells: function(event, selectedWell)
+Every time after mouse up event on canvas, selectedWells function will be triggered and output the addresses of selectedWell
 
 ### Major functions
 The following functions may be called at any time to interact with the UI.  

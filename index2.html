@@ -367,7 +367,10 @@
 			},
 			created: function (event, data) {
 				console.log("Created");
-			}
+			},
+            selectedWells: function(event, selectedWell) {
+                console.log('selected: ' + selectedWell.selectedAddress);
+            }
 		});
 		window.plateData = makeNewPlate();
 		$("#my-plate-layout").plateLayOut("getPlates", window.plateData);
