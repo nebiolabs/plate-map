@@ -74,7 +74,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.setData(this.undoRedoArray[pointer]);
         this.actionPointer = pointer; 
         this.undoRedoActive = false;
-        return true; 
+        this.derivativeChange();
+        return true;
       }
     }
   };

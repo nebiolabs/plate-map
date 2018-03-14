@@ -61,6 +61,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       clearCriteria: function() {
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
+          var hasWellUpdate = false;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex];
             if (tile.index in this.engine.derivative) {
@@ -80,7 +81,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
               } else {
                 delete this.engine.derivative[tile.index];
               }
+              hasWellUpdate = true;
             }
+          }
+          if (hasWellUpdate){
+            this.derivativeChange();
           }
 
           this._colorMixer();

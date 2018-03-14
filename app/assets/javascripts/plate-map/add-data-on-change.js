@@ -46,6 +46,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.applyFieldWarning(wells);
         // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
         this._colorMixer();
+        this.derivativeChange();
       },
 
       processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
@@ -162,15 +163,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _colorMixer: function() {
-        if (!this.undoRedoActive) {
-          var data = this.createObject();
-          this.addToUndoRedo(data);
-          this._trigger("updateWells", null, data);
-        }
-
         this.engine.searchAndStack(); 
         this.engine.applyColors();
         this.mainFabricCanvas.renderAll();
+      },
+
+      derivativeChange: function(){
+        if (!this.undoRedoActive) {
+            var data = this.createObject();
+            this.addToUndoRedo(data);
+            this._trigger("updateWells", null, data);
+        }
       },
 
       createObject: function() {

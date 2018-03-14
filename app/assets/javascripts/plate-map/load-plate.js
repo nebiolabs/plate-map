@@ -25,7 +25,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           "focalWell": selection.focalWell
         }; 
 
-        this.setData(sanitized); 
+        this.setData(sanitized);
       }, 
 
       sanitizeAreas: function (selectedAreas, focalWell) {
