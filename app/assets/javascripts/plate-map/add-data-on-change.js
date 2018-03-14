@@ -163,17 +163,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _colorMixer: function() {
+        if (!this.undoRedoActive) {
+            var data = this.createObject();
+            this.addToUndoRedo(data);
+        }
         this.engine.searchAndStack(); 
         this.engine.applyColors();
         this.mainFabricCanvas.renderAll();
       },
 
       derivativeChange: function(){
-        if (!this.undoRedoActive) {
-            var data = this.createObject();
-            this.addToUndoRedo(data);
-            this._trigger("updateWells", null, data);
-        }
+          this._trigger("updateWells", null, this.createObject());
       },
 
       createObject: function() {
