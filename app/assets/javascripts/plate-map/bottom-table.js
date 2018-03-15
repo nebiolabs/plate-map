@@ -45,15 +45,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       addBottomTableRow: function(color, singleStack) {
-
+        var that = this;
         var modelTile = this.allTiles[singleStack[0]];
         var row = this._createElement("<tr></tr>");
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
-
-        var numberText = this._createElement("<span/>");
+        var numberText = this._createElement("<button/>");
         numberText.addClass("plate-setup-color-text");
         numberText.text(color);
         plateIdDiv.append(numberText);
+
+        numberText.click(function(evt){
+          var addressToSelect = singleStack.map(function(addressIdx){
+            return that.indexToAddress(addressIdx)
+          });
+          if (evt.ctrlKey) {
+            that.getSelectedAddress().forEach(function(val){
+              if (addressToSelect.indexOf(val) < 0){
+                addressToSelect.push(val);
+              }
+            })
+          }
+          that.setSelectedWell(addressToSelect);
+          that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
+        });
 
         if (color > 0) {
           color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
@@ -70,7 +84,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var dataDiv = this._createElement("<td></td>").text(text);
           row.append(dataDiv);
         }
-
         this.bottomTable.append(row);
         this.adjustFieldWidth(row);
       },
@@ -127,7 +140,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
       exportData: function(format) {
         var data = [];
         var rows = document.querySelectorAll("table tr");
-        var corToLocMap = $("#my-plate-layout").plateLayOut("createObject").colorToLoc;
+
+        var colorLocMap = {};
+        var colorLocIdxMap = this.engine.stackUpWithColor;
+        var dim = this.getDimensions();
+        var that = this;
+        for (var colorIdx in colorLocIdxMap) {
+          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
+            return that.indexToAddress(locIdx, dim);
+          })
+        }
 
         for (var i = 0; i < rows.length; i++) {
           var row = [],
@@ -155,11 +177,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
             if (i !== 0 && j === 0) {
               var loc = '';
-              if (corToLocMap[parseInt(cols[j].innerText)]) {
+              if (colorLocMap[parseInt(cols[j].innerText)]) {
                 if (format === "csv") {
-                  loc = '"' + corToLocMap[parseInt(cols[j].innerText)].join(",") + '"';
+                  loc = '"' + colorLocMap[parseInt(cols[j].innerText)].join(",") + '"';
                 } else if (format === 'clipboard') {
-                  loc = corToLocMap[parseInt(cols[j].innerText)].join(",");
+                  loc = colorLocMap[parseInt(cols[j].innerText)].join(",");
                 }
               }
               row.push(loc);

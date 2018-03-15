@@ -61,11 +61,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
       clearCriteria: function() {
         if (this.allSelectedObjects) {
           var noOfSelectedObjects = this.allSelectedObjects.length;
+          var hasWellUpdate = false;
           for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
             var tile = this.allSelectedObjects[objectIndex];
             if (tile.index in this.engine.derivative) {
-              delete this.engine.derivative[tile.index];
+              // handling for clearing well when not allowed to add or delete wells
+              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
+                var well = JSON.parse(JSON.stringify(this.defaultWell));
+                var defaultValue = this.emptyWellWithDefaultVal;
+                for (var key in defaultValue){
+                  if (key in well) {
+                    well[key] = defaultValue[key];
+                    this._applyFieldData(key, defaultValue[key]);
+                  } else {
+                    console.log("Well does not contain key: " + key + ", please contact support");
+                  }
+                }
+                this.engine.derivative[tile.index] = well;
+              } else {
+                delete this.engine.derivative[tile.index];
+              }
+              hasWellUpdate = true;
             }
+          }
+          if (hasWellUpdate){
+            this.derivativeChange();
           }
 
           this._colorMixer();

@@ -20,35 +20,63 @@ var plateLayOutWidget = plateLayOutWidget || {};
               well = $.extend(true, {}, this.defaultWell); 
               this.engine.derivative[tile.index] = well; 
             }
-            for (var id in data) {
-              var v;
-              if (data[id]) {
-                if (data[id].multi){
-                  var curData = data[id];
-                  var preData = well[id];
-                  var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
-                  // need to replace newData
-                  v = JSON.parse(JSON.stringify(newDt));
-                } else {
-                  v = JSON.parse(JSON.stringify(data[id]));
-                }
-              } else {
-                v = JSON.parse(JSON.stringify(data[id]));
-              }
-              well[id] = v;
-              wells.push(well);
-            }
+            var processedData = this.processWellData(data, well, noOfSelectedObjects, wells);
+            wells = processedData.wells;
+            well = processedData.well;
             var empty = this.engine.wellEmpty(well);
             if (empty) {
-              delete this.engine.derivative[tile.index];
+              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
+                var wellCopy = JSON.parse(JSON.stringify(well));
+                var defaultValue = this.emptyWellWithDefaultVal;
+                for (var key in defaultValue){
+                  if (key in wellCopy){
+                    wellCopy[key] = defaultValue[key];
+                    this._applyFieldData(key, defaultValue[key]);
+                  }
+                }
+                this.engine.derivative[tile.index] = wellCopy;
+              } else {
+                delete this.engine.derivative[tile.index];
+              }
             }
           }
-
-          this._colorMixer();
         }
         // update multiplex remove all field
         this._getAllMultipleVal(wells);
         this.applyFieldWarning(wells);
+        // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
+        this._colorMixer();
+        this.derivativeChange();
+      },
+
+      processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
+
+        if (!wellList){
+          wellList = [];
+        }
+        for (var id in newData) {
+          var v;
+          if (newData[id] !== undefined && newData[id] !== null ) {
+            if (newData[id].multi){
+              var curData = newData[id];
+              var preData = curWell[id];
+              var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
+              // need to replace newData
+              v = JSON.parse(JSON.stringify(newDt));
+            } else {
+              v = JSON.parse(JSON.stringify(newData[id]));
+            }
+          } else {
+            v = JSON.parse(JSON.stringify(newData[id]));
+          }
+          curWell[id] = v;
+          wellList.push(curWell);
+        }
+
+        return {
+          well: curWell,
+          wells: wellList
+        }
       },
 
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
@@ -136,14 +164,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _colorMixer: function() {
         if (!this.undoRedoActive) {
-          var data = this.createObject();
-          this.addToUndoRedo(data);
-          this._trigger("updateWells", null, data);
+            var data = this.createObject();
+            this.addToUndoRedo(data);
         }
-
         this.engine.searchAndStack(); 
         this.engine.applyColors();
         this.mainFabricCanvas.renderAll();
+      },
+
+      derivativeChange: function(){
+          this._trigger("updateWells", null, this.createObject());
       },
 
       createObject: function() {
@@ -151,23 +181,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var checkboxes = this.globalSelectedAttributes.slice(); 
         var selectedAreas = this.selectedAreas.slice(); 
         var focalWell = this.focalWell;
-        var colorLocMap = {};
-        var colorLocIdxMap = this.engine.stackUpWithColor;
-        var dim = $("#my-plate-layout").plateLayOut("getDimensions");
-        for (var colorIdx in colorLocIdxMap) {
-          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
-            return $("#my-plate-layout").plateLayOut("indexToAddress", locIdx, dim);
-          })
-        }
-        var requiredField = this.requiredField;
 
         return {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selectedAreas,
           "focalWell": focalWell,
-          "colorToLoc": colorLocMap,
-          "requiredField": requiredField
+          "requiredField": this.requiredField
         };
       }
     };

@@ -722,7 +722,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.root.find(".plate-setup-tab-field-right-side").append(nameContainer1, fieldContainer1);
 
         field.singleSelect = this._createElement("<input/>").attr("id", field.id + "SingleSelect")
-          .addClass("plate-setup-tab-select-field");
+          .addClass("plate-setup-tab-multiplex-single-select-field");
 
         field.singleSelect.appendTo(fieldContainer1); 
 
@@ -779,6 +779,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               subField.setValue(null);
             });
           }
+          that.readOnlyHandler();
         };
 
         setSingleSelectOptions([]); 
@@ -849,10 +850,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.disabled = function(bool) {
           field.input.prop("disabled", bool);
-          field.singleSelect.prop("disabled", bool);
           field.subFieldList.forEach(function(subField) {
-            subField.input.prop("disabled", bool);
+            subField.disabled(bool);
           });
+          if (bool) {
+            nameContainer1.text("Select to inspect");
+          } else {
+            nameContainer1.text("Select to edit");
+          }
         };
 
         field.parseValue = function(value) {
@@ -1179,7 +1184,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var that = this;
 
         var valMap = field.allSelectedMultipleVal;
-        var valToRemove = Object.keys(valMap);
+        var valToRemove;
+        if (valMap) {
+          valToRemove = Object.keys(valMap);
+        } else {
+          valToRemove = [];
+        }
+
 
         var dialogDiv = $("<div/>").addClass("delete-dialog modal");
         $('body').append(dialogDiv); 
@@ -1203,19 +1214,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
           table.find('td').addClass("plate-popout-td");
           table.find('th').addClass("plate-popout-th");
           table.find('tr').addClass("plate-popout-tr");
+          if (!that.readOnly) {
+            var deleteCheckedButton = $("<button class='multiple-field-manage-delete-button'>Delete Checked Items</button>");
+            buttonRow.append(deleteCheckedButton);
+            deleteCheckedButton.click(function() {
+              table.find("input:checked").each(function () {
+                var val = this.value;
+                field.multiOnChange(null, {id: val});
+              });
+              // refresh selected fields after updating the multiplex field value
+              that.decideSelectedFields();
+              killDialog();
+            });
+          }
 
-          var deleteCheckedButton = $("<button>Delete Checked Items</button>");
-          buttonRow.append(deleteCheckedButton);
-
-          deleteCheckedButton.click(function() {
-            table.find("input:checked").each(function () {
-              var val = this.value;
-              field.multiOnChange(null, {id: val}); 
-            }) 
-            // refresh selected fields after updating the multiplex field value
-            that.decideSelectedFields();
-            killDialog(); 
-          });
         } else {
           $("<p/>").text("No " + field.name + " in the selected wells").appendTo(tableArea);
         }
@@ -1234,7 +1246,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       _deleteDialogTable: function (field, valMap) {
-        var colName = [field.name, "Counts", "Delete"]; //Added because it was missing... no idea what the original should have been
+        var that = this;
+        var colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
+        if (!that.readOnly) {
+          colName.push("Delete");
+        }
         var table = $('<table/>');
         var thead = $('<thead/>').appendTo(table);
         var tr = $('<tr/>').appendTo(thead);
@@ -1250,8 +1266,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var tr = $('<tr/>').appendTo(tbody);
             var checkbox = $("<input type='checkbox'>").prop("value", opt.id); 
             $("<td/>").text(opt.text).appendTo(tr); 
-            $("<td/>").text(valMap[opt.id]).appendTo(tr); 
-            $("<td/>").append(checkbox).appendTo(tr); 
+            $("<td/>").text(valMap[opt.id]).appendTo(tr);
+            if (!that.readOnly) {
+              $("<td/>").append(checkbox).appendTo(tr);
+            }
           }
         });
 
