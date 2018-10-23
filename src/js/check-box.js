@@ -9,7 +9,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       globalSelectedAttributes: [],
 
       _addCheckBox: function(field) {
-        var checkImage = $("<img>").attr("src", this._assets.dontImg).addClass("plate-setup-tab-check-box")
+        var checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
           .data("clicked", false);
         checkImage.data("linkedFieldId", field.id);
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
@@ -44,10 +44,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           checkImage.data("clicked", clicked);
           if (clicked) {
-            checkImage.attr("src", that._assets.doImg);
+            checkImage.html(that._assets.doImg);
             subFieldToInclude.push(subField.id);
           } else {
-            checkImage.attr("src", that._assets.dontImg);
+            checkImage.html(that._assets.dontImg);
           }
         });
         return subFieldToInclude;
@@ -72,9 +72,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             checkImage.data("clicked", clicked);
             if (clicked) {
               gsa.push(fieldId);
-              checkImage.attr("src", this._assets.doImg);
+              checkImage.html(this._assets.doImg);
             } else {
-              checkImage.attr("src", this._assets.dontImg);
+              checkImage.html(this._assets.dontImg);
             }
           }
         }
@@ -93,10 +93,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var clicked = fieldIds.indexOf(fieldId) >= 0;
           checkImage.data("clicked", clicked);
           if (clicked) {
-            checkImage.attr("src", that._assets.doImg);
+            checkImage.html(that._assets.doImg);
             subFieldToInclude.push(subField.id);
           } else {
-            checkImage.attr("src", that._assets.dontImg);
+            checkImage.html(that._assets.dontImg);
           }
         });
         return subFieldToInclude;
@@ -121,10 +121,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
             checkImage.data("clicked", clicked);
             if (clicked) {
               gsa.push(fieldId);
-              checkImage.attr("src", this._assets.doImg);
+              checkImage.html(this._assets.doImg);
             } else {
 
-              checkImage.attr("src", this._assets.dontImg);
+              checkImage.html(this._assets.dontImg);
             }
           }
         }

@@ -217,11 +217,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }, 
 
       setTileVisible: function (tile, visible) {
-        tile.visible = visible; 
-        tile.circle.setVisible(tile.visible); 
-        tile.circleCenter.setVisible(tile.visible); 
-        tile.circleText.setVisible(tile.visible); 
-      }, 
+        tile.visible = visible;
+        tile.circle.visible = tile.visible;
+        tile.circleCenter.visible = tile.visible;
+        tile.circleText.visible = tile.visible;
+      },
 
       setTileColor: function(tile, color, stackPointer) {
         this.setTileVisible(tile, true);

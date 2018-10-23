@@ -304,6 +304,7 @@
 
 .plate-setup-tab-check-box {
   margin-top: 26px;
+  cursor: pointer;
 }
 
 .plate-setup-bottom-control-container {
