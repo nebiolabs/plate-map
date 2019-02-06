@@ -27,7 +27,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.mainFabricCanvas = new fabric.Canvas('DNAcanvas', {
             backgroundColor: '#f5f5f5',
-            selection: true,
+            selection: false,
             stateful: false,
             hoverCursor: "pointer",
             renderOnAddRemove: false,

@@ -141,10 +141,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var strokeWidth = 2;
           if (this.focalWellRect) {
             //update focalWellRect
-            this.focalWellRect.setTop(rect.top);
-            this.focalWellRect.setLeft(rect.left);
-            this.focalWellRect.setWidth(rect.width - strokeWidth);
-            this.focalWellRect.setHeight(rect.height - strokeWidth);
+            this.focalWellRect.top = rect.top;
+            this.focalWellRect.left = rect.left;
+            this.focalWellRect.width = rect.width - strokeWidth;
+            this.focalWellRect.height = rect.height - strokeWidth;
           } else {
             //create focalWellRect
             this.focalWellRect = new fabric.Rect({
@@ -171,7 +171,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var selectedTiles = this.allSelectedObjects;
         this.allTiles.forEach(function(tile) {
           var selected = selectedTiles.indexOf(tile) >= 0;
-          tile.highlight.setVisible(selected);
+          tile.highlight.visible = selected;
         })
       },
 

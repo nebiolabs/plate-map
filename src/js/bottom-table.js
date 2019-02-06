@@ -239,7 +239,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         clipboardButton.text("Copy To Clipboard");
         buttonContainer.append(clipboardButton);
 
-        var clipboard = new Clipboard(clipboardButton.get(0), {
+        var clipboard = new ClipboardJS(clipboardButton.get(0), {
           text: function() {
             return that.exportData("clipboard");
           }
