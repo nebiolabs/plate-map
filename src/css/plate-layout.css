@@ -303,7 +303,13 @@
 }
 
 .plate-setup-tab-check-box {
-  margin-top: 26px;
+  border: 1px solid gray;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  text-align: center;
+  line-height: 16px;
+  margin-top: 18px;
   cursor: pointer;
 }
 
