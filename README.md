@@ -27,8 +27,8 @@ utilized in the context of a larger scientific software application.
 - [User-Provided Callback Functions](#user-provided-callback-functions)
 - [Major Functions](#major-functions)
 - [Data Types](#data-types)
-- [Exemple 1](#example-1-multiplex-field-without-sub-field-multiplex-units)
-- [Exemple 2](#example-2-multiplex-field-with-multiplex-unit-sub-fields)
+- [Example 1](#example-1-multiplex-field-without-sub-field-multiplex-units)
+- [Example 2](#example-2-multiplex-field-with-multiplex-unit-sub-fields)
 - [How to contribute](#how-to-contribute)
 
 # Features

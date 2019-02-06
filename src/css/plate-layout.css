@@ -241,6 +241,7 @@
 
 .plate-setup-tab-field-left-side {
   width: 32px;
+  padding-top: 16px;
 }
 
 .plate-setup-tab-field-right-side {
@@ -250,7 +251,8 @@
 .plate-setup-tab-name {
   font-family: "Roboto", Arial, sans-serif;
   font-size: 12px;
-  display: inline-block
+  display: inline-block;
+  line-height: 16px;
 }
 
 .plate-setup-tab-name-singleSelect {
@@ -303,8 +305,13 @@
 }
 
 .plate-setup-tab-check-box {
-  margin-top: 26px;
   cursor: pointer;
+  border: 1px solid gray;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  text-align: center;
+  line-height: 16px;
 }
 
 .plate-setup-bottom-control-container {

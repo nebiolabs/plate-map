@@ -4,7 +4,7 @@ plateLayOutWidget.assets = function () {
     return {
         _assets: {
             doImg: '&#10003;',
-            dontImg: '&nbsp;&nbsp;&nbsp;',
+            dontImg: '',
             warningImg: '&#9888;'
         }
     };
