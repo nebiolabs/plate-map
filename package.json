@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Zahen/plate-map.git"
+    "url": "git+https://github.com/nebiolabs/plate-map.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Zahen/plate-map/issues"
+    "url": "https://github.com/nebiolabs/plate-map/issues"
   },
-  "homepage": "https://github.com/Zahen/plate-map#readme",
+  "homepage": "https://github.com/nebiolabs/plate-map#readme",
   "dependencies": {
     "bootstrap": "^4.1.3",
     "clipboard": "^2.0.4",

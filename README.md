@@ -1,11 +1,10 @@
 # Introduction
 <!-- remember to update badges [version, licence] when needed because they are static -->
-<!-- todo : remember to change these badges to refer to the official plate-map github repo -->
 ![version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg?style=flat-square&v=1.0)
-[![licence ISC](https://img.shields.io/badge/licence-ISC-blue.svg?style=flat-square&v=1.0)](https://www.isc.org/downloads/software-support-policy/isc-license/)
-[![GitHub issues](https://img.shields.io/github/issues/Zahen/plate-map.svg?style=flat-square&v=1.0)](https://github.com/Zahen/plate-map/issues)
-[![dependencies Status](https://david-dm.org/Zahen/plate-map/status.svg?style=flat-square&v=1.0)](https://david-dm.org/Zahen/plate-map)
-[![devDependencies Status](https://david-dm.org/Zahen/plate-map/dev-status.svg?style=flat-square&v=1.0)](https://david-dm.org/Zahen/plate-map?type=dev)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![GitHub issues](https://img.shields.io/github/issues/nebiolabs/plate-map.svg?style=flat-square&v=1.0)](https://github.com/nebiolabs/plate-map/issues)
+[![dependencies Status](https://david-dm.org/nebiolabs/plate-map/status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map)
+[![devDependencies Status](https://david-dm.org/nebiolabs/plate-map/dev-status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map?type=dev)
 
 **JavaScript Plate Layout** is an open source tool developed collaboratively by [Chai Biotechnologies](www.chaibio.com) 
 and [New England Biolabs](www.neb.com) for visualizing and editing the layout of scientific assay plates.
@@ -88,7 +87,7 @@ Embed code similar to the below to add the plate layout tool to your project:
 ```
 The source file `src/js/example.js` (shown below) initializes the plate layout tool. See Configurations Options
 for all available settings. **Note** that this source file is not included in the npm package, but it is available on 
-the Github repository.  
+the Github repository. 
 ```js
   window.onload = function() {
     //Define fields to hold data
