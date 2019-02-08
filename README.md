@@ -467,20 +467,10 @@ options for subfield id `raw_value` will be `["unit1", "unit2"]` , which is used
 ## Requirements
 **Note** that this project was tested with _Node_ v9.10.1 and _NPM_ v5.6.0.
 
-If this is your first time, start by installing the npm dependencies: `npm install`
+If this is your first time:
+1. install the (os) dependencies of the `canvas` library: https://www.npmjs.com/package/canvas/v/1.6.11
+2. run `npm install` in this directory
 
-Building this project also requires the libraries _gif_lib_ and _jpeg_lib_ (required the _Canvas_ npm package).
-
-- On Linux/Ubuntu :
-    ```bash
-    sudo apt install libgif-dev
-    sudo apt install libjpeg-dev
-    ```
-- On Mac OS :
-    ```bash
-    brew install giflib
-    brew install libjpeg
-    ```
    
 ## Project Structure
 ```

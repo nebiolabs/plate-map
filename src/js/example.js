@@ -194,6 +194,7 @@ window.onload = function () {
         numRows: 8,
         numCols: 12,
         attributes: attributes,
+        // scrollToGroup: false, // optional
 
         updateWells: function (event, data) {
             //data has changed

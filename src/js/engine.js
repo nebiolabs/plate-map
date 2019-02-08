@@ -10,6 +10,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       engine: {
 
         derivative: {},
+        colorMap: new Map(),
         stackUpWithColor: {},
         stackPointer: 2,
 
@@ -121,7 +122,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 var index = this.stackUpWithColor[color][tileIndex]; 
                 var tile = THIS.allTiles[index];
                 var well = this.derivative[index];
-                THIS.setTileColor(tile, color, this.stackPointer); 
+                this.colorMap.set(index, color);
+                THIS.setTileColor(tile, color);
                 // Checks if all the required fields are filled
                 var completion = this.checkCompletion(well, tile);
                 THIS.setTileComplete(tile, completion == 1); 

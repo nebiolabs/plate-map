@@ -105,6 +105,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.decideSelectedFields();
           that.mainFabricCanvas.renderAll();
           that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
+          if(that.options.scrollToGroup === undefined || that.options.scrollToGroup) {
+            that.selectObjectInBottomTab();
+          }
         });
       },
 
