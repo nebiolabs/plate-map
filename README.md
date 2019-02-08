@@ -1,7 +1,7 @@
 # Introduction
 <!-- remember to update badges [version, licence] when needed because they are static -->
 ![version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg?style=flat-square&v=1.0)
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![GitHub issues](https://img.shields.io/github/issues/nebiolabs/plate-map.svg?style=flat-square&v=1.0)](https://github.com/nebiolabs/plate-map/issues)
 [![dependencies Status](https://david-dm.org/nebiolabs/plate-map/status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map)
 [![devDependencies Status](https://david-dm.org/nebiolabs/plate-map/dev-status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map?type=dev)
@@ -67,7 +67,7 @@ You need to include the following dependencies:
     ```
     'node_modules/bootstrap/dist/css/bootstrap.min.css'
     'node_modules/select2/select2.css'
-    'node_modules/plate-map/dist/package/css/main.min.css'
+    'node_modules/plate-map/dist/package/css/plate-map.min.css'
     ```
 - Javascript:
     ```
@@ -77,7 +77,7 @@ You need to include the following dependencies:
     'node_modules/jquery-ui-dist/jquery-ui.min.js'
     'node_modules/fabric/dist/fabric.js'
     'node_modules/clipboard/dist/clipboard.min.js'
-    'node_modules/plate-map/dist/package/js/main.min.js'
+    'node_modules/plate-map/dist/package/js/plate-map.min.js'
     ``` 
 
 ## Quick start
@@ -166,7 +166,7 @@ allowing the developer to respond to changes.
 Every time after mouse up event on canvas, selectedWells function will be triggered and output the addresses of selectedWell
 
 # Major Functions
-The following functions may be called at any time to interact with the UI.  
+The following functions may be called at any time to interact with the UI. 
 Typically you will invoke these functions using `$("#mylayout").plateLayOut("function", ...args)` form. 
 
 ## getPlates(data)
@@ -570,8 +570,8 @@ that can then be integrated in dependent projects. It is up to each dependent pr
 with a proper handling of the transitive dependencies.
 
 The `plate-map` _NPM_ package contains:
-- `main.min.css` (app CSS source files concatenated and minified)
-- `main.min.js`  (app JS source files concatenated and uglified)
+- `plate-map.min.css` (app CSS source files concatenated and minified)
+- `plate-map.min.js`  (app JS source files concatenated and uglified)
 - `package.json` (dependencies and tasks of the package)
 
 To build this package on your machine: 

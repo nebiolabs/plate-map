@@ -10,6 +10,7 @@ const browserSync = require('browser-sync').create();
 const connect = require('gulp-connect');
 const mergeStream = require('merge-stream');
 
+const packageName = 'plate-map';
 const PATH = {
     source: {
         app: {
@@ -58,19 +59,19 @@ const PATH = {
 
 let config = {source: {css: '', js: '', img: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
 
-function concat_minify_css(source, destination) {
+function concat_minify_css(name, source, destination) {
     return gulp.src(source)
-        .pipe(concat('main.css'))
+        .pipe(concat(name + '.css'))
         .pipe(minifyCSS())
-        .pipe(rename('main.min.css'))
+        .pipe(rename(name + '.min.css'))
         .pipe(gulp.dest(destination));
 }
 
-function concat_uglify_js(source, destination) {
+function concat_uglify_js(name, source, destination) {
     return gulp.src(source)
-        .pipe(concat('main.js'))
+        .pipe(concat(name + '.js'))
         .pipe(uglifyJS())
-        .pipe(rename('main.min.js'))
+        .pipe(rename(name + '.min.js'))
         .pipe(gulp.dest(destination));
 }
 
@@ -107,11 +108,11 @@ gulp.task('clean', () => {
 });
 
 gulp.task('css', () => {
-    return concat_minify_css(config.source.css, config.destination.css);
+    return concat_minify_css(packageName, config.source.css, config.destination.css);
 });
 
 gulp.task('js', () => {
-    return concat_uglify_js(config.source.js, config.destination.js);
+    return concat_uglify_js(packageName, config.source.js, config.destination.js);
 });
 
 gulp.task('copy.src', () => {

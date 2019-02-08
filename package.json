@@ -15,8 +15,8 @@
     "url": "git+https://github.com/nebiolabs/plate-map.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Langhorst, Brad <Langhorst@neb.com>",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/nebiolabs/plate-map/issues"
   },
