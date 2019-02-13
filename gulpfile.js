@@ -40,19 +40,19 @@ const PATH = {
     },
     destination: {
         prod: {
-            css: 'dist/prod/css',
-            js: 'dist/prod/js',
-            root: 'dist/prod'
+            css: 'build/prod/css',
+            js: 'build/prod/js',
+            root: 'build/prod'
         },
         dev: {
-            css: 'dist/dev/css',
-            js: 'dist/dev/js',
-            root: 'dist/dev'
+            css: 'build/dev/css',
+            js: 'build/dev/js',
+            root: 'build/dev'
         },
         pack: {
-            css: 'dist/package/css',
-            js: 'dist/package/js',
-            root: 'dist/package'
+            css: 'dist/css',
+            js: 'dist/js',
+            root: 'dist'
         }
     }
 };
@@ -60,19 +60,21 @@ const PATH = {
 let config = {source: {css: '', js: '', img: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
 
 function concat_minify_css(name, source, destination) {
-    return gulp.src(source)
+    return gulp.src(source, { sourcemaps: true })
         .pipe(concat(name + '.css'))
+        .pipe(gulp.dest(destination))
         .pipe(minifyCSS())
         .pipe(rename(name + '.min.css'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
 }
 
 function concat_uglify_js(name, source, destination) {
-    return gulp.src(source)
+    return gulp.src(source, { sourcemaps: true })
         .pipe(concat(name + '.js'))
+        .pipe(gulp.dest(destination))
         .pipe(uglifyJS())
         .pipe(rename(name + '.min.js'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
 }
 
 function config_env(env) {
@@ -97,7 +99,6 @@ gulp.task('config.pack', async () => {
     config.source.css = PATH.source.app.css;
     config.source.js = PATH.source.app.js;
     config.source.js.push('!src/js/example.js');
-    config.source.json = PATH.source.app.json;
     config.destination.css = PATH.destination.pack.css;
     config.destination.js = PATH.destination.pack.js;
     config.destination.root = PATH.destination.pack.root;
@@ -129,14 +130,9 @@ gulp.task('copy.img', () => {
         .pipe(gulp.dest(config.destination.css));
 });
 
-gulp.task('copy.package.json', () => {
-   return gulp.src(config.source.json)
-       .pipe(gulp.dest(config.destination.root));
-});
-
 gulp.task('inject.prod', () => {
     return gulp.src(config.source.html)
-        .pipe(inject(gulp.src([`${config.destination.css}/*.css`, `${config.destination.js}/*.js`], {read: false}),
+        .pipe(inject(gulp.src([`${config.destination.css}/*.min.css`, `${config.destination.js}/*.min.js`], {read: false}),
             {
                 ignorePath: config.destination.root,
                 addRootSlash: false
@@ -168,7 +164,7 @@ gulp.task('inject.dev', () => {
 });
 
 gulp.task('server.dev', async () => {
-    browserSync.init({server: 'dist/dev'});
+    browserSync.init({server: PATH.destination.dev.root});
     gulp.watch([PATH.source.app.css, PATH.source.app.js], ['build.dev'])
         .on('change', browserSync.reload);
 });
@@ -176,11 +172,11 @@ gulp.task('server.dev', async () => {
 gulp.task('server.prod', async () => {
     connect.server({
         name: 'App [PRODUCTION MODE]',
-        root: 'dist/prod'
+        root: PATH.destination.prod.root
     });
 });
 
-gulp.task('build.package', gulp.series('config.pack', 'clean', 'css', 'js', 'copy.package.json'));
+gulp.task('build.dist', gulp.series('config.pack', 'clean', 'css', 'js'));
 
 gulp.task('build.dev', gulp.series('config.dev', 'clean', 'copy.src', 'copy.img', 'inject.dev'));
 
