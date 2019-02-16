@@ -2096,7 +2096,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               selected_v = null;
             }
           }
-          field.singleSelect.select2('data', {});
+          field.singleSelect.select2('data', []);
           field.singleSelect.select2(opts);
           field.singleSelect.select2('data', selected_v);
           field.singleSelect.prop("disabled", opts.data.length == 0);
@@ -2130,6 +2130,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.readOnlyHandler();
         };
 
+        field.singleSelect.select2();
         setSingleSelectOptions([]);
 
         field.singleSelect.on("change", singleSelectChange);
