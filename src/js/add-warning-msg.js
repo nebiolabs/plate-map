@@ -8,7 +8,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       fieldWarningMsg: function (field, text, include) {
         var that = this;
         var imgId = "fieldWarning" + field.id;
-        var img = $("<img>").attr("src", that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
+        var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
         //field.root.find(".plate-setup-tab-name").append('<img id="theImg" src="theImg.png" />')
         if (include) {
           if (field.root.find("#" + imgId).length <= 0){
@@ -38,7 +38,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       removeWarningMsg: function (field, text, include) {
         var that = this;
         var imgId = "fieldWarning" + field.id;
-        var img = $("<img>").attr("src", that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
+        var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
         //field.root.find(".plate-setup-tab-name").append('<img id="theImg" src="theImg.png" />')
         if (include) {
           field.root.find(".plate-setup-tab-name").append(img);
