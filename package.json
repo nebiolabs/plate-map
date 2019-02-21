@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/nebiolabs/plate-map.git"
   },
-  "main": "dist/js/plate-map.js", 
+  "main": "dist/js/plate-map.js",
   "style": "dist/css/plate-map.css",
   "keywords": [],
   "author": "Langhorst, Brad <Langhorst@neb.com>",
@@ -29,7 +29,7 @@
     "fabric": "^2.6.0",
     "jquery": "^3.3.1",
     "jquery-ui-dist": "^1.12.1",
-    "popper.js": "^1.14.5",
+    "popper.js": "^1.14.7",
     "select2": "^3.5.1"
   },
   "devDependencies": {
