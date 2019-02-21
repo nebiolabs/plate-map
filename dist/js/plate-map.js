@@ -2130,7 +2130,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.readOnlyHandler();
         };
 
-        field.singleSelect.select2();
         setSingleSelectOptions([]);
 
         field.singleSelect.on("change", singleSelectChange);
