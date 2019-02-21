@@ -1,16 +1,16 @@
 const gulp = require('gulp');
+const del = require("del");
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const uglifyJS = require('gulp-uglify');
 const minifyCSS = require('gulp-clean-css');
 const minifyHTML = require('gulp-htmlmin');
-const clean = require('gulp-clean');
-const runSequence = require('run-sequence');
 const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 const connect = require('gulp-connect');
 const mergeStream = require('merge-stream');
 
+const packageName = 'plate-map';
 const PATH = {
     source: {
         app: {
@@ -40,39 +40,41 @@ const PATH = {
     },
     destination: {
         prod: {
-            css: 'dist/prod/css',
-            js: 'dist/prod/js',
-            root: 'dist/prod'
+            css: 'build/prod/css',
+            js: 'build/prod/js',
+            root: 'build/prod'
         },
         dev: {
-            css: 'dist/dev/css',
-            js: 'dist/dev/js',
-            root: 'dist/dev'
+            css: 'build/dev/css',
+            js: 'build/dev/js',
+            root: 'build/dev'
         },
         pack: {
-            css: 'dist/package/css',
-            js: 'dist/package/js',
-            root: 'dist/package'
+            css: 'dist/css',
+            js: 'dist/js',
+            root: 'dist'
         }
     }
 };
 
 let config = {source: {css: '', js: '', img: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
 
-function concat_minify_css(source, destination) {
-    return gulp.src(source)
-        .pipe(concat('main.css'))
+function concat_minify_css(name, source, destination) {
+    return gulp.src(source, { sourcemaps: true })
+        .pipe(concat(name + '.css'))
+        .pipe(gulp.dest(destination))
         .pipe(minifyCSS())
-        .pipe(rename('main.min.css'))
-        .pipe(gulp.dest(destination));
+        .pipe(rename(name + '.min.css'))
+        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
 }
 
-function concat_uglify_js(source, destination) {
-    return gulp.src(source)
-        .pipe(concat('main.js'))
+function concat_uglify_js(name, source, destination) {
+    return gulp.src(source, { sourcemaps: true })
+        .pipe(concat(name + '.js'))
+        .pipe(gulp.dest(destination))
         .pipe(uglifyJS())
-        .pipe(rename('main.min.js'))
-        .pipe(gulp.dest(destination));
+        .pipe(rename(name + '.min.js'))
+        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
 }
 
 function config_env(env) {
@@ -85,35 +87,33 @@ function config_env(env) {
     config.destination.root = PATH.destination[env].root;
 }
 
-gulp.task('config.prod', () => {
+gulp.task('config.prod', async () => {
     config_env('prod');
 });
 
-gulp.task('config.dev', () => {
+gulp.task('config.dev', async () => {
     config_env('dev');
 });
 
-gulp.task('config.pack', () => {
+gulp.task('config.pack', async () => {
     config.source.css = PATH.source.app.css;
     config.source.js = PATH.source.app.js;
     config.source.js.push('!src/js/example.js');
-    config.source.json = PATH.source.app.json;
     config.destination.css = PATH.destination.pack.css;
     config.destination.js = PATH.destination.pack.js;
     config.destination.root = PATH.destination.pack.root;
 });
 
 gulp.task('clean', () => {
-    return gulp.src(config.destination.root)
-        .pipe(clean());
+    return del([config.destination.root]);
 });
 
 gulp.task('css', () => {
-    return concat_minify_css(config.source.css, config.destination.css);
+    return concat_minify_css(packageName, config.source.css, config.destination.css);
 });
 
 gulp.task('js', () => {
-    return concat_uglify_js(config.source.js, config.destination.js);
+    return concat_uglify_js(packageName, config.source.js, config.destination.js);
 });
 
 gulp.task('copy.src', () => {
@@ -130,14 +130,9 @@ gulp.task('copy.img', () => {
         .pipe(gulp.dest(config.destination.css));
 });
 
-gulp.task('copy.package.json', () => {
-   return gulp.src(config.source.json)
-       .pipe(gulp.dest(config.destination.root));
-});
-
 gulp.task('inject.prod', () => {
     return gulp.src(config.source.html)
-        .pipe(inject(gulp.src([`${config.destination.css}/*.css`, `${config.destination.js}/*.js`], {read: false}),
+        .pipe(inject(gulp.src([`${config.destination.css}/*.min.css`, `${config.destination.js}/*.min.js`], {read: false}),
             {
                 ignorePath: config.destination.root,
                 addRootSlash: false
@@ -168,27 +163,28 @@ gulp.task('inject.dev', () => {
         .pipe(gulp.dest(config.destination.root));
 });
 
-gulp.task('server.dev', () => {
-    browserSync.init({server: 'dist/dev'});
+gulp.task('server.dev', async () => {
+    browserSync.init({server: PATH.destination.dev.root});
     gulp.watch([PATH.source.app.css, PATH.source.app.js], ['build.dev'])
         .on('change', browserSync.reload);
 });
 
-gulp.task('server.prod', () => {
+gulp.task('server.prod', async () => {
     connect.server({
         name: 'App [PRODUCTION MODE]',
-        root: 'dist/prod'
+        root: PATH.destination.prod.root
     });
 });
 
-gulp.task('build.package', (done) => runSequence('config.pack', 'clean', 'css', 'js', 'copy.package.json', done));
+gulp.task('build.dist', gulp.series('config.pack', 'clean', 'css', 'js'));
 
-gulp.task('build.dev', (done) => runSequence('config.dev', 'clean', 'copy.src', 'copy.img', 'inject.dev', done));
+gulp.task('build.dev', gulp.series('config.dev', 'clean', 'copy.src', 'copy.img', 'inject.dev'));
 
-gulp.task('serve.dev', (done) => runSequence('build.dev', 'server.dev', done));
+gulp.task('serve.dev', gulp.series('build.dev', 'server.dev'));
 
-gulp.task('build.prod', (done) => runSequence('config.prod', 'clean', 'css', 'js', 'copy.img', 'inject.prod', done));
+gulp.task('build.prod', gulp.series('config.prod', 'clean', 'css', 'js', 'copy.img', 'inject.prod'));
 
-gulp.task('serve.prod', (done) => runSequence('build.prod', 'server.prod', done));
+gulp.task('serve.prod', gulp.series('build.prod', 'server.prod'));
 
-gulp.task('default', ['serve.dev']);
+gulp.task('default', gulp.series('serve.dev'));
+

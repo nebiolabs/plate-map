@@ -140,8 +140,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         tile.background.setGradient("fill", {
           type: "radial",
-          y1: this.sizes.gap,
-          y2: this.sizes.gap,
+          x1: this.sizes.tile_radius, 
+          x2: this.sizes.tile_radius, 
+          y1: this.sizes.tile_radius + this.sizes.gap,
+          y2: this.sizes.tile_radius + this.sizes.gap,
           r1: this.sizes.tile_radius - this.sizes.gap,
           r2: this.sizes.tile_radius,
           colorStops: {
@@ -234,10 +236,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var colorStops = this.colorPairs[color];
 
         tile.circle.setGradient("fill", {
-          x1: 0,
-          y1: -this.sizes.tile_radius,
-          x2: 0,
-          y2: this.sizes.tile_radius,
+          y2: 2 * this.sizes.tile_radius,
           colorStops: colorStops
         });
       },
