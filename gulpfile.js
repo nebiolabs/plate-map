@@ -171,8 +171,7 @@ gulp.task('inject.dev', () => {
 
 gulp.task('server.dev', async () => {
     browserSync.init({server: PATH.destination.dev.root});
-    gulp.watch([PATH.source.app.css, PATH.source.app.js], ['build.dev'])
-        .on('change', browserSync.reload);
+    gulp.watch(PATH.source.app.css.concat(PATH.source.app.js), gulp.series('build.dev', browserSync.reload));
 });
 
 gulp.task('server.prod', async () => {
