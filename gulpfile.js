@@ -16,8 +16,7 @@ const PATH = {
         app: {
             css: ['src/css/*.css'],
             js: ['src/js/*.js'],
-            html: 'src/index.html',
-            json: 'package.json'
+            html: 'src/index.html'
         },
         dependencies: {
             css: [
@@ -99,7 +98,6 @@ gulp.task('config.pack', async () => {
     config.source.css = PATH.source.app.css;
     config.source.js = PATH.source.app.js;
     config.source.js.push('!src/js/example.js');
-    config.source.json = PATH.source.app.json;
     config.destination.css = PATH.destination.pack.css;
     config.destination.js = PATH.destination.pack.js;
     config.destination.root = PATH.destination.pack.root;
@@ -129,11 +127,6 @@ gulp.task('copy.src', () => {
 gulp.task('copy.img', () => {
     return gulp.src(config.source.img)
         .pipe(gulp.dest(config.destination.css));
-});
-
-gulp.task('copy.package.json', () => {
-   return gulp.src(config.source.json)
-       .pipe(gulp.dest(config.destination.root));
 });
 
 gulp.task('inject.prod', () => {
@@ -181,7 +174,7 @@ gulp.task('server.prod', async () => {
     });
 });
 
-gulp.task('build.dist', gulp.series('config.pack', 'clean', 'css', 'js', 'copy.package.json'));
+gulp.task('build.dist', gulp.series('config.pack', 'clean', 'css', 'js'));
 
 gulp.task('build.dev', gulp.series('config.dev', 'clean', 'copy.src', 'copy.img', 'inject.dev'));
 
