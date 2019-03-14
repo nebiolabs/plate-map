@@ -121,8 +121,6 @@ $.widget("DNA.plateLayOut", {
       $.extend(this, new plateLayOutWidget[component](this));
     }
 
-    this.imgSrc = this.options.imgSrc || "assets";
-
     this._createInterface();
 
     this._trigger("created", null, this);

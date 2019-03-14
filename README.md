@@ -138,7 +138,6 @@ the Github repository.
     $("#my-plate-layout").plateLayOut({
       numRows: 8,
       numCols: 12,
-      imgSrc:  "css",
       readOnly: false,  // optional
       attributes: attributes,
       updateWells: function(event, data) {
