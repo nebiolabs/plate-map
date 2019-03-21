@@ -6,31 +6,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // this class manages creating all the elements within canvas
     return {
 
-      scaleFactor: 1, 
+      scaleFactor: 1,
 
       baseSizes: {
-        spacing: 48, 
-        tile_radius: 22, 
-        center_radius_complete: 10, 
-        center_radius_incomplete: 14, 
-        label_size: 14, 
-        label_spacing: 24, 
+        spacing: 48,
+        tile_radius: 22,
+        center_radius_complete: 10,
+        center_radius_incomplete: 14,
+        label_size: 14,
+        label_spacing: 24,
         text_size: 13,
-        stroke: 0.5, 
+        stroke: 0.5,
         gap: 2
-      }, 
+      },
 
       _setCanvasArea: function(w, h) {
         this.scaleFactor = Math.min(
-           h / (this.dimensions.rows * this.baseSizes.spacing + this.baseSizes.label_spacing), 
-           w / (this.dimensions.cols * this.baseSizes.spacing + this.baseSizes.label_spacing));
+          h / (this.dimensions.rows * this.baseSizes.spacing + this.baseSizes.label_spacing),
+          w / (this.dimensions.cols * this.baseSizes.spacing + this.baseSizes.label_spacing));
 
-        var sizes = {}
+        var sizes = {};
         for (var prop in this.baseSizes) {
-          sizes[prop] = this.baseSizes[prop] * this.scaleFactor; 
+          sizes[prop] = this.baseSizes[prop] * this.scaleFactor;
         }
-        this.sizes = sizes; 
-      }, 
+        this.sizes = sizes;
+      },
 
       _canvas: function() {
         // Those 1,2,3 s and A,B,C s
@@ -46,12 +46,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         var spacing = this.sizes.spacing;
         var d1 = this.sizes.label_spacing / 2;
-        var d2 = this.sizes.label_spacing + this.sizes.spacing / 2; 
-        var fontSize = this.sizes.label_size; 
+        var d2 = this.sizes.label_spacing + this.sizes.spacing / 2;
+        var fontSize = this.sizes.label_size;
 
         // For column
-        var top = d1; 
-        var left = d2;  
+        var top = d1;
+        var left = d2;
         for (var i = 1; i <= cols; i++) {
           var tempFabricText = new fabric.IText(i.toString(), {
             fill: 'black',
@@ -64,16 +64,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             selectable: false,
             fontWeight: "400"
           });
-          left += spacing; 
+          left += spacing;
 
           this.mainFabricCanvas.add(tempFabricText);
         }
 
         // for row
-        top = d2; 
-        left = d1; 
+        top = d2;
+        left = d1;
         for (var i = 1; i <= rows; i++) {
-          var tempFabricText = new fabric.IText(this.rowIndex[i-1], {
+          var tempFabricText = new fabric.IText(this.rowIndex[i - 1], {
             fill: 'black',
             originX: 'center',
             originY: 'center',
@@ -84,7 +84,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             selectable: false,
             fontWeight: "400"
           });
-          top += spacing; 
+          top += spacing;
 
           this.mainFabricCanvas.add(tempFabricText);
         }
@@ -97,9 +97,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tileCounter = 0;
         for (var row = 0; row < rows; row++) {
           for (var col = 0; col < cols; col++) {
-            var index = this.allTiles.length; 
-            var tile = this._createTile(row, col); 
-            tile.index = tileCounter++; 
+            var index = this.allTiles.length;
+            var tile = this._createTile(row, col);
+            tile.index = tileCounter++;
             this.allTiles.push(tile);
             this.mainFabricCanvas.add(tile.background);
             this.mainFabricCanvas.add(tile.highlight);
@@ -113,17 +113,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._fabricEvents();
       },
 
-      _createTile: function (row, col) {
-        var tile = {}; 
+      _createTile: function(row, col) {
+        var tile = {};
 
-        tile.visible = false; 
-        tile.colorIndex = null; 
-        tile.row = row; 
-        tile.col = col; 
-        tile.address = this.rowIndex[row] + (col + 1); 
+        tile.visible = false;
+        tile.colorIndex = null;
+        tile.row = row;
+        tile.col = col;
+        tile.address = this.rowIndex[row] + (col + 1);
 
         var top = (row + 1) * this.sizes.spacing;
-        var left = (col + 1) * this.sizes.spacing; 
+        var left = (col + 1) * this.sizes.spacing;
 
         tile.background = new fabric.Circle({
           top: top,
@@ -140,8 +140,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         tile.background.setGradient("fill", {
           type: "radial",
-          x1: this.sizes.tile_radius, 
-          x2: this.sizes.tile_radius, 
+          x1: this.sizes.tile_radius,
+          x2: this.sizes.tile_radius,
           y1: this.sizes.tile_radius + this.sizes.gap,
           y2: this.sizes.tile_radius + this.sizes.gap,
           r1: this.sizes.tile_radius - this.sizes.gap,
@@ -172,7 +172,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           radius: this.sizes.tile_radius,
           stroke: 'gray',
           strokeWidth: this.sizes.stroke,
-          evented: false, 
+          evented: false,
           visible: false
         });
 
@@ -203,10 +203,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
           visible: false
         });
 
-        return tile; 
-      }, 
+        return tile;
+      },
 
-      setTileComplete: function (tile, complete) {
+      setTileComplete: function(tile, complete) {
         if (complete) {
           tile.circleCenter.radius = this.sizes.center_radius_complete;
           tile.circleText.fill = "black";
@@ -216,22 +216,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
           tile.circleText.fill = "red";
           tile.circleText.fontWeight = 'bold';
         }
-      }, 
+      },
 
-      setTileVisible: function (tile, visible) {
+      setTileVisible: function(tile, visible) {
         tile.visible = visible;
         tile.circle.visible = tile.visible;
         tile.circleCenter.visible = tile.visible;
         tile.circleText.visible = tile.visible;
       },
 
-      setTileColor: function(tile, color, stackPointer) {
+      setTileColor: function(tile, color) {
         this.setTileVisible(tile, true);
-        tile.colorIndex = parseInt(color); 
+        tile.colorIndex = parseInt(color);
         tile.circleText.text = String(tile.colorIndex);
 
         if (color > 0) {
-          color = ((color - 1) % (this.colorPairs.length -1)) + 1;
+          color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
         }
         var colorStops = this.colorPairs[color];
 

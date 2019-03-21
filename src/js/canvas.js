@@ -20,18 +20,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _initiateFabricCanvas: function() {
-        var w = this.canvasContainer.width(); 
-        var h = this.canvasContainer.height(); 
+        var w = this.canvasContainer.width();
+        var h = this.canvasContainer.height();
 
         this._setCanvasArea(w, h);
 
         this.mainFabricCanvas = new fabric.Canvas('DNAcanvas', {
-            backgroundColor: '#f5f5f5',
-            selection: false,
-            stateful: false,
-            hoverCursor: "pointer",
-            renderOnAddRemove: false,
-          })
+          backgroundColor: '#f5f5f5',
+          selection: false,
+          stateful: false,
+          hoverCursor: "pointer",
+          renderOnAddRemove: false,
+        })
           .setWidth(w)
           .setHeight(h);
       },

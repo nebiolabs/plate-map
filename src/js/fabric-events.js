@@ -105,7 +105,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that.decideSelectedFields();
           that.mainFabricCanvas.renderAll();
           that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
-          if(that.options.scrollToGroup === undefined || that.options.scrollToGroup) {
+          if (that.options.scrollToGroup === undefined || that.options.scrollToGroup) {
             that.selectObjectInBottomTab();
           }
         });
@@ -128,7 +128,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             r: well.row,
             c: well.col
           });
-          if  (this.addressAllowToEdit.indexOf(address) < 0) {
+          if (this.addressAllowToEdit.indexOf(address) < 0) {
             flag = false;
             this.setFieldsDisabled(true);
           } else {
@@ -178,18 +178,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         })
       },
 
-      _getSelectedWells: function () {
-        var that = this; 
-        return this.allSelectedObjects.map(function (tile) {
+      _getSelectedWells: function() {
+        var that = this;
+        return this.allSelectedObjects.map(function(tile) {
           var well = that.engine.derivative[tile.index];
           if (!well) {
-            well = that.defaultWell; 
+            well = that.defaultWell;
           }
-          return well; 
-        }); 
+          return well;
+        });
       },
 
-      _getCommonFields: function (wells) {
+      _getCommonFields: function(wells) {
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell);
@@ -197,11 +197,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fields = wells[i];
             for (var field in referenceFields) {
               if (Array.isArray(referenceFields[field])) {
-                var refArr = referenceFields[field]; 
-                var agrArr = []; 
+                var refArr = referenceFields[field];
+                var agrArr = [];
                 for (var j = 0; j < refArr.length; j++) {
                   var v = refArr[j];
-                  if (v && typeof(v) === "object") {
+                  if (v && typeof (v) === "object") {
                     if (this.containsObject(v, fields[field])) {
                       agrArr.push(v);
                     }
@@ -211,10 +211,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     }
                   }
                 }
-                referenceFields[field] = agrArr; 
+                referenceFields[field] = agrArr;
               } else {
-                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
-                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                if (fields[field] && typeof (fields[field]) === "object" && referenceFields[field] && typeof (referenceFields[field]) === "object") {
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)) {
                     delete referenceFields[field];
                   }
                 } else if (referenceFields[field] != fields[field]) {
@@ -235,11 +235,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           list.forEach(function(val) {
             //evaluate val and obj
             var evaluate = [];
-            Object.keys(val).forEach(function(listKey){
-              if (Object.keys(obj).indexOf(listKey) >= 0){
+            Object.keys(val).forEach(function(listKey) {
+              if (Object.keys(obj).indexOf(listKey) >= 0) {
                 var curVal = val[listKey];
-                if (typeof(curVal) === 'object' && curVal) {
-                  if (obj[listKey]){
+                if (typeof (curVal) === 'object' && curVal) {
+                  if (obj[listKey]) {
                     evaluate.push((curVal.unit === obj[listKey].unit) && (curVal.value === obj[listKey].value));
                   } else {
                     // when obj[listKey] is null but curVal is not
@@ -258,7 +258,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _getCommonWell: function (wells) {
+      _getCommonWell: function(wells) {
         if (wells.length) {
           var referenceWell = wells[0];
           var referenceFields = $.extend(true, {}, referenceWell);
@@ -267,12 +267,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var fields = well;
             for (var field in referenceFields) {
               if (Array.isArray(referenceFields[field])) {
-                var refArr = referenceFields[field]; 
-                var agrArr = []; 
+                var refArr = referenceFields[field];
+                var agrArr = [];
                 for (var j = 0; j < refArr.length; j++) {
                   var v = refArr[j];
                   // for multiplex field
-                  if (typeof(refArr[j]) ==="object"){
+                  if (typeof (refArr[j]) === "object") {
                     if (this.containsObject(v, fields[field])) {
                       agrArr.push(v);
                     }
@@ -282,10 +282,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     }
                   }
                 }
-                referenceFields[field] = agrArr; 
+                referenceFields[field] = agrArr;
               } else {
-                if (fields[field] && typeof(fields[field]) ==="object" && referenceFields[field] && typeof(referenceFields[field]) ==="object"){
-                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)){
+                if (fields[field] && typeof (fields[field]) === "object" && referenceFields[field] && typeof (referenceFields[field]) === "object") {
+                  if ((fields[field].value !== referenceFields[field].value) || (fields[field].unit !== referenceFields[field].unit)) {
                     referenceFields[field] = null;
                   }
                 } else if (referenceFields[field] != fields[field]) {
@@ -297,30 +297,30 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
           return referenceFields;
         } else {
-          return this.defaultWell; 
+          return this.defaultWell;
         }
-      }, 
+      },
 
-      _getAllMultipleVal: function (wells) {
+      _getAllMultipleVal: function(wells) {
         var multipleFieldList = this.multipleFieldList;
 
         multipleFieldList.forEach(function(multiplexField) {
-          if(wells.length) {
+          if (wells.length) {
             var curMultipleVal = {};
-            wells.forEach(function (wellData) {
+            wells.forEach(function(wellData) {
               var id = multiplexField.id;
-              if (wellData[id]){
+              if (wellData[id]) {
                 if (wellData[id].length > 0) {
-                  wellData[id].forEach(function (multipleVal) {
-                    if (typeof(multipleVal) === 'object') {
+                  wellData[id].forEach(function(multipleVal) {
+                    if (typeof (multipleVal) === 'object') {
                       if (multipleVal[id] in curMultipleVal) {
-                        curMultipleVal[multipleVal[id]] ++;
+                        curMultipleVal[multipleVal[id]]++;
                       } else {
                         curMultipleVal[multipleVal[id]] = 1;
                       }
                     } else {
                       if (multipleVal in curMultipleVal) {
-                        curMultipleVal[multipleVal] ++;
+                        curMultipleVal[multipleVal]++;
 
                       } else {
                         curMultipleVal[multipleVal] = 1;
@@ -341,24 +341,24 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var wells = this._getSelectedWells();
         this._getAllMultipleVal(wells);
         this.applyFieldWarning(wells);
-        var well = this._getCommonWell(wells); 
+        var well = this._getCommonWell(wells);
         this._addDataToTabFields(well);
       },
 
       // get well value differences for each well in wellsHash
       getDifferentWellsVals: function(wellsHash) {
         var wells = [];
-        for (var wellId in wellsHash){
+        for (var wellId in wellsHash) {
           wells.push(wellsHash[wellId]);
         }
         var differentWellsVals = {};
-        if (wells.length > 1){
+        if (wells.length > 1) {
           var commonWell = this._getCommonWell(wells);
           var allFieldVal = {};
           for (var fieldIdx in wellsHash[0]) {
             allFieldVal[fieldIdx] = [];
           }
-          for (var wellIdx in wells){
+          for (var wellIdx in wells) {
             var diffWellVal = {};
             var curWellData = wells[wellIdx];
             for (var fieldId in curWellData) {
@@ -368,10 +368,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (Array.isArray(curVal)) {
                 // get uncommonVal
                 newVal = [];
-                for (var idx = 0; idx < curVal.length; idx ++){
+                for (var idx = 0; idx < curVal.length; idx++) {
                   var curMultiVal = curVal[idx];
                   // multiplex field
-                  if (curMultiVal && typeof(curMultiVal === "object")){
+                  if (curMultiVal && typeof (curMultiVal === "object")) {
                     if (!this.containsObject(curMultiVal, commonVal)) {
                       newVal.push(curMultiVal);
                       if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
@@ -387,9 +387,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     }
                   }
                 }
-              } else if (curVal && typeof(curVal) === "object"){
-                if (commonVal && typeof(commonVal) ==="object"){
-                  if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))){
+              } else if (curVal && typeof (curVal) === "object") {
+                if (commonVal && typeof (commonVal) === "object") {
+                  if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))) {
                     newVal = curVal;
                     if (!this.containsObject(curVal, allFieldVal[fieldId])) {
                       allFieldVal[fieldId].push(curVal);
@@ -417,7 +417,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // clean up step for fields that are empty
           for (var fieldId in allFieldVal) {
             if (allFieldVal[fieldId].length === 0) {
-              for (var wellIdx in differentWellsVals){
+              for (var wellIdx in differentWellsVals) {
                 delete differentWellsVals[wellIdx][fieldId];
               }
             }
@@ -428,11 +428,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var well = {};
           for (var fieldId in wellsHash[0]) {
             var curVal = wellsHash[0][fieldId];
-            if (Array.isArray(curVal)){
+            if (Array.isArray(curVal)) {
               if (curVal.length > 0) {
                 well[fieldId] = curVal
               }
-            } else if (curVal){
+            } else if (curVal) {
               well[fieldId] = curVal;
             }
           }
@@ -443,10 +443,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       // get all wells that has data
-      getWellSetAddressWithData: function(){
+      getWellSetAddressWithData: function() {
         var address = [];
         var derivative = this.engine.derivative;
-        for (var id in derivative){
+        for (var id in derivative) {
           address.push(this.indexToAddress(id));
         }
         return address;

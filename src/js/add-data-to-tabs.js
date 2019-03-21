@@ -14,7 +14,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _applyFieldData: function(id, v) {
-        this.fieldMap[id].setValue(v); 
+        this.fieldMap[id].setValue(v);
       }
     }
   }

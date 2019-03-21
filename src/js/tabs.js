@@ -30,7 +30,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tabData = this.options.attributes.tabs;
         var that = this;
 
-        tabData.forEach(function (tab, tabIndex) {
+        tabData.forEach(function(tab, tabIndex) {
           that.allTabs[tabIndex] = that._createElement("<div></div>").addClass("plate-setup-tab");
           $(that.allTabs[tabIndex]).data("index", tabIndex)
             .text(tab.name);
@@ -40,7 +40,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           });
 
           $(that.tabHead).append(that.allTabs[tabIndex]);
-        }); 
+        });
 
         this.tabDataContainer = this._createElement("<div></div>").addClass("plate-setup-tab-data-container");
         $(this.tabContainer).append(this.tabDataContainer);

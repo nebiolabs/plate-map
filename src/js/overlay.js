@@ -69,7 +69,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
                 var well = JSON.parse(JSON.stringify(this.defaultWell));
                 var defaultValue = this.emptyWellWithDefaultVal;
-                for (var key in defaultValue){
+                for (var key in defaultValue) {
                   if (key in well) {
                     well[key] = defaultValue[key];
                     this._applyFieldData(key, defaultValue[key]);
@@ -84,7 +84,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               hasWellUpdate = true;
             }
           }
-          if (hasWellUpdate){
+          if (hasWellUpdate) {
             this.derivativeChange();
           }
 
@@ -97,8 +97,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       copyCriteria: function() {
         if (this.allSelectedObjects) {
-          var wells = this._getSelectedWells(); 
-          this.commonWell = this._getCommonFields(wells); 
+          var wells = this._getSelectedWells();
+          this.commonWell = this._getCommonFields(wells);
         } else {
           alert("Please select any well.");
         }
