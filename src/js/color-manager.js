@@ -5,7 +5,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
   plateLayOutWidget.colorManager = function() {
 
     return {
-        // See these are color pairs for the gradient.
+      // See these are color pairs for the gradient.
       colorPairs: [
         ["#e6e6e6", "#808080"],
         ["#66e8ff", "#0082c8"],

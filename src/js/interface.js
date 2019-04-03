@@ -57,22 +57,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return $(element);
       },
 
-      _setShortcuts: function () {
-        var that = this; 
-        window.addEventListener("cut", function (e) {
+      _setShortcuts: function() {
+        var that = this;
+        window.addEventListener("cut", function(e) {
           if (document.activeElement == document.body) {
             that.copyCriteria();
             that.clearCriteria();
             e.preventDefault();
           }
         });
-        window.addEventListener("copy", function (e) {
+        window.addEventListener("copy", function(e) {
           if (document.activeElement == document.body) {
             that.copyCriteria();
             e.preventDefault();
           }
         });
-        window.addEventListener("paste", function (e) {
+        window.addEventListener("paste", function(e) {
           if (document.activeElement == document.body) {
             that.pasteCriteria();
             e.preventDefault();

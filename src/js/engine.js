@@ -10,10 +10,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
       engine: {
 
         derivative: {},
+        colorMap: new Map(),
         stackUpWithColor: {},
         stackPointer: 2,
 
-        wellEmpty: function (well) {
+        wellEmpty: function(well) {
           for (var prop in well) {
             var curVal = well[prop];
             if (curVal !== null && curVal !== undefined) {
@@ -38,16 +39,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var data = this.derivative[idx];
             var wellData = {};
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
-              var attr = THIS.globalSelectedAttributes[i]; 
+              var attr = THIS.globalSelectedAttributes[i];
 
-              if (attr in THIS.globalSelectedMultiplexSubfield){
+              if (attr in THIS.globalSelectedMultiplexSubfield) {
                 var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
                 var newMultiplexVal = [];
-                for (var multiplexIdx in data[attr]){
+                for (var multiplexIdx in data[attr]) {
                   var curMultiplexVals = data[attr][multiplexIdx];
                   var newVal = {};
                   newVal[attr] = curMultiplexVals[attr];
-                  selectedSubFields.forEach(function (subFieldId) {
+                  selectedSubFields.forEach(function(subFieldId) {
                     newVal[subFieldId] = curMultiplexVals[subFieldId];
                   });
                   newMultiplexVal.push(newVal);
@@ -60,15 +61,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
               }
             }
             if ($.isEmptyObject(wellData)) {
-              derivativeJson[idx] = null; 
+              derivativeJson[idx] = null;
             } else {
               derivativeJson[idx] = JSON.stringify(wellData);
             }
           }
 
           while (!$.isEmptyObject(derivativeJson)) {
-            var keys = Object.keys(derivativeJson).map(function (k) {return parseFloat(k, 10);});
-            keys.sort(function (a, b) {return a-b;}); 
+            var keys = Object.keys(derivativeJson).map(function(k) {
+              return parseFloat(k, 10);
+            });
+            keys.sort(function(a, b) {
+              return a - b;
+            });
 
             var refDerivativeIndex = keys[0];
             var referenceDerivative = derivativeJson[refDerivativeIndex];
@@ -86,7 +91,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             } else {
               // if checked boxes have values
               for (var i = 0; i < keys.length; i++) {
-                var idx = keys[i]; 
+                var idx = keys[i];
                 if (referenceDerivative == derivativeJson[idx]) {
                   arr.push(idx);
                   this.stackUpWithColor[this.stackPointer] = arr;
@@ -118,13 +123,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
               for (var tileIndex in arr) {
                 wholeNoTiles++;
-                var index = this.stackUpWithColor[color][tileIndex]; 
+                var index = this.stackUpWithColor[color][tileIndex];
                 var tile = THIS.allTiles[index];
                 var well = this.derivative[index];
-                THIS.setTileColor(tile, color, this.stackPointer); 
+                this.colorMap.set(index, color);
+                THIS.setTileColor(tile, color);
                 // Checks if all the required fields are filled
                 var completion = this.checkCompletion(well, tile);
-                THIS.setTileComplete(tile, completion == 1); 
+                THIS.setTileComplete(tile, completion == 1);
                 wholePercentage = wholePercentage + completion;
               }
             }
@@ -140,11 +146,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         },
 
         checkCompletion: function(wellData, tile) {
-          var req = 0; 
+          var req = 0;
           var fill = 0;
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
-            if (field.checkMultiplexCompletion){
+            if (field.checkMultiplexCompletion) {
               // also apply color
               var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
               if (multiplexStatus.include) {
@@ -161,7 +167,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
           if (req === fill) {
-            return 1; 
+            return 1;
           }
           return fill / req;
         },

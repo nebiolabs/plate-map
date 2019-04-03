@@ -40,14 +40,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _clearPresetSelection: function() {
         for (var j = 0; j < this.presets.length; j++) {
-          var p = this.presets[j]; 
+          var p = this.presets[j];
           p.removeClass("plate-setup-prest-tab-selected")
-            .addClass("plate-setup-prest-tab"); 
+            .addClass("plate-setup-prest-tab");
         }
       },
 
-      _selectPreset: function (preset) {
-        this.setCheckboxes(preset.data("preset")); 
+      _selectPreset: function(preset) {
+        this.setCheckboxes(preset.data("preset"));
         preset.removeClass("plate-setup-prest-tab")
           .addClass("plate-setup-prest-tab-selected");
       },
