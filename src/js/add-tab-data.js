@@ -226,11 +226,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         field.getValue = function() {
-          var v = field.input.select2('data');
+          var v = field.input.val();
           if (v.length) {
-            return v.map(function(i) {
-              return i.id;
-            });
+            return v;
           }
           return null;
         };

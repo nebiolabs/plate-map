@@ -21,19 +21,15 @@ const PATH = {
         dependencies: {
             css: [
                 'node_modules/bootstrap/dist/css/bootstrap.css',
-                'node_modules/select2/select2.css'
+                'node_modules/select2/dist/css/select2.css'
             ],
             js: [
                 'node_modules/jquery/dist/jquery.js',
                 'node_modules/jquery-ui-dist/jquery-ui.js',
                 'node_modules/bootstrap/dist/js/bootstrap.js',
-                'node_modules/select2/select2.js',
+                'node_modules/select2/dist/js/select2.js',
                 'node_modules/fabric/dist/fabric.js',
                 'node_modules/clipboard/dist/clipboard.js'
-            ],
-            img: [
-                'node_modules/select2/*.png',
-                'node_modules/select2/*.gif'
             ]
         },
     },
@@ -56,7 +52,7 @@ const PATH = {
     }
 };
 
-let config = {source: {css: '', js: '', img: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
+let config = {source: {css: '', js: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
 
 function concat_minify_css(name, source, destination) {
     return gulp.src(source, { sourcemaps: true })
@@ -79,7 +75,6 @@ function concat_uglify_js(name, source, destination) {
 function config_env(env) {
     config.source.css = PATH.source.dependencies.css.concat(PATH.source.app.css);
     config.source.js = PATH.source.dependencies.js.concat(PATH.source.app.js);
-    config.source.img = PATH.source.dependencies.img;
     config.source.html = PATH.source.app.html;
     config.destination.css = PATH.destination[env].css;
     config.destination.js = PATH.destination[env].js;
@@ -121,12 +116,6 @@ gulp.task('copy.src', () => {
     const js = gulp.src(config.source.js)
         .pipe(gulp.dest(config.destination.js));
     return mergeStream(css, js);
-});
-
-// Copy images of Select2 (v3.5.1) dependency to 'dist/prod/css'
-gulp.task('copy.img', () => {
-    return gulp.src(config.source.img)
-        .pipe(gulp.dest(config.destination.css));
 });
 
 gulp.task('inject.prod', () => {
@@ -176,11 +165,11 @@ gulp.task('server.prod', async () => {
 
 gulp.task('build.dist', gulp.series('config.pack', 'clean', 'css', 'js'));
 
-gulp.task('build.dev', gulp.series('config.dev', 'clean', 'copy.src', 'copy.img', 'inject.dev'));
+gulp.task('build.dev', gulp.series('config.dev', 'clean', 'copy.src', 'inject.dev'));
 
 gulp.task('serve.dev', gulp.series('build.dev', 'server.dev'));
 
-gulp.task('build.prod', gulp.series('config.prod', 'clean', 'css', 'js', 'copy.img', 'inject.prod'));
+gulp.task('build.prod', gulp.series('config.prod', 'clean', 'css', 'js', 'inject.prod'));
 
 gulp.task('serve.prod', gulp.series('build.prod', 'server.prod'));
 
