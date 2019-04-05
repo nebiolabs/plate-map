@@ -233,6 +233,12 @@ This function may be called at any time to load data. Well data should be passed
 }
 ```
 
+## createObject()
+Calling this function will return the current state of the plate-map, in the form as passed into `getPlates`.
+```js
+$("#my-plate-layout").plateLayOut("createObject")
+```
+
 ## isReadOnly()
 This function will disable editing of the plates, set `flag` to true for read only mode and set `flag` to false to disable read only mode
 ```js
