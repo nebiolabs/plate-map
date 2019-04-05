@@ -179,6 +179,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.onChange();
         });
 
+
+        input.on('select2:unselect', function (evt) {
+            // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+            input.one('select2:opening', function(e) { e.preventDefault(); });
+        });
+
         field.input = input;
       },
 
@@ -286,6 +292,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         input.on("select2:unselect", function (e) {
           field.multiOnChange(null, e.params.data);
+          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+          input.one('select2:opening', function(e) { e.preventDefault(); });
         });
 
         field.input = input;
@@ -670,6 +678,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         input.on("change", function(e) {
           field.onChange();
+        });
+
+
+        input.on('select2:unselect', function (evt) {
+          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+          input.one('select2:opening', function(e) { e.preventDefault(); });
         });
 
         field.input = input;
