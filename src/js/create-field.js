@@ -3,7 +3,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 (function($, fabric) {
 
   plateLayOutWidget.createField = function() {
-    // It create those fields in the tab , there is 4 types of them.
+    // It creates those fields in the tab , there is 4 types of them.
     return {
 
       _createField: function(field) {
@@ -90,17 +90,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           placeholder: "select",
           minimumResultsForSearch: 10
         };
+        var data_specified = false;
 
         if (config.options) {
           opts.data = config.options;
-        } else if (config.query) {
-          var query = config.query;
-          if (config.delay) {
-            query = this._debounce(config.delay, query);
-          }
-          opts.query = query;
-        } else {
-          throw "Must specify data or query";
+          data_specified = true;
+        }
+        if (config.ajax) {
+          opts.ajax = ajax;
+          data_specified = true;
+        }
+        if (!data_specified) {
+          throw "Must specify data or ajax";
         }
         return opts;
       },
@@ -108,7 +109,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createSelectField: function(field) {
         var id = field.id;
         var that = this;
-        var input = this._createElement("<input/>").attr("id", id)
+        var input = this._createElement("<select/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
@@ -143,21 +144,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         field.getValue = function() {
-          var v = input.select2('data');
-          return v ? v.id : null;
+          return input.val();
         };
 
         field.setValue = function(v) {
-          if (v) {
-            v = optMap[v];
-          }
-          input.select2('data', v);
-        };
-
-        field.setOpts = function(v) {
-          input.select2('data', {});
-          opts.data = v || [];
-          input.select2(opts);
+          input.val(v);
+          input.trigger("change.select2")
         };
 
         field.getText = function(v) {
@@ -187,13 +179,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.onChange();
         });
 
+
+        input.on('select2:unselect', function (evt) {
+            // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+            input.one('select2:opening', function(e) { e.preventDefault(); });
+        });
+
         field.input = input;
       },
 
       _createMultiSelectField: function(field) {
         var id = field.id;
         var that = this;
-        var input = this._createElement("<input/>").attr("id", id)
+        var input = this._createElement("<select/>").attr("id", id)
           .addClass("plate-setup-tab-multiselect-field");
         input.attr("multiple", "multiple");
 
@@ -229,36 +227,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        field.setOpts = function(v) {
-          var allOpts = field.data.options;
-          var selectedVal = [];
-          for (var id in allOpts) {
-            var curOpts = allOpts[id];
-            if (v.indexOf(curOpts["id"]) >= 0) {
-              selectedVal.push(curOpts);
-            }
-          }
-
-          opts.data = selectedVal;
-          input.select2(opts);
-        };
-
         field.getValue = function() {
-          var v = input.select2('data');
+          var v = input.val();
           if (v.length) {
-            return v.map(function(i) {
-              return i.id;
-            });
+            return v;
           }
           return null;
         };
 
         field.setValue = function(v) {
           v = v || [];
-          v = v.map(function(i) {
-            return optMap[i];
-          });
-          input.select2('data', v);
+          input.val(v);
+          input.trigger("change.select2");
         };
 
         field.getText = function(v) {
@@ -273,15 +253,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return "";
         };
 
-        field.multiOnChange = function (added, removed) {
+        field.multiOnChange = function(added, removed) {
           if (added) {
             added = added.id.toString();
           }
           if (removed) {
             removed = removed.id.toString();
           }
-          var data = {
-          };
+          var data = {};
           data[field.id] = {
             multi: true,
             added: added,
@@ -291,7 +270,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           that._addAllData(data);
         };
 
-        field.parseText = function(value){
+        field.parseText = function(value) {
           var v = value;
           if (v && v.length) {
             v = v.map(function(opt) {
@@ -307,11 +286,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        input.on("change", function(e, generated) {
-          var added = e.added;
-          var removed = e.removed;
-          //field.onChange();
-          field.multiOnChange(added, removed);
+        input.on("select2:select", function (e) {
+          field.multiOnChange(e.params.data, null);
+        });
+
+        input.on("select2:unselect", function (e) {
+          field.multiOnChange(null, e.params.data);
+          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+          input.one('select2:opening', function(e) { e.preventDefault(); });
         });
 
         field.input = input;
@@ -356,7 +338,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             unitText.text(defaultUnit);
             field.root.find(".plate-setup-tab-field-container").append(unitText);
           } else {
-            unitInput = this._createElement("<input/>").attr("id", id)
+            unitInput = this._createElement("<select/>").attr("id", id)
               .addClass("plate-setup-tab-label-select-field");
 
             field.root.find(".plate-setup-tab-field-container").append(unitInput);
@@ -368,7 +350,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 text: unit
               };
               if (unit == defaultUnit) {
-                selected = o;
+                selected = unit;
               }
               return o;
             });
@@ -380,7 +362,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             };
 
             unitInput.select2(opts);
-            unitInput.select2("data", selected);
+            unitInput.val(selected);
           }
         }
 
@@ -405,7 +387,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 text: curUnit
               };
               if (curUnit == field.defaultUnit) {
-                selected = cleanUnit;
+                selected = curUnit;
               }
               return cleanUnit;
             });
@@ -416,8 +398,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
             allowClear: false,
             minimumResultsForSearch: 10
           };
+          unitInput.select2("destroy");
+          unitInput.val(null);
+          unitInput.empty();
           unitInput.select2(newOpts);
-          unitInput.select2("data", selected);
+          unitInput.val(selected);
         };
 
         field.parseValue = function(value) {
@@ -547,19 +532,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.setUnit = function(unit) {
           if (unitInput) {
             unit = unit || field.defaultUnit;
-            if (unit != null) {
-              unit = {
-                id: unit,
-                text: unit
-              };
-            }
-            unitInput.select2("data", unit);
+            unitInput.val(unit);
+            unitInput.trigger("change.select2");
           }
         };
 
         // val now contains unit
         field.getText = function(val) {
-          if (typeof(val) === 'object' && val) {
+          if (typeof (val) === 'object' && val) {
             var v = val.value;
             var u = val.unit;
             if (v == null) {
@@ -586,9 +566,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return v;
         };
 
-        field.parseText = function(v){
+        field.parseText = function(v) {
           var textVal = field.parseValue(v);
-          if (textVal && typeof(textVal) === "object"){
+          if (textVal && typeof (textVal) === "object") {
             return textVal.value + textVal.unit;
           } else if (textVal) {
             return textVal
@@ -620,7 +600,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _createBooleanField: function(field) {
         var id = field.id;
         var that = this;
-        var input = this._createElement("<input/>").attr("id", id)
+        var input = this._createElement("<select/>").attr("id", id)
           .addClass("plate-setup-tab-select-field");
         that.defaultWell[id] = null;
 
@@ -637,14 +617,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           data: [tval, fval],
           placeholder: "select",
           allowClear: true,
-          minimumResultsForSearch: -1,
-          initSelection: function(element, callback) {
-            var v = element.val();
-            callback({
-              id: v,
-              text: v
-            });
-          }
+          minimumResultsForSearch: -1
         };
 
         input.select2(opts);
@@ -684,13 +657,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.setValue = function(v) {
           if (v == true || v == "true") {
-            v = tval;
+            v = "true";
           } else if (v == false || v == "false") {
-            v = fval;
+            v = "false";
           } else {
             v = null;
           }
-          input.select2('data', v);
+          input.val(v);
+          input.trigger("change.select2");
         };
 
         field.getText = function(v) {
@@ -704,6 +678,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         input.on("change", function(e) {
           field.onChange();
+        });
+
+
+        input.on('select2:unselect', function (evt) {
+          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
+          input.one('select2:opening', function(e) { e.preventDefault(); });
         });
 
         field.input = input;
@@ -721,40 +701,42 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var fieldContainer1 = that._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
         field.root.find(".plate-setup-tab-field-right-side").append(nameContainer1, fieldContainer1);
 
-        field.singleSelect = this._createElement("<input/>").attr("id", field.id + "SingleSelect")
+        field.singleSelect = this._createElement("<select/>").attr("id", field.id + "SingleSelect")
           .addClass("plate-setup-tab-multiplex-single-select-field");
 
         field.singleSelect.appendTo(fieldContainer1);
 
-        field.singleSelectValue = function () {
-          var v = field.singleSelect.select2("data");
-          if (v != null) {
-            v = v.id;
-          }
-          return v;
+        field.singleSelectValue = function() {
+          return field.singleSelect.val();
         };
 
-        var setSingleSelectOptions = function (v, selected_v) {
+        var setSingleSelectOptions = function(v, selected_v) {
           var opts = {
             allowClear: false,
             placeholder: "select",
             minimumResultsForSearch: 10,
             data: v || []
-          }
+          };
           if (!selected_v) {
             if (opts.data.length) {
-              selected_v = opts.data[0];
+              selected_v = opts.data[0].id;
             } else {
               selected_v = null;
             }
           }
-          field.singleSelect.select2('data', []);
+          if (field.singleSelect.hasClass("select2-hidden-accessible")) {
+            field.singleSelect.select2("destroy");
+          }
+          field.singleSelect.val(null);
+          field.singleSelect.empty();
           field.singleSelect.select2(opts);
-          field.singleSelect.select2('data', selected_v);
+          field.singleSelect.val(selected_v);
           field.singleSelect.prop("disabled", opts.data.length == 0);
+          field.singleSelect.trigger("change.select2");
+          field.singleSelect.on("change.select2", singleSelectChange);
         };
 
-        var singleSelectChange = function () {
+        var singleSelectChange = function() {
           var v = field.singleSelectValue();
 
           field.updateSubFieldUnitOpts(v);
@@ -784,8 +766,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         setSingleSelectOptions([]);
 
-        field.singleSelect.on("change", singleSelectChange);
-
         field._changeMultiFieldValue = function(added, removed) {
           var newSubFieldValue = {};
           for (var subFieldName in field.data.multiplexFields) {
@@ -808,7 +788,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           if (removed) {
-            if (removed.value){
+            if (removed.value) {
               val = removed.value;
             } else {
               newSubFieldValue[field.id] = removed.id;
@@ -891,7 +871,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.subFieldList.forEach(function(subField) {
             if (subField.data.hasMultiplexUnit) {
               if (curOpts && curOpts.hasOwnProperty("unitOptions")) {
-								subField.setUnitOpts(curOpts.unitOptions[subField.id]);
+                subField.setUnitOpts(curOpts.unitOptions[subField.id]);
               } else {
                 subField.setUnitOpts(null);
               }
@@ -945,7 +925,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                       });
                     } else {
                       if (subfield.data.units) {
-                        if (subfield.data.units.length > 1){
+                        if (subfield.data.units.length > 1) {
                           subfield.disabled(false);
                         }
                       }
@@ -955,8 +935,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                       };
                       newVal[subfield.id] = subfield.parseValue(val);
                     }
-                  }
-                   else {
+                  } else {
                     newVal[subfield.id] = subfield.parseValue(null);
                   }
                 });
@@ -973,7 +952,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               });
             });
             // set the newest selected to be the current obj
-            curOpt = selectList[v.length - 1];
+            curOpt = selectList[v.length - 1].id;
           }
 
           field.detailData = newMultiplexVal;
@@ -1040,7 +1019,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var valCount = 0;
           var completionPct = 0;
           var include = false;
-          function getSubfieldStatus (vals) {
+
+          function getSubfieldStatus(vals) {
             var req = 0;
             var fill = 0;
             for (var subFieldId in field.subFieldList) {
@@ -1049,7 +1029,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (subField.required) {
                 include = true;
                 req++;
-                if (typeof(curVal) === 'object' && curVal) {
+                if (typeof curVal === 'object' && curVal) {
                   if (curVal.value) {
                     fill++;
                   }
@@ -1058,12 +1038,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 }
               }
             }
-            return fill/req;
+            return fill / req;
           }
 
           // for cases has value in multiplex field
           if (valList) {
-            if (valList.length > 0){
+            if (valList.length > 0) {
               for (var idx in valList) {
                 valCount++;
                 var vals = valList[idx];
@@ -1073,37 +1053,37 @@ var plateLayOutWidget = plateLayOutWidget || {};
               include = true;
               valCount = 1;
             }
-          }  else if (field.required) {
+          } else if (field.required) {
             include = true;
             valCount = 1;
           }
 
           return {
             include: include,
-            completionPct: completionPct/valCount
+            completionPct: completionPct / valCount
           };
         };
 
         // valList contains all of the vals for selected val
-        field.applyMultiplexSubFieldColor = function(valList){
-          function updateSubFieldWarningMap (vals) {
+        field.applyMultiplexSubFieldColor = function(valList) {
+          function updateSubFieldWarningMap(vals) {
             for (var subFieldId in field.subFieldList) {
               var subField = field.subFieldList[subFieldId];
               // loop through each well's multiplexval list
-              if (vals === null){
-                if (field.required && subField.required){
+              if (vals === null) {
+                if (field.required && subField.required) {
                   subFieldWarningMap[subField.id].warningStatus.push(true);
                 }
-              } else if (typeof(vals) === "object") {
+              } else if (typeof (vals) === "object") {
                 if (vals.length === 0) {
-                  if (field.required && subField.required){
+                  if (field.required && subField.required) {
                     subFieldWarningMap[subField.id].warningStatus.push(true);
                   }
                 } else {
                   for (var multiplexIdx in vals) {
                     var curVal = vals[multiplexIdx][subField.id];
                     if (subField.required) {
-                      if (typeof(curVal) === 'object' && curVal) {
+                      if (typeof (curVal) === 'object' && curVal) {
                         if (!curVal.value) {
                           subFieldWarningMap[subField.id].warningStatus.push(true);
                         } else {
@@ -1122,7 +1102,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           var subFieldWarningMap = {};
-          field.subFieldList.forEach(function(subField){
+          field.subFieldList.forEach(function(subField) {
             if (subField.required) {
               subFieldWarningMap[subField.id] = {
                 field: subField,
@@ -1138,11 +1118,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           var requiredSubField = [];
           var mainFieldStatus = [];
-          for (var subFieldId in subFieldWarningMap){
+          for (var subFieldId in subFieldWarningMap) {
             var subField = subFieldWarningMap[subFieldId].field;
             if (subFieldWarningMap[subFieldId].warningStatus.indexOf(true) >= 0) {
-              var text =  subField.name + " is a required subfield for " + field.name + ", please make sure all " + field.name + " have " + subField.name;
-              if (field.required){
+              var text = subField.name + " is a required subfield for " + field.name + ", please make sure all " + field.name + " have " + subField.name;
+              if (field.required) {
                 that.fieldWarningMsg(subField, text, true);
                 mainFieldStatus.push(true);
               } else {
@@ -1171,16 +1151,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field.parseMainFieldVal = function(val) {
           var optMap = field.data.options;
-          for (var idx = 0; idx < optMap.length; idx++){
+          for (var idx = 0; idx < optMap.length; idx++) {
             var curOpt = optMap[idx];
-            if (curOpt.id === val){
+            if (curOpt.id === val) {
               return curOpt.text
             }
           }
         };
       },
 
-      _deleteDialog: function (field) {
+      _deleteDialog: function(field) {
         var that = this;
 
         var valMap = field.allSelectedMultipleVal;
@@ -1204,7 +1184,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var tableArea = $("<div/>").appendTo(dialogContent);
         var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end").appendTo(dialogContent);
 
-        if (valToRemove.length > 0){
+        if (valToRemove.length > 0) {
           // apply CSS property for table
           $("<p/>").text(field.name + " in selected wells: choose items to delete and click the delete button below").appendTo(tableArea);
 
@@ -1218,7 +1198,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             var deleteCheckedButton = $("<button class='multiple-field-manage-delete-button'>Delete Checked Items</button>");
             buttonRow.append(deleteCheckedButton);
             deleteCheckedButton.click(function() {
-              table.find("input:checked").each(function () {
+              table.find("input:checked").each(function() {
                 var val = this.value;
                 field.multiOnChange(null, {id: val});
               });
@@ -1245,7 +1225,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      _deleteDialogTable: function (field, valMap) {
+      _deleteDialogTable: function(field, valMap) {
         var that = this;
         var colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
         if (!that.readOnly) {
@@ -1255,13 +1235,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var thead = $('<thead/>').appendTo(table);
         var tr = $('<tr/>').appendTo(thead);
 
-        tr.append(colName.map(function (text) {
+        tr.append(colName.map(function(text) {
           return $('<th/>').text(text);
         }));
 
         var tbody = $("<tbody/>").appendTo(table);
 
-        field.data.options.forEach(function (opt) {
+        field.data.options.forEach(function(opt) {
           if (opt.id in valMap) {
             var tr = $('<tr/>').appendTo(tbody);
             var checkbox = $("<input type='checkbox'>").prop("value", opt.id);
@@ -1276,7 +1256,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return table;
       },
 
-      _createDeleteButton: function (field) {
+      _createDeleteButton: function(field) {
         var that = this;
         var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
         deleteButton.id = field.id + "Delete";
@@ -1287,7 +1267,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         field.deleteButton = deleteButton;
         field.root.find(".plate-setup-tab-field-right-side").append(buttonContainer);
 
-        deleteButton.click(function () {
+        deleteButton.click(function() {
           that._deleteDialog(field);
         });
       }

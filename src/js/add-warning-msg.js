@@ -2,16 +2,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 (function($, fabric) {
 
-  plateLayOutWidget.addWarningMsg = function () {
+  plateLayOutWidget.addWarningMsg = function() {
     // For those check boxes associated with every field in the tab
     return {
-      fieldWarningMsg: function (field, text, include) {
+      fieldWarningMsg: function(field, text, include) {
         var that = this;
         var imgId = "fieldWarning" + field.id;
         var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
         //field.root.find(".plate-setup-tab-name").append('<img id="theImg" src="theImg.png" />')
         if (include) {
-          if (field.root.find("#" + imgId).length <= 0){
+          if (field.root.find("#" + imgId).length <= 0) {
             field.root.find(".plate-setup-tab-name").text(" " + field.name);
             field.root.find(".plate-setup-tab-name").prepend(img);
 
@@ -19,9 +19,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
             popText.text(text);
             field.root.find(".plate-setup-tab-name").append(popText);
 
-            $("#" + imgId).hover(function (e) {
+            $("#" + imgId).hover(function(e) {
               popText[0].style.display = 'flex';
-            }, function () {
+            }, function() {
               popText.hide();
             });
           }
@@ -35,7 +35,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
       },
 
-      removeWarningMsg: function (field, text, include) {
+      removeWarningMsg: function(field, text, include) {
         var that = this;
         var imgId = "fieldWarning" + field.id;
         var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
@@ -47,9 +47,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
           popText.text(text);
           field.root.find(".plate-setup-tab-name").append(popText);
 
-          $("#" + imgId).hover(function (e) {
+          $("#" + imgId).hover(function(e) {
             popText[0].style.display = 'inline-block';
-          }, function () {
+          }, function() {
             popText.hide();
           });
 
@@ -67,11 +67,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var req = 0;
         var fill = 0;
         var fieldData = {};
-        that.fieldList.forEach(function(field){
+        that.fieldList.forEach(function(field) {
           fieldData[field.id] = [];
         });
-        wells.forEach(function(well){
-          if (!that.engine.wellEmpty(well)){
+        wells.forEach(function(well) {
+          if (!that.engine.wellEmpty(well)) {
             for (var fieldId in fieldData) {
               if (fieldId in well) {
                 fieldData[fieldId].push(well[fieldId]);
@@ -83,12 +83,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
         for (var i = 0; i < that.fieldList.length; i++) {
           var field = that.fieldList[i];
-          if (field.applyMultiplexSubFieldColor){
+          if (field.applyMultiplexSubFieldColor) {
             field.applyMultiplexSubFieldColor(fieldData[field.id]);
           } else {
             if (field.required) {
               var include = false;
-              fieldData[field.id].forEach(function(val){
+              fieldData[field.id].forEach(function(val) {
                 // for multiselect
                 if (val instanceof Array) {
                   if (val.length === 0) {

@@ -16,8 +16,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               for (var c = area.minCol; c <= area.maxCol; c++) {
                 var tile = that.allTiles[c + cols * r];
                 if (tiles.indexOf(tile) < 0) {
-                  if (that.disableAddDeleteWell){
-                    if(that.addressAllowToEdit.indexOf(tile.address) >= 0){
+                  if (that.disableAddDeleteWell) {
+                    if (that.addressAllowToEdit.indexOf(tile.address) >= 0) {
                       tiles.push(tile);
                     }
                   } else {
@@ -155,8 +155,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var cols = this.dimensions.cols;
         var rows = this.dimensions.rows;
 
-        var w = this.sizes.spacing; 
-        var m = this.sizes.label_spacing; 
+        var w = this.sizes.spacing;
+        var m = this.sizes.label_spacing;
 
         var x = (coord.x - m) / w;
         var y = (coord.y - m) / w;
@@ -172,12 +172,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _wellToCoords: function(well, center) {
         //Convert a well to a coordinate
-        var w = this.sizes.spacing; 
-        var m = this.sizes.label_spacing; 
+        var w = this.sizes.spacing;
+        var m = this.sizes.label_spacing;
         var x = well.col * w + m;
         var y = well.row * w + m;
         if (center) {
-          var hw = w/2;
+          var hw = w / 2;
           x = x + hw;
           y = y + hw;
         }
@@ -193,8 +193,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var rows = area.maxRow - area.minRow + 1;
         var cols = area.maxCol - area.minCol + 1;
 
-        var w = this.sizes.spacing; 
-        var m = this.sizes.label_spacing; 
+        var w = this.sizes.spacing;
+        var m = this.sizes.label_spacing;
 
         return {
           top: area.minRow * w + m,
@@ -209,8 +209,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var rows = this.dimensions.rows;
         var cols = this.dimensions.cols;
 
-        var w = this.sizes.spacing; 
-        var m = this.sizes.label_spacing; 
+        var w = this.sizes.spacing;
+        var m = this.sizes.label_spacing;
 
         var left = (rect.left - m) / w;
         var top = (rect.top - m) / w;

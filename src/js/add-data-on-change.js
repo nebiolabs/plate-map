@@ -17,8 +17,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
             if (tile.index in this.engine.derivative) {
               well = this.engine.derivative[tile.index];
             } else {
-              well = $.extend(true, {}, this.defaultWell); 
-              this.engine.derivative[tile.index] = well; 
+              well = $.extend(true, {}, this.defaultWell);
+              this.engine.derivative[tile.index] = well;
             }
             var processedData = this.processWellData(data, well, noOfSelectedObjects, wells);
             wells = processedData.wells;
@@ -28,8 +28,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
               if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
                 var wellCopy = JSON.parse(JSON.stringify(well));
                 var defaultValue = this.emptyWellWithDefaultVal;
-                for (var key in defaultValue){
-                  if (key in wellCopy){
+                for (var key in defaultValue) {
+                  if (key in wellCopy) {
                     wellCopy[key] = defaultValue[key];
                     this._applyFieldData(key, defaultValue[key]);
                   }
@@ -51,13 +51,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
 
-        if (!wellList){
+        if (!wellList) {
           wellList = [];
         }
         for (var id in newData) {
           var v;
-          if (newData[id] !== undefined && newData[id] !== null ) {
-            if (newData[id].multi){
+          if (newData[id] !== undefined && newData[id] !== null) {
+            if (newData[id].multi) {
               var curData = newData[id];
               var preData = curWell[id];
               var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
@@ -83,7 +83,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var addNew = curData.added;
         var removed = curData.removed;
         if (addNew) {
-          if (preData){
+          if (preData) {
             if (addNew.value) {
               var add = true;
               for (var listIdx in preData) {
@@ -96,7 +96,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     if (val[fieldId].toString() === addNew.id.toString()) {
                       for (var subFieldId in val) {
                         // over write previous data if only one well is selected
-                        if (subFieldId in addNew.value && subFieldId !== fieldId){
+                        if (subFieldId in addNew.value && subFieldId !== fieldId) {
                           if (noOfSelectedObjects === 1) {
                             val[subFieldId] = addNew.value[subFieldId];
                           } else if (addNew.value[subFieldId]) {
@@ -119,7 +119,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             preData = [];
             if (addNew.value) {
               preData.push(addNew.value);
-            } else if (addNew){
+            } else if (addNew) {
               preData.push(addNew);
             }
           }
@@ -128,7 +128,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var removeListIndex = function(preData, removeIndex) {
           var newPreData = [];
           for (var idx in preData) {
-            if (parseInt(idx) !== parseInt(removeIndex)){
+            if (parseInt(idx) !== parseInt(removeIndex)) {
               newPreData.push(preData[idx]);
             }
           }
@@ -148,7 +148,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             // remove nested element
             preData = removeListIndex(preData, removeIndex);
           } else {
-            if (preData){
+            if (preData) {
               removeIndex = preData.indexOf(removed);
               if (removeIndex >= 0) {
                 preData = removeListIndex(preData, removeIndex);
@@ -157,29 +157,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
         if (preData && (preData.length == 0)) {
-          preData = null; 
+          preData = null;
         }
         return preData
       },
 
       _colorMixer: function() {
         if (!this.undoRedoActive) {
-            var data = this.createObject();
-            this.addToUndoRedo(data);
+          var data = this.createObject();
+          this.addToUndoRedo(data);
         }
-        this.engine.searchAndStack(); 
+        this.engine.searchAndStack();
         this.engine.applyColors();
         this.mainFabricCanvas.renderAll();
       },
 
-      derivativeChange: function(){
-          this._trigger("updateWells", null, this.createObject());
+      derivativeChange: function() {
+        this._trigger("updateWells", null, this.createObject());
       },
 
       createObject: function() {
-        var derivative = $.extend(true, {}, this.engine.derivative); 
-        var checkboxes = this.globalSelectedAttributes.slice(); 
-        var selectedAreas = this.selectedAreas.slice(); 
+        var derivative = $.extend(true, {}, this.engine.derivative);
+        var checkboxes = this.globalSelectedAttributes.slice();
+        var selectedAreas = this.selectedAreas.slice();
         var focalWell = this.focalWell;
 
         return {

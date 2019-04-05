@@ -54,13 +54,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
         numberText.text(color);
         plateIdDiv.append(numberText);
 
-        numberText.click(function(evt){
-          var addressToSelect = singleStack.map(function(addressIdx){
+        numberText.click(function(evt) {
+          var addressToSelect = singleStack.map(function(addressIdx) {
             return that.indexToAddress(addressIdx)
           });
           if (evt.ctrlKey) {
-            that.getSelectedAddress().forEach(function(val){
-              if (addressToSelect.indexOf(val) < 0){
+            that.getSelectedAddress().forEach(function(val) {
+              if (addressToSelect.indexOf(val) < 0) {
                 addressToSelect.push(val);
               }
             })
@@ -146,7 +146,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var dim = this.getDimensions();
         var that = this;
         for (var colorIdx in colorLocIdxMap) {
-          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function (locIdx) {
+          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function(locIdx) {
             return that.indexToAddress(locIdx, dim);
           })
         }
@@ -264,7 +264,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         overlayContainer.append(buttonContainer);
-        $(".plate-setup-bottom-container").prepend(overlayContainer);
+        this.bottomContainer.prepend(overlayContainer);
       }
     };
   }

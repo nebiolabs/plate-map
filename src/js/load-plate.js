@@ -7,29 +7,29 @@ var plateLayOutWidget = plateLayOutWidget || {};
     // Remember THIS points to plateLayOutWidget and 'this' points to engine
     return {
 
-      getPlates: function (data) {
+      getPlates: function(data) {
         //sanitize input
-        var derivative = {}; 
+        var derivative = {};
         for (var index in data.derivative) {
-          var well = data.derivative[index]; 
-          derivative[index] = this.sanitizeWell(well); 
+          var well = data.derivative[index];
+          derivative[index] = this.sanitizeWell(well);
         }
 
-        var checkboxes = data.checkboxes || []; 
-        var selection = this.sanitizeAreas(data.selectedAreas, data.focalWell); 
+        var checkboxes = data.checkboxes || [];
+        var selection = this.sanitizeAreas(data.selectedAreas, data.focalWell);
 
         var sanitized = {
           "derivative": derivative,
           "checkboxes": checkboxes,
           "selectedAreas": selection.selectedAreas,
           "focalWell": selection.focalWell
-        }; 
+        };
 
         this.setData(sanitized);
-      }, 
+      },
 
-      sanitizeAreas: function (selectedAreas, focalWell) {
-        var that = this; 
+      sanitizeAreas: function(selectedAreas, focalWell) {
+        var that = this;
         var rows = this.dimensions.rows;
         var cols = this.dimensions.cols;
 
@@ -37,14 +37,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           selectedAreas = [];
         }
         if (selectedAreas.length) {
-          selectedAreas = selectedAreas.map(function (area) {
+          selectedAreas = selectedAreas.map(function(area) {
             return {
-              minCol: that._coordIndex(Math.min(area.minCol, area.maxCol), cols), 
-              minRow: that._coordIndex(Math.min(area.minRow, area.maxRow), rows), 
-              maxCol: that._coordIndex(Math.max(area.minCol, area.maxCol), cols), 
+              minCol: that._coordIndex(Math.min(area.minCol, area.maxCol), cols),
+              minRow: that._coordIndex(Math.min(area.minRow, area.maxRow), rows),
+              maxCol: that._coordIndex(Math.max(area.minCol, area.maxCol), cols),
               maxRow: that._coordIndex(Math.max(area.minRow, area.maxRow), rows)
-            }; 
-          }); 
+            };
+          });
           var area = selectedAreas[selectedAreas.length - 1];
           if (focalWell && !this._wellInArea(focalWell, area)) {
             focalWell = null;
@@ -65,19 +65,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           selectedAreas = [this._wellToArea(focalWell)];
         }
         return {
-          selectedAreas: selectedAreas, 
+          selectedAreas: selectedAreas,
           focalWell: focalWell
         };
-      }, 
+      },
 
-      sanitizeWell: function (well) {
+      sanitizeWell: function(well) {
         var newWell = {};
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i];
           newWell[field.id] = field.parseValue(well[field.id]);
         }
-        return newWell; 
-      }, 
+        return newWell;
+      },
 
       setData: function(data) {
         this.engine.derivative = $.extend(true, {}, data.derivative);
