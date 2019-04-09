@@ -225,14 +225,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         });
 
-        field.getValue = function() {
-          var v = field.input.val();
-          if (v.length) {
-            return v;
-          }
-          return null;
-        };
-
         return field;
       }
     }

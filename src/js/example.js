@@ -64,19 +64,19 @@ window.onload = function() {
       placeHolder: "Amplicons",
       options: [
         {
-          id: 'A',
+          id: 11,
           text: 'Amplicon_A'
         },
         {
-          id: 'B',
+          id: 12,
           text: 'Amplicon_B'
         },
         {
-          id: 'C',
+          id: 13,
           text: 'Amplicon_C'
         },
         {
-          id: 'D',
+          id: 14,
           text: 'Amplicon_D'
         }
       ],
@@ -158,26 +158,25 @@ window.onload = function() {
         var v = volume;
         var vunit = "mL";
         var amplicons = [{
-          amplicons: "A",
+          amplicons: 11,
           template_ngul: 'a',
           primer_umolarity: 2,
           probe_umolarity: 3,
           dilution_factor: 4
-        },
-          {
-            amplicons: "B",
-            template_ngul: 'b',
-            primer_umolarity: 22,
-            probe_umolarity: 33,
-            dilution_factor: 44
-          }];
+        }, {
+          amplicons: 12,
+          template_ngul: 'b',
+          primer_umolarity: 22,
+          probe_umolarity: 33,
+          dilution_factor: 44
+        }];
         if (v < 1) {
           v *= 1000;
           vunit = "uL";
         }
         wells[i.toString()] = {
           volume: v,
-          pol: pol,
+          pol: [pol],
           amplicons: amplicons,
           on_ice: on_ice
         };
