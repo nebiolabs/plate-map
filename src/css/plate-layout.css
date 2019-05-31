@@ -390,7 +390,7 @@ input.invalid {
 }
 /* Modal Content */
 
-.modal {
+.plate-modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 2000; /* Sit on top */
@@ -404,8 +404,7 @@ input.invalid {
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.modal-content {
-  font-family: 'Roboto', sans-serif;
+.plate-modal-content {
   font-size: 14px;
   background-color: #fefefe;
   margin: auto;
@@ -413,11 +412,7 @@ input.invalid {
   border: 1px solid #888;
 }
 
-.delete-dialog .modal-content {
-  width: 550px;
-}
-
-.modal-content > * {
+.plate-modal-content > * {
   width: 100%;
 }
 

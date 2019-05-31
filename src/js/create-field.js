@@ -1197,15 +1197,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
 
-        var dialogDiv = $("<div/>").addClass("delete-dialog modal");
-        $('body').append(dialogDiv);
+        var dialogDiv = $("<div/>").addClass("plate-modal");
+        this.container.append(dialogDiv);
 
         function killDialog() {
           dialogDiv.hide();
           dialogDiv.remove();
         }
 
-        var dialogContent = $("<div/>").addClass("modal-content").appendTo(dialogDiv);
+        var dialogContent = $("<div/>").addClass("plate-modal-content").css('width', '550px').appendTo(dialogDiv);
         var tableArea = $("<div/>").appendTo(dialogContent);
         var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end").appendTo(dialogContent);
 
