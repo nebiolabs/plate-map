@@ -9,6 +9,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-container");
         this.bottomTableContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-table-container");
         this.bottomTable = this._createElement("<table></table>").addClass("plate-setup-bottom-table");
+        this.bottomTableHead = this._createElement("<thead></thead>");
+        this.bottomTableBody = this._createElement("<tbody></tbody>");
+        this.bottomTable.append(this.bottomTableHead);
+        this.bottomTable.append(this.bottomTableBody);
         this.bottomTableContainer.append(this.bottomTable);
         this.bottomContainer.append(this.bottomTableContainer);
         this.container.append(this.bottomContainer);
@@ -16,14 +20,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addBottomTableHeadings: function() {
 
-        this.bottomRow = this._createElement("<tr></tr>");
+        var row = this._createElement("<tr></tr>");
 
         var singleField = this._createElement("<th></th>")
           .text("Group");
-        this.bottomRow.prepend(singleField);
-        // Now we append all the captions at the place.
-        this.bottomTable.empty();
-        this.bottomTable.append(this.bottomRow);
+        row.prepend(singleField);
 
         this.rowCounter = 1;
 
@@ -31,10 +32,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var attr = this.globalSelectedAttributes[i];
           var field = this.fieldMap[attr];
           var singleField = this._createElement("<th></th>").text(field.name);
-          this.bottomRow.append(singleField);
+          row.append(singleField);
           this.rowCounter = this.rowCounter + 1;
         }
 
+        // Now we append all the captions at the place.
+        this.bottomTableBody.empty();
+        this.bottomTableHead.empty();
+        this.bottomTableHead.append(row);
         this.adjustFieldWidth(this.bottomRow);
       },
 
@@ -84,7 +89,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var dataDiv = this._createElement("<td></td>").text(text);
           row.append(dataDiv);
         }
-        this.bottomTable.append(row);
+        this.bottomTableBody.append(row);
         this.adjustFieldWidth(row);
       },
 
@@ -97,7 +102,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var plateIdDiv = this._createElement("<td></td>");
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
-        this.bottomTable.append(row);
+        this.bottomTableBody.append(row);
         this.createExportButton();
       },
 
