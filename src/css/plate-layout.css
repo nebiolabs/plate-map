@@ -191,7 +191,7 @@
   justify-content: center;
 }
 
-.plate-setup-prest-tab {
+.plate-setup-preset-tab {
   display: inline-block;
   flex-basis: 50px;
   padding: 0 5px;
@@ -205,7 +205,7 @@
   text-align: center;
 }
 
-.plate-setup-prest-tab-selected {
+.plate-setup-preset-tab-selected {
   display: inline-block;
   flex-basis: 50px;
   padding: 0 5px;
@@ -220,7 +220,7 @@
   color: #00506e;
 }
 
-.plate-setup-prest-tab-div {
+.plate-setup-preset-tab-div {
   padding-top: 3px;
 }
 

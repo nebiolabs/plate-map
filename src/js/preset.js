@@ -21,10 +21,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for (var i = 0; i < presets.length; i++) {
             var preset = presets[i];
-            var divText = this._createElement("<div></div>").addClass("plate-setup-prest-tab-div")
+            var divText = this._createElement("<div></div>").addClass("plate-setup-preset-tab-div")
               .text(preset.title);
 
-            var presetButton = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
+            var presetButton = this._createElement("<div></div>").addClass("plate-setup-preset-tab")
               .data("preset", preset.fields).append(divText);
             this.presetTabContainer.append(presetButton);
 
@@ -41,15 +41,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _clearPresetSelection: function() {
         for (var j = 0; j < this.presets.length; j++) {
           var p = this.presets[j];
-          p.removeClass("plate-setup-prest-tab-selected")
-            .addClass("plate-setup-prest-tab");
+          p.removeClass("plate-setup-preset-tab-selected")
+            .addClass("plate-setup-preset-tab");
         }
       },
 
       _selectPreset: function(preset) {
         this.setCheckboxes(preset.data("preset"));
-        preset.removeClass("plate-setup-prest-tab")
-          .addClass("plate-setup-prest-tab-selected");
+        preset.removeClass("plate-setup-preset-tab")
+          .addClass("plate-setup-preset-tab-selected");
       },
     };
   }
