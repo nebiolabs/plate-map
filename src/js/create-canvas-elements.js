@@ -60,7 +60,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fontSize: fontSize,
             top: top,
             left: left,
-            fontFamily: '"Roboto", "Arial", sans-serif',
+            fontFamily: 'sans-serif',
             selectable: false,
             fontWeight: "400"
           });
@@ -80,7 +80,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fontSize: fontSize,
             top: top,
             left: left,
-            fontFamily: '"Roboto", "Arial", sans-serif',
+            fontFamily: 'sans-serif',
             selectable: false,
             fontWeight: "400"
           });
@@ -195,7 +195,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: top,
           left: left,
           fill: 'black',
-          fontFamily: '"Roboto", "Arial", sans-serif',
+          fontFamily: 'sans-serif',
           fontSize: this.sizes.text_size,
           lockScalingX: true,
           lockScalingY: true,

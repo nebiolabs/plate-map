@@ -6,7 +6,6 @@
 }
 
 .plate-setup-wrapper {
-  font-family: "Roboto", "Arial", sans-serif;
   position: absolute;
   top: 0;
   left: 0;
@@ -363,6 +362,7 @@
 }
 
 .plate-setup-bottom-id {
+  font-family: sans-serif;
   width: 40px;
   text-align: center;
   background-image: linear-gradient(to right, rgba(255,255,255,0.3), transparent)
