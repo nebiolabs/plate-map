@@ -570,6 +570,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.bottomContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-container");
         this.bottomTableContainer = this._createElement("<div></div>").addClass("plate-setup-bottom-table-container");
         this.bottomTable = this._createElement("<table></table>").addClass("plate-setup-bottom-table");
+        this.bottomTableHead = this._createElement("<thead></thead>");
+        this.bottomTableBody = this._createElement("<tbody></tbody>");
+        this.bottomTable.append(this.bottomTableHead);
+        this.bottomTable.append(this.bottomTableBody);
         this.bottomTableContainer.append(this.bottomTable);
         this.bottomContainer.append(this.bottomTableContainer);
         this.container.append(this.bottomContainer);
@@ -577,14 +581,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addBottomTableHeadings: function() {
 
-        this.bottomRow = this._createElement("<tr></tr>");
+        var row = this._createElement("<tr></tr>");
 
         var singleField = this._createElement("<th></th>")
           .text("Group");
-        this.bottomRow.prepend(singleField);
-        // Now we append all the captions at the place.
-        this.bottomTable.empty();
-        this.bottomTable.append(this.bottomRow);
+        row.prepend(singleField);
 
         this.rowCounter = 1;
 
@@ -592,10 +593,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var attr = this.globalSelectedAttributes[i];
           var field = this.fieldMap[attr];
           var singleField = this._createElement("<th></th>").text(field.name);
-          this.bottomRow.append(singleField);
+          row.append(singleField);
           this.rowCounter = this.rowCounter + 1;
         }
 
+        // Now we append all the captions at the place.
+        this.bottomTableBody.empty();
+        this.bottomTableHead.empty();
+        this.bottomTableHead.append(row);
         this.adjustFieldWidth(this.bottomRow);
       },
 
@@ -645,7 +650,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var dataDiv = this._createElement("<td></td>").text(text);
           row.append(dataDiv);
         }
-        this.bottomTable.append(row);
+        this.bottomTableBody.append(row);
         this.adjustFieldWidth(row);
       },
 
@@ -658,7 +663,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var plateIdDiv = this._createElement("<td></td>");
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
-        this.bottomTable.append(row);
+        this.bottomTableBody.append(row);
         this.createExportButton();
       },
 
@@ -1135,7 +1140,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fontSize: fontSize,
             top: top,
             left: left,
-            fontFamily: '"Roboto", Arial, sans-serif',
+            fontFamily: 'sans-serif',
             selectable: false,
             fontWeight: "400"
           });
@@ -1155,7 +1160,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             fontSize: fontSize,
             top: top,
             left: left,
-            fontFamily: '"Roboto", Arial, sans-serif',
+            fontFamily: 'sans-serif',
             selectable: false,
             fontWeight: "400"
           });
@@ -1270,7 +1275,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           top: top,
           left: left,
           fill: 'black',
-          fontFamily: '"Roboto", Arial, sans-serif',
+          fontFamily: 'sans-serif',
           fontSize: this.sizes.text_size,
           lockScalingX: true,
           lockScalingY: true,
@@ -2536,15 +2541,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
 
-        var dialogDiv = $("<div/>").addClass("delete-dialog modal");
-        $('body').append(dialogDiv);
+        var dialogDiv = $("<div/>").addClass("plate-modal");
+        this.container.append(dialogDiv);
 
         function killDialog() {
           dialogDiv.hide();
           dialogDiv.remove();
         }
 
-        var dialogContent = $("<div/>").addClass("modal-content").appendTo(dialogDiv);
+        var dialogContent = $("<div/>").addClass("plate-modal-content").css('width', '550px').appendTo(dialogDiv);
         var tableArea = $("<div/>").appendTo(dialogContent);
         var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end").appendTo(dialogContent);
 
@@ -3956,10 +3961,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           for (var i = 0; i < presets.length; i++) {
             var preset = presets[i];
-            var divText = this._createElement("<div></div>").addClass("plate-setup-prest-tab-div")
+            var divText = this._createElement("<div></div>").addClass("plate-setup-preset-tab-div")
               .text(preset.title);
 
-            var presetButton = this._createElement("<div></div>").addClass("plate-setup-prest-tab")
+            var presetButton = this._createElement("<div></div>").addClass("plate-setup-preset-tab")
               .data("preset", preset.fields).append(divText);
             this.presetTabContainer.append(presetButton);
 
@@ -3976,15 +3981,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
       _clearPresetSelection: function() {
         for (var j = 0; j < this.presets.length; j++) {
           var p = this.presets[j];
-          p.removeClass("plate-setup-prest-tab-selected")
-            .addClass("plate-setup-prest-tab");
+          p.removeClass("plate-setup-preset-tab-selected")
+            .addClass("plate-setup-preset-tab");
         }
       },
 
       _selectPreset: function(preset) {
         this.setCheckboxes(preset.data("preset"));
-        preset.removeClass("plate-setup-prest-tab")
-          .addClass("plate-setup-prest-tab-selected");
+        preset.removeClass("plate-setup-preset-tab")
+          .addClass("plate-setup-preset-tab-selected");
       },
     };
   }

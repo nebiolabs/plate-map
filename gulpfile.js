@@ -20,13 +20,11 @@ const PATH = {
         },
         dependencies: {
             css: [
-                'node_modules/bootstrap/dist/css/bootstrap.css',
                 'node_modules/select2/dist/css/select2.css'
             ],
             js: [
                 'node_modules/jquery/dist/jquery.js',
                 'node_modules/jquery-ui-dist/jquery-ui.js',
-                'node_modules/bootstrap/dist/js/bootstrap.js',
                 'node_modules/select2/dist/js/select2.js',
                 'node_modules/fabric/dist/fabric.js',
                 'node_modules/clipboard/dist/clipboard.js'
