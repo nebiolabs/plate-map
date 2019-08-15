@@ -261,6 +261,10 @@
   display: flex;
 }
 
+.plate-setup-tab-field-container .select2-selection--multiple .select2-selection__choice {
+  white-space: normal;
+}
+
 .plate-setup-tab-input, .plate-setup-tab-select-field, .plate-setup-tab-multiplex-single-select-field {
   height: 28px;
   flex: 1 1 auto;

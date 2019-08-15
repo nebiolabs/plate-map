@@ -2,6 +2,28 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 (function($, fabric) {
 
+  function select2close(ev) {
+    if (ev.params.args.originalEvent) {
+      // When unselecting (in multiple mode)
+      ev.params.args.originalEvent.stopPropagation();
+    } else {
+      // When clearing (in single mode)
+      $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
+    }
+  }
+
+  function select2fix(input) {
+    // prevents select2 open on clear as of v4.0.8
+    input.on('select2:unselecting', select2close);
+  }
+
+  function select2setData(input, data, selected) {
+    input.empty();
+    var dataAdapter = input.data('select2').dataAdapter;
+    dataAdapter.addOptions(dataAdapter.convertToOptions(data));
+    input.val(selected);
+  }
+
   plateLayOutWidget.createField = function() {
     // It creates those fields in the tab , there is 4 types of them.
     return {
@@ -122,6 +144,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         });
 
         input.select2(opts);
+        select2fix(input);
 
         field.parseValue = function(value) {
           var v = value;
@@ -181,12 +204,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.onChange();
         });
 
-
-        input.on('select2:unselect', function (evt) {
-            // Prevent select2 v4.0.6rc1 opening dropdown on unselect
-            input.one('select2:opening', function(e) { e.preventDefault(); });
-        });
-
         field.input = input;
       },
 
@@ -207,6 +224,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           optMap[String(opt.id)] = opt;
         });
         input.select2(opts);
+        select2fix(input);
 
         field.disabled = function(bool) {
           input.prop("disabled", bool);
@@ -300,8 +318,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           var v = field._parseOne(e.params.data.id)
           v = {id: v};
           field.multiOnChange(null, v);
-          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
-          input.one('select2:opening', function(e) { e.preventDefault(); });
         });
 
         field.input = input;
@@ -401,16 +417,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
             });
           }
 
-          var newOpts = {
-            data: newUnits,
-            allowClear: false,
-            minimumResultsForSearch: 10
-          };
-          unitInput.select2("destroy");
-          unitInput.val(null);
-          unitInput.empty();
-          unitInput.select2(newOpts);
-          unitInput.val(selected);
+          select2setData(unitInput, newUnits, selected);
         };
 
         field.parseValue = function(value) {
@@ -629,6 +636,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         input.select2(opts);
+        select2fix(input);
 
         field.disabled = function(bool) {
           field.input.prop("disabled", bool);
@@ -688,12 +696,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
           field.onChange();
         });
 
-
-        input.on('select2:unselect', function (evt) {
-          // Prevent select2 v4.0.6rc1 opening dropdown on unselect
-          input.one('select2:opening', function(e) { e.preventDefault(); });
-        });
-
         field.input = input;
       },
 
@@ -713,6 +715,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           .addClass("plate-setup-tab-multiplex-single-select-field");
 
         field.singleSelect.appendTo(fieldContainer1);
+        var opts = {
+          allowClear: false,
+          placeholder: "select",
+          minimumResultsForSearch: 10,
+          data: []
+        };
+        field.singleSelect.select2(opts);
+        select2fix(field.singleSelect);
 
         var multiselectSetValue = field.setValue;
 
@@ -727,30 +737,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
           return field._parseOne(v)
         };
 
-        var setSingleSelectOptions = function(v, selected_v) {
-          var opts = {
-            allowClear: false,
-            placeholder: "select",
-            minimumResultsForSearch: 10,
-            data: v || []
-          };
-          if (!selected_v) {
-            if (opts.data.length) {
-              selected_v = opts.data[0].id;
+        var setSingleSelectOptions = function(data, selected) {
+          data = data || [];
+
+          if (!selected) {
+            if (data.length) {
+              selected = data[0].id;
             } else {
-              selected_v = null;
+              selected = null;
             }
           }
-          if (field.singleSelect.hasClass("select2-hidden-accessible")) {
-            field.singleSelect.select2("destroy");
-          }
-          field.singleSelect.val(null);
-          field.singleSelect.empty();
-          field.singleSelect.select2(opts);
-          field.singleSelect.val(selected_v);
-          field.singleSelect.prop("disabled", opts.data.length == 0);
+          select2setData(field.singleSelect, data, selected);
+          field.singleSelect.prop("disabled", data.length == 0);
           field.singleSelect.trigger("change.select2");
-          field.singleSelect.on("change.select2", singleSelectChange);
         };
 
         var singleSelectChange = function() {
@@ -782,6 +781,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         setSingleSelectOptions([]);
+        field.singleSelect.on("change.select2", singleSelectChange);
 
         field._changeMultiFieldValue = function(added, removed) {
           var newSubFieldValue = {};
