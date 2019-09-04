@@ -25,10 +25,10 @@
   "homepage": "https://github.com/nebiolabs/plate-map#readme",
   "dependencies": {
     "clipboard": "^2.0.4",
-    "fabric": "^2.7.0",
     "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.1",
-    "select2": "^4.0.8"
+    "select2": "^4.0.8",
+    "svgjs": "^2.6.2"
   },
   "devDependencies": {
     "browser-sync": "^2.26.7",

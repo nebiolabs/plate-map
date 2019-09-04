@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.engine = function(THIS) {
     // Methods which look after data changes and stack up accordingly
@@ -69,7 +69,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           while (!$.isEmptyObject(derivativeJson)) {
             var keys = Object.keys(derivativeJson).map(function(k) {
-              return parseFloat(k, 10);
+              return parseFloat(k);
             });
             keys.sort(function(a, b) {
               return a - b;
@@ -143,6 +143,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             THIS.overLayTextContainer.text("Completion Percentage: " + wholePercentage + "%");
           }
+          THIS.selectObjectInBottomTab();
         },
 
         checkCompletion: function(wellData, tile) {
@@ -174,4 +175,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
     }
   }
-})(jQuery, fabric);
+})(jQuery);

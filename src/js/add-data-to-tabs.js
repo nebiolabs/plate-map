@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.addDataToFields = function() {
 
@@ -18,4 +18,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
     }
   }
-})(jQuery, fabric)
+})(jQuery)

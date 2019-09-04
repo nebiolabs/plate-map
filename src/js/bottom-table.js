@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.bottomTable = function() {
     // for bottom table
@@ -64,14 +64,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
             return that.indexToAddress(addressIdx)
           });
           if (evt.ctrlKey) {
-            that.getSelectedAddress().forEach(function(val) {
+            that.getSelectedAddresses().forEach(function(val) {
               if (addressToSelect.indexOf(val) < 0) {
                 addressToSelect.push(val);
               }
             })
           }
-          that.setSelectedWell(addressToSelect);
-          that._trigger("selectedWells", null, {selectedAddress: that.getSelectedAddress()});
+          that.setSelectedAddresses(addressToSelect);
         });
 
         if (color > 0) {
@@ -149,11 +148,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var colorLocMap = {};
         var colorLocIdxMap = this.engine.stackUpWithColor;
         var dim = this.getDimensions();
-        var that = this;
         for (var colorIdx in colorLocIdxMap) {
           colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function(locIdx) {
-            return that.indexToAddress(locIdx, dim);
-          })
+            return this.indexToAddress(locIdx, dim);
+          }, this);
         }
 
         for (var i = 0; i < rows.length; i++) {
@@ -273,4 +271,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
     };
   }
-})(jQuery, fabric);
+})(jQuery);

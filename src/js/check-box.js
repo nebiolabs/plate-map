@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.checkBox = function() {
     // For those check boxes associated with every field in the tab
@@ -18,8 +18,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _applyCheckboxHandler: function(checkBoxImage) {
-        // We add checkbox handler here, thing is it s not checkbox , its an image and we change
-        // source
         var that = this;
         checkBoxImage.click(function(evt, machineClick) {
           var checkBox = $(this);
@@ -29,6 +27,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
           that.changeCheckboxes(changes);
         });
+      },
+
+      getCheckboxes: function () {
+        var fieldIds = this.globalSelectedAttributes.slice();
+        for (var subfieldIds of Object.values(this.globalSelectedMultiplexSubfield)) {
+          fieldIds = fieldIds.concat(subfieldIds);
+        }
+        return fieldIds;
       },
 
       changeSubFieldsCheckboxes: function(field, changes) {
@@ -53,7 +59,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return subFieldToInclude;
       },
 
-      changeCheckboxes: function(changes) {
+      changeCheckboxes: function(changes, noUndoRedo) {
         var gsa = [];
         var multiplexCheckedSubField = {};
         for (var i = 0; i < this.fieldList.length; i++) {
@@ -82,6 +88,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.globalSelectedAttributes = gsa;
         this._clearPresetSelection();
         this._colorMixer();
+        if (!noUndoRedo) {
+          this.addToUndoRedo();
+        }
       },
 
       setSubFieldCheckboxes: function(field, fieldIds) {
@@ -102,7 +111,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return subFieldToInclude;
       },
 
-      setCheckboxes: function(fieldIds) {
+      setCheckboxes: function(fieldIds, noUndoRedo) {
         fieldIds = fieldIds || [];
         var gsa = [];
         var multiplexCheckedSubField = {};
@@ -132,8 +141,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.globalSelectedAttributes = gsa;
         this._clearPresetSelection();
         this._colorMixer();
+        if (!noUndoRedo) {
+          this.addToUndoRedo();
+        }
       }
 
     };
   }
-})(jQuery, fabric);
+})(jQuery);

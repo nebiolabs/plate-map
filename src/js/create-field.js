@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   function select2close(ev) {
     if (ev.params.args.originalEvent) {
@@ -241,12 +241,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         field._parseMany = function(vals) {
           if (vals && vals.length) {
-            vals = vals.map(field._parseOne);
+            vals = vals.map(field._parseOne, this);
           } else {
             vals = null;
           }
           return vals;
-        }
+        };
 
         field.parseValue = function(value) {
           return field._parseMany(value);
@@ -1299,4 +1299,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
     };
   }
-})(jQuery, fabric);
+})(jQuery);

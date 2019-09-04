@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.addDataOnChange = function() {
     // This object is invoked when something in the tab fields change
@@ -8,17 +8,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addAllData: function(data) {
         // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          var wells = [];
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex];
+        var wells = [];
+        if (this.selectedIndices) {
+          var noOfSelectedObjects = this.selectedIndices.length;
+          this.selectedIndices.forEach(function (index) {
             var well;
-            if (tile.index in this.engine.derivative) {
-              well = this.engine.derivative[tile.index];
+            if (index in this.engine.derivative) {
+              well = this.engine.derivative[index];
             } else {
               well = $.extend(true, {}, this.defaultWell);
-              this.engine.derivative[tile.index] = well;
+              this.engine.derivative[index] = well;
             }
             var processedData = this.processWellData(data, well, noOfSelectedObjects, wells);
             wells = processedData.wells;
@@ -34,12 +33,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     this._applyFieldData(key, defaultValue[key]);
                   }
                 }
-                this.engine.derivative[tile.index] = wellCopy;
+                this.engine.derivative[index] = wellCopy;
               } else {
-                delete this.engine.derivative[tile.index];
+                delete this.engine.derivative[index];
               }
             }
-          }
+          }, this);
         }
         // update multiplex remove all field
         this._getAllMultipleVal(wells);
@@ -47,6 +46,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
         this._colorMixer();
         this.derivativeChange();
+        this.addToUndoRedo();
       },
 
       processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
@@ -163,33 +163,44 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _colorMixer: function() {
-        if (!this.undoRedoActive) {
-          var data = this.createObject();
-          this.addToUndoRedo(data);
-        }
         this.engine.searchAndStack();
         this.engine.applyColors();
-        this.mainFabricCanvas.renderAll();
       },
 
       derivativeChange: function() {
-        this._trigger("updateWells", null, this.createObject());
+        this._trigger("updateWells", null, this);
       },
 
-      createObject: function() {
+      createState: function() {
         var derivative = $.extend(true, {}, this.engine.derivative);
-        var checkboxes = this.globalSelectedAttributes.slice();
-        var selectedAreas = this.selectedAreas.slice();
-        var focalWell = this.focalWell;
+        var checkboxes = this.getCheckboxes();
+        var selectedIndices = this.selectedIndices.slice();
 
         return {
           "derivative": derivative,
           "checkboxes": checkboxes,
-          "selectedAreas": selectedAreas,
-          "focalWell": focalWell,
+          "selectedIndices": selectedIndices,
+          "requiredField": this.requiredField
+        };
+      },
+
+      getPlate: function() {
+        var wells = {};
+        for (var index in this.engine.derivative) {
+          var address = this.indexToAddress(index);
+          var well = this.engine.derivative[index];
+          wells[address] = $.extend(true, {}, well);
+        }
+        var checkboxes = this.getCheckboxes();
+        var selectedAddresses = this.getSelectedAddresses();
+
+        return {
+          "wells": wells,
+          "checkboxes": checkboxes,
+          "selectedAddresses": selectedAddresses,
           "requiredField": this.requiredField
         };
       }
     };
   }
-})(jQuery, fabric);
+})(jQuery);

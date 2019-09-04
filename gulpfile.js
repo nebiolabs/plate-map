@@ -26,7 +26,7 @@ const PATH = {
                 'node_modules/jquery/dist/jquery.js',
                 'node_modules/jquery-ui-dist/jquery-ui.js',
                 'node_modules/select2/dist/js/select2.js',
-                'node_modules/fabric/dist/fabric.js',
+                'node_modules/svgjs/dist/svg.js',
                 'node_modules/clipboard/dist/clipboard.js'
             ]
         },

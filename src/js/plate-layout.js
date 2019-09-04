@@ -6,8 +6,6 @@ $.widget("DNA.plateLayOut", {
     value: 0
   },
 
-  allTiles: [], // All tiles containes all thise circles in the canvas
-
   addressToLoc: function(layoutAddress) {
     var m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase())
     if (m) {
@@ -37,9 +35,6 @@ $.widget("DNA.plateLayOut", {
     if (!dimensions) {
       dimensions = this.dimensions;
     }
-    if (loc.r < 0) {
-      t
-    }
     if (!(loc.r >= 0 && loc.r < dimensions.rows)) {
       throw "Row index " + (loc.r + 1) + " invalid";
     }
@@ -64,6 +59,10 @@ $.widget("DNA.plateLayOut", {
     return code;
   },
 
+  _colKey: function (i) {
+    return (i+1).toString(10);
+  },
+
   indexToLoc: function(index, dimensions) {
     if (!dimensions) {
       dimensions = this.dimensions;
@@ -80,7 +79,7 @@ $.widget("DNA.plateLayOut", {
   },
 
   locToAddress: function(loc) {
-    return this._rowKey(loc.r) + (loc.c + 1).toString(10);
+    return this._rowKey(loc.r) + this._colKey(loc.c);
   },
 
   indexToAddress: function(index, dimensions) {
@@ -134,18 +133,14 @@ $.widget("DNA.plateLayOut", {
     // times _init is used.
   },
 
-  addData: function() {
-    alert("wow this is good");
-  },
-
-  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
+  // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A2:{field1: val1, field2: val2}}
   getTextDerivative: function(wellsData) {
     var textDerivative = {};
     var fieldMap = this.fieldMap;
-    for (var idx in wellsData) {
+    for (var address in wellsData) {
       var textValWell = {};
       var textFieldIdWell = {};
-      var curWellData = wellsData[idx];
+      var curWellData = wellsData[address];
       for (var fieldId in curWellData) {
         if (fieldId in this.fieldMap) {
           var field = this.fieldMap[fieldId];
@@ -158,7 +153,7 @@ $.widget("DNA.plateLayOut", {
           textValWell[fieldId] = curWellData[fieldId];
         }
       }
-      textDerivative[idx] = {
+      textDerivative[address] = {
         textVal: textValWell,
         textFieldVal: textFieldIdWell
       };
@@ -167,9 +162,104 @@ $.widget("DNA.plateLayOut", {
     return textDerivative;
   },
 
-  // wellsData follows syntax: {0:{field1: val1, field2: val2}, 1:{field1: val1, field2: val2}}
-  getWellsDifferences: function(wellsData) {
-    return this.getDifferentWellsVals(wellsData);
+  // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A1:{field1: val1, field2: val2}}
+  getWellsDifferences: function(wellsHash) {
+    var wells = [];
+    for (var wellId in wellsHash) {
+      wells.push(wellsHash[wellId]);
+    }
+    var differentWellsVals = {};
+    if (wells.length > 1) {
+      var commonWell = this._getCommonWell(wells);
+      var allFieldVal = {};
+      for (var fieldIdx in wells[0]) {
+        allFieldVal[fieldIdx] = [];
+      }
+      for (var address in wellsHash) {
+        var diffWellVal = {};
+        var curWellData = wellsHash[address];
+        for (var fieldId in curWellData) {
+          var commonVal = commonWell[fieldId];
+          var curVal = curWellData[fieldId];
+          var newVal = null;
+          if (Array.isArray(curVal)) {
+            // get uncommonVal
+            newVal = [];
+            for (var idx = 0; idx < curVal.length; idx++) {
+              var curMultiVal = curVal[idx];
+              // multiplex field
+              if (curMultiVal && typeof (curMultiVal) === "object") {
+                if (!this.containsObject(curMultiVal, commonVal)) {
+                  newVal.push(curMultiVal);
+                  if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
+                    allFieldVal[fieldId].push(curMultiVal);
+                  }
+                }
+              } else {
+                if (commonVal.indexOf(curMultiVal) < 0) {
+                  newVal.push(curMultiVal);
+                  if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
+                    allFieldVal[fieldId].push(curMultiVal);
+                  }
+                }
+              }
+            }
+          } else if (curVal && typeof (curVal) === "object") {
+            if (commonVal && typeof (commonVal) === "object") {
+              if (!((curVal.value === commonVal.value) || (curVal.unit === commonVal.unit))) {
+                newVal = curVal;
+                if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                  allFieldVal[fieldId].push(curVal);
+                }
+              }
+            } else {
+              newVal = curVal;
+              if (!this.containsObject(curVal, allFieldVal[fieldId])) {
+                allFieldVal[fieldId].push(curVal);
+              }
+            }
+          } else if (curVal !== commonVal) {
+            newVal = curVal;
+            if (!allFieldVal[fieldId].indexOf(curVal) >= 0) {
+              allFieldVal[fieldId].push(curVal);
+            }
+          }
+          diffWellVal[fieldId] = newVal;
+        }
+
+        differentWellsVals[address] = diffWellVal;
+      }
+
+      // clean up step for fields that are empty
+      for (var fieldId in allFieldVal) {
+        if (allFieldVal[fieldId].length === 0) {
+          for (var address in differentWellsVals) {
+            delete differentWellsVals[address][fieldId];
+          }
+        }
+      }
+
+      return differentWellsVals;
+    } else if (wells.length > 0) {
+      var differentWellsVals = {};
+      for (var address in wellsHash) {
+        var diffWellVal = {};
+        var curWellData = wellsHash[address];
+        for (var fieldId in curWellData) {
+          var curVal = curWellData[fieldId];
+          if (Array.isArray(curVal)) {
+            if (curVal.length > 0) {
+              diffWellVal[fieldId] = curVal
+            }
+          } else if (curVal) {
+            diffWellVal[fieldId] = curVal;
+          }
+        }
+        differentWellsVals[address] = diffWellVal;
+      }
+
+      return differentWellsVals;
+    }
   },
 
   setFieldsDisabled: function(flag) {
@@ -209,8 +299,7 @@ $.widget("DNA.plateLayOut", {
       this.addressAllowToEdit = this.getWellSetAddressWithData();
       // configure undo redo action
       this.actionPointer = 0;
-      this.undoRedoArray = [];
-      this.undoRedoArray.push(this.createObject());
+      this.undoRedoArray = [this.createState()];
       if (column_with_default_val) {
         this.emptyWellWithDefaultVal = column_with_default_val;
       }
@@ -219,111 +308,56 @@ $.widget("DNA.plateLayOut", {
       this.setFieldsDisabled(false);
       this.emptyWellWithDefaultVal = null;
     }
-    this._fabricEvents();
-  },
-
-  getSelectedObject: function() {
-    var selectedAddress = [];
-    for (var i = 0; i < this.allSelectedObjects.length; i++) {
-      selectedAddress.push(this.allSelectedObjects[i].address);
-    }
-    var selectedObjects = {};
-    var derivative = this.engine.derivative;
-    for (var index in derivative) {
-      var address = this.indexToAddress(index);
-      if (selectedAddress.indexOf(address) >= 0) {
-        var well = JSON.parse(JSON.stringify(derivative[index]));
-        well.colorIndex = this.engine.colorMap.get(Number(index));
-        selectedObjects[address] = well;
-      }
-    }
-    return selectedObjects;
   },
 
   selectObjectInBottomTab: function() {
-    var selectedObjects = this.getSelectedObject();
-    var selectedObjectAddress;
-    for (var prop in selectedObjects) {
-      if (!selectedObjectAddress) {
-        selectedObjectAddress = prop;
-      } else {
-        return;  // scroll to matching group only if a single well has been selected
+    var colors = [];
+    for (var index of this.selectedIndices) {
+      var well = this.engine.derivative[index];
+      if (well) {
+        var color = this.engine.colorMap.get(index);
+        if (colors.indexOf(color) < 0) {
+          colors.push(color);
+        }
       }
     }
-    if (selectedObjects[selectedObjectAddress]) {
-      var colorIndex = selectedObjects[selectedObjectAddress].colorIndex;
-      var trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
-      for (var i = 1; i < trs.length; i++) { // start at 1 to skip the table headers
-        var tds = trs[i].children;
-        var isSelected = tds[0].querySelector('button').innerHTML === colorIndex.toString();
-        for (var j = 1; j < tds.length; j++) {
-          if (isSelected) {
-            tds[j].style.background = '#22cb94';
-          } else {
-            tds[j].style.background = '#ffffff';
-          }
-        }
-        if (isSelected) {
-          scrollTo(document.querySelector('.plate-setup-bottom-table-container'), tds[0].offsetTop, 300);
-        }
-      }
+    var trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
+    for (var i = 1; i < trs.length; i++) { // start at 1 to skip the table headers
+      var tr = trs[i];
+      var td = tr.children[0];
+      var isSelected = colors.indexOf(Number(td.querySelector('button').innerHTML)) >= 0;
+      tr.classList.toggle("selected", isSelected);
     }
   },
 
   getSelectedIndex: function() {
-    return this.allSelectedObjects.map(function(selectedObj) {
-      return that.addressToIndex(selectedObj.address)
-    });
+    return this.selectedIndices;
   },
 
-  getSelectedAddress: function() {
-    return this.allSelectedObjects.map(function(selectedObj) {
-      return selectedObj.address;
-    });
+  getSelectedAddresses: function() {
+    return this.selectedIndices.map(function(index) {
+      return this.allTiles[index].address;
+    }, this);
   },
 
-  setSelectedWell: function(addressList) {
-    var areas = [];
-    var minRow = 999;
-    var locMap = {};
-    for (var id = 0; id < addressList.length; id++) {
-      var wellIdx = this.addressToIndex(addressList[id]);
-      var loc = this.indexToLoc(wellIdx);
-      areas.push({
-        minCol: loc.c,
-        minRow: loc.r,
-        maxCol: loc.c,
-        maxRow: loc.r
-      });
-      if (loc.r <= minRow) {
-        minRow = loc.r;
-        if (loc.r in locMap) {
-          locMap[loc.r].push(loc.c);
-        } else {
-          locMap[loc.r] = [loc.c];
-        }
-      }
+  setSelectedAddresses: function(addresses, noUndoRedo) {
+    let indices = this.sanitizeAddresses(addresses);
+    this.setSelectedIndices(indices, noUndoRedo);
+  },
+
+  setSelectedIndices: function (indices, noUndoRedo) {
+    if (!indices || indices.length === 0) {
+      indices = [0];
     }
-    var focalWell = {
-      row: minRow,
-      col: Math.min.apply(null, locMap[minRow])
-    };
-
-    this.setSelection(areas, focalWell);
+    // Indices should be sanitized
+    this.setSelection(indices);
+    //this._colorMixer();
     this.decideSelectedFields();
-    this.mainFabricCanvas.renderAll();
+    this._trigger("selectedWells", null, {selectedAddress: this.getSelectedAddresses()});
+    this.selectObjectInBottomTab();
+    if (!noUndoRedo) {
+      this.addToUndoRedo();
+    }
   }
 
 });
-
-// https://stackoverflow.com/questions/17733076/smooth-scroll-anchor-links-without-jquery
-function scrollTo(element, to, duration) {
-  if (duration <= 0) return;
-  var difference = to - element.scrollTop;
-  var perTick = difference / duration * 10;
-  setTimeout(function() {
-    element.scrollTop = element.scrollTop + perTick;
-    if (element.scrollTop === to) return;
-    scrollTo(element, to, duration - 10);
-  }, 10);
-}

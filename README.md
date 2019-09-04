@@ -75,7 +75,7 @@ You need to include the following dependencies:
     'node_modules/bootstrap/dist/js/bootstrap.min.js'
     'node_modules/select2/select2.js'
     'node_modules/jquery-ui-dist/jquery-ui.min.js'
-    'node_modules/fabric/dist/fabric.js'
+    'node_modules/svgjs/dist/svg.js'
     'node_modules/clipboard/dist/clipboard.min.js'
     'node_modules/plate-map/dist/package/js/plate-map.min.js'
     ``` 
@@ -168,12 +168,12 @@ Every time after mouse up event on canvas, selectedWells function will be trigge
 The following functions may be called at any time to interact with the UI. 
 Typically you will invoke these functions using `$("#mylayout").plateLayOut("function", ...args)` form. 
 
-## getPlates(data)
+## loadPlate(data)
 This function may be called at any time to load data. Well data should be passed in the following form:
 ```js
 {
-  derivative: {
-    "0": { //row-major index of well
+  wells: {
+    "A1": { //address of well
       wellData: {
         field_1: "value 1",
         field_2: "value 2",
@@ -205,7 +205,6 @@ This function may be called at any time to load data. Well data should be passed
                   }
                  ]
 
-
       }
     }
   }, 
@@ -218,25 +217,14 @@ This function may be called at any time to load data. Well data should be passed
     "field_6",
     "field_7",
   ], 
-  selectedAreas: [ //min and max rows and columns, inclusive
-    {
-      minRow: 0, 
-      maxRow: 3, 
-      minCol: 2, 
-      maxCol: 3
-    }
-  ], 
-  focalWell: { // position of current focal well
-    row: 0,
-    col: 2
-  }
+  selectedAddresses: ["A1", "A2", "A3"]
 }
 ```
 
-## createObject()
-Calling this function will return the current state of the plate-map, in the form as passed into `getPlates`.
+## getPlate()
+Calling this function will return the current state of the plate-map, in the form as passed into `loadPlate`.
 ```js
-$("#my-plate-layout").plateLayOut("createObject")
+$("#my-plate-layout").plateLayOut("getPlate")
 ```
 
 ## isReadOnly()
@@ -251,17 +239,17 @@ This function will disable adding and removing the existing wells. Set `flag` to
 $("#mylayout").plateLayOut("isDisableAddDeleteWell", flag, defaultFields)
 ```
 
-## getSelectedObject()
-Calling this function will return the derivative of the current selected wells on the plate
-```js
-$("#my-plate-layout").plateLayOut("getSelectedObject")
-```
-
-## setSelectedWell()
-Calling this function will set the input address as selected wells on the plate, `address_list` is a list of addresses
+## setSelectedAddresses()
+Calling this function will set the input address as selected wells on the plate, `addresses` is a list of addresses
  (example: ['A1', 'A2', ...])
 ```js
-$("#my-plate-layout").plateLayOut("setSelectedWell", address_list)
+$("#my-plate-layout").plateLayOut("setSelectedAddresses", addresses)
+```
+
+## getSelectedAddresses()
+Calling this function will return the addresses of selected wells on the plate, as in `setSelectedAddresses`
+```js
+$("#my-plate-layout").plateLayOut("getSelectedAddresses")
 ```
 
 # Data Types

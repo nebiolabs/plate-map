@@ -155,6 +155,7 @@ window.onload = function() {
       var on_ice = Boolean(r % 2);
       for (var c = 0; c < cols; c++) {
         var i = r * cols + c;
+        var address = $("#my-plate-layout").plateLayOut("locToAddress", {"r": r, "c": c});
         var v = volume;
         var vunit = "mL";
         var amplicons = [{
@@ -174,7 +175,7 @@ window.onload = function() {
           v *= 1000;
           vunit = "uL";
         }
-        wells[i.toString()] = {
+        wells[address] = {
           volume: v,
           pol: [pol],
           amplicons: amplicons,
@@ -186,7 +187,7 @@ window.onload = function() {
       }
     }
     return {
-      derivative: wells,
+      wells: wells,
       checkboxes: ["volume", "pol"]
     };
   }
@@ -195,17 +196,17 @@ window.onload = function() {
     numRows: 8,
     numCols: 12,
     attributes: attributes,
-    // scrollToGroup: false, // optional
 
-    updateWells: function(event, data) {
+    updateWells: function(event) {
       //data has changed
-      window.plateData = data;
-      console.log(Object.keys(data.derivative).length + " wells updated");
+      window.plateData = $("#my-plate-layout").plateLayOut("getPlate") ;
+      console.log(Object.keys(window.plateData.wells).length + " wells updated");
     },
     created: function(event, data) {
       console.log("Created");
     }
   });
   window.plateData = makeNewPlate();
-  $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
+  $("#my-plate-layout").plateLayOut("loadPlate", window.plateData);
+  $("#my-plate-layout").plateLayOut("clearHistory");
 };

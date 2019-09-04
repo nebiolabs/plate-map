@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.undoRedoManager = function(THIS) {
 
@@ -10,8 +10,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       actionPointer: null,
 
-      addToUndoRedo: function(data) {
-
+      addToUndoRedo: function() {
+        var state = this.createState();
         if (this.actionPointer != null) {
           var i = this.actionPointer + 1;
           if (i < this.undoRedoArray.length) {
@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
         this.actionPointer = null;
-        this.undoRedoArray.push($.extend(true, {}, data));
+        this.undoRedoArray.push(state);
       },
 
       _configureUndoRedoArray: function() {
@@ -27,21 +27,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         var data = {
           checkboxes: [],
           derivative: {},
-          selectedAreas: [{
-            minRow: 0,
-            minCol: 0,
-            maxRow: 0,
-            maxCol: 0
-          }],
-          focalWell: {
-            row: 0,
-            col: 0
-          }
+          selectedIndices: [0]
         };
 
         this.undoRedoArray = [];
         this.actionPointer = null;
         this.undoRedoArray.push($.extend({}, data));
+      },
+
+      clearHistory: function () {
+        this.undoRedoArray = this.undoRedoArray.slice(-1);
+        this.actionPointer = null;
       },
 
       undo: function() {
@@ -70,14 +66,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (pointer >= this.undoRedoArray.length) {
           return false;
         }
-        this.undoRedoActive = true;
-        this.setData(this.undoRedoArray[pointer]);
         this.actionPointer = pointer;
-        this.undoRedoActive = false;
-        this.derivativeChange();
+        this.setData(this.undoRedoArray[pointer], true);
         return true;
       }
     }
   };
 
-})(jQuery, fabric);
+})(jQuery);

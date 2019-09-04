@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.overlay = function() {
     // overlay holds all the methods to put the part just above the canvas which contains all those
@@ -59,12 +59,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       clearCriteria: function() {
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
+        if (this.selectedIndices && this.selectedIndices.length) {
           var hasWellUpdate = false;
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex];
-            if (tile.index in this.engine.derivative) {
+          for (var index of this.selectedIndices) {
+            if (index in this.engine.derivative) {
               // handling for clearing well when not allowed to add or delete wells
               if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
                 var well = JSON.parse(JSON.stringify(this.defaultWell));
@@ -77,26 +75,27 @@ var plateLayOutWidget = plateLayOutWidget || {};
                     console.log("Well does not contain key: " + key + ", please contact support");
                   }
                 }
-                this.engine.derivative[tile.index] = well;
+                this.engine.derivative[index] = well;
               } else {
-                delete this.engine.derivative[tile.index];
+                delete this.engine.derivative[index];
               }
               hasWellUpdate = true;
             }
-          }
-          if (hasWellUpdate) {
-            this.derivativeChange();
-          }
+          };
 
-          this._colorMixer();
-          this.decideSelectedFields();
+          if (hasWellUpdate) {
+            this._colorMixer();
+            this.decideSelectedFields();
+            this.derivativeChange();
+            this.addToUndoRedo();
+          }
         } else {
           alert("Please select any well");
         }
       },
 
       copyCriteria: function() {
-        if (this.allSelectedObjects) {
+        if (this.selectedIndices && this.selectedIndices.length) {
           var wells = this._getSelectedWells();
           this.commonWell = this._getCommonFields(wells);
         } else {
@@ -108,9 +107,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (this.commonWell) {
           this._addAllData(this.commonWell);
           this.decideSelectedFields();
-          this.mainFabricCanvas.renderAll();
         }
       }
     };
   }
-})(jQuery, fabric);
+})(jQuery);

@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.interface = function() {
     // interface holds all the methods to put the interface in place
@@ -20,10 +20,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this._createOverLay();
         $(this.topLeft).append(this.overLayContainer);
-
-        this._createCanvas();
         $(this.topLeft).append(this.canvasContainer);
-
 
         $(this.topSection).append(this.topLeft);
         $(this.topSection).append(this.topRight);
@@ -31,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.container).append(this.topSection);
         $(this.element).append(this.container);
 
-        this._initiateFabricCanvas();
+        this._createSvg();
 
         this._createTabAtRight();
         this._createTabs();
@@ -39,8 +36,6 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._placePresetTabs();
         // Bottom of the screen
         this._bottomScreen();
-        // Canvas
-        this._canvas();
 
         this.bottomForFirstTime();
 
@@ -102,4 +97,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
     };
   }
-})(jQuery, fabric);
+})(jQuery);

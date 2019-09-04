@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($, fabric) {
+(function($) {
 
   plateLayOutWidget.addTabData = function() {
 
@@ -230,4 +230,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
     }
   }
 
-})(jQuery, fabric);
+})(jQuery);
