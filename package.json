@@ -31,8 +31,8 @@
     "svgjs": "^2.6.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
     "babel-polyfill": "^6.26.0",
     "browser-sync": "^2.26.7",
     "del": "^3.0.0",
@@ -41,7 +41,6 @@
     "gulp-clean-css": "^4.2.0",
     "gulp-concat": "^2.6.1",
     "gulp-connect": "^5.7.0",
-    "gulp-htmlmin": "^5.0.1",
     "gulp-inject": "^5.0.4",
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.5",

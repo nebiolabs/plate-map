@@ -1,7 +1,7 @@
 // Wait for all the script load from the loader.js and fire up
 window.onload = function() {
-  let fields = {
-    polymerase: {
+  let fields = [
+    {
       required: true,
       id: 'pol',
       name: 'Polymerase',
@@ -30,7 +30,7 @@ window.onload = function() {
         }
       ]
     },
-    volume: {
+    {
       required: true,
       id: 'volume',
       name: 'Volume',
@@ -39,7 +39,7 @@ window.onload = function() {
       units: ["uL", "mL"],
       defaultUnit: "uL"
     },
-    conc: {
+    {
       required: true,
       id: 'conc',
       name: 'Concentration',
@@ -47,16 +47,16 @@ window.onload = function() {
       placeholder: "Conc.",
       defaultUnit: "ng/ul (final)"
     },
-    on_ice: {
+    {
       required: true,
       id: "on_ice",
       name: "On Ice",
       type: "boolean",
       placeHolder: "On Ice"
     }
-  };
-  let amplicons_field = {
-    amplicons: {
+  ];
+  let amplicons_fields = [
+    {
       required: true,
       id: 'amplicons',
       name: "Amplicons",
@@ -80,8 +80,8 @@ window.onload = function() {
           text: 'Amplicon_D'
         }
       ],
-      multiplexFields: {
-        template_ngul: {
+      multiplexFields:  [
+        {
           required: true,
           id: 'template_ngul',
           name: 'template conc',
@@ -92,7 +92,7 @@ window.onload = function() {
             {id: 'c', text: "c"}
           ]
         },
-        primer_umolarity: {
+        {
           required: true,
           id: 'primer_umolarity',
           name: 'Primer conc',
@@ -101,7 +101,7 @@ window.onload = function() {
           units: ['uM (final)', "unit1"],
           defaultUnit: 'uM (final)'
         },
-        probe_umolarity: {
+        {
           required: true,
           id: 'probe_umolarity',
           name: 'Probe conc',
@@ -109,7 +109,7 @@ window.onload = function() {
           placeHolder: "Probe",
           defaultUnit: 'uM (final)'
         },
-        dilution_factor: {
+        {
           required: true,
           id: 'dilution_factor',
           name: 'Dilution factor',
@@ -117,9 +117,9 @@ window.onload = function() {
           placeHolder: "Dilution factor",
           defaultUnit: 'X'
         }
-      },
+      ],
     },
-  };
+  ];
   let attributes = {
     presets: [
       {
@@ -137,8 +137,8 @@ window.onload = function() {
         fields: fields
       },
       {
-        name: "amplicons",
-        fields: amplicons_field
+        name: "Amplicons",
+        fields: amplicons_fields
       }
     ]
   };
