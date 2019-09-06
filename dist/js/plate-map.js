@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
@@ -221,7 +223,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -244,7 +245,6 @@ plateMapWidget.addDataToFields = function () {
     }
   };
 };
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -501,7 +501,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -605,7 +604,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -866,7 +864,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -1026,7 +1023,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -1036,9 +1032,6 @@ plateMapWidget.colorManager = function () {
     colorPairs: [["#e6e6e6", "#808080"], ["#66e8ff", "#0082c8"], ["#ff7fb1", "#e6194b"], ["#a2ffb1", "#3cb44b"], ["#f784ff", "#911eb4"], ["#ffe897", "#f58231"], ["#6666ff", "#0000FF"], ["#ffff7f", "#ffe119"], ["#acffff", "#46f0f0"], ["#ff98ff", "#f032e6"], ["#ffffa2", "#d2f53c"], ["#ffffff", "#fabebe"], ["#66e6e6", "#008080"], ["#ffffff", "#e6beff"], ["#ffd48e", "#aa6e28"], ["#e66666", "#800000"], ["#ffffff", "#aaffc3"], ["#e6e666", "#808000"], ["#ffffff", "#ffd8b1"], ["#66a9ef", "#004389"], ["#ff6672", "#a7000c"], ["#66db72", "#00750c"], ["#b866db", "#520075"], ["#ffa966", "#b64300"], ["#ffff66", "#c0a200"], ["#6dffff", "#07b1b1"], ["#ff66ff", "#b100a7"], ["#f9ff66", "#93b600"], ["#ffe5e5", "#bb7f7f"], ["#66a7a7", "#004141"], ["#ffe5ff", "#a77fc0"], ["#d19566", "#6b2f00"], ["#ffffef", "#c0bb89"], ["#d1ffea", "#6bc084"], ["#a7a766", "#414100"], ["#ffffd8", "#c09972"], ["#a5ffff", "#3fc1ff"], ["#ffbef0", "#ff588a"], ["#e1fff0", "#7bf38a"], ["#ffc3ff", "#d05df3"], ["#ffffd6", "#ffc170"], ["#a5a5ff", "#3f3fff"], ["#ffffbe", "#ffff58"], ["#ebffff", "#85ffff"], ["#ffd7ff", "#ff71ff"], ["#a5ffff", "#3fbfbf"], ["#ffffcd", "#e9ad67"], ["#ffa5a5", "#bf3f3f"], ["#ffffa5", "#bfbf3f"]]
   };
 };
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2492,7 +2485,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2549,7 +2541,7 @@ var plateMapWidget = plateMapWidget || {};
                 var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
                 var newMultiplexVal = [];
 
-                var _loop = function _loop(multiplexIdx) {
+                var _loop5 = function _loop5(multiplexIdx) {
                   if (!data[attr].hasOwnProperty(multiplexIdx)) {
                     return "continue";
                   }
@@ -2564,9 +2556,9 @@ var plateMapWidget = plateMapWidget || {};
                 };
 
                 for (var multiplexIdx in data[attr]) {
-                  var _ret = _loop(multiplexIdx);
+                  var _ret6 = _loop5(multiplexIdx);
 
-                  if (_ret === "continue") continue;
+                  if (_ret6 === "continue") continue;
                 }
 
                 wellData[attr] = newMultiplexVal;
@@ -2695,7 +2687,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2708,7 +2699,6 @@ plateMapWidget.assets = function () {
     }
   };
 };
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2805,7 +2795,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2865,7 +2854,6 @@ plateMapWidget.loadPlate = function () {
     }
   };
 };
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -2966,9 +2954,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 $.widget("DNA.plateMap", {
   plateMapWidget: {},
@@ -3368,9 +3353,9 @@ $.widget("DNA.plateMap", {
 
     var trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
 
-    for (var _i = 1; _i < trs.length; _i++) {
+    for (var _i3 = 1; _i3 < trs.length; _i3++) {
       // start at 1 to skip the table headers
-      var tr = trs[_i];
+      var tr = trs[_i3];
       var td = tr.children[0];
       var isSelected = colors.indexOf(Number(td.querySelector('button').innerHTML)) >= 0;
       tr.classList.toggle("selected", isSelected);
@@ -3409,8 +3394,6 @@ $.widget("DNA.plateMap", {
     }
   }
 });
-"use strict";
-
 var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
@@ -3429,7 +3412,7 @@ var plateMapWidget = plateMapWidget || {};
           this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
           this.tabContainer.append(this.presetTabContainer);
 
-          var _loop = function _loop(i) {
+          var _loop6 = function _loop6(i) {
             var preset = presets[i];
 
             var divText = _this._createElement("<div></div>").addClass("plate-setup-preset-tab-div").text(preset.title);
@@ -3449,7 +3432,7 @@ var plateMapWidget = plateMapWidget || {};
           };
 
           for (var i = 0; i < presets.length; i++) {
-            _loop(i);
+            _loop6(i);
           }
         }
       },
@@ -3466,7 +3449,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -3524,9 +3506,9 @@ var plateMapWidget = plateMapWidget || {};
           });
         }
 
-        for (var _i = 0; _i < cols; _i++) {
-          ch.plain(this._colKey(_i)).attr({
-            x: this.baseSizes.spacing * (_i + 0.5)
+        for (var _i4 = 0; _i4 < cols; _i4++) {
+          ch.plain(this._colKey(_i4)).attr({
+            x: this.baseSizes.spacing * (_i4 + 0.5)
           });
         }
       },
@@ -3593,9 +3575,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(SVG);
-"use strict";
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -3852,8 +3831,8 @@ var plateMapWidget = plateMapWidget || {};
               if (Array.isArray(commonVal)) {
                 var commonArr = [];
 
-                for (var _i = 0; _i < commonVal.length; _i++) {
-                  var v = commonVal[_i]; // for multiplex field
+                for (var _i5 = 0; _i5 < commonVal.length; _i5++) {
+                  var v = commonVal[_i5]; // for multiplex field
 
                   if (v && _typeof(v) === "object") {
                     if (this.containsObject(v, wellVal)) {
@@ -3942,7 +3921,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 
@@ -4008,7 +3986,6 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-"use strict";
 
 var plateMapWidget = plateMapWidget || {};
 

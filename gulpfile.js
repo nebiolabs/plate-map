@@ -70,10 +70,10 @@ function concat_minify_css(name, source, destination) {
 function concat_uglify_js(name, source, destination) {
     return gulp.src(source)
         .pipe(sourcemaps.init())
+        .pipe(concat(name + '.js'))
         .pipe(babel({
             presets: ['@babel/env']
         }))
-        .pipe(concat(name + '.js'))
         .pipe(gulp.dest(destination))
         .pipe(uglify())
         .pipe(rename(name + '.min.js'))
