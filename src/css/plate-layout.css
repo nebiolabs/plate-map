@@ -382,6 +382,10 @@
   background-color: white;
 }
 
+.plate-setup-bottom-table tr.selected td {
+  background-color: lightblue;
+}
+
 .plate-setup-color-text {
   font-size: 14px;
   border: none;
@@ -499,4 +503,73 @@ input.invalid {
   float: left;
   margin-top: -44px;
   z-Index: 99999 !important;
+}
+
+.plate-setup-canvas-container > svg {
+  cursor: pointer;
+}
+
+.plate-setup-canvas-container > svg text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.plate-setup-canvas-container > svg * {
+  vector-effect: non-scaling-stroke;
+}
+
+.plate-setup-canvas-container .rowHead text, .colHead text {
+  font-size: 13px;
+  font-family: sans-serif, Arial;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.plate-setup-canvas-container .tile .highlight {
+  fill: none;
+}
+
+.plate-setup-canvas-container .tile .well {
+  stroke: gray;
+  stroke-width: 0.5;
+}
+
+.plate-setup-canvas-container .tile .fill .center, .plate-setup-canvas-container .tile .fill .center_incomplete {
+  fill: white;
+  stroke: gray;
+  stroke-width: 0.5;
+}
+
+.plate-setup-canvas-container .tile:not(.incomplete) .fill .center_incomplete {
+  display:none;
+}
+
+.plate-setup-canvas-container .tile.incomplete .fill .center {
+  display:none;
+}
+
+.plate-setup-canvas-container .tile .fill .label {
+  font-size: 13px;
+  font-family: sans-serif, Arial;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.plate-setup-canvas-container .tile.incomplete .fill .label {
+  fill:  red;
+}
+
+.plate-setup-canvas-container .tile.selected .highlight {
+  fill: lightblue;
+}
+
+.plate-setup-canvas-container .tile.empty .fill {
+  display: none;
+}
+
+.plate-setup-canvas-container .tile:not(.empty) .well {
+  display: none;
 }

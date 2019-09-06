@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.addTabData = function() {
+  plateMapWidget.addTabData = function() {
 
     return {
 
@@ -12,18 +12,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _addTabData: function() {
         // Here we may need more changes because attributes format likely to change
-        var tabData = this.options.attributes.tabs;
-        var that = this;
+        let tabData = this.options.attributes.tabs;
+        let that = this;
         this.requiredField = [];
-        var multiplexFieldArray = [];
+        let multiplexFieldArray = [];
         tabData.forEach(function(tab, tabPointer) {
           if (tab["fields"]) {
-            var tabFields = tab["fields"];
-            var fieldArray = [];
-            var fieldArrayIndex = 0;
+            let tabFields = tab["fields"];
+            let fieldArray = [];
             // Now we look for fields in the json
-            for (var field in tabFields) {
-              var data = tabFields[field];
+            for (var i = 0; i < tabFields.length; i++) {
+              let data = tabFields[i];
 
               if (!data.id) {
                 data.id = "Auto" + that.autoId++;
@@ -34,17 +33,20 @@ var plateLayOutWidget = plateLayOutWidget || {};
                 console.log("Field " + data.id + " autoassigned type " + data.type);
               }
 
-              var field_val;
+              let field;
               if (data.type === "multiplex") {
-                field_val = that._makeMultiplexField(data, tabPointer, fieldArray);
-                multiplexFieldArray.push(field_val);
+                field = that._makeMultiplexField(data, tabPointer, fieldArray);
+                that.defaultWell[field.id] = [];
+                multiplexFieldArray.push(field);
               } else {
-                field_val = that._makeRegularField(data, tabPointer, fieldArray, true);
+                field = that._makeRegularField(data, tabPointer, fieldArray, true);
                 if (data.type === "multiselect") {
-                  multiplexFieldArray.push(field_val);
+                  that.defaultWell[field.id] = [];
+                  multiplexFieldArray.push(field);
+                } else {
+                  that.defaultWell[field.id] = null;
                 }
               }
-              ;
             }
 
             that.allDataTabs[tabPointer]["fields"] = fieldArray;
@@ -55,8 +57,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         that.multipleFieldList = multiplexFieldArray;
       },
 
-      _makeSubField: function(data, tabPointer, fieldArray) {
-        var that = this;
+      _makeSubField: function(mainField, data, tabPointer, fieldArray) {
+        let that = this;
         if (!data.id) {
           data.id = "Auto" + that.autoId++;
           console.log("Field autoassigned id " + data.id);
@@ -65,11 +67,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
           data.type = "text";
           console.log("Field " + data.id + " autoassigned type " + data.type);
         }
-        var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
-        var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
+        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
+        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
 
         $(wrapperDivRightSide).append(nameContainer);
         $(wrapperDivRightSide).append(fieldContainer);
@@ -77,8 +79,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(wrapperDiv).append(wrapperDivRightSide);
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
-        var field = {
+        let field = {
           id: data.id,
+          full_id: mainField.id + "_" + data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -86,18 +89,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         fieldArray.push(field);
-        that.fieldMap[data.id] = field;
+        that.fieldMap[field.full_id] = field;
 
         return field;
       },
 
       _makeRegularField: function(data, tabPointer, fieldArray, checkbox) {
-        var that = this;
-        var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+        let that = this;
+        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
+        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
+        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
 
         wrapperDivRightSide.append(nameContainer);
         wrapperDivRightSide.append(fieldContainer);
@@ -105,8 +108,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         wrapperDiv.append(wrapperDivRightSide);
         that.allDataTabs[tabPointer].append(wrapperDiv);
 
-        var field = {
+        let field = {
           id: data.id,
+          full_id: data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -119,7 +123,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[field.id] = field;
+        that.fieldMap[field.full_id] = field;
 
         // Adding checkbox
         if (checkbox) {
@@ -128,8 +132,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         that._createField(field);
 
         field.onChange = function() {
-          var v = field.getValue();
-          var data = {};
+          let v = field.getValue();
+          let data = {};
           data[field.id] = v;
           that._addAllData(data);
         };
@@ -137,12 +141,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _makeMultiplexField: function(data, tabPointer, fieldArray) {
-        var that = this;
-        var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+        let that = this;
+        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
+        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
+        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
 
         wrapperDivRightSide.append(nameContainer);
         wrapperDivRightSide.append(fieldContainer);
@@ -150,8 +154,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
         wrapperDiv.append(wrapperDivRightSide);
         that.allDataTabs[tabPointer].append(wrapperDiv);
 
-        var field = {
+        let field = {
           id: data.id,
+          full_id: data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -160,14 +165,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[data.id] = field;
+        that.fieldMap[field.full_id] = field;
 
-        var subFieldList = [];
+        let subFieldList = [];
         //create subfields
-        var requiredSubField = [];
-        for (var subFieldKey in data.multiplexFields) {
-          var subFieldData = data.multiplexFields[subFieldKey];
-          var subField = that._makeSubField(subFieldData, tabPointer, fieldArray);
+        let requiredSubField = [];
+        for (let i = 0; i < data.multiplexFields.length; i++) {
+          let subFieldData = data.multiplexFields[i];
+          let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
           subFieldList.push(subField);
 
           // stores required  subField
@@ -190,27 +195,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         subFieldList.forEach(function(subfield) {
           subfield.mainMultiplexField = field;
-          fieldArray.push(subfield);
           that._createField(subfield);
           that._addCheckBox(subfield);
-          delete that.defaultWell[subfield.id];
           // overwrite subField setvalue
           subfield.onChange = function() {
-            var v = subfield.getValue();
-            var mainRefField = subfield.mainMultiplexField;
-            var curId = mainRefField.singleSelectValue();
-            //var curDataLs = mainRefField.detailData;
-            var curVal = {};
+            let v = subfield.getValue();
+            let mainRefField = subfield.mainMultiplexField;
+            let curId = mainRefField.singleSelectValue();
+            //let curDataLs = mainRefField.detailData;
+            let curVal = {};
             curVal[mainRefField.id] = curId;
             //append subfields
             curVal[subfield.id] = v;
-            var returnVal = {
+            let returnVal = {
               id: curId,
               value: curVal
             };
 
             field._changeMultiFieldValue(returnVal, null);
-            var curDataLs = mainRefField.detailData;
+            let curDataLs = mainRefField.detailData;
             if (curDataLs !== null) {
               curId = mainRefField.singleSelectValue();
               curDataLs = curDataLs.map(function(curData) {
@@ -230,4 +233,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
     }
   }
 
-})(jQuery, fabric);
+})(jQuery);

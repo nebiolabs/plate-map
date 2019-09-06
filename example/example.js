@@ -1,7 +1,7 @@
 // Wait for all the script load from the loader.js and fire up
 window.onload = function() {
-  var fields = {
-    polymerase: {
+  let fields = [
+    {
       required: true,
       id: 'pol',
       name: 'Polymerase',
@@ -30,7 +30,7 @@ window.onload = function() {
         }
       ]
     },
-    volume: {
+    {
       required: true,
       id: 'volume',
       name: 'Volume',
@@ -39,7 +39,7 @@ window.onload = function() {
       units: ["uL", "mL"],
       defaultUnit: "uL"
     },
-    conc: {
+    {
       required: true,
       id: 'conc',
       name: 'Concentration',
@@ -47,16 +47,16 @@ window.onload = function() {
       placeholder: "Conc.",
       defaultUnit: "ng/ul (final)"
     },
-    on_ice: {
+    {
       required: true,
       id: "on_ice",
       name: "On Ice",
       type: "boolean",
       placeHolder: "On Ice"
     }
-  };
-  var amplicons_field = {
-    amplicons: {
+  ];
+  let amplicons_fields = [
+    {
       required: true,
       id: 'amplicons',
       name: "Amplicons",
@@ -80,8 +80,8 @@ window.onload = function() {
           text: 'Amplicon_D'
         }
       ],
-      multiplexFields: {
-        template_ngul: {
+      multiplexFields:  [
+        {
           required: true,
           id: 'template_ngul',
           name: 'template conc',
@@ -92,7 +92,7 @@ window.onload = function() {
             {id: 'c', text: "c"}
           ]
         },
-        primer_umolarity: {
+        {
           required: true,
           id: 'primer_umolarity',
           name: 'Primer conc',
@@ -101,7 +101,7 @@ window.onload = function() {
           units: ['uM (final)', "unit1"],
           defaultUnit: 'uM (final)'
         },
-        probe_umolarity: {
+        {
           required: true,
           id: 'probe_umolarity',
           name: 'Probe conc',
@@ -109,7 +109,7 @@ window.onload = function() {
           placeHolder: "Probe",
           defaultUnit: 'uM (final)'
         },
-        dilution_factor: {
+        {
           required: true,
           id: 'dilution_factor',
           name: 'Dilution factor',
@@ -117,10 +117,10 @@ window.onload = function() {
           placeHolder: "Dilution factor",
           defaultUnit: 'X'
         }
-      },
+      ],
     },
-  };
-  var attributes = {
+  ];
+  let attributes = {
     presets: [
       {
         title: "Pol/Vol",
@@ -137,27 +137,29 @@ window.onload = function() {
         fields: fields
       },
       {
-        name: "amplicons",
-        fields: amplicons_field
+        name: "Amplicons",
+        fields: amplicons_fields
       }
     ]
   };
   window.plateData = {};
 
-  function makeNewPlate(obj) {
-    var d = $("#my-plate-layout").plateLayOut("getDimensions");
-    var rows = d.rows;
-    var cols = d.cols;
-    var wells = {};
-    for (var r = 0; r < rows; r++) {
-      var volume = 100;
-      var pol = (r < (rows / 2)) ? 234 : 123;
-      var on_ice = Boolean(r % 2);
-      for (var c = 0; c < cols; c++) {
-        var i = r * cols + c;
-        var v = volume;
-        var vunit = "mL";
-        var amplicons = [{
+  let widget = $("#my-plate-map");
+
+  function makeNewPlate() {
+    let d = widget.plateMap("getDimensions");
+    let rows = d.rows;
+    let cols = d.cols;
+    let wells = {};
+    for (let r = 0; r < rows; r++) {
+      let volume = 100;
+      let pol = (r < (rows / 2)) ? 234 : 123;
+      let on_ice = Boolean(r % 2);
+      for (let c = 0; c < cols; c++) {
+        let address = widget.plateMap("locToAddress", {"r": r, "c": c});
+        let v = volume;
+        let vunit = "mL";
+        let amplicons = [{
           amplicons: 11,
           template_ngul: 'a',
           primer_umolarity: 2,
@@ -174,7 +176,7 @@ window.onload = function() {
           v *= 1000;
           vunit = "uL";
         }
-        wells[i.toString()] = {
+        wells[address] = {
           volume: v,
           pol: [pol],
           amplicons: amplicons,
@@ -186,26 +188,26 @@ window.onload = function() {
       }
     }
     return {
-      derivative: wells,
+      wells: wells,
       checkboxes: ["volume", "pol"]
     };
   }
 
-  $("#my-plate-layout").plateLayOut({
+  widget.plateMap({
     numRows: 8,
     numCols: 12,
     attributes: attributes,
-    // scrollToGroup: false, // optional
 
-    updateWells: function(event, data) {
+    updateWells: function() {
       //data has changed
-      window.plateData = data;
-      console.log(Object.keys(data.derivative).length + " wells updated");
+      window.plateData = widget.plateMap("getPlate") ;
+      console.log(Object.keys(window.plateData.wells).length + " wells updated");
     },
-    created: function(event, data) {
+    created: function() {
       console.log("Created");
     }
   });
   window.plateData = makeNewPlate();
-  $("#my-plate-layout").plateLayOut("getPlates", window.plateData);
+  widget.plateMap("loadPlate", window.plateData);
+  widget.plateMap("clearHistory");
 };

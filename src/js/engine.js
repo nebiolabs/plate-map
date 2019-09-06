@@ -1,10 +1,10 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.engine = function(THIS) {
+  plateMapWidget.engine = function(THIS) {
     // Methods which look after data changes and stack up accordingly
-    // Remember THIS points to plateLayOutWidget and 'this' points to engine
+    // Remember THIS points to plateMapWidget and 'this' points to engine
     // Use THIS to refer parent this.
     return {
       engine: {
@@ -15,8 +15,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         stackPointer: 2,
 
         wellEmpty: function(well) {
-          for (var prop in well) {
-            var curVal = well[prop];
+          for (let prop in well) {
+            if (!well.hasOwnProperty(prop)) {
+              continue;
+            }
+            let curVal = well[prop];
             if (curVal !== null && curVal !== undefined) {
               if (Array.isArray(curVal)) {
                 if (curVal.length > 0) {
@@ -34,19 +37,25 @@ var plateLayOutWidget = plateLayOutWidget || {};
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
           this.stackPointer = 1;
-          var derivativeJson = {};
-          for (var idx in this.derivative) {
-            var data = this.derivative[idx];
-            var wellData = {};
-            for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
-              var attr = THIS.globalSelectedAttributes[i];
+          let derivativeJson = {};
+          for (let idx in this.derivative) {
+            if (!this.derivative.hasOwnProperty(idx)) {
+              continue;
+            }
+            let data = this.derivative[idx];
+            let wellData = {};
+            for (let i = 0; i < THIS.globalSelectedAttributes.length; i++) {
+              let attr = THIS.globalSelectedAttributes[i];
 
               if (attr in THIS.globalSelectedMultiplexSubfield) {
-                var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
-                var newMultiplexVal = [];
-                for (var multiplexIdx in data[attr]) {
-                  var curMultiplexVals = data[attr][multiplexIdx];
-                  var newVal = {};
+                let selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
+                let newMultiplexVal = [];
+                for (let multiplexIdx in data[attr]) {
+                  if (!data[attr].hasOwnProperty(multiplexIdx)) {
+                    continue;
+                  }
+                  let curMultiplexVals = data[attr][multiplexIdx];
+                  let newVal = {};
                   newVal[attr] = curMultiplexVals[attr];
                   selectedSubFields.forEach(function(subFieldId) {
                     newVal[subFieldId] = curMultiplexVals[subFieldId];
@@ -68,16 +77,14 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
 
           while (!$.isEmptyObject(derivativeJson)) {
-            var keys = Object.keys(derivativeJson).map(function(k) {
-              return parseFloat(k, 10);
-            });
+            let keys = Object.keys(derivativeJson).map(parseFloat);
             keys.sort(function(a, b) {
               return a - b;
             });
 
-            var refDerivativeIndex = keys[0];
-            var referenceDerivative = derivativeJson[refDerivativeIndex];
-            var arr = [];
+            let refDerivativeIndex = keys[0];
+            let referenceDerivative = derivativeJson[refDerivativeIndex];
+            let arr = [];
 
             if (!referenceDerivative) {
               // if no checked box has value, push it to first spot
@@ -90,9 +97,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
               delete derivativeJson[refDerivativeIndex];
             } else {
               // if checked boxes have values
-              for (var i = 0; i < keys.length; i++) {
-                var idx = keys[i];
-                if (referenceDerivative == derivativeJson[idx]) {
+              for (let i = 0; i < keys.length; i++) {
+                let idx = keys[i];
+                if (referenceDerivative === derivativeJson[idx]) {
                   arr.push(idx);
                   this.stackUpWithColor[this.stackPointer] = arr;
                   delete derivativeJson[idx];
@@ -106,31 +113,31 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         applyColors: function() {
 
-          var wholeNoTiles = 0;
-          var wholePercentage = 0;
+          let wholeNoTiles = 0;
+          let wholePercentage = 0;
 
           THIS.addBottomTableHeadings();
 
-          for (var i = 0; i < THIS.allTiles.length; i++) {
-            var tile = THIS.allTiles[i];
+          for (let i = 0; i < THIS.allTiles.length; i++) {
+            let tile = THIS.allTiles[i];
             THIS.setTileVisible(tile, false);
           }
 
-          for (var color = 0; color < this.stackPointer; color++) {
-            var arr = this.stackUpWithColor[color];
+          for (let color = 0; color < this.stackPointer; color++) {
+            let arr = this.stackUpWithColor[color];
             if (arr) {
               THIS.addBottomTableRow(color, arr);
 
-              for (var tileIndex in arr) {
+              for (let i = 0; i < arr.length; i++) {
                 wholeNoTiles++;
-                var index = this.stackUpWithColor[color][tileIndex];
-                var tile = THIS.allTiles[index];
-                var well = this.derivative[index];
+                let index = this.stackUpWithColor[color][i];
+                let tile = THIS.allTiles[index];
+                let well = this.derivative[index];
                 this.colorMap.set(index, color);
                 THIS.setTileColor(tile, color);
                 // Checks if all the required fields are filled
-                var completion = this.checkCompletion(well, tile);
-                THIS.setTileComplete(tile, completion == 1);
+                let completion = this.checkCompletion(well, tile);
+                THIS.setTileComplete(tile, completion === 1);
                 wholePercentage = wholePercentage + completion;
               }
             }
@@ -143,16 +150,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
           } else {
             THIS.overLayTextContainer.text("Completion Percentage: " + wholePercentage + "%");
           }
+          THIS.selectObjectInBottomTab();
         },
 
-        checkCompletion: function(wellData, tile) {
-          var req = 0;
-          var fill = 0;
-          for (var i = 0; i < THIS.fieldList.length; i++) {
-            var field = THIS.fieldList[i];
+        checkCompletion: function(wellData) {
+          let req = 0;
+          let fill = 0;
+          for (let i = 0; i < THIS.fieldList.length; i++) {
+            let field = THIS.fieldList[i];
             if (field.checkMultiplexCompletion) {
               // also apply color
-              var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
+              let multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
               if (multiplexStatus.include) {
                 fill += multiplexStatus.completionPct;
                 req++;
@@ -174,4 +182,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
     }
   }
-})(jQuery, fabric);
+})(jQuery);

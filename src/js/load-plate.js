@@ -1,93 +1,80 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+plateMapWidget.loadPlate = function() {
+  // Methods which look after data changes and stack up accordingly
+  // Remember THIS points to plateMapWidget and 'this' points to engine
+  return {
 
-  plateLayOutWidget.loadPlate = function(THIS) {
-    // Methods which look after data changes and stack up accordingly
-    // Remember THIS points to plateLayOutWidget and 'this' points to engine
-    return {
-
-      getPlates: function(data) {
-        //sanitize input
-        var derivative = {};
-        for (var index in data.derivative) {
-          var well = data.derivative[index];
+    loadPlate: function(data) {
+      //sanitize input
+      let derivative;
+      if (data.hasOwnProperty('wells')) {
+        derivative = {};
+        for (let address in data.wells) {
+          let well = data.wells[address];
+          let index = this.addressToIndex(address);
           derivative[index] = this.sanitizeWell(well);
         }
+      } else {
+        derivative = this.derivative;
+      }
 
-        var checkboxes = data.checkboxes || [];
-        var selection = this.sanitizeAreas(data.selectedAreas, data.focalWell);
+      let checkboxes;
+      if (data.hasOwnProperty('checkboxes')) {
+        checkboxes = this.sanitizeCheckboxes(data.checkboxes);
+      } else {
+        checkboxes = this.getCheckboxes();
+      }
 
-        var sanitized = {
-          "derivative": derivative,
-          "checkboxes": checkboxes,
-          "selectedAreas": selection.selectedAreas,
-          "focalWell": selection.focalWell
-        };
+      let indices;
+      if (data.hasOwnProperty('selectedAddresses')) {
+        indices = this.sanitizeAddresses(data.selectedAddresses);
+      } else {
+        indices = this.getSelectedIndices();
+      }
+      if (indices.length === 0) {
+        indices = [0];
+      }
 
-        this.setData(sanitized);
-      },
+      let sanitized = {
+        "derivative": derivative,
+        "checkboxes": checkboxes,
+        "selectedIndices": indices,
+      };
 
-      sanitizeAreas: function(selectedAreas, focalWell) {
-        var that = this;
-        var rows = this.dimensions.rows;
-        var cols = this.dimensions.cols;
+      this.setData(sanitized);
+    },
 
-        if (!selectedAreas) {
-          selectedAreas = [];
-        }
-        if (selectedAreas.length) {
-          selectedAreas = selectedAreas.map(function(area) {
-            return {
-              minCol: that._coordIndex(Math.min(area.minCol, area.maxCol), cols),
-              minRow: that._coordIndex(Math.min(area.minRow, area.maxRow), rows),
-              maxCol: that._coordIndex(Math.max(area.minCol, area.maxCol), cols),
-              maxRow: that._coordIndex(Math.max(area.minRow, area.maxRow), rows)
-            };
-          });
-          var area = selectedAreas[selectedAreas.length - 1];
-          if (focalWell && !this._wellInArea(focalWell, area)) {
-            focalWell = null;
-          }
-          if (!focalWell) {
-            focalWell = {
-              row: area.minRow,
-              col: area.minCol
-            };
-          }
-        } else {
-          if (!focalWell) {
-            focalWell = {
-              row: 0,
-              col: 0
-            };
-          }
-          selectedAreas = [this._wellToArea(focalWell)];
-        }
-        return {
-          selectedAreas: selectedAreas,
-          focalWell: focalWell
-        };
-      },
+    sanitizeCheckboxes: function(checkboxes) {
+      checkboxes = checkboxes || [];
+      return this.allCheckboxes.filter(fieldId => checkboxes.indexOf(fieldId) >= 0);
+    },
 
-      sanitizeWell: function(well) {
-        var newWell = {};
-        for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i];
-          newWell[field.id] = field.parseValue(well[field.id]);
-        }
-        return newWell;
-      },
+    sanitizeAddresses: function(selectedAddresses) {
+      selectedAddresses = selectedAddresses || [];
+      let indices = selectedAddresses.map(this.addressToIndex, this);
+      indices.sort();
+      indices = indices.filter((index, i) => indices.indexOf(index) === i);
+      return indices;
+    },
 
-      setData: function(data) {
-        this.engine.derivative = $.extend(true, {}, data.derivative);
-        this.setCheckboxes(data.checkboxes);
-        this.setSelection(data.selectedAreas, data.focalWell);
-        this._colorMixer();
-        this.decideSelectedFields();
-        this.mainFabricCanvas.renderAll();
-      },
+    sanitizeWell: function(well) {
+      let newWell = {};
+      this.fieldList.forEach(function (field) {
+        newWell[field.id] = field.parseValue(well[field.id]);
+      });
+      return newWell;
+    },
 
-    }
+    setData: function(data, quiet) {
+      this.engine.derivative = data.derivative;
+      this.setCheckboxes(data.checkboxes, true);
+      this.setSelectedIndices(data.selectedIndices, true);
+      this.derivativeChange();
+      if (!quiet) {
+        this.addToUndoRedo();
+      }
+    },
+
   }
-})(jQuery, fabric);
+};

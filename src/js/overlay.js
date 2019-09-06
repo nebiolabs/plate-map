@@ -1,15 +1,15 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.overlay = function() {
+  plateMapWidget.overlay = function() {
     // overlay holds all the methods to put the part just above the canvas which contains all those
     // 'completion percentage' annd 'copy Criteria' button etc ...
     return {
 
       _createOverLay: function() {
 
-        var that = this;
+        let that = this;
         this.overLayTextContainer = this._createElement("<div></div>").addClass("plate-setup-overlay-text-container");
         this.overLayTextContainer.text("Completion Percentage:");
         this.overLayContainer.append(this.overLayTextContainer);
@@ -20,7 +20,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.clearCriteriaButton.text("Clear");
         this.overLayButtonContainer.append(this.clearCriteriaButton);
 
-        this.clearCriteriaButton.click(function(evt) {
+        this.clearCriteriaButton.click(function() {
           that.clearCriteria();
         });
 
@@ -28,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.copyCriteriaButton.text("Copy");
         this.overLayButtonContainer.append(this.copyCriteriaButton);
 
-        this.copyCriteriaButton.click(function(evt) {
+        this.copyCriteriaButton.click(function() {
           that.copyCriteria();
         });
 
@@ -36,7 +36,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.pasteCriteriaButton.text("Paste");
         this.overLayButtonContainer.append(this.pasteCriteriaButton);
 
-        this.pasteCriteriaButton.click(function(evt) {
+        this.pasteCriteriaButton.click(function() {
           that.pasteCriteria();
         });
 
@@ -44,7 +44,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.undoButton.text("Undo");
         this.overLayButtonContainer.append(this.undoButton);
 
-        this.undoButton.click(function(evt) {
+        this.undoButton.click(function() {
           that.undo();
         });
 
@@ -52,65 +52,59 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.redoButton.text("Redo");
         this.overLayButtonContainer.append(this.redoButton);
 
-        this.redoButton.click(function(evt) {
+        this.redoButton.click(function() {
           that.redo();
         });
 
       },
 
       clearCriteria: function() {
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          var hasWellUpdate = false;
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex];
-            if (tile.index in this.engine.derivative) {
+        if (this.selectedIndices && this.selectedIndices.length) {
+          let hasWellUpdate = false;
+          let selectedIndices = this.selectedIndices;
+          let well;
+          for (let i = 0; i < selectedIndices.length; i++) {
+            let index = selectedIndices[i];
+            if (index in this.engine.derivative) {
               // handling for clearing well when not allowed to add or delete wells
-              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
-                var well = JSON.parse(JSON.stringify(this.defaultWell));
-                var defaultValue = this.emptyWellWithDefaultVal;
-                for (var key in defaultValue) {
-                  if (key in well) {
-                    well[key] = defaultValue[key];
-                    this._applyFieldData(key, defaultValue[key]);
-                  } else {
-                    console.log("Well does not contain key: " + key + ", please contact support");
-                  }
+              if (this.disableAddDeleteWell) {
+                if (this.engine.derivative.hasOwnProperty(index)) {
+                  well = $.extend(true, {}, this.emptyWellWithDefaultVal);
+                  this.engine.derivative[index] = well;
                 }
-                this.engine.derivative[tile.index] = well;
               } else {
-                delete this.engine.derivative[tile.index];
+                delete this.engine.derivative[index];
               }
               hasWellUpdate = true;
             }
           }
-          if (hasWellUpdate) {
-            this.derivativeChange();
-          }
 
-          this._colorMixer();
-          this.decideSelectedFields();
+          if (hasWellUpdate) {
+            this._colorMixer();
+            this.decideSelectedFields();
+            this.derivativeChange();
+            this.addToUndoRedo();
+          }
         } else {
           alert("Please select any well");
         }
       },
 
       copyCriteria: function() {
-        if (this.allSelectedObjects) {
-          var wells = this._getSelectedWells();
-          this.commonWell = this._getCommonFields(wells);
+        if (this.selectedIndices && this.selectedIndices.length) {
+          let wells = this._getSelectedWells();
+          this.commonData = this._getCommonData(wells);
         } else {
           alert("Please select any well.");
         }
       },
 
       pasteCriteria: function() {
-        if (this.commonWell) {
-          this._addAllData(this.commonWell);
+        if (this.commonData) {
+          this._addAllData(this.commonData);
           this.decideSelectedFields();
-          this.mainFabricCanvas.renderAll();
         }
       }
     };
   }
-})(jQuery, fabric);
+})(jQuery);

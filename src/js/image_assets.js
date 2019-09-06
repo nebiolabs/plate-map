@@ -1,6 +1,6 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.assets = function() {
+plateMapWidget.assets = function() {
   return {
     _assets: {
       doImg: '&#10003;',

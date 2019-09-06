@@ -1,14 +1,14 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.interface = function() {
+  plateMapWidget.interface = function() {
     // interface holds all the methods to put the interface in place
     return {
 
       _createInterface: function() {
 
-        var divIdentifier = '<div></div>';
+        let divIdentifier = '<div></div>';
         this.container = this._createElement(divIdentifier).addClass("plate-setup-wrapper");
         this.topSection = this._createElement(divIdentifier).addClass("plate-setup-top-section");
 
@@ -20,10 +20,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this._createOverLay();
         $(this.topLeft).append(this.overLayContainer);
-
-        this._createCanvas();
         $(this.topLeft).append(this.canvasContainer);
-
 
         $(this.topSection).append(this.topLeft);
         $(this.topSection).append(this.topRight);
@@ -31,7 +28,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
         $(this.container).append(this.topSection);
         $(this.element).append(this.container);
 
-        this._initiateFabricCanvas();
+        this._createSvg();
 
         this._createTabAtRight();
         this._createTabs();
@@ -39,12 +36,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this._placePresetTabs();
         // Bottom of the screen
         this._bottomScreen();
-        // Canvas
-        this._canvas();
 
         this.bottomForFirstTime();
 
-        var that = this;
+        let that = this;
         this._setShortcuts();
         $(document.body).keyup(function(e) {
           that._handleShortcuts(e);
@@ -58,22 +53,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _setShortcuts: function() {
-        var that = this;
+        let that = this;
         window.addEventListener("cut", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.copyCriteria();
             that.clearCriteria();
             e.preventDefault();
           }
         });
         window.addEventListener("copy", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.copyCriteria();
             e.preventDefault();
           }
         });
         window.addEventListener("paste", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.pasteCriteria();
             e.preventDefault();
           }
@@ -82,18 +77,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _handleShortcuts: function(e) {
         if (document.activeElement === document.body) {
-          if (e.keyCode == 46) {
+          if (e.keyCode === 46) {
             this.clearCriteria();
             e.preventDefault();
           } else if (e.ctrlKey || e.metaKey) {
-            if (e.keyCode == 90) {
+            if (e.keyCode === 90) {
               if (e.shiftKey) {
                 this.redo();
               } else {
                 this.undo();
               }
               e.preventDefault();
-            } else if (e.keyCode == 89) {
+            } else if (e.keyCode === 89) {
               this.redo();
               e.preventDefault();
             }
@@ -102,4 +97,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
     };
   }
-})(jQuery, fabric);
+})(jQuery);

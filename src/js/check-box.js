@@ -1,44 +1,58 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.checkBox = function() {
+  plateMapWidget.checkBox = function() {
     // For those check boxes associated with every field in the tab
     return {
 
       globalSelectedAttributes: [],
+      globalSelectedMultiplexSubfield: [],
+      allCheckboxes: [],
 
       _addCheckBox: function(field) {
-        var checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
+        let checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
           .data("clicked", false);
-        checkImage.data("linkedFieldId", field.id);
+        let linkedFieldId = field.full_id;
+        checkImage.data("linkedFieldId", linkedFieldId);
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
         field.checkbox = checkImage;
+        this.allCheckboxes.push(linkedFieldId);
       },
 
       _applyCheckboxHandler: function(checkBoxImage) {
-        // We add checkbox handler here, thing is it s not checkbox , its an image and we change
-        // source
-        var that = this;
-        checkBoxImage.click(function(evt, machineClick) {
-          var checkBox = $(this);
+        let that = this;
+        checkBoxImage.click(function() {
+          let checkBox = $(this);
 
-          var changes = {};
+          let changes = {};
           changes[checkBox.data("linkedFieldId")] = !checkBox.data("clicked");
 
           that.changeCheckboxes(changes);
         });
       },
 
+      getCheckboxes: function () {
+        return this.allCheckboxes.filter(function (fieldId) {
+          let field = this.fieldMap[fieldId];
+          if (field.mainMultiplexField) {
+            let subfields = this.globalSelectedMultiplexSubfield[field.mainMultiplexField.id] || [];
+            return subfields.indexOf(field.id);
+          } else {
+            return this.globalSelectedAttributes.indexOf(field.id) >= 0;
+          }
+        }, this);
+      },
+
       changeSubFieldsCheckboxes: function(field, changes) {
-        var that = this;
-        var subFieldToInclude = [];
+        let that = this;
+        let subFieldToInclude = [];
 
         field.subFieldList.forEach(function(subField) {
-          var checkImage = subField.checkbox;
-          var fieldId = checkImage.data("linkedFieldId");
-          var clicked = checkImage.data("clicked");
+          let checkImage = subField.checkbox;
+          let fieldId = checkImage.data("linkedFieldId");
+          let clicked = checkImage.data("clicked");
           if (fieldId in changes) {
             clicked = Boolean(changes[fieldId]);
           }
@@ -53,19 +67,19 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return subFieldToInclude;
       },
 
-      changeCheckboxes: function(changes) {
-        var gsa = [];
-        var multiplexCheckedSubField = {};
-        for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i];
+      changeCheckboxes: function(changes, noUndoRedo) {
+        let gsa = [];
+        let multiplexCheckedSubField = {};
+        for (let i = 0; i < this.fieldList.length; i++) {
+          let field = this.fieldList[i];
           if (field.checkbox) {
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.changeSubFieldsCheckboxes(field, changes);
             }
 
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId");
-            var clicked = checkImage.data("clicked");
+            let checkImage = field.checkbox;
+            let fieldId = checkImage.data("linkedFieldId");
+            let clicked = checkImage.data("clicked");
             if (fieldId in changes) {
               clicked = Boolean(changes[fieldId]);
             }
@@ -82,15 +96,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.globalSelectedAttributes = gsa;
         this._clearPresetSelection();
         this._colorMixer();
+        if (!noUndoRedo) {
+          this.addToUndoRedo();
+        }
       },
 
       setSubFieldCheckboxes: function(field, fieldIds) {
-        var that = this;
-        var subFieldToInclude = [];
+        let that = this;
+        let subFieldToInclude = [];
         field.subFieldList.forEach(function(subField) {
-          var checkImage = subField.checkbox;
-          var fieldId = checkImage.data("linkedFieldId");
-          var clicked = fieldIds.indexOf(fieldId) >= 0;
+          let checkImage = subField.checkbox;
+          let fieldId = checkImage.data("linkedFieldId");
+          let clicked = fieldIds.indexOf(fieldId) >= 0;
           checkImage.data("clicked", clicked);
           if (clicked) {
             checkImage.html(that._assets.doImg);
@@ -102,22 +119,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
         return subFieldToInclude;
       },
 
-      setCheckboxes: function(fieldIds) {
+      setCheckboxes: function(fieldIds, noUndoRedo) {
         fieldIds = fieldIds || [];
-        var gsa = [];
-        var multiplexCheckedSubField = {};
+        let gsa = [];
+        let multiplexCheckedSubField = {};
 
-        for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i];
+        for (let i = 0; i < this.fieldList.length; i++) {
+          let field = this.fieldList[i];
           if (field.checkbox) {
             // special handling for multiplex field
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.setSubFieldCheckboxes(field, fieldIds);
             }
 
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId");
-            var clicked = fieldIds.indexOf(fieldId) >= 0;
+            let checkImage = field.checkbox;
+            let fieldId = checkImage.data("linkedFieldId");
+            let clicked = fieldIds.indexOf(fieldId) >= 0;
             checkImage.data("clicked", clicked);
             if (clicked) {
               gsa.push(fieldId);
@@ -132,8 +149,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.globalSelectedAttributes = gsa;
         this._clearPresetSelection();
         this._colorMixer();
+        if (!noUndoRedo) {
+          this.addToUndoRedo();
+        }
       }
 
     };
   }
-})(jQuery, fabric);
+})(jQuery);

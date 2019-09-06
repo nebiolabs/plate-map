@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.undoRedoManager = function(THIS) {
+  plateMapWidget.undoRedoManager = function() {
 
     return {
 
@@ -10,38 +10,34 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       actionPointer: null,
 
-      addToUndoRedo: function(data) {
-
+      addToUndoRedo: function() {
+        let state = this.createState();
         if (this.actionPointer != null) {
-          var i = this.actionPointer + 1;
+          let i = this.actionPointer + 1;
           if (i < this.undoRedoArray.length) {
             this.undoRedoArray.splice(i, this.undoRedoArray.length - i);
           }
         }
         this.actionPointer = null;
-        this.undoRedoArray.push($.extend(true, {}, data));
+        this.undoRedoArray.push(state);
       },
 
       _configureUndoRedoArray: function() {
 
-        var data = {
+        let data = {
           checkboxes: [],
           derivative: {},
-          selectedAreas: [{
-            minRow: 0,
-            minCol: 0,
-            maxRow: 0,
-            maxCol: 0
-          }],
-          focalWell: {
-            row: 0,
-            col: 0
-          }
+          selectedIndices: [0]
         };
 
         this.undoRedoArray = [];
         this.actionPointer = null;
         this.undoRedoArray.push($.extend({}, data));
+      },
+
+      clearHistory: function () {
+        this.undoRedoArray = this.undoRedoArray.slice(-1);
+        this.actionPointer = null;
       },
 
       undo: function() {
@@ -55,7 +51,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       shiftUndoRedo: function(pointerDiff) {
-        var pointer = this.actionPointer;
+        let pointer = this.actionPointer;
         if (pointer == null) {
           pointer = this.undoRedoArray.length - 1;
         }
@@ -70,14 +66,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (pointer >= this.undoRedoArray.length) {
           return false;
         }
-        this.undoRedoActive = true;
-        this.setData(this.undoRedoArray[pointer]);
         this.actionPointer = pointer;
-        this.undoRedoActive = false;
-        this.derivativeChange();
+        this.setData(this.undoRedoArray[pointer], true);
         return true;
       }
     }
   };
 
-})(jQuery, fabric);
+})(jQuery);

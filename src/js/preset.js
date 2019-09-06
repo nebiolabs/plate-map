@@ -1,15 +1,15 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.preset = function(me) {
+  plateMapWidget.preset = function() {
     // All the preset action goes here
     return {
 
       presets: [],
 
       _placePresetTabs: function() {
-        var presets = this.options.attributes.presets;
+        let presets = this.options.attributes.presets;
 
         if (presets && presets.length) {
           this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container")
@@ -19,18 +19,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
           this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
           this.tabContainer.append(this.presetTabContainer);
 
-          for (var i = 0; i < presets.length; i++) {
-            var preset = presets[i];
-            var divText = this._createElement("<div></div>").addClass("plate-setup-preset-tab-div")
+          for (let i = 0; i < presets.length; i++) {
+            let preset = presets[i];
+            let divText = this._createElement("<div></div>").addClass("plate-setup-preset-tab-div")
               .text(preset.title);
 
-            var presetButton = this._createElement("<div></div>").addClass("plate-setup-preset-tab")
+            let presetButton = this._createElement("<div></div>").addClass("plate-setup-preset-tab")
               .data("preset", preset.fields).append(divText);
             this.presetTabContainer.append(presetButton);
 
-            var that = this;
+            let that = this;
             presetButton.click(function() {
-              var preset = $(this);
+              let preset = $(this);
               that._selectPreset(preset);
             });
             this.presets.push(presetButton);
@@ -39,8 +39,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _clearPresetSelection: function() {
-        for (var j = 0; j < this.presets.length; j++) {
-          var p = this.presets[j];
+        for (let j = 0; j < this.presets.length; j++) {
+          let p = this.presets[j];
           p.removeClass("plate-setup-preset-tab-selected")
             .addClass("plate-setup-preset-tab");
         }
@@ -53,4 +53,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
     };
   }
-})(jQuery, fabric);
+})(jQuery);

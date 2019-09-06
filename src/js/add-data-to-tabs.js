@@ -1,21 +1,19 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+plateMapWidget.addDataToFields = function() {
 
-  plateLayOutWidget.addDataToFields = function() {
+  return {
 
-    return {
-
-      _addDataToTabFields: function(values) {
-        // Configure how data is added to tab fields
-        for (var id in values) {
-          this._applyFieldData(id, values[id]);
+    _addDataToTabFields: function(well) {
+      // Configure how data is added to tab fields
+      for (let i = 0; i < this.fieldList.length; i++) {
+        let field = this.fieldList[i];
+        let v = well[field.id];
+        if (v === undefined) {
+          v = null;
         }
-      },
-
-      _applyFieldData: function(id, v) {
-        this.fieldMap[id].setValue(v);
+        field.setValue(v);
       }
     }
   }
-})(jQuery, fabric)
+};

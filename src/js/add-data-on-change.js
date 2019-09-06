@@ -1,45 +1,36 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-(function($, fabric) {
+(function($) {
 
-  plateLayOutWidget.addDataOnChange = function() {
+  plateMapWidget.addDataOnChange = function() {
     // This object is invoked when something in the tab fields change
     return {
 
       _addAllData: function(data) {
-        // Method to add data when something changes in the tabs. Its going to be tricky , just starting.
-        if (this.allSelectedObjects) {
-          var noOfSelectedObjects = this.allSelectedObjects.length;
-          var wells = [];
-          for (var objectIndex = 0; objectIndex < noOfSelectedObjects; objectIndex++) {
-            var tile = this.allSelectedObjects[objectIndex];
-            var well;
-            if (tile.index in this.engine.derivative) {
-              well = this.engine.derivative[tile.index];
+        let wells = [];
+        if (this.selectedIndices) {
+          let noOfSelectedObjects = this.selectedIndices.length;
+          this.selectedIndices.forEach(function (index) {
+            let well;
+            if (index in this.engine.derivative) {
+              well = this.engine.derivative[index];
             } else {
               well = $.extend(true, {}, this.defaultWell);
-              this.engine.derivative[tile.index] = well;
+              this.engine.derivative[index] = well;
             }
-            var processedData = this.processWellData(data, well, noOfSelectedObjects, wells);
-            wells = processedData.wells;
-            well = processedData.well;
-            var empty = this.engine.wellEmpty(well);
+            well = this.processWellData(data, well, noOfSelectedObjects);
+            let empty = this.engine.wellEmpty(well);
             if (empty) {
-              if (this.emptyWellWithDefaultVal && this.disableAddDeleteWell) {
-                var wellCopy = JSON.parse(JSON.stringify(well));
-                var defaultValue = this.emptyWellWithDefaultVal;
-                for (var key in defaultValue) {
-                  if (key in wellCopy) {
-                    wellCopy[key] = defaultValue[key];
-                    this._applyFieldData(key, defaultValue[key]);
-                  }
+              if (this.disableAddDeleteWell) {
+                if (this.engine.derivative.hasOwnProperty(index)) {
+                  well = $.extend(true, {}, this.emptyWellWithDefaultVal);
+                  this.engine.derivative[index] = well;
                 }
-                this.engine.derivative[tile.index] = wellCopy;
               } else {
-                delete this.engine.derivative[tile.index];
+                delete this.engine.derivative[index];
               }
             }
-          }
+          }, this);
         }
         // update multiplex remove all field
         this._getAllMultipleVal(wells);
@@ -47,54 +38,52 @@ var plateLayOutWidget = plateLayOutWidget || {};
         // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
         this._colorMixer();
         this.derivativeChange();
+        this.addToUndoRedo();
       },
 
-      processWellData: function(newData, curWell, noOfSelectedObjects, wellList) {
-
-        if (!wellList) {
-          wellList = [];
-        }
-        for (var id in newData) {
-          var v;
-          if (newData[id] !== undefined && newData[id] !== null) {
-            if (newData[id].multi) {
-              var curData = newData[id];
-              var preData = curWell[id];
-              var newDt = this._getMultiData(preData, curData, id, noOfSelectedObjects);
-              // need to replace newData
-              v = JSON.parse(JSON.stringify(newDt));
-            } else {
-              v = JSON.parse(JSON.stringify(newData[id]));
-            }
-          } else {
-            v = JSON.parse(JSON.stringify(newData[id]));
+      processWellData: function(newData, curWell, noOfSelectedObjects) {
+        for (let id in newData) {
+          if (!newData.hasOwnProperty(id)) {
+            continue;
           }
-          curWell[id] = v;
-          wellList.push(curWell);
+          let newVal = newData[id];
+          if (newVal !== undefined && newVal !== null) {
+            if (newVal.multi) {
+              let preData = curWell[id];
+              newVal = this._getMultiData(preData, newVal, id, noOfSelectedObjects);
+            }
+            newVal = JSON.parse(JSON.stringify(newVal));
+          } else {
+            newVal = null;
+          }
+          curWell[id] = newVal;
         }
 
-        return {
-          well: curWell,
-          wells: wellList
-        }
+        return curWell
       },
 
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
-        var addNew = curData.added;
-        var removed = curData.removed;
+        let addNew = curData.added;
+        let removed = curData.removed;
         if (addNew) {
           if (preData) {
             if (addNew.value) {
-              var add = true;
-              for (var listIdx in preData) {
-                var multiplexData = preData[listIdx];
+              let add = true;
+              for (let listIdx in preData) {
+                if (!preData.hasOwnProperty(listIdx)) {
+                  continue;
+                }
+                let multiplexData = preData[listIdx];
                 // for cases when the add new data exist in well
                 if (multiplexData[fieldId].toString() === addNew.id.toString()) {
                   add = false;
                   // update subfield value
                   preData = preData.map(function(val) {
                     if (val[fieldId].toString() === addNew.id.toString()) {
-                      for (var subFieldId in val) {
+                      for (let subFieldId in val) {
+                        if (!val.hasOwnProperty(subFieldId)) {
+                          continue;
+                        }
                         // over write previous data if only one well is selected
                         if (subFieldId in addNew.value && subFieldId !== fieldId) {
                           if (noOfSelectedObjects === 1) {
@@ -125,9 +114,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
           }
         }
 
-        var removeListIndex = function(preData, removeIndex) {
-          var newPreData = [];
-          for (var idx in preData) {
+        let removeListIndex = function(preData, removeIndex) {
+          let newPreData = [];
+          for (let idx in preData) {
+            if (!preData.hasOwnProperty(idx)) {
+              continue;
+            }
             if (parseInt(idx) !== parseInt(removeIndex)) {
               newPreData.push(preData[idx]);
             }
@@ -136,11 +128,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
         };
 
         if (removed) {
-          var removeIndex;
+          let removeIndex;
           // for multiplex field
           if (removed.value) {
-            for (var listIdx in preData) {
-              var multiplexData = preData[listIdx];
+            for (let listIdx in preData) {
+              let multiplexData = preData[listIdx];
               if (multiplexData[fieldId].toString() === removed.id.toString()) {
                 removeIndex = listIdx;
               }
@@ -156,40 +148,56 @@ var plateLayOutWidget = plateLayOutWidget || {};
             }
           }
         }
-        if (preData && (preData.length == 0)) {
+        if (preData && (preData.length === 0)) {
           preData = null;
         }
         return preData
       },
 
       _colorMixer: function() {
-        if (!this.undoRedoActive) {
-          var data = this.createObject();
-          this.addToUndoRedo(data);
-        }
         this.engine.searchAndStack();
         this.engine.applyColors();
-        this.mainFabricCanvas.renderAll();
       },
 
       derivativeChange: function() {
-        this._trigger("updateWells", null, this.createObject());
+        this._trigger("updateWells", null, this);
       },
 
-      createObject: function() {
-        var derivative = $.extend(true, {}, this.engine.derivative);
-        var checkboxes = this.globalSelectedAttributes.slice();
-        var selectedAreas = this.selectedAreas.slice();
-        var focalWell = this.focalWell;
+      createState: function() {
+        let derivative = $.extend(true, {}, this.engine.derivative);
+        let checkboxes = this.getCheckboxes();
+        let selectedIndices = this.selectedIndices.slice();
 
         return {
           "derivative": derivative,
           "checkboxes": checkboxes,
-          "selectedAreas": selectedAreas,
-          "focalWell": focalWell,
+          "selectedIndices": selectedIndices,
+          "requiredField": this.requiredField
+        };
+      },
+
+      getPlate: function() {
+        let wells = {};
+        let derivative = this.engine.derivative;
+        for (let index in derivative) {
+          if (!derivative.hasOwnProperty(index)) {
+            continue;
+          }
+
+          let address = this.indexToAddress(index);
+          let well = derivative[index];
+          wells[address] = $.extend(true, {}, well);
+        }
+        let checkboxes = this.getCheckboxes();
+        let selectedAddresses = this.getSelectedAddresses();
+
+        return {
+          "wells": wells,
+          "checkboxes": checkboxes,
+          "selectedAddresses": selectedAddresses,
           "requiredField": this.requiredField
         };
       }
     };
   }
-})(jQuery, fabric);
+})(jQuery);
