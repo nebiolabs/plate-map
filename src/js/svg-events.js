@@ -214,16 +214,16 @@ var plateMapWidget = plateMapWidget || {};
         return false;
       },
 
-      _getCommonWell: function(wells) {
+      _getCommonData: function(wells) {
         if (wells.length) {
-          let commonWell = $.extend(true, {}, wells[0]);
+          let commonData = $.extend(true, {}, wells[0]);
           for (let i = 1; i < wells.length; i++) {
             let well = wells[i];
-            for (let field in commonWell) {
-              if (!commonWell.hasOwnProperty(field)) {
+            for (let field in commonData) {
+              if (!commonData.hasOwnProperty(field)) {
                 continue;
               }
-              let commonVal = commonWell[field];
+              let commonVal = commonData[field];
               if (commonVal === undefined) {
                 commonVal = null;
               }
@@ -232,36 +232,41 @@ var plateMapWidget = plateMapWidget || {};
                 wellVal = null;
               }
               if (Array.isArray(commonVal)) {
-                let agrArr = [];
+                let commonArr = [];
                 for (let i = 0; i < commonVal.length; i++) {
                   let v = commonVal[i];
                   // for multiplex field
                   if (v && typeof (v) === "object") {
                     if (this.containsObject(v, wellVal)) {
-                      agrArr.push(v);
+                      commonArr.push(v);
                     }
                   } else {
                     if ($.inArray(v, wellVal) >= 0) {
-                      agrArr.push(v);
+                      commonArr.push(v);
                     }
                   }
                 }
-                commonVal = agrArr;
+                commonData[field] = commonArr;
               } else {
                 if (wellVal && typeof (wellVal) === "object" && commonVal && typeof (commonVal) === "object") {
                   if ((wellVal.value !== commonVal.value) || (wellVal.unit !== commonVal.unit)) {
-                    delete commonWell[field];
+                    delete commonData[field];
                   }
                 } else if (commonVal !== wellVal) {
-                  delete commonWell[field];
+                  delete commonData[field];
                 }
               }
             }
           }
-          return commonWell;
+          return commonData;
         } else {
           return this.defaultWell;
         }
+      },
+
+      _getCommonWell: function (wells) {
+        let commonData = this._getCommonData(wells);
+        return this.sanitizeWell(commonData);
       },
 
       _getAllMultipleVal: function(wells) {

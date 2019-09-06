@@ -93,15 +93,15 @@ var plateMapWidget = plateMapWidget || {};
       copyCriteria: function() {
         if (this.selectedIndices && this.selectedIndices.length) {
           let wells = this._getSelectedWells();
-          this.commonWell = this._getCommonWell(wells);
+          this.commonData = this._getCommonData(wells);
         } else {
           alert("Please select any well.");
         }
       },
 
       pasteCriteria: function() {
-        if (this.commonWell) {
-          this._addAllData(this.commonWell);
+        if (this.commonData) {
+          this._addAllData(this.commonData);
           this.decideSelectedFields();
         }
       }

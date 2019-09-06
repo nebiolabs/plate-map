@@ -2951,14 +2951,14 @@ var plateMapWidget = plateMapWidget || {};
         if (this.selectedIndices && this.selectedIndices.length) {
           var wells = this._getSelectedWells();
 
-          this.commonWell = this._getCommonWell(wells);
+          this.commonData = this._getCommonData(wells);
         } else {
           alert("Please select any well.");
         }
       },
       pasteCriteria: function pasteCriteria() {
-        if (this.commonWell) {
-          this._addAllData(this.commonWell);
+        if (this.commonData) {
+          this._addAllData(this.commonData);
 
           this.decideSelectedFields();
         }
@@ -3487,7 +3487,8 @@ var plateMapWidget = plateMapWidget || {};
       },
       allTiles: [],
       _createSvg: function _createSvg() {
-        this.svg = new SVG(this.canvasContainer[0]).addClass();
+        this.svg = new SVG(this.canvasContainer[0]);
+        this.svg.attr('preserveAspectRatio', 'xMidYMin meet');
         var ls = this.baseSizes.label_spacing;
         this.svg.viewbox(-ls, -ls, ls + this.dimensions.cols * this.baseSizes.spacing, ls + this.dimensions.rows * this.baseSizes.spacing);
         this.wellShadow = this.svg.gradient('radial', function (stop) {
@@ -3824,19 +3825,19 @@ var plateMapWidget = plateMapWidget || {};
 
         return false;
       },
-      _getCommonWell: function _getCommonWell(wells) {
+      _getCommonData: function _getCommonData(wells) {
         if (wells.length) {
-          var commonWell = $.extend(true, {}, wells[0]);
+          var commonData = $.extend(true, {}, wells[0]);
 
           for (var i = 1; i < wells.length; i++) {
             var well = wells[i];
 
-            for (var field in commonWell) {
-              if (!commonWell.hasOwnProperty(field)) {
+            for (var field in commonData) {
+              if (!commonData.hasOwnProperty(field)) {
                 continue;
               }
 
-              var commonVal = commonWell[field];
+              var commonVal = commonData[field];
 
               if (commonVal === undefined) {
                 commonVal = null;
@@ -3849,39 +3850,44 @@ var plateMapWidget = plateMapWidget || {};
               }
 
               if (Array.isArray(commonVal)) {
-                var agrArr = [];
+                var commonArr = [];
 
                 for (var _i = 0; _i < commonVal.length; _i++) {
                   var v = commonVal[_i]; // for multiplex field
 
                   if (v && _typeof(v) === "object") {
                     if (this.containsObject(v, wellVal)) {
-                      agrArr.push(v);
+                      commonArr.push(v);
                     }
                   } else {
                     if ($.inArray(v, wellVal) >= 0) {
-                      agrArr.push(v);
+                      commonArr.push(v);
                     }
                   }
                 }
 
-                commonVal = agrArr;
+                commonData[field] = commonArr;
               } else {
                 if (wellVal && _typeof(wellVal) === "object" && commonVal && _typeof(commonVal) === "object") {
                   if (wellVal.value !== commonVal.value || wellVal.unit !== commonVal.unit) {
-                    delete commonWell[field];
+                    delete commonData[field];
                   }
                 } else if (commonVal !== wellVal) {
-                  delete commonWell[field];
+                  delete commonData[field];
                 }
               }
             }
           }
 
-          return commonWell;
+          return commonData;
         } else {
           return this.defaultWell;
         }
+      },
+      _getCommonWell: function _getCommonWell(wells) {
+        var commonData = this._getCommonData(wells);
+
+        return this.sanitizeWell(commonData);
       },
       _getAllMultipleVal: function _getAllMultipleVal(wells) {
         var multipleFieldList = this.multipleFieldList;
@@ -3997,7 +4003,7 @@ var plateMapWidget = plateMapWidget || {};
         this.allDataTabs = tabs.map(function () {
           return this._createElement("<div></div>").addClass("plate-setup-data-div").css("z-index", 0);
         }, this);
-        $(this.tabContainer).append(this.allDataTabs);
+        $(this.tabDataContainer).append(this.allDataTabs);
       }
     };
   };
