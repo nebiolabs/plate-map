@@ -7,6 +7,8 @@ var plateMapWidget = plateMapWidget || {};
     return {
 
       globalSelectedAttributes: [],
+      globalSelectedMultiplexSubfield: [],
+      allCheckboxes: [],
 
       _addCheckBox: function(field) {
         var checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
@@ -15,6 +17,7 @@ var plateMapWidget = plateMapWidget || {};
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
         field.checkbox = checkImage;
+        this.allCheckboxes.push(field.id);
       },
 
       _applyCheckboxHandler: function(checkBoxImage) {

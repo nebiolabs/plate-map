@@ -7,14 +7,31 @@ plateMapWidget.loadPlate = function() {
 
     loadPlate: function(data) {
       //sanitize input
-      let derivative = {};
-      for (let address in data.wells) {
-        let well = data.wells[address];
-        let index = this.addressToIndex(address);
-        derivative[index] = this.sanitizeWell(well);
+      let derivative;
+      if (data.hasOwnProperty('wells')) {
+        derivative = {};
+        for (let address in data.wells) {
+          let well = data.wells[address];
+          let index = this.addressToIndex(address);
+          derivative[index] = this.sanitizeWell(well);
+        }
+      } else {
+        derivative = this.derivative;
       }
-      let checkboxes = data.checkboxes || [];
-      let indices = this.sanitizeAddresses(data.selectedAddresses);
+
+      let checkboxes;
+      if (data.hasOwnProperty('checkboxes')) {
+        checkboxes = this.sanitizeCheckboxes(data.checkboxes);
+      } else {
+        checkboxes = this.getCheckboxes();
+      }
+
+      let indices;
+      if (data.hasOwnProperty('selectedAddresses')) {
+        indices = this.sanitizeAddresses(data.selectedAddresses);
+      } else {
+        indices = this.getSelectedIndices();
+      }
       if (indices.length === 0) {
         indices = [0];
       }
@@ -26,6 +43,11 @@ plateMapWidget.loadPlate = function() {
       };
 
       this.setData(sanitized);
+    },
+
+    sanitizeCheckboxes: function(checkboxes) {
+      checkboxes = checkboxes || [];
+      return this.allCheckboxes.filter(fieldId => checkboxes.indexOf(fieldId) >= 0);
     },
 
     sanitizeAddresses: function(selectedAddresses) {

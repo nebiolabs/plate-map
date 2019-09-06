@@ -11,7 +11,7 @@ var plateMapWidget = plateMapWidget || {};
       defaultWell: {},
 
       allDataTabs: [], // To hold all the tab contents. this contains all the tabs and its elements and elements
-      // Settings as a whole. its very usefull, when we have units for a specific field.
+      // Settings as a whole. its very useful, when we have units for a specific field.
       // it goes like tabs-> individual field-> units and checkbox
 
       _createTabAtRight: function() {

@@ -376,8 +376,8 @@ $.widget("DNA.plateMap", {
     }
   },
 
-  getSelectedIndex: function() {
-    return this.selectedIndices;
+  getSelectedIndices: function() {
+    return this.selectedIndices.slice();
   },
 
   getSelectedAddresses: function() {

@@ -872,6 +872,8 @@ var plateMapWidget = plateMapWidget || {};
     // For those check boxes associated with every field in the tab
     return {
       globalSelectedAttributes: [],
+      globalSelectedMultiplexSubfield: [],
+      allCheckboxes: [],
       _addCheckBox: function _addCheckBox(field) {
         var checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light").data("clicked", false);
         checkImage.data("linkedFieldId", field.id);
@@ -881,6 +883,7 @@ var plateMapWidget = plateMapWidget || {};
 
 
         field.checkbox = checkImage;
+        this.allCheckboxes.push(field.id);
       },
       _applyCheckboxHandler: function _applyCheckboxHandler(checkBoxImage) {
         var that = this;
@@ -2804,16 +2807,35 @@ plateMapWidget.loadPlate = function () {
   return {
     loadPlate: function loadPlate(data) {
       //sanitize input
-      var derivative = {};
+      var derivative;
 
-      for (var address in data.wells) {
-        var well = data.wells[address];
-        var index = this.addressToIndex(address);
-        derivative[index] = this.sanitizeWell(well);
+      if (data.hasOwnProperty('wells')) {
+        derivative = {};
+
+        for (var address in data.wells) {
+          var well = data.wells[address];
+          var index = this.addressToIndex(address);
+          derivative[index] = this.sanitizeWell(well);
+        }
+      } else {
+        derivative = this.derivative;
       }
 
-      var checkboxes = data.checkboxes || [];
-      var indices = this.sanitizeAddresses(data.selectedAddresses);
+      var checkboxes;
+
+      if (data.hasOwnProperty('checkboxes')) {
+        checkboxes = this.sanitizeCheckboxes(data.checkboxes);
+      } else {
+        checkboxes = this.getCheckboxes();
+      }
+
+      var indices;
+
+      if (data.hasOwnProperty('selectedAddresses')) {
+        indices = this.sanitizeAddresses(data.selectedAddresses);
+      } else {
+        indices = this.getSelectedIndices();
+      }
 
       if (indices.length === 0) {
         indices = [0];
@@ -2825,6 +2847,12 @@ plateMapWidget.loadPlate = function () {
         "selectedIndices": indices
       };
       this.setData(sanitized);
+    },
+    sanitizeCheckboxes: function sanitizeCheckboxes(checkboxes) {
+      checkboxes = checkboxes || [];
+      return this.allCheckboxes.filter(function (fieldId) {
+        return checkboxes.indexOf(fieldId) >= 0;
+      });
     },
     sanitizeAddresses: function sanitizeAddresses(selectedAddresses) {
       selectedAddresses = selectedAddresses || [];
@@ -3361,8 +3389,8 @@ $.widget("DNA.plateMap", {
       tr.classList.toggle("selected", isSelected);
     }
   },
-  getSelectedIndex: function getSelectedIndex() {
-    return this.selectedIndices;
+  getSelectedIndices: function getSelectedIndices() {
+    return this.selectedIndices.slice();
   },
   getSelectedAddresses: function getSelectedAddresses() {
     return this.selectedIndices.map(function (index) {
@@ -3932,7 +3960,7 @@ var plateMapWidget = plateMapWidget || {};
       defaultWell: {},
       allDataTabs: [],
       // To hold all the tab contents. this contains all the tabs and its elements and elements
-      // Settings as a whole. its very usefull, when we have units for a specific field.
+      // Settings as a whole. its very useful, when we have units for a specific field.
       // it goes like tabs-> individual field-> units and checkbox
       _createTabAtRight: function _createTabAtRight() {
         this.tabContainer = this._createElement("<div></div>").addClass("plate-setup-tab-container");
