@@ -11,21 +11,22 @@ var plateMapWidget = plateMapWidget || {};
       allCheckboxes: [],
 
       _addCheckBox: function(field) {
-        var checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
+        let checkImage = $("<span>").html(this._assets.dontImg).addClass("plate-setup-tab-check-box bg-light")
           .data("clicked", false);
-        checkImage.data("linkedFieldId", field.id);
+        let linkedFieldId = field.full_id;
+        checkImage.data("linkedFieldId", linkedFieldId);
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
         field.checkbox = checkImage;
-        this.allCheckboxes.push(field.id);
+        this.allCheckboxes.push(linkedFieldId);
       },
 
       _applyCheckboxHandler: function(checkBoxImage) {
-        var that = this;
+        let that = this;
         checkBoxImage.click(function() {
-          var checkBox = $(this);
+          let checkBox = $(this);
 
-          var changes = {};
+          let changes = {};
           changes[checkBox.data("linkedFieldId")] = !checkBox.data("clicked");
 
           that.changeCheckboxes(changes);
@@ -33,21 +34,25 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       getCheckboxes: function () {
-        var fieldIds = this.globalSelectedAttributes.slice();
-        Object.values(this.globalSelectedMultiplexSubfield).forEach(function (subfieldIds) {
-            fieldIds = fieldIds.concat(subfieldIds);
-        });
-        return fieldIds;
+        return this.allCheckboxes.filter(function (fieldId) {
+          let field = this.fieldMap[fieldId];
+          if (field.mainMultiplexField) {
+            let subfields = this.globalSelectedMultiplexSubfield[field.mainMultiplexField.id] || [];
+            return subfields.indexOf(field.id);
+          } else {
+            return this.globalSelectedAttributes.indexOf(field.id) >= 0;
+          }
+        }, this);
       },
 
       changeSubFieldsCheckboxes: function(field, changes) {
-        var that = this;
-        var subFieldToInclude = [];
+        let that = this;
+        let subFieldToInclude = [];
 
         field.subFieldList.forEach(function(subField) {
-          var checkImage = subField.checkbox;
-          var fieldId = checkImage.data("linkedFieldId");
-          var clicked = checkImage.data("clicked");
+          let checkImage = subField.checkbox;
+          let fieldId = checkImage.data("linkedFieldId");
+          let clicked = checkImage.data("clicked");
           if (fieldId in changes) {
             clicked = Boolean(changes[fieldId]);
           }
@@ -63,18 +68,18 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       changeCheckboxes: function(changes, noUndoRedo) {
-        var gsa = [];
-        var multiplexCheckedSubField = {};
-        for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i];
+        let gsa = [];
+        let multiplexCheckedSubField = {};
+        for (let i = 0; i < this.fieldList.length; i++) {
+          let field = this.fieldList[i];
           if (field.checkbox) {
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.changeSubFieldsCheckboxes(field, changes);
             }
 
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId");
-            var clicked = checkImage.data("clicked");
+            let checkImage = field.checkbox;
+            let fieldId = checkImage.data("linkedFieldId");
+            let clicked = checkImage.data("clicked");
             if (fieldId in changes) {
               clicked = Boolean(changes[fieldId]);
             }
@@ -97,12 +102,12 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       setSubFieldCheckboxes: function(field, fieldIds) {
-        var that = this;
-        var subFieldToInclude = [];
+        let that = this;
+        let subFieldToInclude = [];
         field.subFieldList.forEach(function(subField) {
-          var checkImage = subField.checkbox;
-          var fieldId = checkImage.data("linkedFieldId");
-          var clicked = fieldIds.indexOf(fieldId) >= 0;
+          let checkImage = subField.checkbox;
+          let fieldId = checkImage.data("linkedFieldId");
+          let clicked = fieldIds.indexOf(fieldId) >= 0;
           checkImage.data("clicked", clicked);
           if (clicked) {
             checkImage.html(that._assets.doImg);
@@ -116,20 +121,20 @@ var plateMapWidget = plateMapWidget || {};
 
       setCheckboxes: function(fieldIds, noUndoRedo) {
         fieldIds = fieldIds || [];
-        var gsa = [];
-        var multiplexCheckedSubField = {};
+        let gsa = [];
+        let multiplexCheckedSubField = {};
 
-        for (var i = 0; i < this.fieldList.length; i++) {
-          var field = this.fieldList[i];
+        for (let i = 0; i < this.fieldList.length; i++) {
+          let field = this.fieldList[i];
           if (field.checkbox) {
             // special handling for multiplex field
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.setSubFieldCheckboxes(field, fieldIds);
             }
 
-            var checkImage = field.checkbox;
-            var fieldId = checkImage.data("linkedFieldId");
-            var clicked = fieldIds.indexOf(fieldId) >= 0;
+            let checkImage = field.checkbox;
+            let fieldId = checkImage.data("linkedFieldId");
+            let clicked = fieldIds.indexOf(fieldId) >= 0;
             checkImage.data("clicked", clicked);
             if (clicked) {
               gsa.push(fieldId);

@@ -21,11 +21,8 @@ var plateMapWidget = plateMapWidget || {};
             let tabFields = tab["fields"];
             let fieldArray = [];
             // Now we look for fields in the json
-            for (let field in tabFields) {
-              if (!tabFields.hasOwnProperty(field)) {
-                continue;
-              }
-              let data = tabFields[field];
+            for (var i = 0; i < tabFields.length; i++) {
+              let data = tabFields[i];
 
               if (!data.id) {
                 data.id = "Auto" + that.autoId++;
@@ -36,14 +33,18 @@ var plateMapWidget = plateMapWidget || {};
                 console.log("Field " + data.id + " autoassigned type " + data.type);
               }
 
-              let field_val;
+              let field;
               if (data.type === "multiplex") {
-                field_val = that._makeMultiplexField(data, tabPointer, fieldArray);
-                multiplexFieldArray.push(field_val);
+                field = that._makeMultiplexField(data, tabPointer, fieldArray);
+                that.defaultWell[field.id] = [];
+                multiplexFieldArray.push(field);
               } else {
-                field_val = that._makeRegularField(data, tabPointer, fieldArray, true);
+                field = that._makeRegularField(data, tabPointer, fieldArray, true);
                 if (data.type === "multiselect") {
-                  multiplexFieldArray.push(field_val);
+                  that.defaultWell[field.id] = [];
+                  multiplexFieldArray.push(field);
+                } else {
+                  that.defaultWell[field.id] = null;
                 }
               }
             }
@@ -56,7 +57,7 @@ var plateMapWidget = plateMapWidget || {};
         that.multipleFieldList = multiplexFieldArray;
       },
 
-      _makeSubField: function(data, tabPointer, fieldArray) {
+      _makeSubField: function(mainField, data, tabPointer, fieldArray) {
         let that = this;
         if (!data.id) {
           data.id = "Auto" + that.autoId++;
@@ -80,6 +81,7 @@ var plateMapWidget = plateMapWidget || {};
 
         let field = {
           id: data.id,
+          full_id: mainField.id + "_" + data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -87,7 +89,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         fieldArray.push(field);
-        that.fieldMap[data.id] = field;
+        that.fieldMap[field.full_id] = field;
 
         return field;
       },
@@ -108,6 +110,7 @@ var plateMapWidget = plateMapWidget || {};
 
         let field = {
           id: data.id,
+          full_id: data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -120,7 +123,7 @@ var plateMapWidget = plateMapWidget || {};
 
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[field.id] = field;
+        that.fieldMap[field.full_id] = field;
 
         // Adding checkbox
         if (checkbox) {
@@ -153,6 +156,7 @@ var plateMapWidget = plateMapWidget || {};
 
         let field = {
           id: data.id,
+          full_id: data.id,
           name: data.name,
           root: wrapperDiv,
           data: data,
@@ -161,17 +165,14 @@ var plateMapWidget = plateMapWidget || {};
 
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[data.id] = field;
+        that.fieldMap[field.full_id] = field;
 
         let subFieldList = [];
         //create subfields
         let requiredSubField = [];
-        for (let subFieldKey in data.multiplexFields) {
-          if (!data.multiplexFields.hasOwnProperty(subFieldKey)) {
-            continue;
-          }
-          let subFieldData = data.multiplexFields[subFieldKey];
-          let subField = that._makeSubField(subFieldData, tabPointer, fieldArray);
+        for (let i = 0; i < data.multiplexFields.length; i++) {
+          let subFieldData = data.multiplexFields[i];
+          let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
           subFieldList.push(subField);
 
           // stores required  subField
@@ -194,10 +195,8 @@ var plateMapWidget = plateMapWidget || {};
 
         subFieldList.forEach(function(subfield) {
           subfield.mainMultiplexField = field;
-          fieldArray.push(subfield);
           that._createField(subfield);
           that._addCheckBox(subfield);
-          delete that.defaultWell[subfield.id];
           // overwrite subField setvalue
           subfield.onChange = function() {
             let v = subfield.getValue();

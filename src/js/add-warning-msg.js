@@ -7,7 +7,7 @@ var plateMapWidget = plateMapWidget || {};
     return {
       fieldWarningMsg: function(field, text, include) {
         let that = this;
-        let imgId = "fieldWarning" + field.id;
+        let imgId = "fieldWarning" + field.full_id;
         let img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
         if (include) {
           if (field.root.find("#" + imgId).length <= 0) {
@@ -36,28 +36,22 @@ var plateMapWidget = plateMapWidget || {};
 
       removeWarningMsg: function(field, text, include) {
         let that = this;
-        let imgId = "fieldWarning" + field.id;
-        let img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
-        //field.root.find(".plate-setup-tab-name").append('<img id="theImg" src="theImg.png" />')
+        let imgId = "fieldWarning" + field.full_id;
         if (include) {
+          let img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
           field.root.find(".plate-setup-tab-name").append(img);
 
           let popText = $("<div/>").addClass("pop-out-text");
           popText.text(text);
           field.root.find(".plate-setup-tab-name").append(popText);
 
-          $("#" + imgId).hover(function() {
+          img.hover(function() {
             popText[0].style.display = 'inline-block';
           }, function() {
             popText.hide();
           });
-
         } else {
           $("#" + imgId).remove();
-          if (field.root.find("#" + imgId).length > 0) {
-            //field.root.find(".plate-setup-tab-name").remove(img);
-            $("#" + imgId).remove();
-          }
         }
       },
 
@@ -70,10 +64,12 @@ var plateMapWidget = plateMapWidget || {};
         wells.forEach(function(well) {
           if (!that.engine.wellEmpty(well)) {
             for (let fieldId in fieldData) {
-              if (fieldId in well) {
-                fieldData[fieldId].push(well[fieldId]);
-              } else {
-                fieldData[fieldId].push(null);
+              if (fieldData.hasOwnProperty(fieldId)) {
+                if (fieldId in well) {
+                  fieldData[fieldId].push(well[fieldId]);
+                } else {
+                  fieldData[fieldId].push(null);
+                }
               }
             }
           }

@@ -11,9 +11,9 @@ var plateMapWidget = plateMapWidget || {};
       actionPointer: null,
 
       addToUndoRedo: function() {
-        var state = this.createState();
+        let state = this.createState();
         if (this.actionPointer != null) {
-          var i = this.actionPointer + 1;
+          let i = this.actionPointer + 1;
           if (i < this.undoRedoArray.length) {
             this.undoRedoArray.splice(i, this.undoRedoArray.length - i);
           }
@@ -24,7 +24,7 @@ var plateMapWidget = plateMapWidget || {};
 
       _configureUndoRedoArray: function() {
 
-        var data = {
+        let data = {
           checkboxes: [],
           derivative: {},
           selectedIndices: [0]
@@ -51,7 +51,7 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       shiftUndoRedo: function(pointerDiff) {
-        var pointer = this.actionPointer;
+        let pointer = this.actionPointer;
         if (pointer == null) {
           pointer = this.undoRedoArray.length - 1;
         }
