@@ -3,7 +3,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 (function($) {
 
   plateLayOutWidget.tabs = function() {
-    // Tabs crete and manage tabs at the right side of the canvas.
+    // Tabs create and manage tabs at the right side of widget.
     return {
 
       allTabs: [],
@@ -27,8 +27,8 @@ var plateLayOutWidget = plateLayOutWidget || {};
         this.tabHead = this._createElement("<div></div>").addClass("plate-setup-tab-head");
         $(this.tabContainer).append(this.tabHead);
 
-        var tabData = this.options.attributes.tabs;
-        var that = this;
+        let tabData = this.options.attributes.tabs;
+        let that = this;
 
         tabData.forEach(function(tab, tabIndex) {
           that.allTabs[tabIndex] = that._createElement("<div></div>").addClass("plate-setup-tab");
@@ -58,7 +58,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           $(this.selectedTab).removeClass("plate-setup-tab-selected")
             .addClass("plate-setup-tab");
 
-          var previouslyClickedTabIndex = $(this.selectedTab).data("index");
+          let previouslyClickedTabIndex = $(this.selectedTab).data("index");
           $(this.allDataTabs[previouslyClickedTabIndex]).css("z-index", 0);
           this.readOnlyHandler();
         }
@@ -67,19 +67,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.selectedTab = clickedTab;
 
-        var clickedTabIndex = $(clickedTab).data("index");
+        let clickedTabIndex = $(clickedTab).data("index");
         $(this.allDataTabs[clickedTabIndex]).css("z-index", 1000);
       },
 
       _addDataTabs: function(tabs) {
-
-        var tabIndex = 0;
-
-        for (var tabData in tabs) {
-          this.allDataTabs[tabIndex++] = this._createElement("<div></div>").addClass("plate-setup-data-div")
-            .css("z-index", 0);
-          $(this.tabDataContainer).append(this.allDataTabs[tabIndex - 1]);
-        }
+        this.allDataTabs = tabs.map(function () {
+          return this._createElement("<div></div>").addClass("plate-setup-data-div").css("z-index", 0);
+        }, this);
+        $(this.tabContainer).append(this.allDataTabs);
       }
     };
   }

@@ -20,18 +20,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       addBottomTableHeadings: function() {
 
-        var row = this._createElement("<tr></tr>");
+        let row = this._createElement("<tr></tr>");
 
-        var singleField = this._createElement("<th></th>")
+        let singleField = this._createElement("<th></th>")
           .text("Group");
         row.prepend(singleField);
 
         this.rowCounter = 1;
 
-        for (var i = 0; i < this.globalSelectedAttributes.length; i++) {
-          var attr = this.globalSelectedAttributes[i];
-          var field = this.fieldMap[attr];
-          var singleField = this._createElement("<th></th>").text(field.name);
+        for (let i = 0; i < this.globalSelectedAttributes.length; i++) {
+          let attr = this.globalSelectedAttributes[i];
+          let field = this.fieldMap[attr];
+          let singleField = this._createElement("<th></th>").text(field.name);
           row.append(singleField);
           this.rowCounter = this.rowCounter + 1;
         }
@@ -44,25 +44,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       tileAttrText: function(tile, attr) {
-        var well = this.engine.derivative[tile.index];
-        var field = this.fieldMap[attr];
+        let well = this.engine.derivative[tile.index];
+        let field = this.fieldMap[attr];
         return field.getText(well[attr]);
       },
 
       addBottomTableRow: function(color, singleStack) {
-        var that = this;
-        var modelTile = this.allTiles[singleStack[0]];
-        var row = this._createElement("<tr></tr>");
-        var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
-        var numberText = this._createElement("<button/>");
+        let that = this;
+        let modelTile = this.allTiles[singleStack[0]];
+        let row = this._createElement("<tr></tr>");
+        let plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
+        let numberText = this._createElement("<button/>");
         numberText.addClass("plate-setup-color-text");
         numberText.text(color);
         plateIdDiv.append(numberText);
 
         numberText.click(function(evt) {
-          var addressToSelect = singleStack.map(function(addressIdx) {
-            return that.indexToAddress(addressIdx)
-          });
+          let addressToSelect = singleStack.map(that.indexToAddress, that);
           if (evt.ctrlKey) {
             that.getSelectedAddresses().forEach(function(val) {
               if (addressToSelect.indexOf(val) < 0) {
@@ -76,16 +74,16 @@ var plateLayOutWidget = plateLayOutWidget || {};
         if (color > 0) {
           color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
         }
-        var colorStops = this.colorPairs[color];
+        let colorStops = this.colorPairs[color];
 
         plateIdDiv.css("background", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
 
         row.append(plateIdDiv);
 
-        for (var i = 0; i < this.globalSelectedAttributes.length; i++) {
-          var attr = this.globalSelectedAttributes[i];
-          var text = this.tileAttrText(modelTile, attr);
-          var dataDiv = this._createElement("<td></td>").text(text);
+        for (let i = 0; i < this.globalSelectedAttributes.length; i++) {
+          let attr = this.globalSelectedAttributes[i];
+          let text = this.tileAttrText(modelTile, attr);
+          let dataDiv = this._createElement("<td></td>").text(text);
           row.append(dataDiv);
         }
         this.bottomTableBody.append(row);
@@ -95,10 +93,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
       bottomForFirstTime: function() {
         this.addBottomTableHeadings();
         // This is executed for the very first time.. !
-        var row = this._createElement("<tr></tr>");
+        let row = this._createElement("<tr></tr>");
 
-        var colorStops = this.colorPairs[0];
-        var plateIdDiv = this._createElement("<td></td>");
+        let colorStops = this.colorPairs[0];
+        let plateIdDiv = this._createElement("<td></td>");
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
         this.bottomTableBody.append(row);
@@ -107,15 +105,15 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       adjustFieldWidth: function(row) {
 
-        var length = this.rowCounter;
+        let length = this.rowCounter;
         if ((length) * 150 > 1024) {
           row.css("width", (length) * 152 + "px");
         }
       },
 
       downloadCSV: function(csv, filename) {
-        var csvFile;
-        var downloadLink;
+        let csvFile;
+        let downloadLink;
 
         // CSV file
         csvFile = new Blob([csv], {
@@ -142,24 +140,23 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       exportData: function(format) {
-        var data = [];
-        var rows = document.querySelectorAll("table tr");
+        let data = [];
+        let rows = document.querySelectorAll("table tr");
 
-        var colorLocMap = {};
-        var colorLocIdxMap = this.engine.stackUpWithColor;
-        var dim = this.getDimensions();
-        for (var colorIdx in colorLocIdxMap) {
-          colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(function(locIdx) {
-            return this.indexToAddress(locIdx, dim);
-          }, this);
+        let colorLocMap = {};
+        let colorLocIdxMap = this.engine.stackUpWithColor;
+        for (let colorIdx in colorLocIdxMap) {
+          if (colorLocIdxMap.hasOwnProperty(colorIdx)) {
+            colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(this.indexToAddress, this);
+          }
         }
 
-        for (var i = 0; i < rows.length; i++) {
-          var row = [],
+        for (let i = 0; i < rows.length; i++) {
+          let row = [],
             cols = rows[i].querySelectorAll("td, th");
 
-          for (var j = 0; j < cols.length; j++) {
-            var v = "";
+          for (let j = 0; j < cols.length; j++) {
+            let v = "";
             if (cols[j].innerText) {
               if (format === "csv") {
                 v = '"' + cols[j].innerText.replace(/"/g, '""') + '"';
@@ -179,7 +176,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
             }
             if (i !== 0 && j === 0) {
-              var loc = '';
+              let loc = '';
               if (colorLocMap[parseInt(cols[j].innerText)]) {
                 if (format === "csv") {
                   loc = '"' + colorLocMap[parseInt(cols[j].innerText)].join(",") + '"';
@@ -209,17 +206,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       createExportButton: function() {
-        var that = this;
-        var overlayContainer = $("<div>").addClass("plate-setup-bottom-control-container");
+        let that = this;
+        let overlayContainer = $("<div>").addClass("plate-setup-bottom-control-container");
 
-        var descriptionDiv = $("<div>").addClass("plate-setup-overlay-text-container");
+        let descriptionDiv = $("<div>").addClass("plate-setup-overlay-text-container");
         descriptionDiv.text("Color groups");
         overlayContainer.append(descriptionDiv);
 
-        var buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container");
+        let buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container");
 
         // create export csv option
-        var exportButton = $("<button/>").addClass("plate-setup-button");
+        let exportButton = $("<button/>").addClass("plate-setup-button");
         exportButton.text("Export CSV");
         buttonContainer.append(exportButton);
 
@@ -238,17 +235,17 @@ var plateLayOutWidget = plateLayOutWidget || {};
         }
 
         // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
-        var clipboardButton = $("<button/>").addClass("plate-setup-button");
+        let clipboardButton = $("<button/>").addClass("plate-setup-button");
         clipboardButton.text("Copy To Clipboard");
         buttonContainer.append(clipboardButton);
 
-        var clipboard = new ClipboardJS(clipboardButton.get(0), {
+        let clipboard = new ClipboardJS(clipboardButton.get(0), {
           text: function() {
             return that.exportData("clipboard");
           }
         });
 
-        clipboard.on('success', function(e) {
+        clipboard.on('success', function() {
           clipboardButton.text("Copied as tab-delimited format");
           clipboardButton[0].classList.remove("plate-setup-button");
           clipboardButton.addClass("plate-setup-clicked-button");
@@ -261,7 +258,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
           clipboardButton.addClass("plate-setup-button");
         }
 
-        clipboard.on('error', function(e) {
+        clipboard.on('error', function() {
           clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
           setTimeout(resetClipboardText, 3000);
         });

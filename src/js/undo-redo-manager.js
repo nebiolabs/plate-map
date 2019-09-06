@@ -2,7 +2,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.undoRedoManager = function(THIS) {
+  plateLayOutWidget.undoRedoManager = function() {
 
     return {
 

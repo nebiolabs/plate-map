@@ -19,7 +19,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _applyCheckboxHandler: function(checkBoxImage) {
         var that = this;
-        checkBoxImage.click(function(evt, machineClick) {
+        checkBoxImage.click(function() {
           var checkBox = $(this);
 
           var changes = {};
@@ -31,9 +31,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       getCheckboxes: function () {
         var fieldIds = this.globalSelectedAttributes.slice();
-        for (var subfieldIds of Object.values(this.globalSelectedMultiplexSubfield)) {
-          fieldIds = fieldIds.concat(subfieldIds);
-        }
+        Object.values(this.globalSelectedMultiplexSubfield).forEach(function (subfieldIds) {
+            fieldIds = fieldIds.concat(subfieldIds);
+        });
         return fieldIds;
       },
 

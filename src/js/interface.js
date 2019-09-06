@@ -8,7 +8,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _createInterface: function() {
 
-        var divIdentifier = '<div></div>';
+        let divIdentifier = '<div></div>';
         this.container = this._createElement(divIdentifier).addClass("plate-setup-wrapper");
         this.topSection = this._createElement(divIdentifier).addClass("plate-setup-top-section");
 
@@ -39,7 +39,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
         this.bottomForFirstTime();
 
-        var that = this;
+        let that = this;
         this._setShortcuts();
         $(document.body).keyup(function(e) {
           that._handleShortcuts(e);
@@ -53,22 +53,22 @@ var plateLayOutWidget = plateLayOutWidget || {};
       },
 
       _setShortcuts: function() {
-        var that = this;
+        let that = this;
         window.addEventListener("cut", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.copyCriteria();
             that.clearCriteria();
             e.preventDefault();
           }
         });
         window.addEventListener("copy", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.copyCriteria();
             e.preventDefault();
           }
         });
         window.addEventListener("paste", function(e) {
-          if (document.activeElement == document.body) {
+          if (document.activeElement === document.body) {
             that.pasteCriteria();
             e.preventDefault();
           }
@@ -77,18 +77,18 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
       _handleShortcuts: function(e) {
         if (document.activeElement === document.body) {
-          if (e.keyCode == 46) {
+          if (e.keyCode === 46) {
             this.clearCriteria();
             e.preventDefault();
           } else if (e.ctrlKey || e.metaKey) {
-            if (e.keyCode == 90) {
+            if (e.keyCode === 90) {
               if (e.shiftKey) {
                 this.redo();
               } else {
                 this.undo();
               }
               e.preventDefault();
-            } else if (e.keyCode == 89) {
+            } else if (e.keyCode === 89) {
               this.redo();
               e.preventDefault();
             }

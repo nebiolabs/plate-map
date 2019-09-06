@@ -1,6 +1,6 @@
 // Wait for all the script load from the loader.js and fire up
 window.onload = function() {
-  var fields = {
+  let fields = {
     polymerase: {
       required: true,
       id: 'pol',
@@ -55,7 +55,7 @@ window.onload = function() {
       placeHolder: "On Ice"
     }
   };
-  var amplicons_field = {
+  let amplicons_field = {
     amplicons: {
       required: true,
       id: 'amplicons',
@@ -120,7 +120,7 @@ window.onload = function() {
       },
     },
   };
-  var attributes = {
+  let attributes = {
     presets: [
       {
         title: "Pol/Vol",
@@ -144,21 +144,22 @@ window.onload = function() {
   };
   window.plateData = {};
 
-  function makeNewPlate(obj) {
-    var d = $("#my-plate-layout").plateLayOut("getDimensions");
-    var rows = d.rows;
-    var cols = d.cols;
-    var wells = {};
-    for (var r = 0; r < rows; r++) {
-      var volume = 100;
-      var pol = (r < (rows / 2)) ? 234 : 123;
-      var on_ice = Boolean(r % 2);
-      for (var c = 0; c < cols; c++) {
-        var i = r * cols + c;
-        var address = $("#my-plate-layout").plateLayOut("locToAddress", {"r": r, "c": c});
-        var v = volume;
-        var vunit = "mL";
-        var amplicons = [{
+  let widget = $("#my-plate-layout");
+
+  function makeNewPlate() {
+    let d = widget.plateLayOut("getDimensions");
+    let rows = d.rows;
+    let cols = d.cols;
+    let wells = {};
+    for (let r = 0; r < rows; r++) {
+      let volume = 100;
+      let pol = (r < (rows / 2)) ? 234 : 123;
+      let on_ice = Boolean(r % 2);
+      for (let c = 0; c < cols; c++) {
+        let address = widget.plateLayOut("locToAddress", {"r": r, "c": c});
+        let v = volume;
+        let vunit = "mL";
+        let amplicons = [{
           amplicons: 11,
           template_ngul: 'a',
           primer_umolarity: 2,
@@ -192,21 +193,21 @@ window.onload = function() {
     };
   }
 
-  $("#my-plate-layout").plateLayOut({
+  widget.plateLayOut({
     numRows: 8,
     numCols: 12,
     attributes: attributes,
 
-    updateWells: function(event) {
+    updateWells: function() {
       //data has changed
-      window.plateData = $("#my-plate-layout").plateLayOut("getPlate") ;
+      window.plateData = widget.plateLayOut("getPlate") ;
       console.log(Object.keys(window.plateData.wells).length + " wells updated");
     },
-    created: function(event, data) {
+    created: function() {
       console.log("Created");
     }
   });
   window.plateData = makeNewPlate();
-  $("#my-plate-layout").plateLayOut("loadPlate", window.plateData);
-  $("#my-plate-layout").plateLayOut("clearHistory");
+  widget.plateLayOut("loadPlate", window.plateData);
+  widget.plateLayOut("clearHistory");
 };

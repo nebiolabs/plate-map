@@ -7,13 +7,13 @@ $.widget("DNA.plateLayOut", {
   },
 
   addressToLoc: function(layoutAddress) {
-    var m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase())
+    let m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase());
     if (m) {
-      var row_v = m[1];
-      var col = parseInt(m[2]) - 1;
-      var row;
-      for (var i = 0; i < row_v.length; i++) {
-        var c = row_v.charCodeAt(i) - 65;
+      let row_v = m[1];
+      let col = parseInt(m[2]) - 1;
+      let row = 0;
+      for (let i = 0; i < row_v.length; i++) {
+        let c = row_v.charCodeAt(i) - 65;
         if (i) {
           row += 1;
           row *= 26;
@@ -45,14 +45,14 @@ $.widget("DNA.plateLayOut", {
   },
 
   addressToIndex: function(layoutAddress, dimensions) {
-    var loc = this.addressToLoc(layoutAddress);
+    let loc = this.addressToLoc(layoutAddress);
     return this.locToIndex(loc, dimensions);
   },
 
   _rowKey: function(i) {
-    var c1 = i % 26;
-    var c2 = (i - c1) / 26;
-    var code = String.fromCharCode(65 + c1);
+    let c1 = i % 26;
+    let c2 = (i - c1) / 26;
+    let code = String.fromCharCode(65 + c1);
     if (c2 > 0) {
       code = String.fromCharCode(64 + c2) + code;
     }
@@ -71,7 +71,7 @@ $.widget("DNA.plateLayOut", {
     if (index >= dimensions.rows * dimensions.cols) {
       throw "Index too high: " + index.toString(10);
     }
-    var loc = {};
+    let loc = {};
     loc.c = index % dimensions.cols;
     loc.r = (index - loc.c) / dimensions.cols;
 
@@ -83,7 +83,7 @@ $.widget("DNA.plateLayOut", {
   },
 
   indexToAddress: function(index, dimensions) {
-    var loc = this.indexToLoc(index, dimensions);
+    let loc = this.indexToLoc(index, dimensions);
     return this.locToAddress(loc);
   },
 
@@ -92,14 +92,14 @@ $.widget("DNA.plateLayOut", {
   },
 
   _create: function() {
-    var rows = parseInt(this.options.numRows || 8);
-    var cols = parseInt(this.options.numCols || 12);
+    let rows = parseInt(this.options.numRows || 8);
+    let cols = parseInt(this.options.numCols || 12);
     this.dimensions = {
       rows: rows,
       cols: cols
     };
     this.rowIndex = [];
-    for (var i = 0; i < rows; i++) {
+    for (let i = 0; i < rows; i++) {
       this.rowIndex.push(this._rowKey(i));
     }
 
@@ -114,10 +114,12 @@ $.widget("DNA.plateLayOut", {
       this.isReadOnly(true);
     }
 
-    for (var component in plateLayOutWidget) {
-      // Incase some properties has to initialize with data from options hash,
-      // we provide it sending this object.
-      $.extend(this, new plateLayOutWidget[component](this));
+    for (let component in plateLayOutWidget) {
+      if (plateLayOutWidget.hasOwnProperty(component)) {
+        // Incase some properties has to initialize with data from options hash,
+        // we provide it sending this object.
+        $.extend(this, new plateLayOutWidget[component](this));
+      }
     }
 
     this._createInterface();
@@ -135,16 +137,22 @@ $.widget("DNA.plateLayOut", {
 
   // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A2:{field1: val1, field2: val2}}
   getTextDerivative: function(wellsData) {
-    var textDerivative = {};
-    var fieldMap = this.fieldMap;
-    for (var address in wellsData) {
-      var textValWell = {};
-      var textFieldIdWell = {};
-      var curWellData = wellsData[address];
-      for (var fieldId in curWellData) {
-        if (fieldId in this.fieldMap) {
-          var field = this.fieldMap[fieldId];
-          var textVal = field.parseText(curWellData[fieldId]);
+    let textDerivative = {};
+    let fieldMap = this.fieldMap;
+    for (let address in wellsData) {
+      if (!wellsData.hasOwnProperty(address)) {
+        continue;
+      }
+      let textValWell = {};
+      let textFieldIdWell = {};
+      let curWellData = wellsData[address];
+      for (let fieldId in curWellData) {
+        if (!curWellData.hasOwnProperty(fieldId)) {
+          continue;
+        }
+        if (fieldId in fieldMap) {
+          let field = fieldMap[fieldId];
+          let textVal = field.parseText(curWellData[fieldId]);
           textFieldIdWell[field.name] = textVal;
           textValWell[fieldId] = textVal;
         } else {
@@ -164,29 +172,46 @@ $.widget("DNA.plateLayOut", {
 
   // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A1:{field1: val1, field2: val2}}
   getWellsDifferences: function(wellsHash) {
-    var wells = [];
-    for (var wellId in wellsHash) {
-      wells.push(wellsHash[wellId]);
-    }
-    var differentWellsVals = {};
-    if (wells.length > 1) {
-      var commonWell = this._getCommonWell(wells);
-      var allFieldVal = {};
-      for (var fieldIdx in wells[0]) {
-        allFieldVal[fieldIdx] = [];
+    let wells = [];
+    for (let wellId in wellsHash) {
+      if (wellsHash.hasOwnProperty(wellId)) {
+        wells.push(wellsHash[wellId]);
       }
-      for (var address in wellsHash) {
-        var diffWellVal = {};
-        var curWellData = wellsHash[address];
-        for (var fieldId in curWellData) {
-          var commonVal = commonWell[fieldId];
-          var curVal = curWellData[fieldId];
-          var newVal = null;
+    }
+    let differentWellsVals = {};
+    if (wells.length > 1) {
+      let commonWell = this._getCommonWell(wells);
+      let allFieldVal = {};
+      for (let fieldIdx in wells[0]) {
+        if (wells[0].hasOwnProperty(fieldIdx)) {
+          allFieldVal[fieldIdx] = [];
+        }
+      }
+      for (let address in wellsHash) {
+        if (!wellsHash.hasOwnProperty(address)) {
+          continue;
+        }
+        let diffWellVal = {};
+        let curWellData = wellsHash[address];
+        for (let fieldId in curWellData) {
+          if (!curWellData.hasOwnProperty(fieldId)) {
+            continue;
+          }
+          let commonVal = commonWell[fieldId];
+          let curVal = curWellData[fieldId];
+          if (commonVal === undefined) {
+            commonVal = null;
+          }
+          if (curVal === undefined) {
+            curVal = null;
+          }
+          let newVal = null;
           if (Array.isArray(curVal)) {
+            commonVal = commonVal || [];
             // get uncommonVal
             newVal = [];
-            for (var idx = 0; idx < curVal.length; idx++) {
-              var curMultiVal = curVal[idx];
+            for (let idx = 0; idx < curVal.length; idx++) {
+              let curMultiVal = curVal[idx];
               // multiplex field
               if (curMultiVal && typeof (curMultiVal) === "object") {
                 if (!this.containsObject(curMultiVal, commonVal)) {
@@ -231,9 +256,15 @@ $.widget("DNA.plateLayOut", {
       }
 
       // clean up step for fields that are empty
-      for (var fieldId in allFieldVal) {
+      for (let fieldId in allFieldVal) {
+        if (!allFieldVal.hasOwnProperty(fieldId)) {
+          continue;
+        }
         if (allFieldVal[fieldId].length === 0) {
-          for (var address in differentWellsVals) {
+          for (let address in differentWellsVals) {
+            if (!differentWellsVals.hasOwnProperty(address)) {
+              continue;
+            }
             delete differentWellsVals[address][fieldId];
           }
         }
@@ -241,12 +272,18 @@ $.widget("DNA.plateLayOut", {
 
       return differentWellsVals;
     } else if (wells.length > 0) {
-      var differentWellsVals = {};
-      for (var address in wellsHash) {
-        var diffWellVal = {};
-        var curWellData = wellsHash[address];
-        for (var fieldId in curWellData) {
-          var curVal = curWellData[fieldId];
+      let differentWellsVals = {};
+      for (let address in wellsHash) {
+        if (!wellsHash.hasOwnProperty(address)) {
+          continue;
+        }
+        let diffWellVal = {};
+        let curWellData = wellsHash[address];
+        for (let fieldId in curWellData) {
+          if (!curWellData.hasOwnProperty(fieldId)) {
+            continue;
+          }
+          let curVal = curWellData[fieldId];
           if (Array.isArray(curVal)) {
             if (curVal.length > 0) {
               diffWellVal[fieldId] = curVal
@@ -269,11 +306,7 @@ $.widget("DNA.plateLayOut", {
   },
 
   isReadOnly: function(flag) {
-    if (flag) {
-      this.readOnly = true;
-    } else {
-      this.readOnly = false;
-    }
+    this.readOnly = !!flag;
     this.readOnlyHandler();
   },
 
@@ -292,17 +325,28 @@ $.widget("DNA.plateLayOut", {
   },
 
   disableAddDeleteWell: null,
+
   // column_with_default_val will be used to determine empty wells, format: {field_name: default_val}
-  isDisableAddDeleteWell: function(flag, column_with_default_val) {
+  isDisableAddDeleteWell: function(flag, emptyDefaultWell) {
     if (flag) {
+      let emptyWellWithDefaultVal = $.extend(true, {}, this.defaultWell);
+      if (emptyDefaultWell) {
+        for (let field in emptyDefaultWell) {
+          if (emptyDefaultWell.hasOwnProperty(field)) {
+            if (field in emptyWellWithDefaultVal) {
+              emptyWellWithDefaultVal[field] = emptyDefaultWell[field]
+            } else {
+              console.log("No field for key: " + key + ", please contact support");
+            }
+          }
+        }
+      }
       this.disableAddDeleteWell = true;
       this.addressAllowToEdit = this.getWellSetAddressWithData();
       // configure undo redo action
       this.actionPointer = 0;
       this.undoRedoArray = [this.createState()];
-      if (column_with_default_val) {
-        this.emptyWellWithDefaultVal = column_with_default_val;
-      }
+      this.emptyWellWithDefaultVal = emptyWellWithDefaultVal;
     } else {
       this.disableAddDeleteWell = false;
       this.setFieldsDisabled(false);
@@ -311,21 +355,23 @@ $.widget("DNA.plateLayOut", {
   },
 
   selectObjectInBottomTab: function() {
-    var colors = [];
-    for (var index of this.selectedIndices) {
-      var well = this.engine.derivative[index];
+    let colors = [];
+    let selectedIndices = this.selectedIndices;
+    for (let i = 0; i < selectedIndices.length; i++) {
+      let index = selectedIndices[i];
+      let well = this.engine.derivative[index];
       if (well) {
-        var color = this.engine.colorMap.get(index);
+        let color = this.engine.colorMap.get(index);
         if (colors.indexOf(color) < 0) {
           colors.push(color);
         }
       }
     }
-    var trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
-    for (var i = 1; i < trs.length; i++) { // start at 1 to skip the table headers
-      var tr = trs[i];
-      var td = tr.children[0];
-      var isSelected = colors.indexOf(Number(td.querySelector('button').innerHTML)) >= 0;
+    let trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
+    for (let i = 1; i < trs.length; i++) { // start at 1 to skip the table headers
+      let tr = trs[i];
+      let td = tr.children[0];
+      let isSelected = colors.indexOf(Number(td.querySelector('button').innerHTML)) >= 0;
       tr.classList.toggle("selected", isSelected);
     }
   },

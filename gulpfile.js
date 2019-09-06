@@ -2,13 +2,17 @@ const gulp = require('gulp');
 const del = require("del");
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
-const uglifyJS = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const minifyCSS = require('gulp-clean-css');
 const minifyHTML = require('gulp-htmlmin');
 const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 const connect = require('gulp-connect');
 const mergeStream = require('merge-stream');
+
+const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
+
 
 const packageName = 'plate-map';
 const PATH = {
@@ -53,21 +57,28 @@ const PATH = {
 let config = {source: {css: '', js: '', html: '', json: ''}, destination: {css: '', js: '', root: ''}};
 
 function concat_minify_css(name, source, destination) {
-    return gulp.src(source, { sourcemaps: true })
+    return gulp.src(source)
+        .pipe(sourcemaps.init())
         .pipe(concat(name + '.css'))
         .pipe(gulp.dest(destination))
         .pipe(minifyCSS())
         .pipe(rename(name + '.min.css'))
-        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(destination));
 }
 
 function concat_uglify_js(name, source, destination) {
-    return gulp.src(source, { sourcemaps: true })
+    return gulp.src(source)
+        .pipe(sourcemaps.init())
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(concat(name + '.js'))
         .pipe(gulp.dest(destination))
-        .pipe(uglifyJS())
+        .pipe(uglify())
         .pipe(rename(name + '.min.js'))
-        .pipe(gulp.dest(destination, { sourcemaps: '.' }));
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(destination));
 }
 
 function config_env(env) {

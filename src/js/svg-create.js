@@ -1,6 +1,6 @@
 var plateLayOutWidget = plateLayOutWidget || {};
 
-(function($) {
+(function(SVG) {
 
   plateLayOutWidget.svgCreate = function() {
     //
@@ -31,43 +31,41 @@ var plateLayOutWidget = plateLayOutWidget || {};
           stop.at(1, 'rgba(0,0,0,0.2)');
         }).from("50%", "50%").to("50%", "55%").radius("50%").attr('id', 'wellShadow');
 
-        this.wellColors = this.colorPairs.map((pair, i) => this.svg.gradient('linear', function (stop) {
-          stop.at(0, pair[0]);
-          stop.at(1, pair[1]);
-        }).from(0, 0).to(0, 1).id('wellColor' + i.toString()));
+        this.wellColors = this.colorPairs.map(function (pair, i) {
+            return this.svg.gradient('linear', function (stop) {
+                stop.at(0, pair[0]);
+                stop.at(1, pair[1]);
+            }).from(0, 0).to(0, 1).id('wellColor' + i.toString());
+        }, this);
 
-        // Those 1,2,3 s and A,B,C s
         this._fixRowAndColumn();
-
-        // All those circles in the canvas.
         this._putCircles();
-
         this._svgEvents();
       },
 
       _fixRowAndColumn: function () {
-        var cols = this.dimensions.cols;
-        var rows = this.dimensions.rows;
+        let cols = this.dimensions.cols;
+        let rows = this.dimensions.rows;
 
-        var rh = this.svg.nested().attr({'x': -this.baseSizes.label_spacing / 2.0}).addClass('rowHead');
-        var ch = this.svg.nested().attr({'y': -this.baseSizes.label_spacing / 2.0}).addClass('colHead');
+        let rh = this.svg.nested().attr({'x': -this.baseSizes.label_spacing / 2.0}).addClass('rowHead');
+        let ch = this.svg.nested().attr({'y': -this.baseSizes.label_spacing / 2.0}).addClass('colHead');
 
-        for (var i = 0; i < rows; i++) {
+        for (let i = 0; i < rows; i++) {
           rh.plain(this._rowKey(i)).attr({y: this.baseSizes.spacing * (i + 0.5)});
         }
-        for (var i = 0; i < cols; i++) {
+        for (let i = 0; i < cols; i++) {
           ch.plain(this._colKey(i)).attr({x: this.baseSizes.spacing * (i + 0.5)});
         }
       },
 
       _putCircles: function () {
-        var cols = this.dimensions.cols;
-        var rows = this.dimensions.rows;
-        this.allTiles = Array(cols * rows)
+        let cols = this.dimensions.cols;
+        let rows = this.dimensions.rows;
+        this.allTiles = Array(cols * rows);
 
-        for (var row = 0; row < rows; row++) {
-          for (var col = 0; col < cols; col++) {
-            var tile = this._createTile(row, col);
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            let tile = this._createTile(row, col);
             this.allTiles[tile.index] = tile;
           }
         }
@@ -124,4 +122,4 @@ var plateLayOutWidget = plateLayOutWidget || {};
       }
     };
   }
-})(jQuery);
+})(SVG);
