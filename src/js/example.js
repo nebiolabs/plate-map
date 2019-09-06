@@ -144,10 +144,10 @@ window.onload = function() {
   };
   window.plateData = {};
 
-  let widget = $("#my-plate-layout");
+  let widget = $("#my-plate-map");
 
   function makeNewPlate() {
-    let d = widget.plateLayOut("getDimensions");
+    let d = widget.plateMap("getDimensions");
     let rows = d.rows;
     let cols = d.cols;
     let wells = {};
@@ -156,7 +156,7 @@ window.onload = function() {
       let pol = (r < (rows / 2)) ? 234 : 123;
       let on_ice = Boolean(r % 2);
       for (let c = 0; c < cols; c++) {
-        let address = widget.plateLayOut("locToAddress", {"r": r, "c": c});
+        let address = widget.plateMap("locToAddress", {"r": r, "c": c});
         let v = volume;
         let vunit = "mL";
         let amplicons = [{
@@ -193,14 +193,14 @@ window.onload = function() {
     };
   }
 
-  widget.plateLayOut({
+  widget.plateMap({
     numRows: 8,
     numCols: 12,
     attributes: attributes,
 
     updateWells: function() {
       //data has changed
-      window.plateData = widget.plateLayOut("getPlate") ;
+      window.plateData = widget.plateMap("getPlate") ;
       console.log(Object.keys(window.plateData.wells).length + " wells updated");
     },
     created: function() {
@@ -208,6 +208,6 @@ window.onload = function() {
     }
   });
   window.plateData = makeNewPlate();
-  widget.plateLayOut("loadPlate", window.plateData);
-  widget.plateLayOut("clearHistory");
+  widget.plateMap("loadPlate", window.plateData);
+  widget.plateMap("clearHistory");
 };

@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.tabs = function() {
+  plateMapWidget.tabs = function() {
     // Tabs create and manage tabs at the right side of widget.
     return {
 

@@ -1,10 +1,10 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.engine = function(THIS) {
+  plateMapWidget.engine = function(THIS) {
     // Methods which look after data changes and stack up accordingly
-    // Remember THIS points to plateLayOutWidget and 'this' points to engine
+    // Remember THIS points to plateMapWidget and 'this' points to engine
     // Use THIS to refer parent this.
     return {
       engine: {

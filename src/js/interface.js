@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.interface = function() {
+  plateMapWidget.interface = function() {
     // interface holds all the methods to put the interface in place
     return {
 

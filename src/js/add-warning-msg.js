@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.addWarningMsg = function() {
+  plateMapWidget.addWarningMsg = function() {
     // For those check boxes associated with every field in the tab
     return {
       fieldWarningMsg: function(field, text, include) {

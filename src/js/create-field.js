@@ -1,4 +1,4 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
@@ -24,7 +24,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     input.val(selected);
   }
 
-  plateLayOutWidget.createField = function() {
+  plateMapWidget.createField = function() {
     // It creates those fields in the tab , there is 4 types of them.
     return {
 

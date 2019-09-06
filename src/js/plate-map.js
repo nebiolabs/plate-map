@@ -1,13 +1,13 @@
-$.widget("DNA.plateLayOut", {
+$.widget("DNA.plateMap", {
 
-  plateLayOutWidget: {},
+  plateMapWidget: {},
 
   options: {
     value: 0
   },
 
-  addressToLoc: function(layoutAddress) {
-    let m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase());
+  addressToLoc: function(address) {
+    let m = /^([A-Z]+)(\d+)$/.exec(address.trim().toUpperCase());
     if (m) {
       let row_v = m[1];
       let col = parseInt(m[2]) - 1;
@@ -27,7 +27,7 @@ $.widget("DNA.plateLayOut", {
         c: col
       };
     } else {
-      throw layoutAddress + " not a proper layout address";
+      throw address + " not a proper plate address";
     }
   },
 
@@ -44,8 +44,8 @@ $.widget("DNA.plateLayOut", {
     return loc.r * dimensions.cols + loc.c;
   },
 
-  addressToIndex: function(layoutAddress, dimensions) {
-    let loc = this.addressToLoc(layoutAddress);
+  addressToIndex: function(address, dimensions) {
+    let loc = this.addressToLoc(address);
     return this.locToIndex(loc, dimensions);
   },
 
@@ -108,17 +108,17 @@ $.widget("DNA.plateLayOut", {
     // Import classes from other files.. Here we import it using extend and add it to this
     // object. internally we add to widget.DNA.getPlates.prototype.
     // Helpers are methods which return other methods and objects.
-    // add Objects to plateLayOutWidget and it will be added to this object.
+    // add Objects to plateMapWidget and it will be added to this object.
     // set read only well
     if (this.options.readOnly) {
       this.isReadOnly(true);
     }
 
-    for (let component in plateLayOutWidget) {
-      if (plateLayOutWidget.hasOwnProperty(component)) {
+    for (let component in plateMapWidget) {
+      if (plateMapWidget.hasOwnProperty(component)) {
         // Incase some properties has to initialize with data from options hash,
         // we provide it sending this object.
-        $.extend(this, new plateLayOutWidget[component](this));
+        $.extend(this, new plateMapWidget[component](this));
       }
     }
 
@@ -156,7 +156,7 @@ $.widget("DNA.plateLayOut", {
           textFieldIdWell[field.name] = textVal;
           textValWell[fieldId] = textVal;
         } else {
-          // do not convert if not a field (ex: layout_address)
+          // do not convert if not a field
           textFieldIdWell[fieldId] = curWellData[fieldId];
           textValWell[fieldId] = curWellData[fieldId];
         }

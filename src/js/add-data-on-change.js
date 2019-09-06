@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.addDataOnChange = function() {
+  plateMapWidget.addDataOnChange = function() {
     // This object is invoked when something in the tab fields change
     return {
 

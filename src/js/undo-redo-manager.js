@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.undoRedoManager = function() {
+  plateMapWidget.undoRedoManager = function() {
 
     return {
 

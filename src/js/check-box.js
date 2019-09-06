@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.checkBox = function() {
+  plateMapWidget.checkBox = function() {
     // For those check boxes associated with every field in the tab
     return {
 

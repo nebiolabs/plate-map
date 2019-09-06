@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.preset = function() {
+  plateMapWidget.preset = function() {
     // All the preset action goes here
     return {
 

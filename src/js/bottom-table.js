@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.bottomTable = function() {
+  plateMapWidget.bottomTable = function() {
     // for bottom table
     return {
       _bottomScreen: function() {

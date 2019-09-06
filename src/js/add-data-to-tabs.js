@@ -1,6 +1,6 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.addDataToFields = function() {
+plateMapWidget.addDataToFields = function() {
 
   return {
 

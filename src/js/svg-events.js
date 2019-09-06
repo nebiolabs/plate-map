@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.svgEvents = function() {
+  plateMapWidget.svgEvents = function() {
     // This object contains Menu items and how it works;
     return {
       colorToIndex: {},

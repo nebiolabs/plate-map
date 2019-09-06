@@ -83,7 +83,7 @@ You need to include the following dependencies:
 ## Quick start
 Embed code similar to the below to add the plate layout tool to your project: 
 ```html
-<div id="my-plate-layout"></div>
+<div id="my-plate-map"></div>
 ```
 The source file `src/js/example.js` (shown below) initializes the plate layout tool. See Configurations Options
 for all available settings. **Note** that this source file is not included in the npm package, but it is available on 
@@ -135,7 +135,7 @@ the Github repository.
     };
 
     // Main function
-    $("#my-plate-layout").plateLayOut({
+    $("#my-plate-map").plateMap({
       numRows: 8,
       numCols: 12,
       readOnly: false,  // optional
@@ -150,7 +150,7 @@ the Github repository.
     });
     //You can trigger the load of plateData at any time, 
     //including initializing, using the getPlates method
-    $("#my-plate-layout").plateLayOut("getPlates", plateData);
+    $("#my-plate-map").plateMap("getPlates", plateData);
   }
 ```
 
@@ -166,7 +166,7 @@ Every time after mouse up event on canvas, selectedWells function will be trigge
 
 # Major Functions
 The following functions may be called at any time to interact with the UI. 
-Typically you will invoke these functions using `$("#mylayout").plateLayOut("function", ...args)` form. 
+Typically you will invoke these functions using `$("#mylayout").plateMap("function", ...args)` form. 
 
 ## loadPlate(data)
 This function may be called at any time to load data. Well data should be passed in the following form:
@@ -224,32 +224,32 @@ This function may be called at any time to load data. Well data should be passed
 ## getPlate()
 Calling this function will return the current state of the plate-map, in the form as passed into `loadPlate`.
 ```js
-$("#my-plate-layout").plateLayOut("getPlate")
+$("#my-plate-map").plateMap("getPlate")
 ```
 
 ## isReadOnly()
 This function will disable editing of the plates, set `flag` to true for read only mode and set `flag` to false to disable read only mode
 ```js
-$("#mylayout").plateLayOut("isReadOnly", flag)
+$("#mylayout").plateMap("isReadOnly", flag)
 ```
 
 ## isDisableAddDeleteWell()
 This function will disable adding and removing the existing wells. Set `flag` to true will set the current state of the plate as reference and remove the ability to add and remove wells. `defaultFields` can be specified for setting default values to existing empty wells (`defaultFields` format: `{fieldId1: val1, fieldId2: val2, ...}`)
 ```js
-$("#mylayout").plateLayOut("isDisableAddDeleteWell", flag, defaultFields)
+$("#mylayout").plateMap("isDisableAddDeleteWell", flag, defaultFields)
 ```
 
 ## setSelectedAddresses()
 Calling this function will set the input address as selected wells on the plate, `addresses` is a list of addresses
  (example: ['A1', 'A2', ...])
 ```js
-$("#my-plate-layout").plateLayOut("setSelectedAddresses", addresses)
+$("#my-plate-map").plateMap("setSelectedAddresses", addresses)
 ```
 
 ## getSelectedAddresses()
 Calling this function will return the addresses of selected wells on the plate, as in `setSelectedAddresses`
 ```js
-$("#my-plate-layout").plateLayOut("getSelectedAddresses")
+$("#my-plate-map").plateMap("getSelectedAddresses")
 ```
 
 # Data Types
@@ -565,7 +565,7 @@ npm run build.package
 ```
 
 ## Add External Dependencies
-If you want to external dependencies to the Plate-Layout tool, you can follow the next steps: 
+If you want to external dependencies to the PlateMap tool, you can follow the next steps: 
 
 - Install the npm dependency: 
     ```bash

@@ -1,9 +1,9 @@
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.addDataOnChange = function () {
+  plateMapWidget.addDataOnChange = function () {
     // This object is invoked when something in the tab fields change
     return {
       _addAllData: function _addAllData(data) {
@@ -223,9 +223,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.addDataToFields = function () {
+plateMapWidget.addDataToFields = function () {
   return {
     _addDataToTabFields: function _addDataToTabFields(well) {
       // Configure how data is added to tab fields
@@ -246,10 +246,10 @@ plateLayOutWidget.addDataToFields = function () {
 };
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.addTabData = function () {
+  plateMapWidget.addTabData = function () {
     return {
       fieldList: [],
       fieldMap: {},
@@ -503,10 +503,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.addWarningMsg = function () {
+  plateMapWidget.addWarningMsg = function () {
     // For those check boxes associated with every field in the tab
     return {
       fieldWarningMsg: function fieldWarningMsg(field, text, include) {
@@ -607,10 +607,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.bottomTable = function () {
+  plateMapWidget.bottomTable = function () {
     // for bottom table
     return {
       _bottomScreen: function _bottomScreen() {
@@ -868,10 +868,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.checkBox = function () {
+  plateMapWidget.checkBox = function () {
     // For those check boxes associated with every field in the tab
     return {
       globalSelectedAttributes: [],
@@ -1028,9 +1028,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.colorManager = function () {
+plateMapWidget.colorManager = function () {
   return {
     // See these are color pairs for the gradient.
     colorPairs: [["#e6e6e6", "#808080"], ["#66e8ff", "#0082c8"], ["#ff7fb1", "#e6194b"], ["#a2ffb1", "#3cb44b"], ["#f784ff", "#911eb4"], ["#ffe897", "#f58231"], ["#6666ff", "#0000FF"], ["#ffff7f", "#ffe119"], ["#acffff", "#46f0f0"], ["#ff98ff", "#f032e6"], ["#ffffa2", "#d2f53c"], ["#ffffff", "#fabebe"], ["#66e6e6", "#008080"], ["#ffffff", "#e6beff"], ["#ffd48e", "#aa6e28"], ["#e66666", "#800000"], ["#ffffff", "#aaffc3"], ["#e6e666", "#808000"], ["#ffffff", "#ffd8b1"], ["#66a9ef", "#004389"], ["#ff6672", "#a7000c"], ["#66db72", "#00750c"], ["#b866db", "#520075"], ["#ffa966", "#b64300"], ["#ffff66", "#c0a200"], ["#6dffff", "#07b1b1"], ["#ff66ff", "#b100a7"], ["#f9ff66", "#93b600"], ["#ffe5e5", "#bb7f7f"], ["#66a7a7", "#004141"], ["#ffe5ff", "#a77fc0"], ["#d19566", "#6b2f00"], ["#ffffef", "#c0bb89"], ["#d1ffea", "#6bc084"], ["#a7a766", "#414100"], ["#ffffd8", "#c09972"], ["#a5ffff", "#3fc1ff"], ["#ffbef0", "#ff588a"], ["#e1fff0", "#7bf38a"], ["#ffc3ff", "#d05df3"], ["#ffffd6", "#ffc170"], ["#a5a5ff", "#3f3fff"], ["#ffffbe", "#ffff58"], ["#ebffff", "#85ffff"], ["#ffd7ff", "#ff71ff"], ["#a5ffff", "#3fbfbf"], ["#ffffcd", "#e9ad67"], ["#ffa5a5", "#bf3f3f"], ["#ffffa5", "#bfbf3f"]]
@@ -1040,7 +1040,7 @@ plateLayOutWidget.colorManager = function () {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
   function select2close(ev) {
@@ -1067,7 +1067,7 @@ var plateLayOutWidget = plateLayOutWidget || {};
     input.val(selected);
   }
 
-  plateLayOutWidget.createField = function () {
+  plateMapWidget.createField = function () {
     // It creates those fields in the tab , there is 4 types of them.
     return {
       _createField: function _createField(field) {
@@ -2494,12 +2494,12 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.engine = function (THIS) {
+  plateMapWidget.engine = function (THIS) {
     // Methods which look after data changes and stack up accordingly
-    // Remember THIS points to plateLayOutWidget and 'this' points to engine
+    // Remember THIS points to plateMapWidget and 'this' points to engine
     // Use THIS to refer parent this.
     return {
       engine: {
@@ -2697,9 +2697,9 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.assets = function () {
+plateMapWidget.assets = function () {
   return {
     _assets: {
       doImg: '&#10003;',
@@ -2710,10 +2710,10 @@ plateLayOutWidget.assets = function () {
 };
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget["interface"] = function () {
+  plateMapWidget["interface"] = function () {
     // interface holds all the methods to put the interface in place
     return {
       _createInterface: function _createInterface() {
@@ -2807,11 +2807,11 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.loadPlate = function () {
+plateMapWidget.loadPlate = function () {
   // Methods which look after data changes and stack up accordingly
-  // Remember THIS points to plateLayOutWidget and 'this' points to engine
+  // Remember THIS points to plateMapWidget and 'this' points to engine
   return {
     loadPlate: function loadPlate(data) {
       //sanitize input
@@ -2867,10 +2867,10 @@ plateLayOutWidget.loadPlate = function () {
 };
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.overlay = function () {
+  plateMapWidget.overlay = function () {
     // overlay holds all the methods to put the part just above the canvas which contains all those
     // 'completion percentage' annd 'copy Criteria' button etc ...
     return {
@@ -2970,13 +2970,13 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-$.widget("DNA.plateLayOut", {
-  plateLayOutWidget: {},
+$.widget("DNA.plateMap", {
+  plateMapWidget: {},
   options: {
     value: 0
   },
-  addressToLoc: function addressToLoc(layoutAddress) {
-    var m = /^([A-Z]+)(\d+)$/.exec(layoutAddress.trim().toUpperCase());
+  addressToLoc: function addressToLoc(address) {
+    var m = /^([A-Z]+)(\d+)$/.exec(address.trim().toUpperCase());
 
     if (m) {
       var row_v = m[1];
@@ -3000,7 +3000,7 @@ $.widget("DNA.plateLayOut", {
         c: col
       };
     } else {
-      throw layoutAddress + " not a proper layout address";
+      throw address + " not a proper plate address";
     }
   },
   locToIndex: function locToIndex(loc, dimensions) {
@@ -3018,8 +3018,8 @@ $.widget("DNA.plateLayOut", {
 
     return loc.r * dimensions.cols + loc.c;
   },
-  addressToIndex: function addressToIndex(layoutAddress, dimensions) {
-    var loc = this.addressToLoc(layoutAddress);
+  addressToIndex: function addressToIndex(address, dimensions) {
+    var loc = this.addressToLoc(address);
     return this.locToIndex(loc, dimensions);
   },
   _rowKey: function _rowKey(i) {
@@ -3076,18 +3076,18 @@ $.widget("DNA.plateLayOut", {
     this.target = this.element[0].id ? "#" + this.element[0].id : "." + this.element[0].className; // Import classes from other files.. Here we import it using extend and add it to this
     // object. internally we add to widget.DNA.getPlates.prototype.
     // Helpers are methods which return other methods and objects.
-    // add Objects to plateLayOutWidget and it will be added to this object.
+    // add Objects to plateMapWidget and it will be added to this object.
     // set read only well
 
     if (this.options.readOnly) {
       this.isReadOnly(true);
     }
 
-    for (var component in plateLayOutWidget) {
-      if (plateLayOutWidget.hasOwnProperty(component)) {
+    for (var component in plateMapWidget) {
+      if (plateMapWidget.hasOwnProperty(component)) {
         // Incase some properties has to initialize with data from options hash,
         // we provide it sending this object.
-        $.extend(this, new plateLayOutWidget[component](this));
+        $.extend(this, new plateMapWidget[component](this));
       }
     }
 
@@ -3126,7 +3126,7 @@ $.widget("DNA.plateLayOut", {
           textFieldIdWell[field.name] = textVal;
           textValWell[fieldId] = textVal;
         } else {
-          // do not convert if not a field (ex: layout_address)
+          // do not convert if not a field
           textFieldIdWell[fieldId] = curWellData[fieldId];
           textValWell[fieldId] = curWellData[fieldId];
         }
@@ -3411,10 +3411,10 @@ $.widget("DNA.plateLayOut", {
 });
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.preset = function () {
+  plateMapWidget.preset = function () {
     // All the preset action goes here
     return {
       presets: [],
@@ -3468,10 +3468,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function (SVG) {
-  plateLayOutWidget.svgCreate = function () {
+  plateMapWidget.svgCreate = function () {
     //
     return {
       baseSizes: {
@@ -3596,10 +3596,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.svgEvents = function () {
+  plateMapWidget.svgEvents = function () {
     // This object contains Menu items and how it works;
     return {
       colorToIndex: {},
@@ -3938,10 +3938,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.tabs = function () {
+  plateMapWidget.tabs = function () {
     // Tabs create and manage tabs at the right side of widget.
     return {
       allTabs: [],
@@ -4004,10 +4004,10 @@ var plateLayOutWidget = plateLayOutWidget || {};
 })(jQuery);
 "use strict";
 
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
-  plateLayOutWidget.undoRedoManager = function () {
+  plateMapWidget.undoRedoManager = function () {
     return {
       undoRedoArray: [],
       actionPointer: null,

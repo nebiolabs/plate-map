@@ -1,6 +1,6 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.colorManager = function() {
+plateMapWidget.colorManager = function() {
 
   return {
     // See these are color pairs for the gradient.

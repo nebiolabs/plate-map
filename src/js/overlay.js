@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
-  plateLayOutWidget.overlay = function() {
+  plateMapWidget.overlay = function() {
     // overlay holds all the methods to put the part just above the canvas which contains all those
     // 'completion percentage' annd 'copy Criteria' button etc ...
     return {

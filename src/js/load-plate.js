@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
-plateLayOutWidget.loadPlate = function() {
+plateMapWidget.loadPlate = function() {
   // Methods which look after data changes and stack up accordingly
-  // Remember THIS points to plateLayOutWidget and 'this' points to engine
+  // Remember THIS points to plateMapWidget and 'this' points to engine
   return {
 
     loadPlate: function(data) {

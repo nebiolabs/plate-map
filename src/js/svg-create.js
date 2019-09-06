@@ -1,8 +1,8 @@
-var plateLayOutWidget = plateLayOutWidget || {};
+var plateMapWidget = plateMapWidget || {};
 
 (function(SVG) {
 
-  plateLayOutWidget.svgCreate = function() {
+  plateMapWidget.svgCreate = function() {
     //
     return {
 
