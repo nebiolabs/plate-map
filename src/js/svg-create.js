@@ -21,7 +21,8 @@ var plateMapWidget = plateMapWidget || {};
       allTiles: [],
 
       _createSvg: function() {
-        this.svg = new SVG(this.canvasContainer[0]).addClass();
+        this.svg = new SVG(this.canvasContainer[0]);
+        this.svg.attr('preserveAspectRatio', 'xMidYMin meet');
         let ls = this.baseSizes.label_spacing;
 
         this.svg.viewbox(-ls, -ls, ls + this.dimensions.cols * this.baseSizes.spacing, ls + this.dimensions.rows * this.baseSizes.spacing);
