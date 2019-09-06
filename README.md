@@ -91,8 +91,8 @@ the Github repository.
 ```js
   window.onload = function() {
     //Define fields to hold data
-    var fields = {
-      Volume: {
+    let fields = [
+      {
         required: true,
         id:       'volume',
         name:     'Volume',
@@ -101,27 +101,27 @@ the Github repository.
         units: ["uL", "mL"], 
         defaultUnit: "uL"
       },
-      Polymerase: {
+      {
         required: true,
         id: 'pol',
         name: 'Polymerase',
         type: 'multiselect',
         placeHolder: "Polymerase",
-        options: {
-          'Taq 1': {
+        options: [
+          {
                 id:   '234',
-                name: 'Taq 1'
+                text: 'Taq 1'
           },
-          'Taq 2': {
+          {
                 id:   '123',
-                name: 'Taq 2'
+                text: 'Taq 2'
           }
-        }
+        ]
       }
-    }; 
+    ]; 
 
     // Define presentation attributes
-    var attributes = {
+    let attributes = {
       presets: {// Define quick pick of different combinations of checked fields
         "preset 1": ['volume', 'pol'],
         "preset 2": ["pol"]
@@ -135,7 +135,8 @@ the Github repository.
     };
 
     // Main function
-    $("#my-plate-map").plateMap({
+    let widget = $("my-plate-map");
+    widget.plateMap({
       numRows: 8,
       numCols: 12,
       readOnly: false,  // optional
@@ -150,7 +151,7 @@ the Github repository.
     });
     //You can trigger the load of plateData at any time, 
     //including initializing, using the getPlates method
-    $("#my-plate-map").plateMap("getPlates", plateData);
+    widget.plateMap("getPlates", plateData);
   }
 ```
 
@@ -171,7 +172,7 @@ Typically you will invoke these functions using `$("#mylayout").plateMap("functi
 ## loadPlate(data)
 This function may be called at any time to load data. Well data should be passed in the following form:
 ```js
-{
+data = {
   wells: {
     "A1": { //address of well
       wellData: {
@@ -188,7 +189,7 @@ This function may be called at any time to load data. Well data should be passed
                   },
                   {
                     multiplex_field: "multiplex field1 id2",
-                    subfield_1: "value 3"
+                    subfield_1: "value 3",
                     subfield_2: "value 4"
                   }
                  ],
@@ -215,6 +216,7 @@ This function may be called at any time to load data. Well data should be passed
     "field_4",
     "field_5",
     "field_6",
+    "field_6_multiplex_field1", //activate checkbox for subfield
     "field_7",
   ], 
   selectedAddresses: ["A1", "A2", "A3"]
@@ -265,7 +267,7 @@ save the value.
 Numeric fields may optionally allow for units. You can specify the default unit if desired, otherwise the first unit 
 will be used. 
 ```js
-Volume: {
+some_numeric_field = {
   required: true,
   id:       'volume',
   name:     'Volume',
@@ -273,21 +275,21 @@ Volume: {
   placeholder: "Volume",
   units: ["uL", "mL"], 
   defaultUnit: "uL"
-}
+};
 ```
 see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter 
 speed data.
 when numeric field is used as a sub field for multiplex field, if the numeric field has multiplex units, the set up of 
 the field will become:
 ```js
-condition_amt: {
+some_multiplex_numeric_field = {
   required: false,
   id: 'raw_value',
   name: 'Amount',
   type: 'numeric',
   hasMultiplexUnit: true,
   units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
-}
+};
 ```
 Note that `units` attribute is a list of all the possible options for `condition_amt` field.
 More examples at the end of the page
@@ -298,7 +300,7 @@ Name says it all, Just brought the select2 to show it.
 ## Select
 Selected single option using select2 dropdown.Options field lists options in order. 
 ```js
-Polymerase: {
+some_select_field= {
   required: true,
   id: 'pol',
   name: 'Polymerase',
@@ -307,33 +309,33 @@ Polymerase: {
   options: [
     {
       id:   '234',
-      name: 'Taq 1'
+      text: 'Taq 1'
     },
     {
       id:   '123',
-      name: 'Taq 2'
+      text: 'Taq 2'
     }
   ]
-}
+};
 ```
 
 ## Multiselect
 Select multiple options using select2 picker. Options field lists options in order. 
 ```js
-Polymerase: {
+some_multiselect_field = {
   required: true,
-  id: 'pol',
-  name: 'Polymerase',
-  type: 'multiselect',
+  id: "pol",
+  name: "Polymerase",
+  type: "multiselect",
   placeHolder: "Polymerase",
   options: [
     {
-      id:   '234',
-      name: 'Taq 1'
+      id:   "234",
+      text: "Taq 1"
     },
     {
-      id:   '123',
-      name: 'Taq 2'
+      id:   "123",
+      text: "Taq 2"
     }
   ]
 }
@@ -347,55 +349,49 @@ specify sub fields, components of multiplexFields can be any of the basic field 
 
 ### Example 1: multiplex field without sub field multiplex units
 ```js
-Amplicon: {
+some_multiplex_field = {
   required: true,
-  id: 'amplicon_id',
+  id: "amplicon_id",
   name: "Amplicon",
   type: "multiplex",
   options: [
-    {
-      id: 'a',
-      text: 'amplicon_a'
-    },
-    {
-      id: 'b',
-      text: 'amplicon_b'
-    }
+    {id: "a", text: "amplicon_a"},
+    {id: "b", text: "amplicon_b"}
   ],
-  multiplexFields: {
-    template_ngul: {
+  multiplexFields: [
+    {
       required: true,
-      id: 'template_ngul',
-      name: 'template conc',
-      type: 'numeric',
-      defaultUnit: 'ng/ul'
+      id: "template_ngul",
+      name: "template conc",
+      type: "numeric",
+      defaultUnit: "ng/ul"
     },
-    primer_umolarity: {
+    {
       required: true,
-      id: 'primer_umolarity',
-      name: 'Primer conc',
-      type: 'numeric',
+      id: "primer_umolarity",
+      name: "Primer conc",
+      type: "numeric",
       placeHolder: "Primer",
-      units: ['uM (final)', "unit1"],
-      defaultUnit: 'uM (final)'
+      units: ["uM (final)", "unit1"],
+      defaultUnit: "uM (final)"
     },
-    probe_umolarity: {
+    {
       required: true,
-      id: 'probe_umolarity',
-      name: 'Probe conc',
-      type: 'numeric',
+      id: "probe_umolarity",
+      name: "Probe conc",
+      type: "numeric",
       placeHolder: "Probe",
-      defaultUnit: 'uM (final)'
+      defaultUnit: "uM (final)"
     },
-    dilution_factor: {
+    {
       required: true,
-      id: 'dilution_factor',
-      name: 'Dilution factor',
-      type: 'numeric',
+      id: "dilution_factor",
+      name: "Dilution factor",
+      type: "numeric",
       placeHolder: "Dilution factor",
-      defaultUnit: 'X'
+      defaultUnit: "X"
    }
-  }
+  ]
 }
 ```
 see the example above, Amplicon is a multiplex field contains sub fields: template concentration, primer concentration, 
@@ -403,49 +399,49 @@ probe concentration and dilution factor.
 
 ### Example 2: multiplex field with multiplex unit sub fields
 ```js
-experimental_conditions: {
+some_multiplex_field = {
   required: false,
-  id: 'experimental_conditions',
+  id: "experimental_conditions",
   name: "Experimental Conditions",
   type: "multiplex",
   placeHolder: "Experimental Conditions",
   options: [
     {
       id: "a",
-      unitOptions: {raw_value: ["unit1", "unit2"]},
+      unitOptions: {"raw_value": ["unit1", "unit2"]},
       text: "experimental condition1"
     },
     {
       id: "b",
-      unitOptions: {raw_value: ["unit3", "unit4"]},
+      unitOptions: {"raw_value": ["unit3", "unit4"]},
       text: "experimental condition2"
     },
     {
       id: "c",
-      unitOptions: {raw_value: ["unit5", "unit6"]},
+      unitOptions: {"raw_value": ["unit5", "unit6"]},
       text: "experimental condition3"
     }
   ],
-  multiplexFields: {
-    condition_amt: {
+  multiplexFields: [
+    {
       required: false,
-      id: 'raw_value',
-      name: 'Amount',
-      type: 'numeric',
-      units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
+      id: "raw_value",
+      name: "Amount",
+      type: "numeric",
+      units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"],
       hasMultiplexUnit: true
     },
-    is_modulator: {
+    {
       required: false,
-      id: 'is_modulator',
-      name: 'Is Additive',
-      type: 'select',
+      id: "is_modulator",
+      name: "Is Additive",
+      type: "select",
       options:[
-        {id:'a',text: 'Is Modulator'},
-        {id:'b',text: 'Not Modulator'}
+        {id:"a", text: "Is Modulator"},
+        {id:"b", text: "Not Modulator"}
       ]
     }
-  }
+  ]
 }
 ```
 In this case `experimental_conditions` is a multiplex field with subfields `condition_amt` and `is_modulator`. 
@@ -574,7 +570,7 @@ If you want to external dependencies to the PlateMap tool, you can follow the ne
 - In the gulpfile.js, add the new dependency path(s) to the constant PATH under the dependencies key. For example, if 
 your dependency has just a javascript distribution file `dist/js/index.js`, the PATH constant in the gulpfile.js should 
 look like this:
-```js
+```
 const PATH = {
     source: {
         app: {...},
