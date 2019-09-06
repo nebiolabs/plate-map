@@ -75,7 +75,7 @@ var plateMapWidget = plateMapWidget || {};
         this.allDataTabs = tabs.map(function () {
           return this._createElement("<div></div>").addClass("plate-setup-data-div").css("z-index", 0);
         }, this);
-        $(this.tabContainer).append(this.allDataTabs);
+        $(this.tabDataContainer).append(this.allDataTabs);
       }
     };
   }
