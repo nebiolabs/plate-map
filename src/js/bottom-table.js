@@ -40,7 +40,7 @@ var plateMapWidget = plateMapWidget || {};
         this.bottomTableBody.empty();
         this.bottomTableHead.empty();
         this.bottomTableHead.append(row);
-        this.adjustFieldWidth(this.bottomRow);
+        this.adjustFieldWidth(row);
       },
 
       tileAttrText: function(tile, attr) {
