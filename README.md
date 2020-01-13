@@ -1,6 +1,6 @@
 # Introduction
 <!-- remember to update badges [version, licence] when needed because they are static -->
-![version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg?style=flat-square&v=1.0)
+![version](https://img.shields.io/badge/version-2.0.1-brightgreen.svg?style=flat-square&v=1.0)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![GitHub issues](https://img.shields.io/github/issues/nebiolabs/plate-map.svg?style=flat-square&v=1.0)](https://github.com/nebiolabs/plate-map/issues)
 [![dependencies Status](https://david-dm.org/nebiolabs/plate-map/status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map)
