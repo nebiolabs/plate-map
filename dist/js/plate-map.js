@@ -637,7 +637,7 @@ var plateMapWidget = plateMapWidget || {};
         this.bottomTableBody.empty();
         this.bottomTableHead.empty();
         this.bottomTableHead.append(row);
-        this.adjustFieldWidth(this.bottomRow);
+        this.adjustFieldWidth(row);
       },
       tileAttrText: function tileAttrText(tile, attr) {
         var well = this.engine.derivative[tile.index];

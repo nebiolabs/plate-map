@@ -186,3 +186,5 @@ gulp.task('serve.prod', gulp.series('build.prod', 'server.prod'));
 
 gulp.task('default', gulp.series('serve.dev'));
 
+gulp.task('build.all', gulp.series('build.dev', 'build.prod', 'build.dist'));
+
