@@ -25,7 +25,7 @@
   "homepage": "https://github.com/nebiolabs/plate-map#readme",
   "dependencies": {
     "clipboard": "^2.0.4",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-ui-dist": "^1.12.1",
     "select2": "^4.0.12",
     "svgjs": "^2.6.2"
