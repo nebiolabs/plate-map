@@ -16,7 +16,7 @@ plateMapWidget.loadPlate = function() {
           derivative[index] = this.sanitizeWell(well);
         }
       } else {
-        derivative = this.derivative;
+        derivative = this.engine.derivative;
       }
 
       let checkboxes;
