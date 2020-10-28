@@ -349,9 +349,9 @@ $.widget("DNA.plateMap", {
       this.emptyWellWithDefaultVal = emptyWellWithDefaultVal;
     } else {
       this.disableAddDeleteWell = false;
-      this.setFieldsDisabled(false);
       this.emptyWellWithDefaultVal = null;
     }
+    this.readOnlyHandler();
   },
 
   selectObjectInBottomTab: function() {

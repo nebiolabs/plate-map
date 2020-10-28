@@ -87,6 +87,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
         };
 
@@ -156,6 +157,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
         };
 
@@ -218,6 +220,7 @@ var plateMapWidget = plateMapWidget || {};
         select2fix(input);
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           input.prop("disabled", bool);
         };
 
@@ -377,6 +380,7 @@ var plateMapWidget = plateMapWidget || {};
         }
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           if (unitInput) {
             unitInput.prop("disabled", bool);
@@ -627,6 +631,7 @@ var plateMapWidget = plateMapWidget || {};
         select2fix(input);
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
         };
 
@@ -754,12 +759,12 @@ var plateMapWidget = plateMapWidget || {};
           if (curSubField) {
             // setvalue for subfield
             field.subFieldList.forEach(function(subField) {
-              subField.disabled(false);
+              subField.isDisabled = false;
               subField.setValue(curSubField[subField.id]);
             });
           } else {
             field.subFieldList.forEach(function(subField) {
-              subField.disabled(true);
+              subField.isDisabled = true;
               subField.setValue(null);
             });
           }
@@ -827,6 +832,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.disabled = function(bool) {
+          bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           field.subFieldList.forEach(function(subField) {
             subField.disabled(bool);
