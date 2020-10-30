@@ -32,14 +32,17 @@ var plateMapWidget = plateMapWidget || {};
         switch (field.data.type) {
           case "text":
             this._createTextField(field);
+            this._handleFieldUnits(field);
             break;
 
           case "numeric":
             this._createNumericField(field);
+            this._handleFieldUnits(field);
             break;
 
           case "select":
             this._createSelectField(field);
+            this._handleFieldUnits(field);
             break;
 
           case "multiselect":
@@ -54,6 +57,244 @@ var plateMapWidget = plateMapWidget || {};
             this._createMultiplexField(field);
             break;
         }
+      },
+
+      _handleFieldUnits: function (field) {
+        let data = field.data;
+
+        // Adding unit
+        let units = data.units || [];
+        let defaultUnit = data.defaultUnit || null;
+        let unitInput = null;
+        if (defaultUnit) {
+          if (units.length) {
+            if (units.indexOf(defaultUnit) < 0) {
+              defaultUnit = units[0];
+            }
+          } else {
+            units = [defaultUnit];
+          }
+        } else {
+          if (units.length) {
+            defaultUnit = units[0];
+          }
+        }
+
+        if (units.length) {
+          field.units = units;
+          field.hasUnits = true;
+          field.defaultUnit = defaultUnit;
+          this._makeFieldUnits(field);
+        }
+      },
+
+      _makeFieldUnits: function(field) {
+        let full_id = field.full_id;
+        let units = field.units;
+        let defaultUnit = field.defaultUnit;
+        let unitInput = null;
+
+        field.disabledRegular = field.disabled;
+        field.parseRegularValue = field.parseValue;
+        field.setRegularValue = field.setValue;
+        field.getRegularValue = field.getValue;
+        field.getRegularText = field.getText;
+
+        if (units.length) {
+          if (units.length === 1) {
+            let unitText = $("<div></div>").addClass("plate-setup-tab-unit");
+            unitText.text(defaultUnit);
+            field.root.find(".plate-setup-tab-field-container").append(unitText);
+          } else {
+            unitInput = this._createElement("<select/>").attr("id", full_id + "Units")
+                .addClass("plate-setup-tab-unit-select-field");
+
+            field.root.find(".plate-setup-tab-field-container").append(unitInput);
+
+            let selected = null;
+            let unitData = units.map(function(unit) {
+              let o = {
+                id: unit,
+                text: unit
+              };
+              if (unit === defaultUnit) {
+                selected = unit;
+              }
+              return o;
+            });
+
+            let opts = {
+              data: unitData,
+              allowClear: false,
+              minimumResultsForSearch: 10
+            };
+
+            unitInput.select2(opts);
+            unitInput.val(selected);
+          }
+        }
+
+        field.disabled = function(bool) {
+          bool = field.disabledRegular(bool);
+          if (unitInput) {
+            unitInput.prop("disabled", bool);
+          }
+          return bool;
+        };
+
+        field.parseValue = function(value) {
+          let v;
+          if ($.isPlainObject(value)) {
+            v = field.parseRegularValue(value.value);
+            if (v === null) {
+              return null;
+            }
+            return {
+              value: v,
+              unit: field.parseUnit(value.unit)
+            };
+          } else {
+            v = field.parseRegularValue(value);
+            if (v === null) {
+              return null;
+            }
+            return {
+              value: v,
+              unit: field.defaultUnit
+            };
+          }
+        };
+
+        field.getValue = function() {
+          let v = field.getRegularValue();
+
+          if ((v === null) || isNaN(v)) {
+            return null;
+          } else {
+            let returnVal = {
+              value: v,
+              unit: field.getUnit()
+            };
+
+            if (field.data.hasMultiplexUnit) {
+              // include unitTypeId and UnitId to returnVal
+              let unitMap = field.data.unitMap;
+              for (let unitTypeKey in unitMap) {
+                if (!unitMap.hasOwnProperty(unitTypeKey)) {
+                  continue;
+                }
+                let unitTypeUnits = unitMap[unitTypeKey];
+                unitTypeUnits.forEach(function(unit) {
+                  if (unit.text === returnVal.unit) {
+                    returnVal['unitTypeId'] = unitTypeKey;
+                    returnVal['unitId'] = unit.id;
+                  }
+                })
+              }
+            }
+            return returnVal;
+          }
+        };
+
+        field.setValue = function(value) {
+          if ($.isPlainObject(value)) {
+            field.setUnit(value.unit || field.defaultUnit);
+            field.setRegularValue(value.value);
+
+          } else {
+            field.setRegularValue(value);
+            field.setUnit(field.defaultUnit)
+          }
+        };
+
+        field.setUnitOpts = function(opts) {
+          field.units = opts || null;
+          field.defaultUnit = null;
+
+          let newUnits = [];
+          let selected = null;
+          field.defaultUnit = field.units[0];
+          newUnits = field.units.map(function(curUnit) {
+            let cleanUnit = {
+              id: curUnit,
+              text: curUnit
+            };
+            if (curUnit === field.defaultUnit) {
+              selected = curUnit;
+            }
+            return cleanUnit;
+          });
+
+          select2setData(unitInput, newUnits, selected);
+        };
+
+        field.parseUnit = function(unit) {
+          if (unit == null || unit === "") {
+            return field.defaultUnit;
+          }
+          for (let i = 0; i < units.length; i++) {
+            if (unit.toLowerCase() === units[i].toLowerCase()) {
+              return units[i];
+            }
+          }
+          throw "Invalid unit " + unit + " for field " + full_id;
+        };
+
+        field.getUnit = function() {
+          if (unitInput) {
+            return unitInput.val();
+          } else {
+            return field.defaultUnit;
+          }
+        };
+
+        field.setUnit = function(unit) {
+          if (unitInput) {
+            unit = unit || field.defaultUnit;
+            unitInput.val(unit);
+            unitInput.trigger("change.select2");
+          }
+        };
+
+        // val now contains unit
+        field.getText = function(val) {
+          if (typeof (val) === 'object' && val) {
+            let v = val.value;
+            let u = val.unit;
+            if (v == null) {
+              return "";
+            }
+            v = v.toString();
+            if (!u) {
+              u = defaultUnit;
+            }
+            if (u) {
+              v = v + " " + u;
+            }
+            return v;
+          } else {
+            return field.getRegularText(val);
+          }
+        };
+
+        field.parseText = function(v) {
+          let value = field.parseValue(v);
+          if (value && typeof (value) === "object") {
+            return field.getRegularText(value.value) + value.unit;
+          } else if (value != null) {
+            return field.getRegularText(value)
+          } else {
+            return null;
+          }
+        };
+
+        if (unitInput) {
+          unitInput.on("change", function() {
+            field.onChange();
+          });
+        }
+
+        field.unitInput = unitInput;
       },
 
       _createTextField: function(field) {
@@ -89,6 +330,7 @@ var plateMapWidget = plateMapWidget || {};
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
+          return bool;
         };
 
         field.parseText = field.parseValue;
@@ -126,7 +368,7 @@ var plateMapWidget = plateMapWidget || {};
         let full_id = field.full_id;
         let that = this;
         let input = this._createElement("<select/>").attr("id", full_id)
-          .addClass("plate-setup-tab-select-field");
+          .addClass("plate-setup-tab-select-field").addClass("plate-setup-tab-input");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
@@ -159,6 +401,7 @@ var plateMapWidget = plateMapWidget || {};
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
+          return bool;
         };
 
         field.getValue = function() {
@@ -222,6 +465,7 @@ var plateMapWidget = plateMapWidget || {};
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           input.prop("disabled", bool);
+          return bool;
         };
 
         field._parseOne = function(val) {
@@ -324,172 +568,13 @@ var plateMapWidget = plateMapWidget || {};
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
-        // Adding unit
-        let units = data.units || [];
-        let defaultUnit = data.defaultUnit || null;
-        let unitInput = null;
-        if (defaultUnit) {
-          if (units.length) {
-            if (units.indexOf(defaultUnit) < 0) {
-              defaultUnit = units[0];
-            }
-          } else {
-            units = [defaultUnit];
-          }
-        } else {
-          if (units.length) {
-            defaultUnit = units[0];
-          }
-        }
-
-        if (units.length) {
-          field.units = units;
-          field.hasUnits = true;
-          field.defaultUnit = defaultUnit;
-          if (units.length === 1) {
-            let unitText = $("<div></div>").addClass("plate-setup-tab-unit");
-            unitText.text(defaultUnit);
-            field.root.find(".plate-setup-tab-field-container").append(unitText);
-          } else {
-            unitInput = this._createElement("<select/>").attr("id", full_id + "Units")
-              .addClass("plate-setup-tab-label-select-field");
-
-            field.root.find(".plate-setup-tab-field-container").append(unitInput);
-
-            let selected = null;
-            let unitData = units.map(function(unit) {
-              let o = {
-                id: unit,
-                text: unit
-              };
-              if (unit === defaultUnit) {
-                selected = unit;
-              }
-              return o;
-            });
-
-            let opts = {
-              data: unitData,
-              allowClear: false,
-              minimumResultsForSearch: 10
-            };
-
-            unitInput.select2(opts);
-            unitInput.val(selected);
-          }
-        }
-
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
-          if (unitInput) {
-            unitInput.prop("disabled", bool);
-          }
-        };
-
-        field.setUnitOpts = function(opts) {
-          field.units = opts || null;
-          field.defaultUnit = null;
-
-          let newUnits = [];
-          let selected = null;
-          if (field.units && field.units.length) {
-            field.defaultUnit = field.units[0];
-            newUnits = field.units.map(function(curUnit) {
-              let cleanUnit = {
-                id: curUnit,
-                text: curUnit
-              };
-              if (curUnit === field.defaultUnit) {
-                selected = curUnit;
-              }
-              return cleanUnit;
-            });
-          }
-
-          select2setData(unitInput, newUnits, selected);
+          return bool;
         };
 
         field.parseValue = function(value) {
-          let v;
-          if ($.isPlainObject(value)) {
-            if (field.hasUnits) {
-              v = field.parseRegularValue(value.value);
-              if (v === null) {
-                return null;
-              }
-              return {
-                value: v,
-                unit: field.parseUnit(value.unit)
-              };
-            } else {
-              throw "Value must be plain numeric for numeric field " + full_id;
-            }
-          } else {
-            if (field.hasUnits) {
-              v = field.parseRegularValue(value);
-              if (v === null) {
-                return null;
-              }
-              return {
-                value: v,
-                unit: field.defaultUnit
-              };
-            } else {
-              return field.parseRegularValue(value);
-            }
-          }
-        };
-
-        field.getValue = function() {
-          let v = field.getRegularValue();
-
-          if ((v === null) || isNaN(v)) {
-            return null;
-          } else if (field.hasUnits) {
-            let returnVal = {
-              value: v,
-              unit: field.getUnit()
-            };
-
-            if (field.data.hasMultiplexUnit) {
-              // include unitTypeId and UnitId to returnVal
-              let unitMap = field.data.unitMap;
-              for (let unitTypeKey in unitMap) {
-                if (!unitMap.hasOwnProperty(unitTypeKey)) {
-                  continue;
-                }
-                let unitTypeUnits = unitMap[unitTypeKey];
-                unitTypeUnits.forEach(function(unit) {
-                  if (unit.text === returnVal.unit) {
-                    returnVal['unitTypeId'] = unitTypeKey;
-                    returnVal['unitId'] = unit.id;
-                  }
-                })
-              }
-            }
-            return returnVal;
-          } else {
-            return v;
-          }
-        };
-
-        field.setValue = function(value) {
-          if (field.hasUnits) {
-            if ($.isPlainObject(value)) {
-              field.setUnit(value.unit || field.defaultUnit);
-              field.setRegularValue(value.value);
-
-            } else {
-              field.setRegularValue(value);
-              field.setUnit(field.defaultUnit)
-            }
-          } else {
-            field.setRegularValue(value);
-          }
-        };
-
-        field.parseRegularValue = function(value) {
           if (value == null) {
             return null;
           }
@@ -504,7 +589,7 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.getRegularValue = function() {
+        field.getValue = function() {
           let v = input.val().trim();
           if (v === "") {
             v = null;
@@ -514,60 +599,11 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.setRegularValue = function(value) {
+        field.setValue = function(value) {
           input.val(value);
         };
 
-        field.parseUnit = function(unit) {
-          if (unit == null || unit === "") {
-            return field.defaultUnit;
-          }
-          for (let i = 0; i < units.length; i++) {
-            if (unit.toLowerCase() === units[i].toLowerCase()) {
-              return units[i];
-            }
-          }
-          throw "Invalid unit " + unit + " for field " + full_id;
-        };
-
-        field.getUnit = function() {
-          if (unitInput) {
-            return unitInput.val();
-          } else {
-            return field.defaultUnit;
-          }
-        };
-
-        field.setUnit = function(unit) {
-          if (unitInput) {
-            unit = unit || field.defaultUnit;
-            unitInput.val(unit);
-            unitInput.trigger("change.select2");
-          }
-        };
-
-        // val now contains unit
-        field.getText = function(val) {
-          if (typeof (val) === 'object' && val) {
-            let v = val.value;
-            let u = val.unit;
-            if (v == null) {
-              return "";
-            }
-            v = v.toString();
-            if (!u) {
-              u = defaultUnit;
-            }
-            if (u) {
-              v = v + " " + u;
-            }
-            return v;
-          } else {
-            return field.getRegularText(val);
-          }
-        };
-
-        field.getRegularText = function(v) {
+        field.getText = function(v) {
           if (v == null) {
             return "";
           }
@@ -576,14 +612,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.parseText = function(v) {
-          let textVal = field.parseValue(v);
-          if (textVal && typeof (textVal) === "object") {
-            return textVal.value + textVal.unit;
-          } else if (textVal) {
-            return textVal
-          } else {
-            return null;
-          }
+          return field.getText(field.parseValue(v));
         };
 
         input.on("input", function() {
@@ -596,14 +625,8 @@ var plateMapWidget = plateMapWidget || {};
           }
           field.onChange();
         });
-        if (unitInput) {
-          unitInput.on("change", function() {
-            field.onChange();
-          });
-        }
 
         field.input = input;
-        field.unitInput = unitInput;
       },
 
       _createBooleanField: function(field) {
@@ -633,6 +656,7 @@ var plateMapWidget = plateMapWidget || {};
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
+          return bool;
         };
 
         field.parseValue = function(value) {
@@ -842,6 +866,7 @@ var plateMapWidget = plateMapWidget || {};
           } else {
             nameContainer1.text("Select to edit");
           }
+          return bool;
         };
 
         field.parseValue = function(value) {
