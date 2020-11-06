@@ -268,7 +268,7 @@
 .plate-setup-tab-input, .plate-setup-tab-select-field, .plate-setup-tab-multiplex-single-select-field {
   height: 28px;
   flex: 1 1 auto;
-  width: 30px;
+  width: 100%;
   margin: auto;
 }
 
@@ -278,13 +278,24 @@
   width: 30px;
 }
 
-.plate-setup-tab-label-select-field, .plate-setup-tab-unit {
-  width: 130px;
+.plate-setup-tab-unit-select-field, .plate-setup-tab-unit {
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   height: 28px;
   box-sizing: border-box;
   padding-left: 5px;
+}
+
+.plate-setup-tab-unit-select-field+.select2{
+  padding-left: 5px;
+  width: 100% !important;
+  flex: 1 1 auto;
+}
+
+.plate-setup-tab-input+.select2 {
+  width: 100% !important;
+  flex: 1 1 auto;
 }
 
 .plate-setup-tab-unit {

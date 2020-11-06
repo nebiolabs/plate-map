@@ -84,13 +84,16 @@ window.onload = function() {
         {
           required: true,
           id: 'template_ngul',
+          setAll: true,
           name: 'template conc',
           type: 'select',
           options: [
             {id: 'a', text: "a"},
             {id: 'b', text: "b"},
             {id: 'c', text: "c"}
-          ]
+          ],
+          units: ['uM (final)', "unit1"],
+          defaultUnit: 'uM (final)'
         },
         {
           required: true,
@@ -115,7 +118,7 @@ window.onload = function() {
           name: 'Dilution factor',
           type: 'numeric',
           placeHolder: "Dilution factor",
-          defaultUnit: 'X'
+          // defaultUnit: 'X'
         }
       ],
     },

@@ -259,40 +259,31 @@ We have four data types which can be used to initialize tabs in the right hand s
 multichoice.
 
 ## Text
-Text field are the normal and basic text field which holds a text value inside. Nothing specific.
+Text field are the normal and basic text field which holds a text value inside. 
+
+```
+some_text_field = {
+  required: true,
+  id:       'creator',
+  name:     'Creator',
+  type:     'text',
+  placeholder: "Creator"
+};
+```
 
 ## Numeric
 Numeric fields only allow numeric values. If a non-numeric value is entered, the field will be rendered in red and not 
 save the value. 
-Numeric fields may optionally allow for units. You can specify the default unit if desired, otherwise the first unit 
-will be used. 
-```js
+
+```
 some_numeric_field = {
   required: true,
   id:       'volume',
   name:     'Volume',
   type:     'numeric',
-  placeholder: "Volume",
-  units: ["uL", "mL"], 
-  defaultUnit: "uL"
+  placeholder: "Volume"
 };
 ```
-see the units in the above object. Units will be a seperate dropdown and will be placed over the text box where we enter 
-speed data.
-when numeric field is used as a sub field for multiplex field, if the numeric field has multiplex units, the set up of 
-the field will become:
-```js
-some_multiplex_numeric_field = {
-  required: false,
-  id: 'raw_value',
-  name: 'Amount',
-  type: 'numeric',
-  hasMultiplexUnit: true,
-  units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
-};
-```
-Note that `units` attribute is a list of all the possible options for `condition_amt` field.
-More examples at the end of the page
 
 ## Boolean Field
 Name says it all, Just brought the select2 to show it.
@@ -318,6 +309,43 @@ some_select_field= {
   ]
 };
 ```
+
+
+## Text, Numeric, or Select fields with Units
+
+Text, Numeric, and Select fields optionally allow for units. 
+You can specify the default unit if desired, otherwise the first unit will be used. 
+
+```
+some_numeric_field = {
+  required: true,
+  id:       'volume',
+  name:     'Volume',
+  type:     'numeric',
+  placeholder: "Volume",
+  units: ["uL", "mL"], 
+  defaultUnit: "uL"
+};
+```
+
+See the units in the above object. Units will be a seperate dropdown and will be placed next to the text box where we enter 
+the main value.
+When a field with units is used as a sub field for multiplex field, if the field has multiplex units, the set up of 
+the field will become:
+
+```js
+some_multiplex_numeric_field = {
+  required: false,
+  id: 'raw_value',
+  name: 'Amount',
+  type: 'numeric',
+  hasMultiplexUnit: true,
+  units: ["unit1", "unit2", "unit3", "unit4", "unit5", "unit6"]
+};
+```
+
+Note that `units` attribute is a list of all the possible options for the field.
+More examples at the end of the page.
 
 ## Multiselect
 Select multiple options using select2 picker. Options field lists options in order. 

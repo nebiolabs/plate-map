@@ -214,54 +214,72 @@ var plateMapWidget = plateMapWidget || {};
         return false;
       },
 
-      _getCommonData: function(wells) {
-        if (wells.length) {
-          let commonData = $.extend(true, {}, wells[0]);
-          for (let i = 1; i < wells.length; i++) {
-            let well = wells[i];
-            for (let field in commonData) {
-              if (!commonData.hasOwnProperty(field)) {
-                continue;
-              }
-              let commonVal = commonData[field];
-              if (commonVal === undefined) {
-                commonVal = null;
-              }
-              let wellVal = well[field];
-              if (wellVal === undefined) {
-                wellVal = null;
-              }
-              if (Array.isArray(commonVal)) {
-                let commonArr = [];
-                for (let i = 0; i < commonVal.length; i++) {
-                  let v = commonVal[i];
-                  // for multiplex field
-                  if (v && typeof (v) === "object") {
-                    if (this.containsObject(v, wellVal)) {
-                      commonArr.push(v);
-                    }
-                  } else {
-                    if ($.inArray(v, wellVal) >= 0) {
-                      commonArr.push(v);
-                    }
+      _buildCommonData: function(commonData, obj, field) {
+        let commonVal = commonData[field];
+        if (commonVal === undefined) {
+          commonVal = null;
+        }
+        let objVal = obj[field];
+        if (objVal === undefined) {
+          objVal = null;
+        }
+
+        if (Array.isArray(commonVal)) {
+          let commonArr = [];
+          for (let i = 0; i < commonVal.length; i++) {
+            let v = commonVal[i];
+            // for multiplex field
+            if (v && typeof (v) === "object") {
+              for (let j = 0; j < objVal.length; j++) {
+                let v2 = objVal[j];
+                if (v[field] == v2[field]) {
+                  v = $.extend(true, {}, v);
+                  for (let oField in v) {
+                    this._buildCommonData(v, v2, oField);
                   }
+                  commonArr.push(v)
                 }
-                commonData[field] = commonArr;
-              } else {
-                if (wellVal && typeof (wellVal) === "object" && commonVal && typeof (commonVal) === "object") {
-                  if ((wellVal.value !== commonVal.value) || (wellVal.unit !== commonVal.unit)) {
-                    delete commonData[field];
-                  }
-                } else if (commonVal !== wellVal) {
-                  delete commonData[field];
-                }
+              }
+              // if (this.containsObject(v, objVal)) {
+              //   commonArr.push(v);
+              // }
+            } else {
+              if ($.inArray(v, objVal) >= 0) {
+                commonArr.push(v);
               }
             }
           }
-          return commonData;
+          commonData[field] = commonArr;
         } else {
-          return this.defaultWell;
+          if (objVal && typeof (objVal) === "object" && commonVal && typeof (commonVal) === "object") {
+            if ((objVal.value !== commonVal.value) || (objVal.unit !== commonVal.unit)) {
+              delete commonData[field];
+            }
+          } else if (commonVal !== objVal) {
+            delete commonData[field];
+          }
         }
+      },
+
+      _getCommonData: function(wells) {
+        let commonData = null;
+        for (let i = 0; i < wells.length; i++) {
+          let well = wells[i];
+          if (well == null) {
+            continue;
+          }
+          if (commonData == null) {
+            commonData = $.extend(true, {}, wells[0]);
+            continue
+          }
+          for (let field in commonData) {
+            if (!commonData.hasOwnProperty(field)) {
+              continue;
+            }
+            this._buildCommonData(commonData, well, field);
+          }
+        }
+        return commonData || this.defaultWell;
       },
 
       _getCommonWell: function (wells) {
@@ -271,35 +289,47 @@ var plateMapWidget = plateMapWidget || {};
 
       _getAllMultipleVal: function(wells) {
         let multipleFieldList = this.multipleFieldList;
+        let that = this;
 
         multipleFieldList.forEach(function(multiplexField) {
           if (wells.length) {
             let curMultipleVal = {};
-            wells.forEach(function(wellData) {
+            let multiData = null;
+            wells.forEach(function(well) {
+              if (well == null) {
+                return;
+              }
               let id = multiplexField.id;
-              if (wellData[id]) {
-                if (wellData[id].length > 0) {
-                  wellData[id].forEach(function(multipleVal) {
-                    if (typeof (multipleVal) === 'object') {
-                      if (multipleVal[id] in curMultipleVal) {
-                        curMultipleVal[multipleVal[id]]++;
-                      } else {
-                        curMultipleVal[multipleVal[id]] = 1;
-                      }
+              let wellFieldVals = well[id];
+              if (wellFieldVals && wellFieldVals.length) {
+                wellFieldVals.forEach(function(multipleVal) {
+                  if (typeof (multipleVal) === 'object') {
+                    if (multiData == null) {
+                      multiData = $.extend(true, {}, multipleVal);
                     } else {
-                      if (multipleVal in curMultipleVal) {
-                        curMultipleVal[multipleVal]++;
-
-                      } else {
-                        curMultipleVal[multipleVal] = 1;
+                      for (let oField in multiData) {
+                        that._buildCommonData(multiData, multipleVal, oField);
                       }
                     }
-                  })
-                }
+                    if (multipleVal[id] in curMultipleVal) {
+                      curMultipleVal[multipleVal[id]]++;
+                    } else {
+                      curMultipleVal[multipleVal[id]] = 1;
+                    }
+                  } else {
+                    if (multipleVal in curMultipleVal) {
+                      curMultipleVal[multipleVal]++;
+                    } else {
+                      curMultipleVal[multipleVal] = 1;
+                    }
+                  }
+                })
               }
             });
+            multiplexField.allSelectedMultipleData = multiData || {};
             multiplexField.allSelectedMultipleVal = curMultipleVal;
           } else {
+            multiplexField.allSelectedMultipleData = null;
             multiplexField.allSelectedMultipleVal = null
           }
         });
