@@ -168,7 +168,7 @@ var plateMapWidget = plateMapWidget || {};
         field.getValue = function() {
           let v = field.getRegularValue();
 
-          if ((v === null) || isNaN(v)) {
+          if (v === null) {
             return null;
           } else {
             let returnVal = {
@@ -381,7 +381,7 @@ var plateMapWidget = plateMapWidget || {};
         input.select2(opts);
         select2fix(input);
 
-        field.parseValue = function(value) {
+        let parseValue = function(value) {
           let v = value;
 
           if (v === "") {
@@ -397,6 +397,7 @@ var plateMapWidget = plateMapWidget || {};
             throw "Invalid value " + value + " for select field " + full_id;
           }
         };
+        field.parseValue = parseValue;
 
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
@@ -405,7 +406,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.getValue = function() {
-          return field.parseValue(input.val());
+          return parseValue(input.val());
         };
 
         field.setValue = function(v) {
@@ -574,7 +575,7 @@ var plateMapWidget = plateMapWidget || {};
           return bool;
         };
 
-        field.parseValue = function(value) {
+        let parseValue = function(value) {
           if (value == null) {
             return null;
           }
@@ -588,6 +589,7 @@ var plateMapWidget = plateMapWidget || {};
           }
           return v;
         };
+        field.parseValue = parseValue;
 
         field.getValue = function() {
           let v = input.val().trim();
@@ -595,6 +597,9 @@ var plateMapWidget = plateMapWidget || {};
             v = null;
           } else {
             v = Number(v);
+            if (isNaN(v)) {
+              v = null;
+            }
           }
           return v;
         };
@@ -603,16 +608,17 @@ var plateMapWidget = plateMapWidget || {};
           input.val(value);
         };
 
-        field.getText = function(v) {
+        let getText = function(v) {
           if (v == null) {
             return "";
           }
           v = v.toString();
           return v;
         };
+        field.getText = getText;
 
         field.parseText = function(v) {
-          return field.getText(field.parseValue(v));
+          return getText(parseValue(v));
         };
 
         input.on("input", function() {
