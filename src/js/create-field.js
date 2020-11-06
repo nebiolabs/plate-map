@@ -345,8 +345,7 @@ var plateMapWidget = plateMapWidget || {};
       _createOpts: function(config) {
         let opts = {
           allowClear: true,
-          placeholder: "select",
-          minimumResultsForSearch: 10
+          placeholder: "select"
         };
         let data_specified = false;
 

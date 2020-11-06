@@ -584,3 +584,9 @@ input.invalid {
 .plate-setup-canvas-container .tile:not(.empty) .well {
   display: none;
 }
+
+.select2-search {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
