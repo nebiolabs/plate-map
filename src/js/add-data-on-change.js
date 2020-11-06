@@ -65,52 +65,29 @@ var plateMapWidget = plateMapWidget || {};
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
         let addNew = curData.added;
         let removed = curData.removed;
+        preData = preData || [];
         if (addNew) {
-          if (preData) {
-            if (addNew.value) {
-              let add = true;
-              for (let listIdx in preData) {
-                if (!preData.hasOwnProperty(listIdx)) {
-                  continue;
+          if (addNew.value) {
+            const multiplexId = addNew.id.toString();
+            const doAll = multiplexId === '[ALL]';
+            let add = !doAll;
+            preData = preData.map(function(val) {
+              if (doAll || val[fieldId].toString() === multiplexId) {
+                add = false;
+                for (let subFieldId in addNew.value) {
+                  if (subFieldId !== fieldId) {
+                    val[subFieldId] = addNew.value[subFieldId];
+                  }
                 }
-                let multiplexData = preData[listIdx];
-                // for cases when the add new data exist in well
-                if (multiplexData[fieldId].toString() === addNew.id.toString()) {
-                  add = false;
-                  // update subfield value
-                  preData = preData.map(function(val) {
-                    if (val[fieldId].toString() === addNew.id.toString()) {
-                      for (let subFieldId in val) {
-                        if (!val.hasOwnProperty(subFieldId)) {
-                          continue;
-                        }
-                        // over write previous data if only one well is selected
-                        if (subFieldId in addNew.value && subFieldId !== fieldId) {
-                          if (noOfSelectedObjects === 1) {
-                            val[subFieldId] = addNew.value[subFieldId];
-                          } else if (addNew.value[subFieldId]) {
-                            val[subFieldId] = addNew.value[subFieldId];
-                          }
-                        }
-                      }
-                    }
-                    return val;
-                  })
-                }
+                return val;
               }
-              if (add) {
-                preData.push(addNew.value);
-              }
-            } else if (preData.indexOf(addNew) < 0) {
-              preData.push(addNew);
-            }
-          } else {
-            preData = [];
-            if (addNew.value) {
+              return val;
+            });
+            if (add) {
               preData.push(addNew.value);
-            } else if (addNew) {
-              preData.push(addNew);
             }
+          } else if (preData.indexOf(addNew) < 0) {
+            preData.push(addNew);
           }
         }
 

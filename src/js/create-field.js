@@ -749,11 +749,26 @@ var plateMapWidget = plateMapWidget || {};
           if (v == null) {
             return null;
           }
+          if (v == '[ALL]') {
+            return v;
+          }
           return field._parseOne(v)
         };
 
         let setSingleSelectOptions = function(data, selected) {
           data = data || [];
+
+          if (field.allSelectedMultipleVal) {
+            const count = Object.values(field.allSelectedMultipleVal).reduce(function (a, b) {return a + b}, 0);
+            if (count) {
+              const all_option = {
+                id: '[ALL]',
+                text: `[${count} well ${field.data.name}]`,
+                forAll: true
+              }
+              data = [all_option].concat(data);
+            }
+          }
 
           if (!selected) {
             if (data.length) {
@@ -772,13 +787,17 @@ var plateMapWidget = plateMapWidget || {};
 
           field.updateSubFieldUnitOpts(v);
 
-          let curData = field.detailData || [];
           let curSubField = null;
-          curData.forEach(function(val) {
-            if (val[field.id] === v) {
-              curSubField = val;
-            }
-          });
+          if (v === '[ALL]') {
+            curSubField = field.allSelectedMultipleData;
+          } else {
+            let curData = field.detailData || [];
+            curData.forEach(function(val) {
+              if (val[field.id] === v) {
+                curSubField = val;
+              }
+            });
+          }
 
           if (curSubField) {
             // setvalue for subfield
