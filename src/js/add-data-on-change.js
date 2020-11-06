@@ -7,7 +7,6 @@ var plateMapWidget = plateMapWidget || {};
     return {
 
       _addAllData: function(data) {
-        let wells = [];
         if (this.selectedIndices) {
           let noOfSelectedObjects = this.selectedIndices.length;
           this.selectedIndices.forEach(function (index) {
@@ -32,9 +31,8 @@ var plateMapWidget = plateMapWidget || {};
             }
           }, this);
         }
-        // update multiplex remove all field
-        this._getAllMultipleVal(wells);
-        this.applyFieldWarning(wells);
+        // update multiplex
+        this.decideSelectedFields();
         // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
         this._colorMixer();
         this.derivativeChange();

@@ -876,7 +876,7 @@ var plateMapWidget = plateMapWidget || {};
 
           multiselectSetValue(multiselectValues);
           let newOptions = field.input.select2('data') || [];
-          setSingleSelectOptions(newOptions);
+          setSingleSelectOptions(newOptions, field.singleSelectValue());
           singleSelectChange();
         };
 
