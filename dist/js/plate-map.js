@@ -1244,19 +1244,23 @@ var plateMapWidget = plateMapWidget || {};
           field.defaultUnit = null;
           var newUnits = [];
           var selected = null;
-          field.defaultUnit = field.units[0];
-          newUnits = field.units.map(function (curUnit) {
-            var cleanUnit = {
-              id: curUnit,
-              text: curUnit
-            };
 
-            if (curUnit === field.defaultUnit) {
-              selected = curUnit;
-            }
+          if (field.units && field.units.length) {
+            field.defaultUnit = field.units[0];
+            newUnits = field.units.map(function (curUnit) {
+              var cleanUnit = {
+                id: curUnit,
+                text: curUnit
+              };
 
-            return cleanUnit;
-          });
+              if (curUnit === field.defaultUnit) {
+                selected = curUnit;
+              }
+
+              return cleanUnit;
+            });
+          }
+
           select2setData(unitInput, newUnits, selected);
         };
 
