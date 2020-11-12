@@ -213,17 +213,19 @@ var plateMapWidget = plateMapWidget || {};
 
           let newUnits = [];
           let selected = null;
-          field.defaultUnit = field.units[0];
-          newUnits = field.units.map(function(curUnit) {
-            let cleanUnit = {
-              id: curUnit,
-              text: curUnit
-            };
-            if (curUnit === field.defaultUnit) {
-              selected = curUnit;
-            }
-            return cleanUnit;
-          });
+          if (field.units && field.units.length) {
+            field.defaultUnit = field.units[0];
+            newUnits = field.units.map(function (curUnit) {
+              let cleanUnit = {
+                id: curUnit,
+                text: curUnit
+              };
+              if (curUnit === field.defaultUnit) {
+                selected = curUnit;
+              }
+              return cleanUnit;
+            });
+          }
 
           select2setData(unitInput, newUnits, selected);
         };
