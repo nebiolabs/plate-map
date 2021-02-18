@@ -2849,22 +2849,9 @@ plateMapWidget.loadPlate = function () {
         checkboxes = this.getCheckboxes();
       }
 
-      var indices;
-
-      if (data.hasOwnProperty('selectedAddresses')) {
-        indices = this.sanitizeAddresses(data.selectedAddresses);
-      } else {
-        indices = this.getSelectedIndices();
-      }
-
-      if (indices.length === 0) {
-        indices = [0];
-      }
-
       var sanitized = {
         "derivative": derivative,
-        "checkboxes": checkboxes,
-        "selectedIndices": indices
+        "checkboxes": checkboxes
       };
       this.setData(sanitized);
     },
