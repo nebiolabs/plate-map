@@ -1,6 +1,6 @@
 {
   "name": "plate-map",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "JavaScript Plate Layout is an open source tool developed collaboratively by [Chai Biotechnologies](www.chaibio.com) and [New England Biolabs](www.neb.com) for visualizing and editing the layout of scientific assay plates.",
   "scripts": {
     "build.dist": "gulp build.dist",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/nebiolabs/plate-map#readme",
   "dependencies": {
+    "canvas": "^2.6.1",
     "clipboard": "^2.0.6",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",

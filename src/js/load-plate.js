@@ -26,20 +26,9 @@ plateMapWidget.loadPlate = function() {
         checkboxes = this.getCheckboxes();
       }
 
-      let indices;
-      if (data.hasOwnProperty('selectedAddresses')) {
-        indices = this.sanitizeAddresses(data.selectedAddresses);
-      } else {
-        indices = this.getSelectedIndices();
-      }
-      if (indices.length === 0) {
-        indices = [0];
-      }
-
       let sanitized = {
         "derivative": derivative,
-        "checkboxes": checkboxes,
-        "selectedIndices": indices,
+        "checkboxes": checkboxes
       };
 
       this.setData(sanitized);
