@@ -584,25 +584,15 @@ var plateMapWidget = plateMapWidget || {};
           if (v === "") {
             return null;
           }
-          // v = Number(value);
-          // if (isNaN(v)) {
-          //   throw "Invalid value " + value + " for numeric field " + full_id;
-          // }
+          
           return v;
         };
         field.parseValue = parseValue;
 
         field.getValue = function() {
           let v = input.val().trim();
-          console.log(`current value: ${v}`)
           if (v === "") {
             v = null;
-          } else {
-            let vNum = Number(v);            
-
-            // if (isNaN(v)) {
-            //   v = null;
-            // }
           }
           return v;
         };
@@ -625,7 +615,6 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         input.on("input", function() {
-          console.log('yep!')
           let v = field.getRegularValue();
           if (isNaN(v)) {
             //flag field as invalid
