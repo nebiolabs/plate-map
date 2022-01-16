@@ -1650,12 +1650,6 @@ var plateMapWidget = plateMapWidget || {};
             return null;
           }
 
-          v = Number(value);
-
-          if (isNaN(v)) {
-            throw "Invalid value " + value + " for numeric field " + full_id;
-          }
-
           return v;
         };
 
@@ -1666,12 +1660,6 @@ var plateMapWidget = plateMapWidget || {};
 
           if (v === "") {
             v = null;
-          } else {
-            v = Number(v);
-
-            if (isNaN(v)) {
-              v = null;
-            }
           }
 
           return v;
