@@ -55,6 +55,7 @@ window.onload = function() {
       placeHolder: "On Ice"
     }
   ];
+
   let amplicons_fields = [
     {
       required: true,
@@ -123,6 +124,47 @@ window.onload = function() {
       ],
     },
   ];
+
+  let product_fields = [
+    {
+      required: true,
+      id: 'product_id',
+      name: 'Product',
+      type: 'multiplex',
+      placeHolder: 'Product',
+      options: [
+        {
+          id: 1,
+          text: '-Agarase I'
+        },
+        {
+          id: 2,
+          text: '-N-Acetylgalactosaminidase'
+        },
+        {
+          id: 3,
+          text: '-N-Acetylglucosaminidase S'
+        }
+      ],
+      multiplexFields: [
+        {
+          required: true,
+          id: 'lot_id',
+          setAll: true,
+          name: 'Lot',
+          type: 'select',
+          options: [
+            {id: 587, text: '028'},
+            {id: 8284, text: '29'},
+            {id: 8736, text: '30'},
+            {id: 9192, text: '10007192'},
+            {id: 10477, text: '10119863'}
+          ]
+        }
+      ]
+    }
+  ]
+
   let attributes = {
     presets: [
       {
@@ -135,6 +177,10 @@ window.onload = function() {
       }
     ],
     tabs: [
+      {
+        name: 'Product',
+        fields: product_fields
+      },
       {
         name: "Settings",
         fields: fields
