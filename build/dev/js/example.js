@@ -206,7 +206,7 @@ window.onload = function() {
       required: false,
       id: 'product_id',
       name: 'Product',
-      type: 'multiplex',
+      type: 'select',
       placeHolder: 'Product',
       options: parseConditions(
           product_options,
@@ -221,8 +221,8 @@ window.onload = function() {
           required: true,
           id: 'lot_id',
           name: 'Lot',
-          type: 'text',
-          units: unitsToList(lot_options),
+          type: 'select',
+          options: unitsToList(lot_options),
         }
       ]
     }
