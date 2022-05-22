@@ -131,6 +131,58 @@ var plateMapWidget = plateMapWidget || {};
         }
         that._createField(field);
 
+        if (data.multiplexFields) {
+          let subFieldList = [];
+          //create subfields
+          let requiredSubField = [];
+          for (let i = 0; i < data.multiplexFields.length; i++) {
+            let subFieldData = data.multiplexFields[i];
+            let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
+            subFieldList.push(subField);
+
+            // stores required  subField
+            if (subFieldData.required) {
+              requiredSubField.push(subField.id);
+            }
+          }
+
+          field.subFieldList = subFieldList;
+
+          subFieldList.forEach(function (subfield) {
+            subfield.mainMultiplexField = field;
+            that._createField(subfield);
+            that._addCheckBox(subfield);
+            // overwrite subField setvalue
+            subfield.onChange = function () {
+              let v = subfield.getValue();
+              let mainRefField = subfield.mainMultiplexField;
+              let curId = mainRefField.singleSelectValue();
+              //let curDataLs = mainRefField.detailData;
+              let curVal = {};
+              curVal[mainRefField.id] = curId;
+              //append subfields
+              curVal[subfield.id] = v;
+              let returnVal = {
+                id: curId,
+                value: curVal
+              };
+
+              field._changeMultiFieldValue(returnVal, null);
+              let curDataLs = mainRefField.detailData;
+              if (curDataLs !== null) {
+                curId = mainRefField.singleSelectValue();
+                curDataLs = curDataLs.map(function (curData) {
+                  if (curData[mainRefField.id] === curId) {
+                    curData[subfield.id] = v;
+                  }
+                  return curData;
+                });
+              }
+              mainRefField.detailData = curDataLs;
+            };
+          });
+        }
+
         field.onChange = function() {
           let v = field.getValue();
           let data = {};
