@@ -405,7 +405,7 @@ var plateMapWidget = plateMapWidget || {};
             return
           }
 
-          let v = field.parseValue();
+          let v = field.parseValue(field.getValue());
 
           field.updateSubFieldUnitOpts(v);
 
