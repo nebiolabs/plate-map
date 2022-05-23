@@ -223,6 +223,7 @@ window.onload = function() {
           name: 'Lot',
           type: 'select',
           options: unitsToList(lot_options),
+          hasMultiplexUnit: true
         }
       ]
     }
