@@ -42,7 +42,9 @@ var plateMapWidget = plateMapWidget || {};
 
           case "select":
             this._createSelectField(field);
-            this._handleFieldUnits(field);
+            // if (field.data.subOptionFields) {
+              this._handleFieldSubOptions(field);
+            // }
             break;
 
           case "multiselect":
@@ -297,6 +299,224 @@ var plateMapWidget = plateMapWidget || {};
         }
 
         field.unitInput = unitInput;
+      },
+
+      _handleFieldSubOptions: function (field) {
+        let data = field.data;
+        let subOptions = data.options || [];
+        let defaultSubOption = data.defaultSubOption || null;
+
+        if (defaultSubOption) {
+          if (subOptions.length) {
+            if (subOptions.indexOf(defaultSubOption) < 0) {
+              defaultSubOption = subOptions[0];
+            }
+          } else {
+            subOptions = [defaultSubOption]
+          }
+        } else {
+          if (subOptions.length) {
+            defaultSubOption = subOptions[0]
+          }
+        }
+
+        if (subOptions.length) {
+          field.subOptions = subOptions;
+          field.hasSubOptions = true;
+          field.defaultSubOption = defaultSubOption;
+          this._makeFieldSubOptions(field);
+        }
+      },
+
+      _makeFieldSubOptions: function(field) {
+        let full_id = field.full_id;
+        let subOptions = field.subOptions;
+        let defaultSubOption = field.defaultSubOption;
+        let unitInput = null;
+
+        field.disabledRegular = field.disabled;
+        field.parseRegularValue = field.parseValue;
+        field.setRegularValue = field.setValue;
+        field.getRegularValue = field.getValue;
+        field.getRegularText = field.getText;
+
+        // let subOptionInput;
+        let subOptionInput;
+        if (subOptions.length) {
+          subOptionInput =
+              this._createElement('<select/>')
+                  .attr('id', full_id + 'SubOptions')
+                  .addClass('plate-setup-tab-subOption-select-field');
+          field.root
+              .find('.plate-setup-tab-field-container')
+              .append(subOptionInput)
+
+          let selected = null;
+          let subOptionData = subOptions.map(function(subOption) {
+            return {
+              id: subOption,
+              text: subOption
+            }
+          });
+
+          let opts = {
+            data: subOptionData,
+            allowClear: false,
+            minimumResultsForSearch: 10
+          };
+
+          subOptionInput.select2(opts);
+          subOptionInput.val(selected)
+        }
+
+        field.disabled = function(bool) {
+          bool = field.disabledRegular(bool);
+          if (subOptionInput) {
+            subOptionInput.prop("disabled", bool);
+          }
+          return bool;
+        };
+
+        field.parseValue = function(value) {
+          let v;
+          if ($.isPlainObject(value)) {
+            v = field.parseRegularValue(value.value);
+            if (v === null) {
+              return null;
+            }
+            return {
+              value: v,
+              subOption: field.parseSubOption(value.subOption)
+            };
+          }
+        };
+
+        field.getValue = function() {
+          let v = field.getRegularValue();
+
+          if (v === null) {
+            return null;
+          } else {
+            let returnVal = {
+              value: v,
+              option: field.getSubOption()
+            };
+
+            if (field.data.hasSubOptions) {
+              let subOptionMap = field.data.subOptionMap;
+              for (let subOptionTypeKey in subOptionMap) {
+                if (!subOptionMap.hasOwnProperty(subOptionTypeKey)) {
+                  continue;
+                }
+                let subOptionTypeUnits = subOptionMap[subOptionTypeKey];
+                subOptionTypeUnits.forEach(function(option) {
+                  if (option.text === returnVal.subOption) {
+                    returnVal['subOptionTypeId'] = subOptionTypeKey;
+                    returnVal['subOptionId'] = option.id;
+                  }
+                })
+              }
+            }
+            return returnVal;
+          }
+        };
+
+        field.setValue = function(value) {
+          if ($.isPlainObject(value)) {
+            field.setSubOption(value.subOption);
+            field.setRegularValue(value.value);
+          } else {
+            field.setRegularValue(value);
+          }
+        };
+
+        field.setSubOptionOpts = function(opts) {
+          field.subOptions = opts || null;
+          field.defaultSubOption = null;
+
+          let newOptions = [];
+          let selected = null;
+          if (field.subOptions && field.subOptions.length) {
+            field.defaultOption = field.subOptions[0];
+            newOptions = field.subOptions.map(function (curOption) {
+              let cleanOption = {
+                id: curOption,
+                text: curOption
+              };
+              if (curOption === field.defaultOption) {
+                selected = curOption;
+              }
+              return cleanOption;
+            });
+          }
+          select2setData(subOptionInput, newOptions, selected)
+        };
+
+        field.parseSubOption = function(option) {
+          if (option === null || option === '') {
+            return field.defaultSubOption;
+          }
+          for (let i = 0; i < subOptions.length; i++) {
+            if (option.toLowerCase() === options[i].toLowerCase()) {
+              return options[i]
+            }
+          }
+          throw 'Invalid option ' + option + ' for field ' + full_id;
+        };
+
+        field.getSubOption = function() {
+          if (subOptionInput) {
+            return subOptionInput.val();
+          } else {
+            return field.defaultOption;
+          }
+        };
+
+        field.setSubOption = function(option) {
+          if (subOptionInput) {
+            option = option || option.defaultOption;
+            subOptionInput.val(option);
+            subOptionInput.trigger('change.select2');
+          }
+        };
+
+        field.getText = function(val) {
+          if (typeof (val) === 'object' && val) {
+            let v = val.value;
+            let o = val.option;
+            if (v === null) {
+              return '';
+            }
+            v = v.toString();
+            if (!o) {
+              o = defaultSubOption;
+            }
+            if (o) {
+              v = v + ' ' + o;
+            }
+            return v;
+          } else {
+            return field.getRegularText(val);
+          }
+        };
+
+        field.parseText = function() {
+          let value = field.parseValue(v);
+          if (value && typeof (value) === 'object') {
+            return field.getRegularText(value.value) + value.subOption;
+          } else if (value != null) {
+            return field.getRegularText(value)
+          } else {
+            return null
+          }
+        };
+
+        if (subOptionInput) {
+          subOptionInput.on('change', function() {
+            field.onChange();
+          });
+        }
+        field.subOptionInput = subOptionInput;
       },
 
       _createTextField: function(field) {

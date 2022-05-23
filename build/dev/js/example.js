@@ -216,7 +216,7 @@ window.onload = function() {
           }]
       )
       ,
-      multiplexFields: [
+      subOptionFields: [
         {
           required: true,
           id: 'lot_id',
