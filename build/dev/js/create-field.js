@@ -400,6 +400,66 @@ var plateMapWidget = plateMapWidget || {};
         };
         field.parseValue = parseValue;
 
+        let singleSelectChange = function() {
+          if (typeof field.subFieldList === 'undefined') {
+            return
+          }
+
+          let v = field.parseValue();
+
+          field.updateSubFieldUnitOpts(v);
+
+          let curSubField = null;
+          if (v === '[ALL]') {
+            curSubField = field.allSelectedMultipleData;
+          } else {
+            let curData = field.detailData || [];
+            curData.forEach(function(val) {
+              if (val[field.id] === v) {
+                curSubField = val;
+              }
+            });
+          }
+
+          if (curSubField) {
+            // setvalue for subfield
+            field.subFieldList.forEach(function(subField) {
+              subField.isDisabled = false;
+              subField.setValue(curSubField[subField.id]);
+            });
+          } else {
+            field.subFieldList.forEach(function(subField) {
+              subField.isDisabled = true;
+              subField.setValue(null);
+            });
+          }
+          that.readOnlyHandler();
+        };
+
+        field.updateSubFieldUnitOpts = function(val) {
+          if (typeof field.subFieldList === 'undefined') {
+            return
+          }
+
+          let curOpts;
+          field.data.options.forEach(function(opt) {
+            if (opt.id === val) {
+              curOpts = opt;
+            }
+          });
+          field.subFieldList.forEach(function(subField) {
+            if (subField.data.hasMultiplexUnit) {
+              if (curOpts && curOpts.hasOwnProperty("unitOptions")) {
+                subField.setUnitOpts(curOpts.unitOptions[subField.id]);
+              } else {
+                subField.setUnitOpts(null);
+              }
+            }
+          })
+        };
+
+        input.on('change.select2', singleSelectChange);
+
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
