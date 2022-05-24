@@ -131,12 +131,12 @@ var plateMapWidget = plateMapWidget || {};
         }
         that._createField(field);
 
-        if (data.multiplexFields) {
+        if (data.subOptionsFields) {
           let subFieldList = [];
           //create subfields
           let requiredSubField = [];
-          for (let i = 0; i < data.multiplexFields.length; i++) {
-            let subFieldData = data.multiplexFields[i];
+          for (let i = 0; i < data.subOptionsFields.length; i++) {
+            let subFieldData = data.subOptionsFields[i];
             let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
             subFieldList.push(subField);
 
