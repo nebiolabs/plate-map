@@ -181,8 +181,8 @@ window.onload = function() {
       [33, 33, 'dGTP']
   ]
 
-  // units container is {unit_type_id: [unit_id, unit_name], ...}
-  // lot_options is {product_id: [lot_id, lot_name], ...}
+  // units container is {unit_type_id: [{id: unit_id, text: unit_name} ...], ...}
+  // lot_options is {product_id: [{id: lot_id, text: lot_name} ...], ...}
   let lot_options = {
     1: [
       {id: 587, text: '028'},
