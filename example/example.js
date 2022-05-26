@@ -1,3 +1,47 @@
+export function parseConditions(cond, unitMapList) {
+  if (cond !== null && cond !== undefined) {
+    let r = cond.map(function (element) {
+      let unitOpts = {};
+      unitMapList.forEach(function(unitMap) {
+        let unitVals = unitMap.unitHash[element[1]];
+        if (typeof unitVals != 'undefined'){
+          unitOpts[unitMap.unitSubFieldId] = unitVals.map(function(unit){
+            return unit.text;
+          });
+        } else {
+          // when unit type is has no unit, return all the units
+          unitOpts[unitMap.unitSubFieldId] = unitsToList(unitMapList.unitHash);
+        }
+      });
+      return {
+        "id": element[0],
+        "unitOptions": unitOpts,
+        "text": element[2]
+      };
+    });
+    r.sort(optionSort);
+    return r;
+  }
+}
+
+export function unitsToList(unitMap) {
+  let cleanList = [];
+  for (let unitType in unitMap) {
+    unitMap[unitType].forEach(function(units){
+      cleanList.push(units.text);
+    });
+  }
+  return cleanList;
+}
+
+export function optionSort(a, b) {
+  if (a.text < b.text)
+    return -1;
+  if (a.text > b.text)
+    return 1;
+  return 0
+}
+
 // Wait for all the script load from the loader.js and fire up
 window.onload = function() {
   let fields = [
@@ -55,6 +99,7 @@ window.onload = function() {
       placeHolder: "On Ice"
     }
   ];
+
   let amplicons_fields = [
     {
       required: true,
@@ -123,6 +168,71 @@ window.onload = function() {
       ],
     },
   ];
+
+  /////////////////
+  // PRODUCT LOT //
+  /////////////////
+
+  // conds container is [[condition_id, unit_type_id, condition_name] ...]
+  // product_options is [[product_id, product_id, product_name] ...]
+  let product_options = [
+      [1, 1, '-Agarase I'],
+      [28, 28, "5' Deadenylase"],
+      [33, 33, 'dGTP']
+  ]
+
+  // units container is {unit_type_id: [{id: unit_id, text: unit_name} ...], ...}
+  // lot_options is {product_id: [{id: lot_id, text: lot_name} ...], ...}
+  let lot_options = {
+    1: [
+      {id: 587, text: '028'},
+      {id: 8284, text: '29'},
+      {id: 8736, text: '30'},
+      {id: 9192, text: '10007192'},
+      {id: 10477, text: '10119863'}
+    ],
+    28: [
+      {id: 3795, text: '2'},
+      {id: 4718, text: '4'}
+    ],
+    33: [
+      {id: 8591, text: '10091556'},
+      {id: 10019, text: '10109116'}
+    ]
+  }
+
+  let product_fields = [
+    {
+      required: false,
+      id: 'product_id',
+      name: 'Product',
+      type: 'select',
+      placeHolder: 'Product',
+      options: parseConditions(
+          product_options,
+          [{
+            unitSubFieldId: 'lot_id',
+            unitHash: lot_options
+          }]
+      )
+      ,
+      subOptionFields: [
+        {
+          required: true,
+          id: 'lot_id',
+          name: 'Lot',
+          type: 'select',
+          options: unitsToList(lot_options),
+          hasMultiplexUnit: true
+        }
+      ]
+    }
+  ]
+
+  /////////////////
+  // PRODUCT LOT //
+  /////////////////
+
   let attributes = {
     presets: [
       {
@@ -135,6 +245,10 @@ window.onload = function() {
       }
     ],
     tabs: [
+      {
+        name: 'Product',
+        fields: product_fields
+      },
       {
         name: "Settings",
         fields: fields
