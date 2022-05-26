@@ -1,4 +1,4 @@
-export function parseConditions(cond, unitMapList) {
+function parseConditions(cond, unitMapList) {
   if (cond !== null && cond !== undefined) {
     let r = cond.map(function (element) {
       let unitOpts = {};
@@ -24,7 +24,7 @@ export function parseConditions(cond, unitMapList) {
   }
 }
 
-export function unitsToList(unitMap) {
+function unitsToList(unitMap) {
   let cleanList = [];
   for (let unitType in unitMap) {
     unitMap[unitType].forEach(function(units){
@@ -34,7 +34,7 @@ export function unitsToList(unitMap) {
   return cleanList;
 }
 
-export function optionSort(a, b) {
+function optionSort(a, b) {
   if (a.text < b.text)
     return -1;
   if (a.text > b.text)
