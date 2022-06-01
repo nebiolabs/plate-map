@@ -167,6 +167,11 @@ gulp.task('server.dev', async () => {
     gulp.watch(PATH.source.css.concat(PATH.source.js), gulp.series('build.dev', browserSync.reload));
 });
 
+gulp.task('watch', async () => {
+    gulp.watch("./src/*.js", ['js']).on('change', browserSync.reload);
+    gulp.watch("./src/*.css", ['css']).on('change', browserSync.reload);
+});
+
 gulp.task('server.prod', async () => {
     connect.server({
         name: 'App [PRODUCTION MODE]',

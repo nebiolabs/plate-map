@@ -326,5 +326,6 @@ window.onload = function() {
   });
   window.plateData = makeNewPlate();
   widget.plateMap("loadPlate", window.plateData);
+  // console.log(window.plateData)
   widget.plateMap("clearHistory");
 };

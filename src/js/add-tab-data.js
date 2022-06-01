@@ -58,6 +58,8 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       _makeSubField: function(mainField, data, tabPointer, fieldArray) {
+        // console.log('subfield with data: ');
+        // console.log(data)
         let that = this;
         if (!data.id) {
           data.id = "Auto" + that.autoId++;
@@ -95,6 +97,17 @@ var plateMapWidget = plateMapWidget || {};
       },
 
       _makeRegularField: function(data, tabPointer, fieldArray, checkbox) {
+        
+        // HB additions for product / lot selection
+        
+        if (data.subOptionFields) {
+          console.log(`regular field with ${data.name} data: `);
+          console.log(data)
+          // console.log(data.subOptionFields)
+
+        }
+
+
         let that = this;
         let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
         let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
@@ -132,15 +145,25 @@ var plateMapWidget = plateMapWidget || {};
         that._createField(field);
 
         field.onChange = function() {
+          
           let v = field.getValue();
           let data = {};
           data[field.id] = v;
           that._addAllData(data);
+          console.log('field changed to' + v)
+          console.log(field)
+          field.data.options.forEach(product => {
+            console.log(product)
+            console.log(product.unitOptions.lot_id)
+
+          })
         };
         return field;
       },
 
       _makeMultiplexField: function(data, tabPointer, fieldArray) {
+        // console.log('multiplex field with data: ');
+        // console.log(data)
         let that = this;
         let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
         let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
