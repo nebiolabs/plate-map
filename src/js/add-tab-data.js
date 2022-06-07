@@ -1,8 +1,8 @@
 var plateMapWidget = plateMapWidget || {};
 
-(function($) {
+(function ($) {
 
-  plateMapWidget.addTabData = function() {
+  plateMapWidget.addTabData = function () {
 
     return {
 
@@ -10,13 +10,13 @@ var plateMapWidget = plateMapWidget || {};
       fieldMap: {},
       autoId: 1,
 
-      _addTabData: function() {
+      _addTabData: function () {
         // Here we may need more changes because attributes format likely to change
         let tabData = this.options.attributes.tabs;
         let that = this;
         this.requiredField = [];
         let multiplexFieldArray = [];
-        tabData.forEach(function(tab, tabPointer) {
+        tabData.forEach(function (tab, tabPointer) {
           if (tab["fields"]) {
             let tabFields = tab["fields"];
             let fieldArray = [];
@@ -57,9 +57,26 @@ var plateMapWidget = plateMapWidget || {};
         that.multipleFieldList = multiplexFieldArray;
       },
 
-      _makeSubField: function(mainField, data, tabPointer, fieldArray) {
-        // console.log('subfield with data: ');
-        // console.log(data)
+      _makeSubField: function (mainField, data, tabPointer, fieldArray) {
+
+        // HB product additions
+        if (data.id === 'template_ngul') {
+          console.log('making template_ngul subfield with data: ');
+          console.log(mainField.id)
+          console.log(data)
+          console.log(tabPointer)
+          console.log(fieldArray)
+        } else if (data.id === 'product_lot') {
+          console.log('making product_lot subfield with data: ');
+          console.log(mainField.id)
+          console.log(data)
+          console.log(tabPointer)
+          console.log(fieldArray)
+        }
+
+        // HB product additions
+
+
         let that = this;
         if (!data.id) {
           data.id = "Auto" + that.autoId++;
@@ -74,7 +91,11 @@ var plateMapWidget = plateMapWidget || {};
         let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
         let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
         let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
+        
+        if (data.id === 'product_lot') {
+          console.log('made containers')
+          console.log(data.name)
+        }
         $(wrapperDivRightSide).append(nameContainer);
         $(wrapperDivRightSide).append(fieldContainer);
         $(wrapperDiv).append(wrapperDivLeftSide);
@@ -96,17 +117,7 @@ var plateMapWidget = plateMapWidget || {};
         return field;
       },
 
-      _makeRegularField: function(data, tabPointer, fieldArray, checkbox) {
-        
-        // HB additions for product / lot selection
-        
-        if (data.subOptionFields) {
-          console.log(`regular field with ${data.name} data: `);
-          console.log(data)
-          // console.log(data.subOptionFields)
-
-        }
-
+      _makeRegularField: function (data, tabPointer, fieldArray, checkbox) {
 
         let that = this;
         let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
@@ -144,26 +155,33 @@ var plateMapWidget = plateMapWidget || {};
         }
         that._createField(field);
 
-        field.onChange = function() {
-          
+        field.onChange = function () {
+
           let v = field.getValue();
           let data = {};
           data[field.id] = v;
           that._addAllData(data);
-          console.log('field changed to' + v)
-          console.log(field)
-          field.data.options.forEach(product => {
-            console.log(product)
-            console.log(product.unitOptions.lot_id)
 
-          })
+          // make a subfield with lots if its the product being selected
+          if (field.id === 'product_id') {
+            // console.log('field changed to' + v)
+            // console.log(field)
+            // console.log(field.data.subOptionFields)
+            field.data.subOptionFields[0].id = 'product_lot';
+            field.data.subOptionFields[0].name = 'Lot No.';
+
+            // make a subfield showing the available lots for the product selected
+            that._makeSubField(field, field.data.subOptionFields[0], tabPointer, fieldArray);
+          }
+
+
+
+          
         };
         return field;
       },
 
-      _makeMultiplexField: function(data, tabPointer, fieldArray) {
-        // console.log('multiplex field with data: ');
-        // console.log(data)
+      _makeMultiplexField: function (data, tabPointer, fieldArray) {
         let that = this;
         let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
         let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
@@ -195,7 +213,21 @@ var plateMapWidget = plateMapWidget || {};
         let requiredSubField = [];
         for (let i = 0; i < data.multiplexFields.length; i++) {
           let subFieldData = data.multiplexFields[i];
+
+          // HB
+          // console.log('multiplex field making subfield with:')
+          // console.log('field:')
+          // console.log(field)
+          // console.log('subFieldData:')
+          // console.log(subFieldData)
+          // console.log('tabPointer:')
+          // console.log(tabPointer)
+          // console.log('fieldArray:')
+          // console.log(fieldArray)
+          // HB
+
           let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
+
           subFieldList.push(subField);
 
           // stores required  subField
@@ -216,12 +248,12 @@ var plateMapWidget = plateMapWidget || {};
         that._createField(field);
         that._addCheckBox(field);
 
-        subFieldList.forEach(function(subfield) {
+        subFieldList.forEach(function (subfield) {
           subfield.mainMultiplexField = field;
           that._createField(subfield);
           that._addCheckBox(subfield);
           // overwrite subField setvalue
-          subfield.onChange = function() {
+          subfield.onChange = function () {
             let v = subfield.getValue();
             let mainRefField = subfield.mainMultiplexField;
             let curId = mainRefField.singleSelectValue();
@@ -239,7 +271,7 @@ var plateMapWidget = plateMapWidget || {};
             let curDataLs = mainRefField.detailData;
             if (curDataLs !== null) {
               curId = mainRefField.singleSelectValue();
-              curDataLs = curDataLs.map(function(curData) {
+              curDataLs = curDataLs.map(function (curData) {
                 if (curData[mainRefField.id] === curId) {
                   curData[subfield.id] = v;
                 }

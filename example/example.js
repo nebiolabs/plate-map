@@ -318,10 +318,10 @@ window.onload = function() {
     updateWells: function() {
       //data has changed
       window.plateData = widget.plateMap("getPlate") ;
-      console.log(Object.keys(window.plateData.wells).length + " wells updated");
+      // console.log(Object.keys(window.plateData.wells).length + " wells updated");
     },
     created: function() {
-      console.log("Created");
+      // console.log("Created");
     }
   });
   window.plateData = makeNewPlate();

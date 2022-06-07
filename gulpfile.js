@@ -54,7 +54,7 @@ const PATH = {
     }
 };
 
-let config = {destination: {css: '', js: '', root: ''}};
+let config = { destination: { css: '', js: '', root: '' } };
 
 function concat_minify_css(name, source, destination) {
     return gulp.src(source)
@@ -129,48 +129,57 @@ gulp.task('copy.src', () => {
     return mergeStream(css, js);
 });
 
-function jsLink (filePath) {
+function jsLink(filePath) {
     const fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length);
     return '<script src="js/' + fileName + '"></script>';
 }
 
-function cssLink (filePath) {
+function cssLink(filePath) {
     const fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length);
     return '<link rel="stylesheet" href="css/' + fileName + '">';
 }
 
 gulp.task('inject.prod', () => {
     return gulp.src(PATH.example.html)
-        .pipe(inject(gulp.src(PATH.dependencies.css, {read: false}), {transform: cssLink, name: 'dependencies'}))
-        .pipe(inject(gulp.src(PATH.dependencies.js, {read: false}), {transform: jsLink, name: 'dependencies'}))
-        .pipe(inject(gulp.src([`${config.destination.css}/${packageName}.min.css`, `${config.destination.js}/${packageName}.min.js`], {read: false}),
+        .pipe(inject(gulp.src(PATH.dependencies.css, { read: false }), { transform: cssLink, name: 'dependencies' }))
+        .pipe(inject(gulp.src(PATH.dependencies.js, { read: false }), { transform: jsLink, name: 'dependencies' }))
+        .pipe(inject(gulp.src([`${config.destination.css}/${packageName}.min.css`, `${config.destination.js}/${packageName}.min.js`], { read: false }),
             {
                 ignorePath: config.destination.root,
                 addRootSlash: false
             }))
-        .pipe(inject(gulp.src(PATH.example.js, {read: false}), {transform: jsLink, name: 'example'}))
+        .pipe(inject(gulp.src(PATH.example.js, { read: false }), { transform: jsLink, name: 'example' }))
         .pipe(gulp.dest(config.destination.root));
 });
 
 gulp.task('inject.dev', () => {
     return gulp.src(PATH.example.html)
-        .pipe(inject(gulp.src(PATH.dependencies.css, {read: false}), {transform: cssLink, name: 'dependencies'}))
-        .pipe(inject(gulp.src(PATH.dependencies.js, {read: false}), {transform: jsLink, name: 'dependencies'}))
-        .pipe(inject(gulp.src(PATH.source.css, {read: false}), {transform: cssLink}))
-        .pipe(inject(gulp.src(PATH.source.js, {read: false}), {transform: jsLink}))
-        .pipe(inject(gulp.src(PATH.example.js, {read: false}), {transform: jsLink, name: 'example'}))
+        .pipe(inject(gulp.src(PATH.dependencies.css, { read: false }), { transform: cssLink, name: 'dependencies' }))
+        .pipe(inject(gulp.src(PATH.dependencies.js, { read: false }), { transform: jsLink, name: 'dependencies' }))
+        .pipe(inject(gulp.src(PATH.source.css, { read: false }), { transform: cssLink }))
+        .pipe(inject(gulp.src(PATH.source.js, { read: false }), { transform: jsLink }))
+        .pipe(inject(gulp.src(PATH.example.js, { read: false }), { transform: jsLink, name: 'example' }))
         .pipe(gulp.dest(config.destination.root));
 });
 
+function reload(done) {
+    browserSync.reload();
+    done();
+}
+
 gulp.task('server.dev', async () => {
-    browserSync.init({server: PATH.destination.dev.root});
-    gulp.watch(PATH.source.css.concat(PATH.source.js), gulp.series('build.dev', browserSync.reload));
+    browserSync.init({ server: PATH.destination.dev.root });
+    gulp.watch(PATH.source.css.concat(PATH.source.js), gulp.series('build.dev', reload));
 });
 
-gulp.task('watch', async () => {
-    gulp.watch("./src/*.js", ['js']).on('change', browserSync.reload);
-    gulp.watch("./src/*.css", ['css']).on('change', browserSync.reload);
-});
+
+
+
+
+// gulp.task('watch', async () => {
+//     gulp.watch("./src/*.js", ['js']).on('change', reload);
+//     gulp.watch("./src*.css", ['css']).on('change', reload);
+// });
 
 gulp.task('server.prod', async () => {
     connect.server({
