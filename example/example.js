@@ -222,7 +222,7 @@ window.onload = function() {
           id: 'lot_id',
           name: 'Lot',
           type: 'select',
-          options: unitsToList(lot_options),
+          options: lot_options,
           hasMultiplexUnit: true
         }
       ]

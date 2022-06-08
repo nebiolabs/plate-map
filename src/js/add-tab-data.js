@@ -74,6 +74,8 @@ var plateMapWidget = plateMapWidget || {};
           console.log(fieldArray)
         }
 
+
+        // *** check for hasmultiplexunit!!! ***
         // HB product additions
 
 
@@ -102,6 +104,7 @@ var plateMapWidget = plateMapWidget || {};
         $(wrapperDiv).append(wrapperDivRightSide);
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
+        console.log('appended containers')
         let field = {
           id: data.id,
           full_id: mainField.id + "_" + data.id,
@@ -113,6 +116,8 @@ var plateMapWidget = plateMapWidget || {};
 
         fieldArray.push(field);
         that.fieldMap[field.full_id] = field;
+        console.log(fieldArray)
+        console.log('did everything')
 
         return field;
       },
@@ -164,14 +169,16 @@ var plateMapWidget = plateMapWidget || {};
 
           // make a subfield with lots if its the product being selected
           if (field.id === 'product_id') {
-            // console.log('field changed to' + v)
-            // console.log(field)
-            // console.log(field.data.subOptionFields)
-            field.data.subOptionFields[0].id = 'product_lot';
-            field.data.subOptionFields[0].name = 'Lot No.';
+            // copy the field object
+            let subOptionCopy = JSON.parse(JSON.stringify(field.data.subOptionFields[0]));
+
+            subOptionCopy.id = 'product_lot';
+            subOptionCopy.name = 'Lot No.';
+            subOptionCopy.options = field.data.subOptionFields[0].options[v];
+
 
             // make a subfield showing the available lots for the product selected
-            that._makeSubField(field, field.data.subOptionFields[0], tabPointer, fieldArray);
+            that._makeSubField(field, subOptionCopy, tabPointer, fieldArray);
           }
 
 
