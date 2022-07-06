@@ -61,17 +61,15 @@ var plateMapWidget = plateMapWidget || {};
 
         // HB product additions
         if (data.id === 'template_ngul') {
-          console.log('making template_ngul subfield with data: ');
-          console.log(mainField.id)
-          console.log(data)
-          console.log(tabPointer)
-          console.log(fieldArray)
+          console.log('making template_ngul subfield : ');
+          // console.log(mainField.id)
+          // console.log(data)
+          // console.log(fieldArray)
         } else if (data.id === 'product_lot') {
-          console.log('making product_lot subfield with data: ');
-          console.log(mainField.id)
-          console.log(data)
-          console.log(tabPointer)
-          console.log(fieldArray)
+          console.log('making product_lot subfield : ');
+          // console.log(mainField.id)
+          // console.log(data)
+          // console.log(fieldArray)
         }
 
 
@@ -93,18 +91,13 @@ var plateMapWidget = plateMapWidget || {};
         let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
         let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
         let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-        
-        if (data.id === 'product_lot') {
-          console.log('made containers')
-          console.log(data.name)
-        }
+
         $(wrapperDivRightSide).append(nameContainer);
         $(wrapperDivRightSide).append(fieldContainer);
         $(wrapperDiv).append(wrapperDivLeftSide);
         $(wrapperDiv).append(wrapperDivRightSide);
         $(that.allDataTabs[tabPointer]).append(wrapperDiv);
 
-        console.log('appended containers')
         let field = {
           id: data.id,
           full_id: mainField.id + "_" + data.id,
@@ -116,8 +109,12 @@ var plateMapWidget = plateMapWidget || {};
 
         fieldArray.push(field);
         that.fieldMap[field.full_id] = field;
-        console.log(fieldArray)
-        console.log('did everything')
+
+        // HB
+        if (data.id === 'product_lot' || data.id === 'template_ngul') {
+          console.log(fieldArray)
+        }
+        // HB
 
         return field;
       },
@@ -178,12 +175,47 @@ var plateMapWidget = plateMapWidget || {};
 
 
             // make a subfield showing the available lots for the product selected
-            that._makeSubField(field, subOptionCopy, tabPointer, fieldArray);
+            let subfield = that._makeSubField(field, subOptionCopy, tabPointer, fieldArray);
+
+            // below is appropriated from the _makeMultiplexField code
+            subfield.mainMultiplexField = field;
+            that._createField(subfield);
+            that._addCheckBox(subfield);
+            // overwrite subField setvalue
+            subfield.onChange = function () {
+              let v = subfield.getValue();
+              let mainRefField = subfield.mainMultiplexField;
+              console.log(mainRefField)
+              let curId = mainRefField.singleSelectValue();
+              //let curDataLs = mainRefField.detailData;
+              let curVal = {};
+              curVal[mainRefField.id] = curId;
+              //append subfields
+              curVal[subfield.id] = v;
+              let returnVal = {
+                id: curId,
+                value: curVal
+              };
+
+              field._changeMultiFieldValue(returnVal, null);
+              let curDataLs = mainRefField.detailData;
+              if (curDataLs !== null) {
+                curId = mainRefField.singleSelectValue();
+                curDataLs = curDataLs.map(function (curData) {
+                  if (curData[mainRefField.id] === curId) {
+                    curData[subfield.id] = v;
+                  }
+                  return curData;
+                });
+              }
+              mainRefField.detailData = curDataLs;
+            };
+
           }
 
 
 
-          
+
         };
         return field;
       },
@@ -220,18 +252,6 @@ var plateMapWidget = plateMapWidget || {};
         let requiredSubField = [];
         for (let i = 0; i < data.multiplexFields.length; i++) {
           let subFieldData = data.multiplexFields[i];
-
-          // HB
-          // console.log('multiplex field making subfield with:')
-          // console.log('field:')
-          // console.log(field)
-          // console.log('subFieldData:')
-          // console.log(subFieldData)
-          // console.log('tabPointer:')
-          // console.log(tabPointer)
-          // console.log('fieldArray:')
-          // console.log(fieldArray)
-          // HB
 
           let subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
 
