@@ -1,6 +1,6 @@
 var plateMapWidget = plateMapWidget || {};
 
-(function($) {
+(function ($) {
 
   function select2close(ev) {
     if (ev.params.args.originalEvent) {
@@ -8,7 +8,7 @@ var plateMapWidget = plateMapWidget || {};
       ev.params.args.originalEvent.stopPropagation();
     } else {
       // When clearing (in single mode)
-      $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
+      $(this).one('select2:opening', function (ev) { ev.preventDefault(); });
     }
   }
 
@@ -24,11 +24,11 @@ var plateMapWidget = plateMapWidget || {};
     input.val(selected);
   }
 
-  plateMapWidget.createField = function() {
+  plateMapWidget.createField = function () {
     // It creates those fields in the tab , there is 4 types of them.
     return {
 
-      _createField: function(field) {
+      _createField: function (field) {
         switch (field.data.type) {
           case "text":
             this._createTextField(field);
@@ -88,7 +88,7 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
-      _makeFieldUnits: function(field) {
+      _makeFieldUnits: function (field) {
         let full_id = field.full_id;
         let units = field.units;
         let defaultUnit = field.defaultUnit;
@@ -107,12 +107,12 @@ var plateMapWidget = plateMapWidget || {};
             field.root.find(".plate-setup-tab-field-container").append(unitText);
           } else {
             unitInput = this._createElement("<select/>").attr("id", full_id + "Units")
-                .addClass("plate-setup-tab-unit-select-field");
+              .addClass("plate-setup-tab-unit-select-field");
 
             field.root.find(".plate-setup-tab-field-container").append(unitInput);
 
             let selected = null;
-            let unitData = units.map(function(unit) {
+            let unitData = units.map(function (unit) {
               let o = {
                 id: unit,
                 text: unit
@@ -134,7 +134,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         }
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.disabledRegular(bool);
           if (unitInput) {
             unitInput.prop("disabled", bool);
@@ -142,7 +142,7 @@ var plateMapWidget = plateMapWidget || {};
           return bool;
         };
 
-        field.parseValue = function(value) {
+        field.parseValue = function (value) {
           let v;
           if ($.isPlainObject(value)) {
             v = field.parseRegularValue(value.value);
@@ -165,7 +165,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.getValue = function() {
+        field.getValue = function () {
           let v = field.getRegularValue();
 
           if (v === null) {
@@ -184,7 +184,7 @@ var plateMapWidget = plateMapWidget || {};
                   continue;
                 }
                 let unitTypeUnits = unitMap[unitTypeKey];
-                unitTypeUnits.forEach(function(unit) {
+                unitTypeUnits.forEach(function (unit) {
                   if (unit.text === returnVal.unit) {
                     returnVal['unitTypeId'] = unitTypeKey;
                     returnVal['unitId'] = unit.id;
@@ -196,7 +196,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.setValue = function(value) {
+        field.setValue = function (value) {
           if ($.isPlainObject(value)) {
             field.setUnit(value.unit || field.defaultUnit);
             field.setRegularValue(value.value);
@@ -207,7 +207,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.setUnitOpts = function(opts) {
+        field.setUnitOpts = function (opts) {
           field.units = opts || null;
           field.defaultUnit = null;
 
@@ -230,7 +230,7 @@ var plateMapWidget = plateMapWidget || {};
           select2setData(unitInput, newUnits, selected);
         };
 
-        field.parseUnit = function(unit) {
+        field.parseUnit = function (unit) {
           if (unit == null || unit === "") {
             return field.defaultUnit;
           }
@@ -242,7 +242,7 @@ var plateMapWidget = plateMapWidget || {};
           throw "Invalid unit " + unit + " for field " + full_id;
         };
 
-        field.getUnit = function() {
+        field.getUnit = function () {
           if (unitInput) {
             return unitInput.val();
           } else {
@@ -250,7 +250,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.setUnit = function(unit) {
+        field.setUnit = function (unit) {
           if (unitInput) {
             unit = unit || field.defaultUnit;
             unitInput.val(unit);
@@ -259,7 +259,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         // val now contains unit
-        field.getText = function(val) {
+        field.getText = function (val) {
           if (typeof (val) === 'object' && val) {
             let v = val.value;
             let u = val.unit;
@@ -279,7 +279,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.parseText = function(v) {
+        field.parseText = function (v) {
           let value = field.parseValue(v);
           if (value && typeof (value) === "object") {
             return field.getRegularText(value.value) + value.unit;
@@ -291,7 +291,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         if (unitInput) {
-          unitInput.on("change", function() {
+          unitInput.on("change", function () {
             field.onChange();
           });
         }
@@ -299,13 +299,13 @@ var plateMapWidget = plateMapWidget || {};
         field.unitInput = unitInput;
       },
 
-      _createTextField: function(field) {
+      _createTextField: function (field) {
         let input = this._createElement("<input>").attr("id", field.full_id)
           .addClass("plate-setup-tab-input");
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
-        field.parseValue = function(v) {
+        field.parseValue = function (v) {
           if (v) {
             v = String(v);
           } else {
@@ -314,22 +314,22 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.getValue = function() {
+        field.getValue = function () {
           return input.val().trim() || null;
         };
 
-        field.setValue = function(v) {
+        field.setValue = function (v) {
           input.val(v);
         };
 
-        field.getText = function(v) {
+        field.getText = function (v) {
           if (v == null) {
             return "";
           }
           return v;
         };
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
@@ -337,14 +337,14 @@ var plateMapWidget = plateMapWidget || {};
 
         field.parseText = field.parseValue;
 
-        input.on("input", function() {
+        input.on("input", function () {
           field.onChange();
         });
 
         field.input = input;
       },
 
-      _createOpts: function(config) {
+      _createOpts: function (config) {
         let opts = {
           allowClear: true,
           placeholder: "select"
@@ -365,7 +365,42 @@ var plateMapWidget = plateMapWidget || {};
         return opts;
       },
 
-      _createSelectField: function(field) {
+      _createSelectField: function (field) {
+
+        // HB
+        if (field.id === 'product_id') {
+          console.log('creating product lot field');
+
+          field.singleSelect = this._createElement("<select/>").attr("id", field.full_id + "SingleSelect")
+            .addClass("plate-setup-tab-multiplex-single-select-field");
+
+            
+          field.singleSelectValue = function () {
+            let v = field.singleSelect.val();
+            if (v === "") {
+              return null;
+            }
+            if (v == null) {
+              return null;
+            }
+            if (v == '[ALL]') {
+              return v;
+            }
+            return field._parseOne(v)
+          };
+
+          field._parseOne = function (val) {
+            val = String(val);
+            if (val in optMap) {
+              return optMap[val].id;
+            } else {
+              throw "Invalid value " + val + " for multiselect field " + full_id;
+            }
+          };
+
+        }
+        // HB
+
         let full_id = field.full_id;
         let that = this;
         let input = this._createElement("<select/>").attr("id", full_id)
@@ -375,14 +410,14 @@ var plateMapWidget = plateMapWidget || {};
 
         let opts = that._createOpts(field.data);
         let optMap = {};
-        opts.data.forEach(function(opt) {
+        opts.data.forEach(function (opt) {
           optMap[String(opt.id)] = opt;
         });
 
         input.select2(opts);
         select2fix(input);
 
-        let parseValue = function(value) {
+        let parseValue = function (value) {
           let v = value;
 
           if (v === "") {
@@ -400,29 +435,29 @@ var plateMapWidget = plateMapWidget || {};
         };
         field.parseValue = parseValue;
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
 
-        field.getValue = function() {
+        field.getValue = function () {
           return parseValue(input.val());
         };
 
-        field.setValue = function(v) {
+        field.setValue = function (v) {
           input.val(v);
           input.trigger("change.select2")
         };
 
-        field.getText = function(v) {
+        field.getText = function (v) {
           if (v == null) {
             return "";
           }
           return optMap[String(v)].text;
         };
 
-        field.parseText = function(value) {
+        field.parseText = function (value) {
           let v = value;
 
           if (v === "") {
@@ -439,14 +474,14 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        input.on("change", function() {
+        input.on("change", function () {
           field.onChange();
         });
 
         field.input = input;
       },
 
-      _createMultiSelectField: function(field) {
+      _createMultiSelectField: function (field) {
         let full_id = field.full_id;
         let that = this;
         let input = this._createElement("<select/>").attr("id", full_id)
@@ -458,19 +493,19 @@ var plateMapWidget = plateMapWidget || {};
         let opts = that._createOpts(field.data);
         opts.multiple = true;
         let optMap = {};
-        opts.data.forEach(function(opt) {
+        opts.data.forEach(function (opt) {
           optMap[String(opt.id)] = opt;
         });
         input.select2(opts);
         select2fix(input);
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           input.prop("disabled", bool);
           return bool;
         };
 
-        field._parseOne = function(val) {
+        field._parseOne = function (val) {
           val = String(val);
           if (val in optMap) {
             return optMap[val].id;
@@ -479,7 +514,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field._parseMany = function(vals) {
+        field._parseMany = function (vals) {
           if (vals && vals.length) {
             vals = vals.map(field._parseOne, this);
           } else {
@@ -488,21 +523,21 @@ var plateMapWidget = plateMapWidget || {};
           return vals;
         };
 
-        field.parseValue = function(value) {
+        field.parseValue = function (value) {
           return field._parseMany(value);
         };
 
-        field.getValue = function() {
+        field.getValue = function () {
           return field._parseMany(input.val());
         };
 
-        field.setValue = function(v) {
+        field.setValue = function (v) {
           v = v || [];
           input.val(v);
           input.trigger("change.select2");
         };
 
-        field.getText = function(v) {
+        field.getText = function (v) {
           if (v == null) {
             return "";
           }
@@ -512,7 +547,7 @@ var plateMapWidget = plateMapWidget || {};
           return "";
         };
 
-        field.multiOnChange = function(added, removed) {
+        field.multiOnChange = function (added, removed) {
           if (added) {
             added = added.id;
           }
@@ -528,10 +563,10 @@ var plateMapWidget = plateMapWidget || {};
           that._addAllData(data);
         };
 
-        field.parseText = function(value) {
+        field.parseText = function (value) {
           let v = value;
           if (v && v.length) {
-            v = v.map(function(opt) {
+            v = v.map(function (opt) {
               opt = String(opt);
               if (opt in optMap) {
                 return optMap[opt].text;
@@ -547,13 +582,13 @@ var plateMapWidget = plateMapWidget || {};
 
         input.on("select2:select", function (e) {
           let v = field._parseOne(e.params.data.id);
-          v = {id: v};
+          v = { id: v };
           field.multiOnChange(v, null);
         });
 
         input.on("select2:unselect", function (e) {
           let v = field._parseOne(e.params.data.id);
-          v = {id: v};
+          v = { id: v };
           field.multiOnChange(null, v);
         });
 
@@ -562,7 +597,7 @@ var plateMapWidget = plateMapWidget || {};
         that._createDeleteButton(field);
       },
 
-      _createNumericField: function(field) {
+      _createNumericField: function (field) {
         let full_id = field.full_id;
         let data = field.data;
         let input = this._createElement("<input>").addClass("plate-setup-tab-input")
@@ -570,13 +605,13 @@ var plateMapWidget = plateMapWidget || {};
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
 
-        let parseValue = function(value) {
+        let parseValue = function (value) {
           if (value == null) {
             return null;
           }
@@ -584,12 +619,12 @@ var plateMapWidget = plateMapWidget || {};
           if (v === "") {
             return null;
           }
-          
+
           return v;
         };
         field.parseValue = parseValue;
 
-        field.getValue = function() {
+        field.getValue = function () {
           let v = input.val().trim();
           if (v === "") {
             v = null;
@@ -597,11 +632,11 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.setValue = function(value) {
+        field.setValue = function (value) {
           input.val(value);
         };
 
-        let getText = function(v) {
+        let getText = function (v) {
           if (v == null) {
             return "";
           }
@@ -610,11 +645,11 @@ var plateMapWidget = plateMapWidget || {};
         };
         field.getText = getText;
 
-        field.parseText = function(v) {
+        field.parseText = function (v) {
           return getText(parseValue(v));
         };
 
-        input.on("input", function() {
+        input.on("input", function () {
           let v = field.getRegularValue();
           if (isNaN(v)) {
             //flag field as invalid
@@ -628,7 +663,7 @@ var plateMapWidget = plateMapWidget || {};
         field.input = input;
       },
 
-      _createBooleanField: function(field) {
+      _createBooleanField: function (field) {
         let full_id = field.full_id;
         let input = this._createElement("<select/>").attr("id", full_id)
           .addClass("plate-setup-tab-select-field");
@@ -652,13 +687,13 @@ var plateMapWidget = plateMapWidget || {};
         input.select2(opts);
         select2fix(input);
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
 
-        field.parseValue = function(value) {
+        field.parseValue = function (value) {
           if (value == null) {
             return null;
           }
@@ -675,7 +710,7 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.getValue = function() {
+        field.getValue = function () {
           let v = input.val();
           switch (v) {
             case "true":
@@ -687,7 +722,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.setValue = function(v) {
+        field.setValue = function (v) {
           if (v === 1 || v === true || v === "true") {
             v = "true";
           } else if (v === 0 || v === false || v === "false") {
@@ -699,7 +734,7 @@ var plateMapWidget = plateMapWidget || {};
           input.trigger("change.select2");
         };
 
-        field.getText = function(v) {
+        field.getText = function (v) {
           if (v == null) {
             return "";
           }
@@ -708,14 +743,14 @@ var plateMapWidget = plateMapWidget || {};
 
         field.parseText = field.parseValue;
 
-        input.on("change", function() {
+        input.on("change", function () {
           field.onChange();
         });
 
         field.input = input;
       },
 
-      _createMultiplexField: function(field) {
+      _createMultiplexField: function (field) {
         let that = this;
         // make correct multiplex data
         this._createMultiSelectField(field);
@@ -740,7 +775,7 @@ var plateMapWidget = plateMapWidget || {};
 
         let multiselectSetValue = field.setValue;
 
-        field.singleSelectValue = function() {
+        field.singleSelectValue = function () {
           let v = field.singleSelect.val();
           if (v === "") {
             return null;
@@ -754,11 +789,11 @@ var plateMapWidget = plateMapWidget || {};
           return field._parseOne(v)
         };
 
-        let setSingleSelectOptions = function(data, selected) {
+        let setSingleSelectOptions = function (data, selected) {
           data = data || [];
 
           if (field.allSelectedMultipleVal) {
-            const count = Object.values(field.allSelectedMultipleVal).reduce(function (a, b) {return a + b}, 0);
+            const count = Object.values(field.allSelectedMultipleVal).reduce(function (a, b) { return a + b }, 0);
             if (count) {
               const all_option = {
                 id: '[ALL]',
@@ -781,7 +816,7 @@ var plateMapWidget = plateMapWidget || {};
           field.singleSelect.trigger("change.select2");
         };
 
-        let singleSelectChange = function() {
+        let singleSelectChange = function () {
           let v = field.singleSelectValue();
 
           field.updateSubFieldUnitOpts(v);
@@ -791,7 +826,7 @@ var plateMapWidget = plateMapWidget || {};
             curSubField = field.allSelectedMultipleData;
           } else {
             let curData = field.detailData || [];
-            curData.forEach(function(val) {
+            curData.forEach(function (val) {
               if (val[field.id] === v) {
                 curSubField = val;
               }
@@ -800,12 +835,12 @@ var plateMapWidget = plateMapWidget || {};
 
           if (curSubField) {
             // setvalue for subfield
-            field.subFieldList.forEach(function(subField) {
+            field.subFieldList.forEach(function (subField) {
               subField.isDisabled = false;
               subField.setValue(curSubField[subField.id]);
             });
           } else {
-            field.subFieldList.forEach(function(subField) {
+            field.subFieldList.forEach(function (subField) {
               subField.isDisabled = true;
               subField.setValue(null);
             });
@@ -816,7 +851,7 @@ var plateMapWidget = plateMapWidget || {};
         setSingleSelectOptions([]);
         field.singleSelect.on("change.select2", singleSelectChange);
 
-        field._changeMultiFieldValue = function(added, removed) {
+        field._changeMultiFieldValue = function (added, removed) {
           let newSubFieldValue = {};
           for (let i = 0; i < field.subFieldList.length; i++) {
             let subFieldId = field.subFieldList[i].id;
@@ -859,7 +894,7 @@ var plateMapWidget = plateMapWidget || {};
           that._addAllData(data);
         };
 
-        field.setValue = function(v) {
+        field.setValue = function (v) {
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
           let multiselectValues = null;
@@ -873,10 +908,10 @@ var plateMapWidget = plateMapWidget || {};
           singleSelectChange();
         };
 
-        field.disabled = function(bool) {
+        field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
-          field.subFieldList.forEach(function(subField) {
+          field.subFieldList.forEach(function (subField) {
             subField.disabled(bool);
           });
           if (bool) {
@@ -887,15 +922,15 @@ var plateMapWidget = plateMapWidget || {};
           return bool;
         };
 
-        field.parseValue = function(value) {
+        field.parseValue = function (value) {
           let v = value;
           if (v && v.length) {
-            v = v.map(function(opt) {
+            v = v.map(function (opt) {
               let valMap = {};
               valMap[field.id] = opt[field.id];
               for (let subFieldId in opt) {
                 if (opt.hasOwnProperty(subFieldId)) {
-                  field.subFieldList.forEach(function(subField) {
+                  field.subFieldList.forEach(function (subField) {
                     if (subField.id === subFieldId) {
                       valMap[subField.id] = subField.parseValue(opt[subFieldId]);
                     }
@@ -910,14 +945,14 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
-        field.updateSubFieldUnitOpts = function(val) {
+        field.updateSubFieldUnitOpts = function (val) {
           let curOpts;
-          field.data.options.forEach(function(opt) {
+          field.data.options.forEach(function (opt) {
             if (opt.id === val) {
               curOpts = opt;
             }
           });
-          field.subFieldList.forEach(function(subField) {
+          field.subFieldList.forEach(function (subField) {
             if (subField.data.hasMultiplexUnit) {
               if (curOpts && curOpts.hasOwnProperty("unitOptions")) {
                 subField.setUnitOpts(curOpts.unitOptions[subField.id]);
@@ -928,7 +963,7 @@ var plateMapWidget = plateMapWidget || {};
           })
         };
 
-        field.multiOnChange = function(added, removed) {
+        field.multiOnChange = function (added, removed) {
           field._changeMultiFieldValue(added, removed);
           let v = field.getValue();
           let curData = field.detailData;
@@ -942,9 +977,9 @@ var plateMapWidget = plateMapWidget || {};
           let newMultiplexVal = [];
           let selectList = [];
           if (v) {
-            v.forEach(function(selectedVal) {
+            v.forEach(function (selectedVal) {
               if (curData) {
-                curData.forEach(function(val) {
+                curData.forEach(function (val) {
                   if (val[field.id] === selectedVal) {
                     newMultiplexVal.push(val)
                   }
@@ -956,12 +991,12 @@ var plateMapWidget = plateMapWidget || {};
                 newVal[field.id] = selectedVal;
 
                 field.updateSubFieldUnitOpts(selectedVal);
-                field.subFieldList.forEach(function(subfield) {
+                field.subFieldList.forEach(function (subfield) {
                   // special handling for subfield which has multiplexUnit
                   if (subfield.hasUnits) {
                     if (subfield.data.hasMultiplexUnit) {
                       subfield.disabled(false);
-                      field.data.options.forEach(function(opt) {
+                      field.data.options.forEach(function (opt) {
                         if (opt.id === selectedVal) {
                           let val = {
                             value: null,
@@ -991,8 +1026,8 @@ var plateMapWidget = plateMapWidget || {};
             });
 
             // make data for single select options
-            v.forEach(function(selectVal) {
-              field.data.options.forEach(function(opt) {
+            v.forEach(function (selectVal) {
+              field.data.options.forEach(function (opt) {
                 if (opt.id === selectVal) {
                   selectList.push(opt);
                 }
@@ -1017,7 +1052,7 @@ var plateMapWidget = plateMapWidget || {};
           singleSelectChange();
         };
 
-        field.getText = function(v) {
+        field.getText = function (v) {
           if (v === null) {
             return "";
           }
@@ -1039,7 +1074,7 @@ var plateMapWidget = plateMapWidget || {};
                   }
                 }
               }
-              field.subFieldList.forEach(function(subField) {
+              field.subFieldList.forEach(function (subField) {
                 if (checkedSubfields.indexOf(subField.id) >= 0) {
                   let x = subField.getText(subV[subField.id]);
                   subText.push(subField.name + ": " + x);
@@ -1051,7 +1086,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.parseText = function(v) {
+        field.parseText = function (v) {
           if (v === null) {
             return "";
           } else {
@@ -1070,7 +1105,7 @@ var plateMapWidget = plateMapWidget || {};
                   }
                 }
               }
-              field.subFieldList.forEach(function(subField) {
+              field.subFieldList.forEach(function (subField) {
                 let x = subField.getText(subV[subField.id]);
                 if (x) {
                   subText.push(x);
@@ -1082,7 +1117,7 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
-        field.checkMultiplexCompletion = function(valList) {
+        field.checkMultiplexCompletion = function (valList) {
           let valCount = 0;
           let completionPct = 0;
           let include = false;
@@ -1137,7 +1172,7 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         // valList contains all of the vals for selected val
-        field.applyMultiplexSubFieldColor = function(valList) {
+        field.applyMultiplexSubFieldColor = function (valList) {
           function updateSubFieldWarningMap(vals) {
             for (let subFieldId in field.subFieldList) {
               if (!field.subFieldList.hasOwnProperty(subFieldId)) {
@@ -1180,7 +1215,7 @@ var plateMapWidget = plateMapWidget || {};
           }
 
           let subFieldWarningMap = {};
-          field.subFieldList.forEach(function(subField) {
+          field.subFieldList.forEach(function (subField) {
             if (subField.required) {
               subFieldWarningMap[subField.id] = {
                 field: subField,
@@ -1189,7 +1224,7 @@ var plateMapWidget = plateMapWidget || {};
             }
           });
 
-          valList.forEach(function(multiplexVals) {
+          valList.forEach(function (multiplexVals) {
             updateSubFieldWarningMap(multiplexVals);
           });
           // turn off main field when all subfield are filled
@@ -1224,7 +1259,7 @@ var plateMapWidget = plateMapWidget || {};
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
         };
 
-        field.parseMainFieldVal = function(val) {
+        field.parseMainFieldVal = function (val) {
           let optMap = field.data.options;
           for (let idx = 0; idx < optMap.length; idx++) {
             let curOpt = optMap[idx];
@@ -1235,7 +1270,7 @@ var plateMapWidget = plateMapWidget || {};
         };
       },
 
-      _deleteDialog: function(field) {
+      _deleteDialog: function (field) {
         let that = this;
 
         let valMap = field.allSelectedMultipleVal;
@@ -1272,10 +1307,10 @@ var plateMapWidget = plateMapWidget || {};
           if (!that.readOnly) {
             let deleteCheckedButton = $("<button class='multiple-field-manage-delete-button'>Delete Checked Items</button>");
             buttonRow.append(deleteCheckedButton);
-            deleteCheckedButton.click(function() {
-              table.find("input:checked").each(function() {
+            deleteCheckedButton.click(function () {
+              table.find("input:checked").each(function () {
                 let val = this.value;
-                field.multiOnChange(null, {id: val});
+                field.multiOnChange(null, { id: val });
               });
               // refresh selected fields after updating the multiplex field value
               that.decideSelectedFields();
@@ -1293,14 +1328,14 @@ var plateMapWidget = plateMapWidget || {};
 
         dialogDiv.show();
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
           if (event.target === dialogDiv[0]) {
             killDialog();
           }
         }
       },
 
-      _deleteDialogTable: function(field, valMap) {
+      _deleteDialogTable: function (field, valMap) {
         let that = this;
         let colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
         if (!that.readOnly) {
@@ -1310,13 +1345,13 @@ var plateMapWidget = plateMapWidget || {};
         let thead = $('<thead/>').appendTo(table);
         let tr = $('<tr/>').appendTo(thead);
 
-        tr.append(colName.map(function(text) {
+        tr.append(colName.map(function (text) {
           return $('<th/>').text(text);
         }));
 
         let tbody = $("<tbody/>").appendTo(table);
 
-        field.data.options.forEach(function(opt) {
+        field.data.options.forEach(function (opt) {
           if (opt.id in valMap) {
             let tr = $('<tr/>').appendTo(tbody);
             let checkbox = $("<input type='checkbox'>").prop("value", opt.id);
@@ -1331,7 +1366,7 @@ var plateMapWidget = plateMapWidget || {};
         return table;
       },
 
-      _createDeleteButton: function(field) {
+      _createDeleteButton: function (field) {
         let that = this;
         let deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
         deleteButton.id = field.id + "Delete";
@@ -1342,7 +1377,7 @@ var plateMapWidget = plateMapWidget || {};
         field.deleteButton = deleteButton;
         field.root.find(".plate-setup-tab-field-right-side").append(buttonContainer);
 
-        deleteButton.click(function() {
+        deleteButton.click(function () {
           that._deleteDialog(field);
         });
       }

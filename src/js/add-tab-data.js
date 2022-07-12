@@ -197,18 +197,18 @@ var plateMapWidget = plateMapWidget || {};
                 value: curVal
               };
 
-              field._changeMultiFieldValue(returnVal, null);
-              let curDataLs = mainRefField.detailData;
-              if (curDataLs !== null) {
-                curId = mainRefField.singleSelectValue();
-                curDataLs = curDataLs.map(function (curData) {
-                  if (curData[mainRefField.id] === curId) {
-                    curData[subfield.id] = v;
-                  }
-                  return curData;
-                });
-              }
-              mainRefField.detailData = curDataLs;
+              // field._changeMultiFieldValue(returnVal, null);
+              // let curDataLs = mainRefField.detailData;
+              // if (curDataLs !== null) {
+              //   curId = mainRefField.singleSelectValue();
+              //   curDataLs = curDataLs.map(function (curData) {
+              //     if (curData[mainRefField.id] === curId) {
+              //       curData[subfield.id] = v;
+              //     }
+              //     return curData;
+              //   });
+              // }
+              // mainRefField.detailData = curDataLs;
             };
 
           }
@@ -298,6 +298,12 @@ var plateMapWidget = plateMapWidget || {};
             let curDataLs = mainRefField.detailData;
             if (curDataLs !== null) {
               curId = mainRefField.singleSelectValue();
+              // HB
+              console.log(`curId: ${curId}`, typeof(curId))
+              console.log(`curDataLs:`)
+              console.log(curDataLs[0])
+              // HB
+
               curDataLs = curDataLs.map(function (curData) {
                 if (curData[mainRefField.id] === curId) {
                   curData[subfield.id] = v;
