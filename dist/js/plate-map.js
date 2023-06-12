@@ -1,9 +1,7 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.addDataOnChange = function () {
     // This object is invoked when something in the tab fields change
@@ -13,17 +11,14 @@ var plateMapWidget = plateMapWidget || {};
           var noOfSelectedObjects = this.selectedIndices.length;
           this.selectedIndices.forEach(function (index) {
             var well;
-
             if (index in this.engine.derivative) {
               well = this.engine.derivative[index];
             } else {
               well = $.extend(true, {}, this.defaultWell);
               this.engine.derivative[index] = well;
             }
-
             well = this.processWellData(data, well, noOfSelectedObjects);
             var empty = this.engine.wellEmpty(well);
-
             if (empty) {
               if (this.disableAddDeleteWell) {
                 if (this.engine.derivative.hasOwnProperty(index)) {
@@ -35,13 +30,11 @@ var plateMapWidget = plateMapWidget || {};
               }
             }
           }, this);
-        } // update multiplex
-
-
-        this.decideSelectedFields(); // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
-
+        }
+        // update multiplex
+        this.decideSelectedFields();
+        // create well when default field is sent for the cases when user delete all fields during disabledNewDeleteWell mode
         this._colorMixer();
-
         this.derivativeChange();
         this.addToUndoRedo();
       },
@@ -50,30 +43,24 @@ var plateMapWidget = plateMapWidget || {};
           if (!newData.hasOwnProperty(id)) {
             continue;
           }
-
           var newVal = newData[id];
-
           if (newVal !== undefined && newVal !== null) {
             if (newVal.multi) {
               var preData = curWell[id];
               newVal = this._getMultiData(preData, newVal, id, noOfSelectedObjects);
             }
-
             newVal = JSON.parse(JSON.stringify(newVal));
           } else {
             newVal = null;
           }
-
           curWell[id] = newVal;
         }
-
         return curWell;
       },
       _getMultiData: function _getMultiData(preData, curData, fieldId, noOfSelectedObjects) {
         var addNew = curData.added;
         var removed = curData.removed;
         preData = preData || [];
-
         if (addNew) {
           if (addNew.value) {
             var multiplexId = addNew.id.toString();
@@ -82,19 +69,15 @@ var plateMapWidget = plateMapWidget || {};
             preData = preData.map(function (val) {
               if (doAll || val[fieldId].toString() === multiplexId) {
                 add = false;
-
                 for (var subFieldId in addNew.value) {
                   if (subFieldId !== fieldId) {
                     val[subFieldId] = addNew.value[subFieldId];
                   }
                 }
-
                 return val;
               }
-
               return val;
             });
-
             if (add) {
               preData.push(addNew.value);
             }
@@ -102,52 +85,42 @@ var plateMapWidget = plateMapWidget || {};
             preData.push(addNew);
           }
         }
-
         var removeListIndex = function removeListIndex(preData, removeIndex) {
           var newPreData = [];
-
           for (var idx in preData) {
             if (!preData.hasOwnProperty(idx)) {
               continue;
             }
-
             if (parseInt(idx) !== parseInt(removeIndex)) {
               newPreData.push(preData[idx]);
             }
           }
-
           return newPreData;
         };
-
         if (removed) {
-          var removeIndex; // for multiplex field
-
+          var removeIndex;
+          // for multiplex field
           if (removed.value) {
             for (var listIdx in preData) {
               var multiplexData = preData[listIdx];
-
               if (multiplexData[fieldId].toString() === removed.id.toString()) {
                 removeIndex = listIdx;
               }
-            } // remove nested element
-
-
+            }
+            // remove nested element
             preData = removeListIndex(preData, removeIndex);
           } else {
             if (preData) {
               removeIndex = preData.indexOf(removed);
-
               if (removeIndex >= 0) {
                 preData = removeListIndex(preData, removeIndex);
               }
             }
           }
         }
-
         if (preData && preData.length === 0) {
           preData = null;
         }
-
         return preData;
       },
       _colorMixer: function _colorMixer() {
@@ -171,17 +144,14 @@ var plateMapWidget = plateMapWidget || {};
       getPlate: function getPlate() {
         var wells = {};
         var derivative = this.engine.derivative;
-
         for (var index in derivative) {
           if (!derivative.hasOwnProperty(index)) {
             continue;
           }
-
           var address = this.indexToAddress(index);
           var well = derivative[index];
           wells[address] = $.extend(true, {}, well);
         }
-
         var checkboxes = this.getCheckboxes();
         var selectedAddresses = this.getSelectedAddresses();
         return {
@@ -194,9 +164,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 plateMapWidget.addDataToFields = function () {
   return {
     _addDataToTabFields: function _addDataToTabFields(well) {
@@ -204,19 +172,15 @@ plateMapWidget.addDataToFields = function () {
       for (var i = 0; i < this.fieldList.length; i++) {
         var field = this.fieldList[i];
         var v = well[field.id];
-
         if (v === undefined) {
           v = null;
         }
-
         field.setValue(v);
       }
     }
   };
 };
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.addTabData = function () {
     return {
@@ -232,30 +196,25 @@ var plateMapWidget = plateMapWidget || {};
         tabData.forEach(function (tab, tabPointer) {
           if (tab["fields"]) {
             var tabFields = tab["fields"];
-            var fieldArray = []; // Now we look for fields in the json
-
+            var fieldArray = [];
+            // Now we look for fields in the json
             for (var i = 0; i < tabFields.length; i++) {
               var data = tabFields[i];
-
               if (!data.id) {
                 data.id = "Auto" + that.autoId++;
                 console.log("Field autoassigned id " + data.id);
               }
-
               if (!data.type) {
                 data.type = "text";
                 console.log("Field " + data.id + " autoassigned type " + data.type);
               }
-
               var field = void 0;
-
               if (data.type === "multiplex") {
                 field = that._makeMultiplexField(data, tabPointer, fieldArray);
                 that.defaultWell[field.id] = [];
                 multiplexFieldArray.push(field);
               } else {
                 field = that._makeRegularField(data, tabPointer, fieldArray, true);
-
                 if (data.type === "multiselect") {
                   that.defaultWell[field.id] = [];
                   multiplexFieldArray.push(field);
@@ -264,7 +223,6 @@ var plateMapWidget = plateMapWidget || {};
                 }
               }
             }
-
             that.allDataTabs[tabPointer]["fields"] = fieldArray;
           } else {
             console.log("unknown format in field initialization");
@@ -274,27 +232,19 @@ var plateMapWidget = plateMapWidget || {};
       },
       _makeSubField: function _makeSubField(mainField, data, tabPointer, fieldArray) {
         var that = this;
-
         if (!data.id) {
           data.id = "Auto" + that.autoId++;
           console.log("Field autoassigned id " + data.id);
         }
-
         if (!data.type) {
           data.type = "text";
           console.log("Field " + data.id + " autoassigned type " + data.type);
         }
-
         var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-
         var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-
         var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
-
         var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-
         var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
         $(wrapperDivRightSide).append(nameContainer);
         $(wrapperDivRightSide).append(fieldContainer);
         $(wrapperDiv).append(wrapperDivLeftSide);
@@ -314,17 +264,11 @@ var plateMapWidget = plateMapWidget || {};
       },
       _makeRegularField: function _makeRegularField(data, tabPointer, fieldArray, checkbox) {
         var that = this;
-
         var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-
         var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-
         var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-
         var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-
         var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
         wrapperDivRightSide.append(nameContainer);
         wrapperDivRightSide.append(fieldContainer);
         wrapperDiv.append(wrapperDivLeftSide);
@@ -338,44 +282,33 @@ var plateMapWidget = plateMapWidget || {};
           data: data,
           required: data.required
         };
-
         if (field.required) {
           that.requiredField.push(field.id);
         }
-
         fieldArray.push(field);
         that.fieldList.push(field);
-        that.fieldMap[field.full_id] = field; // Adding checkbox
+        that.fieldMap[field.full_id] = field;
 
+        // Adding checkbox
         if (checkbox) {
           that._addCheckBox(field);
         }
-
         that._createField(field);
-
         field.onChange = function () {
           var v = field.getValue();
           var data = {};
           data[field.id] = v;
-
           that._addAllData(data);
         };
-
         return field;
       },
       _makeMultiplexField: function _makeMultiplexField(data, tabPointer, fieldArray) {
         var that = this;
-
         var wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-
         var wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-
         var wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-
         var nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-
         var fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
         wrapperDivRightSide.append(nameContainer);
         wrapperDivRightSide.append(fieldContainer);
         wrapperDiv.append(wrapperDivLeftSide);
@@ -392,73 +325,59 @@ var plateMapWidget = plateMapWidget || {};
         fieldArray.push(field);
         that.fieldList.push(field);
         that.fieldMap[field.full_id] = field;
-        var subFieldList = []; //create subfields
-
+        var subFieldList = [];
+        //create subfields
         var requiredSubField = [];
-
         for (var i = 0; i < data.multiplexFields.length; i++) {
           var subFieldData = data.multiplexFields[i];
-
           var subField = that._makeSubField(field, subFieldData, tabPointer, fieldArray);
+          subFieldList.push(subField);
 
-          subFieldList.push(subField); // stores required  subField
-
+          // stores required  subField
           if (subFieldData.required) {
             requiredSubField.push(subField.id);
           }
-        } //store required field
+        }
 
-
+        //store required field
         if (field.required || requiredSubField.length) {
           this.requiredField.push({
             multiplexId: field.id,
             subFields: requiredSubField
           });
         }
-
         field.subFieldList = subFieldList;
-
         that._createField(field);
-
         that._addCheckBox(field);
-
         subFieldList.forEach(function (subfield) {
           subfield.mainMultiplexField = field;
-
           that._createField(subfield);
-
-          that._addCheckBox(subfield); // overwrite subField setvalue
-
-
+          that._addCheckBox(subfield);
+          // overwrite subField setvalue
           subfield.onChange = function () {
             var v = subfield.getValue();
             var mainRefField = subfield.mainMultiplexField;
-            var curId = mainRefField.singleSelectValue(); //let curDataLs = mainRefField.detailData;
-
+            var curId = mainRefField.singleSelectValue();
+            //let curDataLs = mainRefField.detailData;
             var curVal = {};
-            curVal[mainRefField.id] = curId; //append subfields
-
+            curVal[mainRefField.id] = curId;
+            //append subfields
             curVal[subfield.id] = v;
             var returnVal = {
               id: curId,
               value: curVal
             };
-
             field._changeMultiFieldValue(returnVal, null);
-
             var curDataLs = mainRefField.detailData;
-
             if (curDataLs !== null) {
               curId = mainRefField.singleSelectValue();
               curDataLs = curDataLs.map(function (curData) {
                 if (curData[mainRefField.id] === curId) {
                   curData[subfield.id] = v;
                 }
-
                 return curData;
               });
             }
-
             mainRefField.detailData = curDataLs;
           };
         });
@@ -467,9 +386,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.addWarningMsg = function () {
     // For those check boxes associated with every field in the tab
@@ -478,7 +395,6 @@ var plateMapWidget = plateMapWidget || {};
         var that = this;
         var imgId = "fieldWarning" + field.full_id;
         var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
-
         if (include) {
           if (field.root.find("#" + imgId).length <= 0) {
             field.root.find(".plate-setup-tab-name").text(" " + field.name);
@@ -502,7 +418,6 @@ var plateMapWidget = plateMapWidget || {};
       removeWarningMsg: function removeWarningMsg(field, text, include) {
         var that = this;
         var imgId = "fieldWarning" + field.full_id;
-
         if (include) {
           var img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
           field.root.find(".plate-setup-tab-name").append(img);
@@ -537,10 +452,8 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
         });
-
-        for (var i = 0; i < that.fieldList.length; i++) {
+        var _loop = function _loop() {
           var field = that.fieldList[i];
-
           if (field.applyMultiplexSubFieldColor) {
             field.applyMultiplexSubFieldColor(fieldData[field.id]);
           } else {
@@ -557,19 +470,20 @@ var plateMapWidget = plateMapWidget || {};
                     include = true;
                   }
                 }
-              }); //field.root.find(".plate-setup-tab-name").css("background", color);
-
+              });
+              //field.root.find(".plate-setup-tab-name").css("background", color);
               that.fieldWarningMsg(field, "required field", include);
             }
           }
+        };
+        for (var i = 0; i < that.fieldList.length; i++) {
+          _loop();
         }
       }
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.bottomTable = function () {
     // for bottom table
@@ -588,23 +502,18 @@ var plateMapWidget = plateMapWidget || {};
       },
       addBottomTableHeadings: function addBottomTableHeadings() {
         var row = this._createElement("<tr></tr>");
-
         var singleField = this._createElement("<th></th>").text("Group");
-
-        row.prepend(singleField);
+        row.html(singleField);
         this.rowCounter = 1;
-
         for (var i = 0; i < this.globalSelectedAttributes.length; i++) {
           var attr = this.globalSelectedAttributes[i];
           var field = this.fieldMap[attr];
-
           var _singleField = this._createElement("<th></th>").text(field.name);
-
           row.append(_singleField);
           this.rowCounter = this.rowCounter + 1;
-        } // Now we append all the captions at the place.
+        }
 
-
+        // Now we append all the captions at the place.
         this.bottomTableBody.empty();
         this.bottomTableHead.empty();
         this.bottomTableHead.append(row);
@@ -618,19 +527,14 @@ var plateMapWidget = plateMapWidget || {};
       addBottomTableRow: function addBottomTableRow(color, singleStack) {
         var that = this;
         var modelTile = this.allTiles[singleStack[0]];
-
         var row = this._createElement("<tr></tr>");
-
         var plateIdDiv = this._createElement("<td></td>").addClass("plate-setup-bottom-id");
-
         var numberText = this._createElement("<button/>");
-
         numberText.addClass("plate-setup-color-text");
         numberText.text(color);
         plateIdDiv.append(numberText);
         numberText.click(function (evt) {
           var addressToSelect = singleStack.map(that.indexToAddress, that);
-
           if (evt.ctrlKey) {
             that.getSelectedAddresses().forEach(function (val) {
               if (addressToSelect.indexOf(val) < 0) {
@@ -638,39 +542,29 @@ var plateMapWidget = plateMapWidget || {};
               }
             });
           }
-
           that.setSelectedAddresses(addressToSelect);
         });
-
         if (color > 0) {
           color = (color - 1) % (this.colorPairs.length - 1) + 1;
         }
-
         var colorStops = this.colorPairs[color];
         plateIdDiv.css("background", "linear-gradient(to right, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
-
         for (var i = 0; i < this.globalSelectedAttributes.length; i++) {
           var attr = this.globalSelectedAttributes[i];
           var text = this.tileAttrText(modelTile, attr);
-
           var dataDiv = this._createElement("<td></td>").text(text);
-
           row.append(dataDiv);
         }
-
         this.bottomTableBody.append(row);
         this.adjustFieldWidth(row);
       },
       bottomForFirstTime: function bottomForFirstTime() {
-        this.addBottomTableHeadings(); // This is executed for the very first time.. !
-
+        this.addBottomTableHeadings();
+        // This is executed for the very first time.. !
         var row = this._createElement("<tr></tr>");
-
         var colorStops = this.colorPairs[0];
-
         var plateIdDiv = this._createElement("<td></td>");
-
         plateIdDiv.css("background", "-webkit-linear-gradient(left, " + colorStops[0] + " , " + colorStops[1] + ")");
         row.append(plateIdDiv);
         this.bottomTableBody.append(row);
@@ -678,29 +572,35 @@ var plateMapWidget = plateMapWidget || {};
       },
       adjustFieldWidth: function adjustFieldWidth(row) {
         var length = this.rowCounter;
-
         if (length * 150 > 1024) {
           row.css("width", length * 152 + "px");
         }
       },
       downloadCSV: function downloadCSV(csv, filename) {
         var csvFile;
-        var downloadLink; // CSV file
+        var downloadLink;
 
+        // CSV file
         csvFile = new Blob([csv], {
           type: "text/csv"
-        }); // Download link
+        });
 
-        downloadLink = document.createElement("a"); // File name
+        // Download link
+        downloadLink = document.createElement("a");
 
-        downloadLink.download = filename; // Create a link to the file
+        // File name
+        downloadLink.download = filename;
 
-        downloadLink.href = window.URL.createObjectURL(csvFile); // Hide download link
+        // Create a link to the file
+        downloadLink.href = window.URL.createObjectURL(csvFile);
 
-        downloadLink.style.display = "none"; // Add the link to DOM
+        // Hide download link
+        downloadLink.style.display = "none";
 
-        document.body.appendChild(downloadLink); // Click download link
+        // Add the link to DOM
+        document.body.appendChild(downloadLink);
 
+        // Click download link
         downloadLink.click();
       },
       exportData: function exportData(format) {
@@ -708,20 +608,16 @@ var plateMapWidget = plateMapWidget || {};
         var rows = document.querySelectorAll("table tr");
         var colorLocMap = {};
         var colorLocIdxMap = this.engine.stackUpWithColor;
-
         for (var colorIdx in colorLocIdxMap) {
           if (colorLocIdxMap.hasOwnProperty(colorIdx)) {
             colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(this.indexToAddress, this);
           }
         }
-
         for (var i = 0; i < rows.length; i++) {
           var row = [],
-              cols = rows[i].querySelectorAll("td, th");
-
+            cols = rows[i].querySelectorAll("td, th");
           for (var j = 0; j < cols.length; j++) {
             var v = "";
-
             if (cols[j].innerText) {
               if (format === "csv") {
                 v = '"' + cols[j].innerText.replace(/"/g, '""') + '"';
@@ -729,9 +625,9 @@ var plateMapWidget = plateMapWidget || {};
                 v = cols[j].innerText;
               }
             }
+            row.push(v);
 
-            row.push(v); // add location column
-
+            // add location column
             if (i === 0 && j === 0) {
               if (format === "csv") {
                 row.push('"Location"');
@@ -739,10 +635,8 @@ var plateMapWidget = plateMapWidget || {};
                 row.push("Location");
               }
             }
-
             if (i !== 0 && j === 0) {
               var loc = '';
-
               if (colorLocMap[parseInt(cols[j].innerText)]) {
                 if (format === "csv") {
                   loc = '"' + colorLocMap[parseInt(cols[j].innerText)].join(",") + '"';
@@ -750,15 +644,14 @@ var plateMapWidget = plateMapWidget || {};
                   loc = colorLocMap[parseInt(cols[j].innerText)].join(",");
                 }
               }
-
               row.push(loc);
             }
           }
-
           if (format === "csv") {
             data.push(row.join(","));
           } else if (format === 'clipboard') {
-            data.push(row.join("\t")); //data.push(row);   // for text type
+            data.push(row.join("\t"));
+            //data.push(row);   // for text type
           }
         }
 
@@ -776,8 +669,9 @@ var plateMapWidget = plateMapWidget || {};
         var descriptionDiv = $("<div>").addClass("plate-setup-overlay-text-container");
         descriptionDiv.text("Color groups");
         overlayContainer.append(descriptionDiv);
-        var buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container"); // create export csv option
+        var buttonContainer = $("<div>").addClass("plate-setup-overlay-bottom-button-container");
 
+        // create export csv option
         var exportButton = $("<button/>").addClass("plate-setup-button");
         exportButton.text("Export CSV");
         buttonContainer.append(exportButton);
@@ -788,14 +682,13 @@ var plateMapWidget = plateMapWidget || {};
           exportButton.addClass("plate-setup-clicked-button");
           setTimeout(resetExportText, 3000);
         });
-
         function resetExportText() {
           exportButton.text("Export CSV");
           exportButton[0].classList.remove("plate-setup-clicked-button");
           exportButton.addClass("plate-setup-button");
-        } // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
+        }
 
-
+        // creat clipboard option, CLipboard is an external js file located in vendor/asset/javascripts
         var clipboardButton = $("<button/>").addClass("plate-setup-button");
         clipboardButton.text("Copy To Clipboard");
         buttonContainer.append(clipboardButton);
@@ -810,26 +703,22 @@ var plateMapWidget = plateMapWidget || {};
           clipboardButton.addClass("plate-setup-clicked-button");
           setTimeout(resetClipboardText, 3000);
         });
-
         function resetClipboardText() {
           clipboardButton.text("Copy To Clipboard");
           clipboardButton[0].classList.remove("plate-setup-clicked-button");
           clipboardButton.addClass("plate-setup-button");
         }
-
         clipboard.on('error', function () {
           clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
           setTimeout(resetClipboardText, 3000);
         });
         overlayContainer.append(buttonContainer);
-        this.bottomContainer.prepend(overlayContainer);
+        this.bottomContainer.html(overlayContainer);
       }
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.checkBox = function () {
     // For those check boxes associated with every field in the tab
@@ -842,10 +731,7 @@ var plateMapWidget = plateMapWidget || {};
         var linkedFieldId = field.full_id;
         checkImage.data("linkedFieldId", linkedFieldId);
         field.root.find(".plate-setup-tab-field-left-side").empty().append(checkImage);
-
         this._applyCheckboxHandler(checkImage); // Adding handler for change the image when clicked
-
-
         field.checkbox = checkImage;
         this.allCheckboxes.push(linkedFieldId);
       },
@@ -861,7 +747,6 @@ var plateMapWidget = plateMapWidget || {};
       getCheckboxes: function getCheckboxes() {
         return this.allCheckboxes.filter(function (fieldId) {
           var field = this.fieldMap[fieldId];
-
           if (field.mainMultiplexField) {
             var subfields = this.globalSelectedMultiplexSubfield[field.mainMultiplexField.id] || [];
             return subfields.indexOf(field.id);
@@ -877,13 +762,10 @@ var plateMapWidget = plateMapWidget || {};
           var checkImage = subField.checkbox;
           var fieldId = checkImage.data("linkedFieldId");
           var clicked = checkImage.data("clicked");
-
           if (fieldId in changes) {
             clicked = Boolean(changes[fieldId]);
           }
-
           checkImage.data("clicked", clicked);
-
           if (clicked) {
             checkImage.html(that._assets.doImg);
             subFieldToInclude.push(subField.id);
@@ -896,25 +778,19 @@ var plateMapWidget = plateMapWidget || {};
       changeCheckboxes: function changeCheckboxes(changes, noUndoRedo) {
         var gsa = [];
         var multiplexCheckedSubField = {};
-
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i];
-
           if (field.checkbox) {
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.changeSubFieldsCheckboxes(field, changes);
             }
-
             var checkImage = field.checkbox;
             var fieldId = checkImage.data("linkedFieldId");
             var clicked = checkImage.data("clicked");
-
             if (fieldId in changes) {
               clicked = Boolean(changes[fieldId]);
             }
-
             checkImage.data("clicked", clicked);
-
             if (clicked) {
               gsa.push(fieldId);
               checkImage.html(this._assets.doImg);
@@ -923,14 +799,10 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
         }
-
         this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
         this.globalSelectedAttributes = gsa;
-
         this._clearPresetSelection();
-
         this._colorMixer();
-
         if (!noUndoRedo) {
           this.addToUndoRedo();
         }
@@ -943,7 +815,6 @@ var plateMapWidget = plateMapWidget || {};
           var fieldId = checkImage.data("linkedFieldId");
           var clicked = fieldIds.indexOf(fieldId) >= 0;
           checkImage.data("clicked", clicked);
-
           if (clicked) {
             checkImage.html(that._assets.doImg);
             subFieldToInclude.push(subField.id);
@@ -957,21 +828,17 @@ var plateMapWidget = plateMapWidget || {};
         fieldIds = fieldIds || [];
         var gsa = [];
         var multiplexCheckedSubField = {};
-
         for (var i = 0; i < this.fieldList.length; i++) {
           var field = this.fieldList[i];
-
           if (field.checkbox) {
             // special handling for multiplex field
             if (field.subFieldList) {
               multiplexCheckedSubField[field.id] = this.setSubFieldCheckboxes(field, fieldIds);
             }
-
             var checkImage = field.checkbox;
             var fieldId = checkImage.data("linkedFieldId");
             var clicked = fieldIds.indexOf(fieldId) >= 0;
             checkImage.data("clicked", clicked);
-
             if (clicked) {
               gsa.push(fieldId);
               checkImage.html(this._assets.doImg);
@@ -980,14 +847,10 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
         }
-
         this.globalSelectedMultiplexSubfield = multiplexCheckedSubField;
         this.globalSelectedAttributes = gsa;
-
         this._clearPresetSelection();
-
         this._colorMixer();
-
         if (!noUndoRedo) {
           this.addToUndoRedo();
         }
@@ -995,18 +858,14 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 plateMapWidget.colorManager = function () {
   return {
     // See these are color pairs for the gradient.
     colorPairs: [["#e6e6e6", "#808080"], ["#66e8ff", "#0082c8"], ["#ff7fb1", "#e6194b"], ["#a2ffb1", "#3cb44b"], ["#f784ff", "#911eb4"], ["#ffe897", "#f58231"], ["#6666ff", "#0000FF"], ["#ffff7f", "#ffe119"], ["#acffff", "#46f0f0"], ["#ff98ff", "#f032e6"], ["#ffffa2", "#d2f53c"], ["#ffffff", "#fabebe"], ["#66e6e6", "#008080"], ["#ffffff", "#e6beff"], ["#ffd48e", "#aa6e28"], ["#e66666", "#800000"], ["#ffffff", "#aaffc3"], ["#e6e666", "#808000"], ["#ffffff", "#ffd8b1"], ["#66a9ef", "#004389"], ["#ff6672", "#a7000c"], ["#66db72", "#00750c"], ["#b866db", "#520075"], ["#ffa966", "#b64300"], ["#ffff66", "#c0a200"], ["#6dffff", "#07b1b1"], ["#ff66ff", "#b100a7"], ["#f9ff66", "#93b600"], ["#ffe5e5", "#bb7f7f"], ["#66a7a7", "#004141"], ["#ffe5ff", "#a77fc0"], ["#d19566", "#6b2f00"], ["#ffffef", "#c0bb89"], ["#d1ffea", "#6bc084"], ["#a7a766", "#414100"], ["#ffffd8", "#c09972"], ["#a5ffff", "#3fc1ff"], ["#ffbef0", "#ff588a"], ["#e1fff0", "#7bf38a"], ["#ffc3ff", "#d05df3"], ["#ffffd6", "#ffc170"], ["#a5a5ff", "#3f3fff"], ["#ffffbe", "#ffff58"], ["#ebffff", "#85ffff"], ["#ffd7ff", "#ff71ff"], ["#a5ffff", "#3fbfbf"], ["#ffffcd", "#e9ad67"], ["#ffa5a5", "#bf3f3f"], ["#ffffa5", "#bfbf3f"]]
   };
 };
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   function select2close(ev) {
     if (ev.params.args.originalEvent) {
@@ -1019,19 +878,16 @@ var plateMapWidget = plateMapWidget || {};
       });
     }
   }
-
   function select2fix(input) {
     // prevents select2 open on clear as of v4.0.8
     input.on('select2:unselecting', select2close);
   }
-
   function select2setData(input, data, selected) {
     input.empty();
     var dataAdapter = input.data('select2').dataAdapter;
     dataAdapter.addOptions(dataAdapter.convertToOptions(data));
     input.val(selected);
   }
-
   plateMapWidget.createField = function () {
     // It creates those fields in the tab , there is 4 types of them.
     return {
@@ -1039,48 +895,34 @@ var plateMapWidget = plateMapWidget || {};
         switch (field.data.type) {
           case "text":
             this._createTextField(field);
-
             this._handleFieldUnits(field);
-
             break;
-
           case "numeric":
             this._createNumericField(field);
-
             this._handleFieldUnits(field);
-
             break;
-
           case "select":
             this._createSelectField(field);
-
             this._handleFieldUnits(field);
-
             break;
-
           case "multiselect":
             this._createMultiSelectField(field);
-
             break;
-
           case "boolean":
             this._createBooleanField(field);
-
             break;
-
           case "multiplex":
             this._createMultiplexField(field);
-
             break;
         }
       },
       _handleFieldUnits: function _handleFieldUnits(field) {
-        var data = field.data; // Adding unit
+        var data = field.data;
 
+        // Adding unit
         var units = data.units || [];
         var defaultUnit = data.defaultUnit || null;
         var unitInput = null;
-
         if (defaultUnit) {
           if (units.length) {
             if (units.indexOf(defaultUnit) < 0) {
@@ -1094,12 +936,10 @@ var plateMapWidget = plateMapWidget || {};
             defaultUnit = units[0];
           }
         }
-
         if (units.length) {
           field.units = units;
           field.hasUnits = true;
           field.defaultUnit = defaultUnit;
-
           this._makeFieldUnits(field);
         }
       },
@@ -1113,7 +953,6 @@ var plateMapWidget = plateMapWidget || {};
         field.setRegularValue = field.setValue;
         field.getRegularValue = field.getValue;
         field.getRegularText = field.getText;
-
         if (units.length) {
           if (units.length === 1) {
             var unitText = $("<div></div>").addClass("plate-setup-tab-unit");
@@ -1128,11 +967,9 @@ var plateMapWidget = plateMapWidget || {};
                 id: unit,
                 text: unit
               };
-
               if (unit === defaultUnit) {
                 selected = unit;
               }
-
               return o;
             });
             var opts = {
@@ -1144,91 +981,67 @@ var plateMapWidget = plateMapWidget || {};
             unitInput.val(selected);
           }
         }
-
         field.disabled = function (bool) {
           bool = field.disabledRegular(bool);
-
           if (unitInput) {
             unitInput.prop("disabled", bool);
           }
-
           return bool;
         };
-
         field.parseValue = function (value) {
           var v;
-
           if ($.isPlainObject(value)) {
             v = field.parseRegularValue(value.value);
-
             if (v === null) {
               return null;
             }
-
             return {
               value: v,
               unit: field.parseUnit(value.unit)
             };
           } else {
             v = field.parseRegularValue(value);
-
             if (v === null) {
               return null;
             }
-
             return {
               value: v,
               unit: field.defaultUnit
             };
           }
         };
-
         field.getValue = function () {
           var v = field.getRegularValue();
-
           if (v === null) {
             return null;
           } else {
-            var _ret = function () {
-              var returnVal = {
-                value: v,
-                unit: field.getUnit()
-              };
-
-              if (field.data.hasMultiplexUnit) {
-                // include unitTypeId and UnitId to returnVal
-                var unitMap = field.data.unitMap;
-
-                var _loop = function _loop(unitTypeKey) {
-                  if (!unitMap.hasOwnProperty(unitTypeKey)) {
-                    return "continue";
-                  }
-
-                  var unitTypeUnits = unitMap[unitTypeKey];
-                  unitTypeUnits.forEach(function (unit) {
-                    if (unit.text === returnVal.unit) {
-                      returnVal['unitTypeId'] = unitTypeKey;
-                      returnVal['unitId'] = unit.id;
-                    }
-                  });
-                };
-
-                for (var unitTypeKey in unitMap) {
-                  var _ret2 = _loop(unitTypeKey);
-
-                  if (_ret2 === "continue") continue;
+            var returnVal = {
+              value: v,
+              unit: field.getUnit()
+            };
+            if (field.data.hasMultiplexUnit) {
+              // include unitTypeId and UnitId to returnVal
+              var unitMap = field.data.unitMap;
+              var _loop2 = function _loop2(unitTypeKey) {
+                if (!unitMap.hasOwnProperty(unitTypeKey)) {
+                  return "continue";
                 }
-              }
-
-              return {
-                v: returnVal
+                var unitTypeUnits = unitMap[unitTypeKey];
+                unitTypeUnits.forEach(function (unit) {
+                  if (unit.text === returnVal.unit) {
+                    returnVal['unitTypeId'] = unitTypeKey;
+                    returnVal['unitId'] = unit.id;
+                  }
+                });
               };
-            }();
-
-            if (_typeof(_ret) === "object") return _ret.v;
+              for (var unitTypeKey in unitMap) {
+                var _ret = _loop2(unitTypeKey);
+                if (_ret === "continue") continue;
+              }
+            }
+            return returnVal;
           }
         };
-
         field.setValue = function (value) {
           if ($.isPlainObject(value)) {
             field.setUnit(value.unit || field.defaultUnit);
@@ -1238,13 +1051,11 @@ var plateMapWidget = plateMapWidget || {};
             field.setUnit(field.defaultUnit);
           }
         };
-
         field.setUnitOpts = function (opts) {
           field.units = opts || null;
           field.defaultUnit = null;
           var newUnits = [];
           var selected = null;
-
           if (field.units && field.units.length) {
             field.defaultUnit = field.units[0];
             newUnits = field.units.map(function (curUnit) {
@@ -1252,32 +1063,25 @@ var plateMapWidget = plateMapWidget || {};
                 id: curUnit,
                 text: curUnit
               };
-
               if (curUnit === field.defaultUnit) {
                 selected = curUnit;
               }
-
               return cleanUnit;
             });
           }
-
           select2setData(unitInput, newUnits, selected);
         };
-
         field.parseUnit = function (unit) {
           if (unit == null || unit === "") {
             return field.defaultUnit;
           }
-
           for (var i = 0; i < units.length; i++) {
             if (unit.toLowerCase() === units[i].toLowerCase()) {
               return units[i];
             }
           }
-
           throw "Invalid unit " + unit + " for field " + full_id;
         };
-
         field.getUnit = function () {
           if (unitInput) {
             return unitInput.val();
@@ -1285,44 +1089,36 @@ var plateMapWidget = plateMapWidget || {};
             return field.defaultUnit;
           }
         };
-
         field.setUnit = function (unit) {
           if (unitInput) {
             unit = unit || field.defaultUnit;
             unitInput.val(unit);
             unitInput.trigger("change.select2");
           }
-        }; // val now contains unit
+        };
 
-
+        // val now contains unit
         field.getText = function (val) {
           if (_typeof(val) === 'object' && val) {
             var v = val.value;
             var u = val.unit;
-
             if (v == null) {
               return "";
             }
-
             v = v.toString();
-
             if (!u) {
               u = defaultUnit;
             }
-
             if (u) {
               v = v + " " + u;
             }
-
             return v;
           } else {
             return field.getRegularText(val);
           }
         };
-
         field.parseText = function (v) {
           var value = field.parseValue(v);
-
           if (value && _typeof(value) === "object") {
             return field.getRegularText(value.value) + value.unit;
           } else if (value != null) {
@@ -1331,52 +1127,41 @@ var plateMapWidget = plateMapWidget || {};
             return null;
           }
         };
-
         if (unitInput) {
           unitInput.on("change", function () {
             field.onChange();
           });
         }
-
         field.unitInput = unitInput;
       },
       _createTextField: function _createTextField(field) {
         var input = this._createElement("<input>").attr("id", field.full_id).addClass("plate-setup-tab-input");
-
         field.root.find(".plate-setup-tab-field-container").append(input);
-
         field.parseValue = function (v) {
           if (v) {
             v = String(v);
           } else {
             v = null;
           }
-
           return v;
         };
-
         field.getValue = function () {
           return input.val().trim() || null;
         };
-
         field.setValue = function (v) {
           input.val(v);
         };
-
         field.getText = function (v) {
           if (v == null) {
             return "";
           }
-
           return v;
         };
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
-
         field.parseText = field.parseValue;
         input.on("input", function () {
           field.onChange();
@@ -1389,105 +1174,80 @@ var plateMapWidget = plateMapWidget || {};
           placeholder: "select"
         };
         var data_specified = false;
-
         if (config.options) {
           opts.data = config.options;
           data_specified = true;
         }
-
         if (config.ajax) {
           opts.ajax = ajax;
           data_specified = true;
         }
-
         if (!data_specified) {
           throw "Must specify data or ajax";
         }
-
         return opts;
       },
       _createSelectField: function _createSelectField(field) {
         var full_id = field.full_id;
         var that = this;
-
         var input = this._createElement("<select/>").attr("id", full_id).addClass("plate-setup-tab-select-field").addClass("plate-setup-tab-input");
-
         field.root.find(".plate-setup-tab-field-container").append(input);
-
         var opts = that._createOpts(field.data);
-
         var optMap = {};
         opts.data.forEach(function (opt) {
           optMap[String(opt.id)] = opt;
         });
         input.select2(opts);
         select2fix(input);
-
         var parseValue = function parseValue(value) {
           var v = value;
-
           if (v === "") {
             v = null;
           }
-
           if (v == null) {
             return null;
           }
-
           v = String(v);
-
           if (v in optMap) {
             return optMap[v].id;
           } else {
             throw "Invalid value " + value + " for select field " + full_id;
           }
         };
-
         field.parseValue = parseValue;
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
-
         field.getValue = function () {
           return parseValue(input.val());
         };
-
         field.setValue = function (v) {
           input.val(v);
           input.trigger("change.select2");
         };
-
         field.getText = function (v) {
           if (v == null) {
             return "";
           }
-
           return optMap[String(v)].text;
         };
-
         field.parseText = function (value) {
           var v = value;
-
           if (v === "") {
             v = null;
           }
-
           if (v == null) {
             return null;
           }
-
           v = String(v);
-
           if (v in optMap) {
             return optMap[v].text;
           } else {
             throw "Invalid text value " + value + " for select field " + full_id;
           }
         };
-
         input.on("change", function () {
           field.onChange();
         });
@@ -1496,14 +1256,10 @@ var plateMapWidget = plateMapWidget || {};
       _createMultiSelectField: function _createMultiSelectField(field) {
         var full_id = field.full_id;
         var that = this;
-
         var input = this._createElement("<select/>").attr("id", full_id).addClass("plate-setup-tab-multiselect-field");
-
         input.attr("multiple", "multiple");
         field.root.find(".plate-setup-tab-field-container").append(input);
-
         var opts = that._createOpts(field.data);
-
         opts.multiple = true;
         var optMap = {};
         opts.data.forEach(function (opt) {
@@ -1511,87 +1267,69 @@ var plateMapWidget = plateMapWidget || {};
         });
         input.select2(opts);
         select2fix(input);
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           input.prop("disabled", bool);
           return bool;
         };
-
         field._parseOne = function (val) {
           val = String(val);
-
           if (val in optMap) {
             return optMap[val].id;
           } else {
             throw "Invalid value " + val + " for multiselect field " + full_id;
           }
         };
-
         field._parseMany = function (vals) {
           if (vals && vals.length) {
             vals = vals.map(field._parseOne, this);
           } else {
             vals = null;
           }
-
           return vals;
         };
-
         field.parseValue = function (value) {
           return field._parseMany(value);
         };
-
         field.getValue = function () {
           return field._parseMany(input.val());
         };
-
         field.setValue = function (v) {
           v = v || [];
           input.val(v);
           input.trigger("change.select2");
         };
-
         field.getText = function (v) {
           if (v == null) {
             return "";
           }
-
           if (v.length > 0) {
             return v.map(function (v) {
               return optMap[String(v)].text;
             }).join("; ");
           }
-
           return "";
         };
-
         field.multiOnChange = function (added, removed) {
           if (added) {
             added = added.id;
           }
-
           if (removed) {
             removed = removed.id;
           }
-
           var data = {};
           data[field.id] = {
             multi: true,
             added: added,
             removed: removed
           };
-
           that._addAllData(data);
         };
-
         field.parseText = function (value) {
           var v = value;
-
           if (v && v.length) {
             v = v.map(function (opt) {
               opt = String(opt);
-
               if (opt in optMap) {
                 return optMap[opt].text;
               } else {
@@ -1601,13 +1339,10 @@ var plateMapWidget = plateMapWidget || {};
           } else {
             v = null;
           }
-
           return v;
         };
-
         input.on("select2:select", function (e) {
           var v = field._parseOne(e.params.data.id);
-
           v = {
             id: v
           };
@@ -1615,94 +1350,71 @@ var plateMapWidget = plateMapWidget || {};
         });
         input.on("select2:unselect", function (e) {
           var v = field._parseOne(e.params.data.id);
-
           v = {
             id: v
           };
           field.multiOnChange(null, v);
         });
         field.input = input;
-
         that._createDeleteButton(field);
       },
       _createNumericField: function _createNumericField(field) {
         var full_id = field.full_id;
         var data = field.data;
-
         var input = this._createElement("<input>").addClass("plate-setup-tab-input").attr("placeholder", data.placeholder || "").attr("id", full_id);
-
         field.root.find(".plate-setup-tab-field-container").append(input);
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
-
         var parseValue = function parseValue(value) {
           if (value == null) {
             return null;
           }
-
           var v = String(value).trim();
-
           if (v === "") {
             return null;
           }
-
           return v;
         };
-
         field.parseValue = parseValue;
-
         field.getValue = function () {
           var v = input.val().trim();
-
           if (v === "") {
             v = null;
           }
-
           return v;
         };
-
         field.setValue = function (value) {
           input.val(value);
         };
-
         var getText = function getText(v) {
           if (v == null) {
             return "";
           }
-
           v = v.toString();
           return v;
         };
-
         field.getText = getText;
-
         field.parseText = function (v) {
           return getText(parseValue(v));
         };
-
         input.on("input", function () {
           var v = field.getRegularValue();
-
           if (isNaN(v)) {
             //flag field as invalid
             input.addClass("invalid");
           } else {
             input.removeClass("invalid");
           }
-
           field.onChange();
         });
         field.input = input;
       },
       _createBooleanField: function _createBooleanField(field) {
         var full_id = field.full_id;
-
         var input = this._createElement("<select/>").attr("id", full_id).addClass("plate-setup-tab-select-field");
-
         field.root.find(".plate-setup-tab-field-container").append(input);
         var tval = {
           id: "true",
@@ -1720,20 +1432,16 @@ var plateMapWidget = plateMapWidget || {};
         };
         input.select2(opts);
         select2fix(input);
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           return bool;
         };
-
         field.parseValue = function (value) {
           if (value == null) {
             return null;
           }
-
           var v = String(value).trim().toLowerCase();
-
           if (v === "true") {
             v = true;
           } else if (v === "false") {
@@ -1743,25 +1451,19 @@ var plateMapWidget = plateMapWidget || {};
           } else {
             throw "Invalid value " + value + " for boolean field " + full_id;
           }
-
           return v;
         };
-
         field.getValue = function () {
           var v = input.val();
-
           switch (v) {
             case "true":
               return true;
-
             case "false":
               return false;
-
             default:
               return null;
           }
         };
-
         field.setValue = function (v) {
           if (v === 1 || v === true || v === "true") {
             v = "true";
@@ -1770,19 +1472,15 @@ var plateMapWidget = plateMapWidget || {};
           } else {
             v = null;
           }
-
           input.val(v);
           input.trigger("change.select2");
         };
-
         field.getText = function (v) {
           if (v == null) {
             return "";
           }
-
           return v.toString();
         };
-
         field.parseText = field.parseValue;
         input.on("change", function () {
           field.onChange();
@@ -1790,15 +1488,13 @@ var plateMapWidget = plateMapWidget || {};
         field.input = input;
       },
       _createMultiplexField: function _createMultiplexField(field) {
-        var that = this; // make correct multiplex data
+        var that = this;
+        // make correct multiplex data
+        this._createMultiSelectField(field);
 
-        this._createMultiSelectField(field); // single select
-
-
+        // single select
         var nameContainer1 = this._createElement("<div></div>").addClass("plate-setup-tab-name-singleSelect").text("Select to edit");
-
         var fieldContainer1 = this._createElement("<div></div>").addClass("plate-setup-tab-field-container-singleSelect");
-
         field.root.find(".plate-setup-tab-field-right-side").append(nameContainer1, fieldContainer1);
         field.singleSelect = this._createElement("<select/>").attr("id", field.full_id + "SingleSelect").addClass("plate-setup-tab-multiplex-single-select-field");
         field.singleSelect.appendTo(fieldContainer1);
@@ -1811,33 +1507,25 @@ var plateMapWidget = plateMapWidget || {};
         field.singleSelect.select2(opts);
         select2fix(field.singleSelect);
         var multiselectSetValue = field.setValue;
-
         field.singleSelectValue = function () {
           var v = field.singleSelect.val();
-
           if (v === "") {
             return null;
           }
-
           if (v == null) {
             return null;
           }
-
           if (v == '[ALL]') {
             return v;
           }
-
           return field._parseOne(v);
         };
-
         var setSingleSelectOptions = function setSingleSelectOptions(data, selected) {
           data = data || [];
-
           if (field.allSelectedMultipleVal) {
             var count = Object.values(field.allSelectedMultipleVal).reduce(function (a, b) {
               return a + b;
             }, 0);
-
             if (count) {
               var all_option = {
                 id: '[ALL]',
@@ -1847,7 +1535,6 @@ var plateMapWidget = plateMapWidget || {};
               data = [all_option].concat(data);
             }
           }
-
           if (!selected) {
             if (data.length) {
               selected = data[0].id;
@@ -1855,17 +1542,14 @@ var plateMapWidget = plateMapWidget || {};
               selected = null;
             }
           }
-
           select2setData(field.singleSelect, data, selected);
           field.singleSelect.prop("disabled", data.length === 0);
           field.singleSelect.trigger("change.select2");
         };
-
         var singleSelectChange = function singleSelectChange() {
           var v = field.singleSelectValue();
           field.updateSubFieldUnitOpts(v);
           var curSubField = null;
-
           if (v === '[ALL]') {
             curSubField = field.allSelectedMultipleData;
           } else {
@@ -1876,7 +1560,6 @@ var plateMapWidget = plateMapWidget || {};
               }
             });
           }
-
           if (curSubField) {
             // setvalue for subfield
             field.subFieldList.forEach(function (subField) {
@@ -1889,23 +1572,17 @@ var plateMapWidget = plateMapWidget || {};
               subField.setValue(null);
             });
           }
-
           that.readOnlyHandler();
         };
-
         setSingleSelectOptions([]);
         field.singleSelect.on("change.select2", singleSelectChange);
-
         field._changeMultiFieldValue = function (added, removed) {
           var newSubFieldValue = {};
-
           for (var i = 0; i < field.subFieldList.length; i++) {
             var subFieldId = field.subFieldList[i].id;
             newSubFieldValue[subFieldId] = null;
           }
-
           var val;
-
           if (added) {
             if (added.value) {
               val = added.value;
@@ -1913,13 +1590,11 @@ var plateMapWidget = plateMapWidget || {};
               newSubFieldValue[field.id] = added.id;
               val = newSubFieldValue;
             }
-
             added = {
               id: added.id,
               value: val
             };
           }
-
           if (removed) {
             if (removed.value) {
               val = removed.value;
@@ -1927,65 +1602,53 @@ var plateMapWidget = plateMapWidget || {};
               newSubFieldValue[field.id] = removed.id;
               val = newSubFieldValue;
             }
-
             removed = {
               id: removed.id,
               value: val
             };
           }
-
           var data = {};
           data[field.id] = {
             multi: true,
             added: added,
             removed: removed
           };
-
           that._addAllData(data);
         };
-
         field.setValue = function (v) {
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
           var multiselectValues = null;
-
           if (v && v.length) {
             multiselectValues = v.map(function (val) {
               return val[field.id];
             });
           }
-
           multiselectSetValue(multiselectValues);
           var newOptions = field.input.select2('data') || [];
           setSingleSelectOptions(newOptions, field.singleSelectValue());
           singleSelectChange();
         };
-
         field.disabled = function (bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
           field.subFieldList.forEach(function (subField) {
             subField.disabled(bool);
           });
-
           if (bool) {
             nameContainer1.text("Select to inspect");
           } else {
             nameContainer1.text("Select to edit");
           }
-
           return bool;
         };
-
         field.parseValue = function (value) {
           var v = value;
-
           if (v && v.length) {
             v = v.map(function (opt) {
               var valMap = {};
               valMap[field.id] = opt[field.id];
-
-              var _loop2 = function _loop2(subFieldId) {
+              var _loop3 = function _loop3(subFieldId) {
                 if (opt.hasOwnProperty(subFieldId)) {
                   field.subFieldList.forEach(function (subField) {
                     if (subField.id === subFieldId) {
@@ -1994,20 +1657,16 @@ var plateMapWidget = plateMapWidget || {};
                   });
                 }
               };
-
               for (var subFieldId in opt) {
-                _loop2(subFieldId);
+                _loop3(subFieldId);
               }
-
               return valMap;
             });
           } else {
             v = null;
           }
-
           return v;
         };
-
         field.updateSubFieldUnitOpts = function (val) {
           var curOpts;
           field.data.options.forEach(function (opt) {
@@ -2025,24 +1684,20 @@ var plateMapWidget = plateMapWidget || {};
             }
           });
         };
-
         field.multiOnChange = function (added, removed) {
           field._changeMultiFieldValue(added, removed);
-
           var v = field.getValue();
           var curData = field.detailData;
           var curIds = [];
-          var curOpt = null; //reshape data for saveback
-
+          var curOpt = null;
+          //reshape data for saveback
           if (curData) {
             curIds = curData.map(function (val) {
               return val[field.id];
             });
           }
-
           var newMultiplexVal = [];
           var selectList = [];
-
           if (v) {
             v.forEach(function (selectedVal) {
               if (curData) {
@@ -2051,9 +1706,8 @@ var plateMapWidget = plateMapWidget || {};
                     newMultiplexVal.push(val);
                   }
                 });
-              } // cases when adding new data
-
-
+              }
+              // cases when adding new data
               if (curIds.indexOf(selectedVal) < 0) {
                 var newVal = {};
                 newVal[field.id] = selectedVal;
@@ -2078,7 +1732,6 @@ var plateMapWidget = plateMapWidget || {};
                           subfield.disabled(false);
                         }
                       }
-
                       var val = {
                         value: null,
                         unit: subfield.defaultUnit
@@ -2091,8 +1744,9 @@ var plateMapWidget = plateMapWidget || {};
                 });
                 newMultiplexVal.push(newVal);
               }
-            }); // make data for single select options
+            });
 
+            // make data for single select options
             v.forEach(function (selectVal) {
               field.data.options.forEach(function (opt) {
                 if (opt.id === selectVal) {
@@ -2101,7 +1755,6 @@ var plateMapWidget = plateMapWidget || {};
               });
             });
             var selected = field.singleSelectValue();
-
             for (var i = 0; i < v.length; i++) {
               if (added && added.id === v[i]) {
                 curOpt = v[i];
@@ -2113,130 +1766,97 @@ var plateMapWidget = plateMapWidget || {};
               }
             }
           }
-
           field.detailData = newMultiplexVal;
           setSingleSelectOptions(selectList, curOpt);
           singleSelectChange();
         };
-
         field.getText = function (v) {
           if (v === null) {
             return "";
-          } // get subfields that is selected from the checkbox
-
-
-          if (field.id in that.globalSelectedMultiplexSubfield) {
-            var _ret3 = function () {
-              var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
-              var returnVal = [];
-
-              var _loop3 = function _loop3(valIdx) {
-                if (!v.hasOwnProperty(valIdx)) {
-                  return "continue";
-                }
-
-                var subV = v[valIdx];
-                var subText = [];
-
-                for (var optId in field.data.options) {
-                  if (field.data.options.hasOwnProperty(optId)) {
-                    var opt = field.data.options[optId];
-
-                    if (opt.id === subV[field.id]) {
-                      subText.push(opt.text);
-                    }
-                  }
-                }
-
-                field.subFieldList.forEach(function (subField) {
-                  if (checkedSubfields.indexOf(subField.id) >= 0) {
-                    var x = subField.getText(subV[subField.id]);
-                    subText.push(subField.name + ": " + x);
-                  }
-                });
-                returnVal.push("{" + subText.join(", ") + "}");
-              };
-
-              for (var valIdx in v) {
-                var _ret4 = _loop3(valIdx);
-
-                if (_ret4 === "continue") continue;
-              }
-
-              return {
-                v: returnVal.join(";")
-              };
-            }();
-
-            if (_typeof(_ret3) === "object") return _ret3.v;
           }
-        };
-
-        field.parseText = function (v) {
-          if (v === null) {
-            return "";
-          } else {
+          // get subfields that is selected from the checkbox
+          if (field.id in that.globalSelectedMultiplexSubfield) {
+            var checkedSubfields = that.globalSelectedMultiplexSubfield[field.id];
             var returnVal = [];
-
-            var _loop4 = function _loop4(valIdx) {
+            var _loop4 = function _loop4() {
               if (!v.hasOwnProperty(valIdx)) {
                 return "continue";
               }
-
               var subV = v[valIdx];
               var subText = [];
-
               for (var optId in field.data.options) {
                 if (field.data.options.hasOwnProperty(optId)) {
                   var opt = field.data.options[optId];
-
                   if (opt.id === subV[field.id]) {
                     subText.push(opt.text);
                   }
                 }
               }
-
+              field.subFieldList.forEach(function (subField) {
+                if (checkedSubfields.indexOf(subField.id) >= 0) {
+                  var x = subField.getText(subV[subField.id]);
+                  subText.push(subField.name + ": " + x);
+                }
+              });
+              returnVal.push("{" + subText.join(", ") + "}");
+            };
+            for (var valIdx in v) {
+              var _ret2 = _loop4();
+              if (_ret2 === "continue") continue;
+            }
+            return returnVal.join(";");
+          }
+        };
+        field.parseText = function (v) {
+          if (v === null) {
+            return "";
+          } else {
+            var returnVal = [];
+            var _loop5 = function _loop5() {
+              if (!v.hasOwnProperty(valIdx)) {
+                return "continue";
+              }
+              var subV = v[valIdx];
+              var subText = [];
+              for (var optId in field.data.options) {
+                if (field.data.options.hasOwnProperty(optId)) {
+                  var opt = field.data.options[optId];
+                  if (opt.id === subV[field.id]) {
+                    subText.push(opt.text);
+                  }
+                }
+              }
               field.subFieldList.forEach(function (subField) {
                 var x = subField.getText(subV[subField.id]);
-
                 if (x) {
                   subText.push(x);
                 }
               });
               returnVal.push(subText);
             };
-
             for (var valIdx in v) {
-              var _ret5 = _loop4(valIdx);
-
-              if (_ret5 === "continue") continue;
+              var _ret3 = _loop5();
+              if (_ret3 === "continue") continue;
             }
-
             return returnVal;
           }
         };
-
         field.checkMultiplexCompletion = function (valList) {
           var valCount = 0;
           var completionPct = 0;
           var include = false;
-
           function getSubfieldStatus(vals) {
             var req = 0;
             var fill = 0;
-
             for (var subFieldId in field.subFieldList) {
               if (!field.subFieldList.hasOwnProperty(subFieldId)) {
                 continue;
               }
-
               var subField = field.subFieldList[subFieldId];
               var curVal = vals[subField.id];
-
               if (subField.required) {
                 include = true;
                 req++;
-
                 if (_typeof(curVal) === 'object' && curVal) {
                   if (curVal.value) {
                     fill++;
@@ -2246,11 +1866,10 @@ var plateMapWidget = plateMapWidget || {};
                 }
               }
             }
-
             return fill / req;
-          } // for cases has value in multiplex field
+          }
 
-
+          // for cases has value in multiplex field
           if (valList) {
             if (valList.length > 0) {
               for (var idx in valList) {
@@ -2268,23 +1887,21 @@ var plateMapWidget = plateMapWidget || {};
             include = true;
             valCount = 1;
           }
-
           return {
             include: include,
             completionPct: completionPct / valCount
           };
-        }; // valList contains all of the vals for selected val
+        };
 
-
+        // valList contains all of the vals for selected val
         field.applyMultiplexSubFieldColor = function (valList) {
           function updateSubFieldWarningMap(vals) {
             for (var subFieldId in field.subFieldList) {
               if (!field.subFieldList.hasOwnProperty(subFieldId)) {
                 continue;
               }
-
-              var subField = field.subFieldList[subFieldId]; // loop through each well's multiplexval list
-
+              var subField = field.subFieldList[subFieldId];
+              // loop through each well's multiplexval list
               if (vals === null) {
                 if (field.required && subField.required) {
                   subFieldWarningMap[subField.id].warningStatus.push(true);
@@ -2299,9 +1916,7 @@ var plateMapWidget = plateMapWidget || {};
                     if (!vals.hasOwnProperty(multiplexIdx)) {
                       continue;
                     }
-
                     var curVal = vals[multiplexIdx][subField.id];
-
                     if (subField.required) {
                       if (_typeof(curVal) === 'object' && curVal) {
                         if (!curVal.value) {
@@ -2320,7 +1935,6 @@ var plateMapWidget = plateMapWidget || {};
               }
             }
           }
-
           var subFieldWarningMap = {};
           field.subFieldList.forEach(function (subField) {
             if (subField.required) {
@@ -2332,20 +1946,17 @@ var plateMapWidget = plateMapWidget || {};
           });
           valList.forEach(function (multiplexVals) {
             updateSubFieldWarningMap(multiplexVals);
-          }); // turn off main field when all subfield are filled
+          });
+          // turn off main field when all subfield are filled
 
           var mainFieldStatus = [];
-
           for (var subFieldId in subFieldWarningMap) {
             if (!subFieldWarningMap.hasOwnProperty(subFieldId)) {
               continue;
             }
-
             var subField = subFieldWarningMap[subFieldId].field;
-
             if (subFieldWarningMap[subFieldId].warningStatus.indexOf(true) >= 0) {
               var text = subField.name + " is a required subfield for " + field.name + ", please make sure all " + field.name + " have " + subField.name;
-
               if (field.required) {
                 that.fieldWarningMsg(subField, text, true);
                 mainFieldStatus.push(true);
@@ -2358,25 +1969,19 @@ var plateMapWidget = plateMapWidget || {};
               mainFieldStatus.push(false);
             }
           }
-
           var mainFieldWarning = mainFieldStatus.indexOf(true) >= 0;
           var warningText;
-
           if (field.required) {
             warningText = field.name + " is a required field, please also fix missing required subfield(s) below";
           } else {
             warningText = field.name + " is not a required field, please fix missing required subfield(s) below or remove selected " + field.name;
           }
-
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
         };
-
         field.parseMainFieldVal = function (val) {
           var optMap = field.data.options;
-
           for (var idx = 0; idx < optMap.length; idx++) {
             var curOpt = optMap[idx];
-
             if (curOpt.id === val) {
               return curOpt.text;
             }
@@ -2387,37 +1992,29 @@ var plateMapWidget = plateMapWidget || {};
         var that = this;
         var valMap = field.allSelectedMultipleVal;
         var valToRemove;
-
         if (valMap) {
           valToRemove = Object.keys(valMap);
         } else {
           valToRemove = [];
         }
-
         var dialogDiv = $("<div/>").addClass("plate-modal");
         this.container.append(dialogDiv);
-
         function killDialog() {
           dialogDiv.hide();
           dialogDiv.remove();
         }
-
         var dialogContent = $("<div/>").addClass("plate-modal-content").css('width', '550px').appendTo(dialogDiv);
         var tableArea = $("<div/>").appendTo(dialogContent);
         var buttonRow = $("<div/>").addClass("dialog-buttons").css("justify-content", "flex-end").appendTo(dialogContent);
-
         if (valToRemove.length > 0) {
           // apply CSS property for table
           $("<p/>").text(field.name + " in selected wells: choose items to delete and click the delete button below").appendTo(tableArea);
-
           var table = that._deleteDialogTable(field, valMap);
-
           table.appendTo(tableArea);
           table.addClass("plate-popout-table");
           table.find('td').addClass("plate-popout-td");
           table.find('th').addClass("plate-popout-th");
           table.find('tr').addClass("plate-popout-tr");
-
           if (!that.readOnly) {
             var deleteCheckedButton = $("<button class='multiple-field-manage-delete-button'>Delete Checked Items</button>");
             buttonRow.append(deleteCheckedButton);
@@ -2427,8 +2024,8 @@ var plateMapWidget = plateMapWidget || {};
                 field.multiOnChange(null, {
                   id: val
                 });
-              }); // refresh selected fields after updating the multiplex field value
-
+              });
+              // refresh selected fields after updating the multiplex field value
               that.decideSelectedFields();
               killDialog();
             });
@@ -2436,12 +2033,10 @@ var plateMapWidget = plateMapWidget || {};
         } else {
           $("<p/>").text("No " + field.name + " in the selected wells").appendTo(tableArea);
         }
-
         var cancelButton = $("<button>Cancel</button>");
         buttonRow.append(cancelButton);
         cancelButton.click(killDialog);
         dialogDiv.show();
-
         window.onclick = function (event) {
           if (event.target === dialogDiv[0]) {
             killDialog();
@@ -2451,11 +2046,9 @@ var plateMapWidget = plateMapWidget || {};
       _deleteDialogTable: function _deleteDialogTable(field, valMap) {
         var that = this;
         var colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
-
         if (!that.readOnly) {
           colName.push("Delete");
         }
-
         var table = $('<table/>');
         var thead = $('<thead/>').appendTo(table);
         var tr = $('<tr/>').appendTo(thead);
@@ -2466,11 +2059,9 @@ var plateMapWidget = plateMapWidget || {};
         field.data.options.forEach(function (opt) {
           if (opt.id in valMap) {
             var _tr = $('<tr/>').appendTo(tbody);
-
             var checkbox = $("<input type='checkbox'>").prop("value", opt.id);
             $("<td/>").text(opt.text).appendTo(_tr);
             $("<td/>").text(valMap[opt.id]).appendTo(_tr);
-
             if (!that.readOnly) {
               $("<td/>").append(checkbox).appendTo(_tr);
             }
@@ -2483,9 +2074,7 @@ var plateMapWidget = plateMapWidget || {};
         var deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");
         deleteButton.id = field.id + "Delete";
         deleteButton.text("Manage " + field.name + "...");
-
         var buttonContainer = that._createElement("<div></div>").addClass("plate-setup-remove-all-button-container");
-
         buttonContainer.append(deleteButton);
         field.deleteButton = deleteButton;
         field.root.find(".plate-setup-tab-field-right-side").append(buttonContainer);
@@ -2496,9 +2085,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.engine = function (THIS) {
     // Methods which look after data changes and stack up accordingly
@@ -2515,9 +2102,7 @@ var plateMapWidget = plateMapWidget || {};
             if (!well.hasOwnProperty(prop)) {
               continue;
             }
-
             var curVal = well[prop];
-
             if (curVal !== null && curVal !== undefined) {
               if (Array.isArray(curVal)) {
                 if (curVal.length > 0) {
@@ -2528,7 +2113,6 @@ var plateMapWidget = plateMapWidget || {};
               }
             }
           }
-
           return true;
         },
         searchAndStack: function searchAndStack() {
@@ -2536,27 +2120,21 @@ var plateMapWidget = plateMapWidget || {};
           this.stackUpWithColor = {};
           this.stackPointer = 1;
           var derivativeJson = {};
-
           for (var idx in this.derivative) {
             if (!this.derivative.hasOwnProperty(idx)) {
               continue;
             }
-
             var data = this.derivative[idx];
             var wellData = {};
-
             for (var i = 0; i < THIS.globalSelectedAttributes.length; i++) {
               var attr = THIS.globalSelectedAttributes[i];
-
               if (attr in THIS.globalSelectedMultiplexSubfield) {
                 var selectedSubFields = THIS.globalSelectedMultiplexSubfield[attr];
                 var newMultiplexVal = [];
-
-                var _loop5 = function _loop5(multiplexIdx) {
+                var _loop6 = function _loop6() {
                   if (!data[attr].hasOwnProperty(multiplexIdx)) {
                     return "continue";
                   }
-
                   var curMultiplexVals = data[attr][multiplexIdx];
                   var newVal = {};
                   newVal[attr] = curMultiplexVals[attr];
@@ -2565,13 +2143,10 @@ var plateMapWidget = plateMapWidget || {};
                   });
                   newMultiplexVal.push(newVal);
                 };
-
                 for (var multiplexIdx in data[attr]) {
-                  var _ret6 = _loop5(multiplexIdx);
-
-                  if (_ret6 === "continue") continue;
+                  var _ret4 = _loop6();
+                  if (_ret4 === "continue") continue;
                 }
-
                 wellData[attr] = newMultiplexVal;
               } else {
                 if (data[attr] != null) {
@@ -2579,14 +2154,12 @@ var plateMapWidget = plateMapWidget || {};
                 }
               }
             }
-
             if ($.isEmptyObject(wellData)) {
               derivativeJson[idx] = null;
             } else {
               derivativeJson[idx] = JSON.stringify(wellData);
             }
           }
-
           while (!$.isEmptyObject(derivativeJson)) {
             var keys = Object.keys(derivativeJson).map(parseFloat);
             keys.sort(function (a, b) {
@@ -2595,7 +2168,6 @@ var plateMapWidget = plateMapWidget || {};
             var refDerivativeIndex = keys[0];
             var referenceDerivative = derivativeJson[refDerivativeIndex];
             var arr = [];
-
             if (!referenceDerivative) {
               // if no checked box has value, push it to first spot
               if (this.stackUpWithColor[0]) {
@@ -2603,20 +2175,17 @@ var plateMapWidget = plateMapWidget || {};
               } else {
                 this.stackUpWithColor[0] = [refDerivativeIndex];
               }
-
               delete derivativeJson[refDerivativeIndex];
             } else {
               // if checked boxes have values
               for (var _i = 0; _i < keys.length; _i++) {
                 var _idx = keys[_i];
-
                 if (referenceDerivative === derivativeJson[_idx]) {
                   arr.push(_idx);
                   this.stackUpWithColor[this.stackPointer] = arr;
                   delete derivativeJson[_idx];
                 }
               }
-
               if (arr.length > 0) this.stackPointer++;
             }
           }
@@ -2625,54 +2194,44 @@ var plateMapWidget = plateMapWidget || {};
           var wholeNoTiles = 0;
           var wholePercentage = 0;
           THIS.addBottomTableHeadings();
-
           for (var i = 0; i < THIS.allTiles.length; i++) {
             var tile = THIS.allTiles[i];
             THIS.setTileVisible(tile, false);
           }
-
           for (var color = 0; color < this.stackPointer; color++) {
             var arr = this.stackUpWithColor[color];
-
             if (arr) {
               THIS.addBottomTableRow(color, arr);
-
               for (var _i2 = 0; _i2 < arr.length; _i2++) {
                 wholeNoTiles++;
                 var index = this.stackUpWithColor[color][_i2];
                 var _tile = THIS.allTiles[index];
                 var well = this.derivative[index];
                 this.colorMap.set(index, color);
-                THIS.setTileColor(_tile, color); // Checks if all the required fields are filled
-
+                THIS.setTileColor(_tile, color);
+                // Checks if all the required fields are filled
                 var completion = this.checkCompletion(well, _tile);
                 THIS.setTileComplete(_tile, completion === 1);
                 wholePercentage = wholePercentage + completion;
               }
             }
           }
-
           wholePercentage = Math.floor(100 * wholePercentage / wholeNoTiles);
-
           if (isNaN(wholePercentage)) {
             THIS.overLayTextContainer.text("Completion Percentage: 0%");
           } else {
             THIS.overLayTextContainer.text("Completion Percentage: " + wholePercentage + "%");
           }
-
           THIS.selectObjectInBottomTab();
         },
         checkCompletion: function checkCompletion(wellData) {
           var req = 0;
           var fill = 0;
-
           for (var i = 0; i < THIS.fieldList.length; i++) {
             var field = THIS.fieldList[i];
-
             if (field.checkMultiplexCompletion) {
               // also apply color
               var multiplexStatus = field.checkMultiplexCompletion(wellData[field.id]);
-
               if (multiplexStatus.include) {
                 fill += multiplexStatus.completionPct;
                 req++;
@@ -2680,27 +2239,22 @@ var plateMapWidget = plateMapWidget || {};
             } else {
               if (field.required) {
                 req++;
-
                 if (wellData[field.id] !== null) {
                   fill++;
                 }
               }
             }
           }
-
           if (req === fill) {
             return 1;
           }
-
           return fill / req;
         }
       }
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 plateMapWidget.assets = function () {
   return {
     _assets: {
@@ -2710,9 +2264,7 @@ plateMapWidget.assets = function () {
     }
   };
 };
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget["interface"] = function () {
     // interface holds all the methods to put the interface in place
@@ -2725,36 +2277,25 @@ var plateMapWidget = plateMapWidget || {};
         this.topRight = this._createElement(divIdentifier).addClass("plate-setup-top-right");
         this.overLayContainer = this._createElement(divIdentifier).addClass("plate-setup-overlay-container");
         this.canvasContainer = this._createElement(divIdentifier).addClass("plate-setup-canvas-container");
-
         this._createOverLay();
-
         $(this.topLeft).append(this.overLayContainer);
         $(this.topLeft).append(this.canvasContainer);
         $(this.topSection).append(this.topLeft);
         $(this.topSection).append(this.topRight);
         $(this.container).append(this.topSection);
         $(this.element).append(this.container);
-
         this._createSvg();
-
         this._createTabAtRight();
-
         this._createTabs();
-
-        this._placePresetTabs(); // Bottom of the screen
-
-
+        this._placePresetTabs();
+        // Bottom of the screen
         this._bottomScreen();
-
         this.bottomForFirstTime();
         var that = this;
-
         this._setShortcuts();
-
         $(document.body).keyup(function (e) {
           that._handleShortcuts(e);
         });
-
         this._configureUndoRedoArray();
       },
       _createElement: function _createElement(element) {
@@ -2794,7 +2335,6 @@ var plateMapWidget = plateMapWidget || {};
               } else {
                 this.undo();
               }
-
               e.preventDefault();
             } else if (e.keyCode === 89) {
               this.redo();
@@ -2806,9 +2346,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 plateMapWidget.loadPlate = function () {
   // Methods which look after data changes and stack up accordingly
   // Remember THIS points to plateMapWidget and 'this' points to engine
@@ -2816,10 +2354,8 @@ plateMapWidget.loadPlate = function () {
     loadPlate: function loadPlate(data) {
       //sanitize input
       var derivative;
-
       if (data.hasOwnProperty('wells')) {
         derivative = {};
-
         for (var address in data.wells) {
           var well = data.wells[address];
           var index = this.addressToIndex(address);
@@ -2828,15 +2364,12 @@ plateMapWidget.loadPlate = function () {
       } else {
         derivative = this.engine.derivative;
       }
-
       var checkboxes;
-
       if (data.hasOwnProperty('checkboxes')) {
         checkboxes = this.sanitizeCheckboxes(data.checkboxes);
       } else {
         checkboxes = this.getCheckboxes();
       }
-
       var sanitized = {
         "derivative": derivative,
         "checkboxes": checkboxes
@@ -2870,16 +2403,13 @@ plateMapWidget.loadPlate = function () {
       this.setCheckboxes(data.checkboxes, true);
       this.setSelectedIndices(data.selectedIndices, true);
       this.derivativeChange();
-
       if (!quiet) {
         this.addToUndoRedo();
       }
     }
   };
 };
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.overlay = function () {
     // overlay holds all the methods to put the part just above the canvas which contains all those
@@ -2928,10 +2458,8 @@ var plateMapWidget = plateMapWidget || {};
           var hasWellUpdate = false;
           var selectedIndices = this.selectedIndices;
           var well;
-
           for (var i = 0; i < selectedIndices.length; i++) {
             var index = selectedIndices[i];
-
             if (index in this.engine.derivative) {
               // handling for clearing well when not allowed to add or delete wells
               if (this.disableAddDeleteWell) {
@@ -2942,14 +2470,11 @@ var plateMapWidget = plateMapWidget || {};
               } else {
                 delete this.engine.derivative[index];
               }
-
               hasWellUpdate = true;
             }
           }
-
           if (hasWellUpdate) {
             this._colorMixer();
-
             this.decideSelectedFields();
             this.derivativeChange();
             this.addToUndoRedo();
@@ -2961,7 +2486,6 @@ var plateMapWidget = plateMapWidget || {};
       copyCriteria: function copyCriteria() {
         if (this.selectedIndices && this.selectedIndices.length) {
           var wells = this._getSelectedWells();
-
           this.commonData = this._getCommonData(wells);
         } else {
           alert("Please select any well.");
@@ -2970,14 +2494,12 @@ var plateMapWidget = plateMapWidget || {};
       pasteCriteria: function pasteCriteria() {
         if (this.commonData) {
           this._addAllData(this.commonData);
-
           this.decideSelectedFields();
         }
       }
     };
   };
 })(jQuery);
-
 $.widget("DNA.plateMap", {
   plateMapWidget: {},
   options: {
@@ -2985,15 +2507,12 @@ $.widget("DNA.plateMap", {
   },
   addressToLoc: function addressToLoc(address) {
     var m = /^([A-Z]+)(\d+)$/.exec(address.trim().toUpperCase());
-
     if (m) {
       var row_v = m[1];
       var col = parseInt(m[2]) - 1;
       var row = 0;
-
       for (var i = 0; i < row_v.length; i++) {
         var c = row_v.charCodeAt(i) - 65;
-
         if (i) {
           row += 1;
           row *= 26;
@@ -3002,7 +2521,6 @@ $.widget("DNA.plateMap", {
           row = c;
         }
       }
-
       return {
         r: row,
         c: col
@@ -3015,15 +2533,12 @@ $.widget("DNA.plateMap", {
     if (!dimensions) {
       dimensions = this.dimensions;
     }
-
     if (!(loc.r >= 0 && loc.r < dimensions.rows)) {
       throw "Row index " + (loc.r + 1) + " invalid";
     }
-
     if (!(loc.c >= 0 && loc.c < dimensions.cols)) {
       throw "Column index " + (loc.c + 1) + " invalid";
     }
-
     return loc.r * dimensions.cols + loc.c;
   },
   addressToIndex: function addressToIndex(address, dimensions) {
@@ -3034,11 +2549,9 @@ $.widget("DNA.plateMap", {
     var c1 = i % 26;
     var c2 = (i - c1) / 26;
     var code = String.fromCharCode(65 + c1);
-
     if (c2 > 0) {
       code = String.fromCharCode(64 + c2) + code;
     }
-
     return code;
   },
   _colKey: function _colKey(i) {
@@ -3048,11 +2561,9 @@ $.widget("DNA.plateMap", {
     if (!dimensions) {
       dimensions = this.dimensions;
     }
-
     if (index >= dimensions.rows * dimensions.cols) {
       throw "Index too high: " + index.toString(10);
     }
-
     var loc = {};
     loc.c = index % dimensions.cols;
     loc.r = (index - loc.c) / dimensions.cols;
@@ -3076,21 +2587,19 @@ $.widget("DNA.plateMap", {
       cols: cols
     };
     this.rowIndex = [];
-
     for (var i = 0; i < rows; i++) {
       this.rowIndex.push(this._rowKey(i));
     }
+    this.target = this.element[0].id ? "#" + this.element[0].id : "." + this.element[0].className;
 
-    this.target = this.element[0].id ? "#" + this.element[0].id : "." + this.element[0].className; // Import classes from other files.. Here we import it using extend and add it to this
+    // Import classes from other files.. Here we import it using extend and add it to this
     // object. internally we add to widget.DNA.getPlates.prototype.
     // Helpers are methods which return other methods and objects.
     // add Objects to plateMapWidget and it will be added to this object.
     // set read only well
-
     if (this.options.readOnly) {
       this.isReadOnly(true);
     }
-
     for (var component in plateMapWidget) {
       if (plateMapWidget.hasOwnProperty(component)) {
         // Incase some properties has to initialize with data from options hash,
@@ -3098,14 +2607,12 @@ $.widget("DNA.plateMap", {
         $.extend(this, new plateMapWidget[component](this));
       }
     }
-
     this._createInterface();
-
     this._trigger("created", null, this);
-
     return this;
   },
-  _init: function _init() {// This is invoked when the user use the plugin after _create is called.
+  _init: function _init() {
+    // This is invoked when the user use the plugin after _create is called.
     // The point is _create is invoked for the very first time and for all other
     // times _init is used.
   },
@@ -3113,21 +2620,17 @@ $.widget("DNA.plateMap", {
   getTextDerivative: function getTextDerivative(wellsData) {
     var textDerivative = {};
     var fieldMap = this.fieldMap;
-
     for (var address in wellsData) {
       if (!wellsData.hasOwnProperty(address)) {
         continue;
       }
-
       var textValWell = {};
       var textFieldIdWell = {};
       var curWellData = wellsData[address];
-
       for (var fieldId in curWellData) {
         if (!curWellData.hasOwnProperty(fieldId)) {
           continue;
         }
-
         if (fieldId in fieldMap) {
           var field = fieldMap[fieldId];
           var textVal = field.parseText(curWellData[fieldId]);
@@ -3139,76 +2642,59 @@ $.widget("DNA.plateMap", {
           textValWell[fieldId] = curWellData[fieldId];
         }
       }
-
       textDerivative[address] = {
         textVal: textValWell,
         textFieldVal: textFieldIdWell
       };
     }
-
     return textDerivative;
   },
   // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A1:{field1: val1, field2: val2}}
   getWellsDifferences: function getWellsDifferences(wellsHash) {
     var wells = [];
-
     for (var wellId in wellsHash) {
       if (wellsHash.hasOwnProperty(wellId)) {
         wells.push(wellsHash[wellId]);
       }
     }
-
     var differentWellsVals = {};
-
     if (wells.length > 1) {
       var commonWell = this._getCommonWell(wells);
-
       var allFieldVal = {};
-
       for (var fieldIdx in wells[0]) {
         if (wells[0].hasOwnProperty(fieldIdx)) {
           allFieldVal[fieldIdx] = [];
         }
       }
-
       for (var address in wellsHash) {
         if (!wellsHash.hasOwnProperty(address)) {
           continue;
         }
-
         var diffWellVal = {};
         var curWellData = wellsHash[address];
-
         for (var fieldId in curWellData) {
           if (!curWellData.hasOwnProperty(fieldId)) {
             continue;
           }
-
           var commonVal = commonWell[fieldId];
           var curVal = curWellData[fieldId];
-
           if (commonVal === undefined) {
             commonVal = null;
           }
-
           if (curVal === undefined) {
             curVal = null;
           }
-
           var newVal = null;
-
           if (Array.isArray(curVal)) {
-            commonVal = commonVal || []; // get uncommonVal
-
+            commonVal = commonVal || [];
+            // get uncommonVal
             newVal = [];
-
             for (var idx = 0; idx < curVal.length; idx++) {
-              var curMultiVal = curVal[idx]; // multiplex field
-
+              var curMultiVal = curVal[idx];
+              // multiplex field
               if (curMultiVal && _typeof(curMultiVal) === "object") {
                 if (!this.containsObject(curMultiVal, commonVal)) {
                   newVal.push(curMultiVal);
-
                   if (!this.containsObject(curMultiVal, allFieldVal[fieldId])) {
                     allFieldVal[fieldId].push(curMultiVal);
                   }
@@ -3216,7 +2702,6 @@ $.widget("DNA.plateMap", {
               } else {
                 if (commonVal.indexOf(curMultiVal) < 0) {
                   newVal.push(curMultiVal);
-
                   if (!allFieldVal[fieldId].indexOf(curMultiVal) >= 0) {
                     allFieldVal[fieldId].push(curMultiVal);
                   }
@@ -3227,68 +2712,55 @@ $.widget("DNA.plateMap", {
             if (commonVal && _typeof(commonVal) === "object") {
               if (!(curVal.value === commonVal.value || curVal.unit === commonVal.unit)) {
                 newVal = curVal;
-
                 if (!this.containsObject(curVal, allFieldVal[fieldId])) {
                   allFieldVal[fieldId].push(curVal);
                 }
               }
             } else {
               newVal = curVal;
-
               if (!this.containsObject(curVal, allFieldVal[fieldId])) {
                 allFieldVal[fieldId].push(curVal);
               }
             }
           } else if (curVal !== commonVal) {
             newVal = curVal;
-
             if (!allFieldVal[fieldId].indexOf(curVal) >= 0) {
               allFieldVal[fieldId].push(curVal);
             }
           }
-
           diffWellVal[fieldId] = newVal;
         }
-
         differentWellsVals[address] = diffWellVal;
-      } // clean up step for fields that are empty
+      }
 
-
+      // clean up step for fields that are empty
       for (var _fieldId in allFieldVal) {
         if (!allFieldVal.hasOwnProperty(_fieldId)) {
           continue;
         }
-
         if (allFieldVal[_fieldId].length === 0) {
           for (var _address in differentWellsVals) {
             if (!differentWellsVals.hasOwnProperty(_address)) {
               continue;
             }
-
             delete differentWellsVals[_address][_fieldId];
           }
         }
       }
-
       return differentWellsVals;
     } else if (wells.length > 0) {
       var _differentWellsVals = {};
-
       for (var _address2 in wellsHash) {
         if (!wellsHash.hasOwnProperty(_address2)) {
           continue;
         }
-
         var _diffWellVal = {};
         var _curWellData = wellsHash[_address2];
-
         for (var _fieldId2 in _curWellData) {
           if (!_curWellData.hasOwnProperty(_fieldId2)) {
             continue;
           }
-
           var _curVal = _curWellData[_fieldId2];
-
           if (Array.isArray(_curVal)) {
             if (_curVal.length > 0) {
               _diffWellVal[_fieldId2] = _curVal;
@@ -3297,10 +2769,8 @@ $.widget("DNA.plateMap", {
             _diffWellVal[_fieldId2] = _curVal;
           }
         }
-
         _differentWellsVals[_address2] = _diffWellVal;
       }
-
       return _differentWellsVals;
     }
   },
@@ -3321,7 +2791,6 @@ $.widget("DNA.plateMap", {
     } else {
       this.overLayButtonContainer.css("display", "flex");
       $('.multiple-field-manage-delete-button').css("display", "none");
-
       if (!this.disableAddDeleteWell) {
         this.setFieldsDisabled(false);
       }
@@ -3332,7 +2801,6 @@ $.widget("DNA.plateMap", {
   isDisableAddDeleteWell: function isDisableAddDeleteWell(flag, emptyDefaultWell) {
     if (flag) {
       var emptyWellWithDefaultVal = $.extend(true, {}, this.defaultWell);
-
       if (emptyDefaultWell) {
         for (var field in emptyDefaultWell) {
           if (emptyDefaultWell.hasOwnProperty(field)) {
@@ -3344,10 +2812,9 @@ $.widget("DNA.plateMap", {
           }
         }
       }
-
       this.disableAddDeleteWell = true;
-      this.addressAllowToEdit = this.getWellSetAddressWithData(); // configure undo redo action
-
+      this.addressAllowToEdit = this.getWellSetAddressWithData();
+      // configure undo redo action
       this.actionPointer = 0;
       this.undoRedoArray = [this.createState()];
       this.emptyWellWithDefaultVal = emptyWellWithDefaultVal;
@@ -3355,28 +2822,22 @@ $.widget("DNA.plateMap", {
       this.disableAddDeleteWell = false;
       this.emptyWellWithDefaultVal = null;
     }
-
     this.readOnlyHandler();
   },
   selectObjectInBottomTab: function selectObjectInBottomTab() {
     var colors = [];
     var selectedIndices = this.selectedIndices;
-
     for (var i = 0; i < selectedIndices.length; i++) {
       var index = selectedIndices[i];
       var well = this.engine.derivative[index];
-
       if (well) {
         var color = this.engine.colorMap.get(index);
-
         if (colors.indexOf(color) < 0) {
           colors.push(color);
         }
       }
     }
-
     var trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
-
     for (var _i3 = 1; _i3 < trs.length; _i3++) {
       // start at 1 to skip the table headers
       var tr = trs[_i3];
@@ -3400,26 +2861,21 @@ $.widget("DNA.plateMap", {
   setSelectedIndices: function setSelectedIndices(indices, noUndoRedo) {
     if (!indices || indices.length === 0) {
       indices = [0];
-    } // Indices should be sanitized
-
-
-    this.setSelection(indices); //this._colorMixer();
-
+    }
+    // Indices should be sanitized
+    this.setSelection(indices);
+    //this._colorMixer();
     this.decideSelectedFields();
-
     this._trigger("selectedWells", null, {
       selectedAddress: this.getSelectedAddresses()
     });
-
     this.selectObjectInBottomTab();
-
     if (!noUndoRedo) {
       this.addToUndoRedo();
     }
   }
 });
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.preset = function () {
     // All the preset action goes here
@@ -3427,36 +2883,26 @@ var plateMapWidget = plateMapWidget || {};
       presets: [],
       _placePresetTabs: function _placePresetTabs() {
         var _this = this;
-
         var presets = this.options.attributes.presets;
-
         if (presets && presets.length) {
           this.wellAttrContainer = this._createElement("<div></div>").addClass("plate-setup-well-attr-container").text("Checkbox presets");
           this.tabContainer.append(this.wellAttrContainer);
           this.presetTabContainer = this._createElement("<div></div>").addClass("plate-setup-preset-container");
           this.tabContainer.append(this.presetTabContainer);
-
-          var _loop6 = function _loop6(i) {
+          var _loop7 = function _loop7() {
             var preset = presets[i];
-
             var divText = _this._createElement("<div></div>").addClass("plate-setup-preset-tab-div").text(preset.title);
-
             var presetButton = _this._createElement("<div></div>").addClass("plate-setup-preset-tab").data("preset", preset.fields).append(divText);
-
             _this.presetTabContainer.append(presetButton);
-
             var that = _this;
             presetButton.click(function () {
               var preset = $(this);
-
               that._selectPreset(preset);
             });
-
             _this.presets.push(presetButton);
           };
-
           for (var i = 0; i < presets.length; i++) {
-            _loop6(i);
+            _loop7();
           }
         }
       },
@@ -3473,9 +2919,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function (SVG) {
   plateMapWidget.svgCreate = function () {
     //
@@ -3507,11 +2951,8 @@ var plateMapWidget = plateMapWidget || {};
             stop.at(1, pair[1]);
           }).from(0, 0).to(0, 1).id('wellColor' + i.toString());
         }, this);
-
         this._fixRowAndColumn();
-
         this._putCircles();
-
         this._svgEvents();
       },
       _fixRowAndColumn: function _fixRowAndColumn() {
@@ -3523,13 +2964,11 @@ var plateMapWidget = plateMapWidget || {};
         var ch = this.svg.nested().attr({
           'y': -this.baseSizes.label_spacing / 2.0
         }).addClass('colHead');
-
         for (var i = 0; i < rows; i++) {
           rh.plain(this._rowKey(i)).attr({
             y: this.baseSizes.spacing * (i + 0.5)
           });
         }
-
         for (var _i4 = 0; _i4 < cols; _i4++) {
           ch.plain(this._colKey(_i4)).attr({
             x: this.baseSizes.spacing * (_i4 + 0.5)
@@ -3540,11 +2979,9 @@ var plateMapWidget = plateMapWidget || {};
         var cols = this.dimensions.cols;
         var rows = this.dimensions.rows;
         this.allTiles = Array(cols * rows);
-
         for (var row = 0; row < rows; row++) {
           for (var col = 0; col < cols; col++) {
             var tile = this._createTile(row, col);
-
             this.allTiles[tile.index] = tile;
           }
         }
@@ -3589,19 +3026,15 @@ var plateMapWidget = plateMapWidget || {};
         this.setTileVisible(tile, true);
         tile.colorIndex = parseInt(color);
         tile.label.plain(String(tile.colorIndex));
-
         if (color > 0) {
           color = (color - 1) % (this.wellColors.length - 1) + 1;
         }
-
         tile.circle.fill(this.wellColors[color]);
       }
     };
   };
 })(SVG);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.svgEvents = function () {
     // This object contains Menu items and how it works;
@@ -3611,7 +3044,6 @@ var plateMapWidget = plateMapWidget || {};
       _svgEvents: function _svgEvents() {
         // Set up event handling.
         var that = this;
-
         function getMousePosition(evt) {
           var CTM = that.svg.node.getScreenCTM();
           return {
@@ -3619,10 +3051,8 @@ var plateMapWidget = plateMapWidget || {};
             y: (evt.clientY - CTM.f) / CTM.d
           };
         }
-
         function dimCoord(v, max) {
           max = max - 1;
-
           if (v < 0) {
             return 0;
           } else if (v >= max) {
@@ -3631,7 +3061,6 @@ var plateMapWidget = plateMapWidget || {};
             return Math.trunc(v);
           }
         }
-
         function posToLoc(pos) {
           var s = that.baseSizes.spacing;
           var c = dimCoord(pos.x / s, that.dimensions.cols);
@@ -3641,22 +3070,18 @@ var plateMapWidget = plateMapWidget || {};
             c: c
           };
         }
-
         function selectionBoxPosition(pos0, pos1) {
           var d0 = posToLoc(pos0);
           var d1 = posToLoc(pos1);
           var s = that.baseSizes.spacing;
           var x0 = Math.min(d0.c, d1.c) * s;
           var y0 = Math.min(d0.r, d1.r) * s;
-
           if (pos0.x < 0) {
             d0.c = that.dimensions.cols - 1;
           }
-
           if (pos0.y < 0) {
             d0.r = that.dimensions.rows - 1;
           }
-
           var x1 = (Math.max(d0.c, d1.c) + 1) * s;
           var y1 = (Math.max(d0.r, d1.r) + 1) * s;
           return {
@@ -3666,33 +3091,26 @@ var plateMapWidget = plateMapWidget || {};
             height: y1 - y0
           };
         }
-
         function selectTiles(pos0, pos1, secondary) {
           var d0 = posToLoc(pos0);
           var d1 = posToLoc(pos1);
           var extending = true;
-
           if (secondary) {
             // if d0 is already selected, we are deselecting
             var startIdx = that.locToIndex(d0);
             extending = that.selectedIndices.indexOf(startIdx) < 0;
           }
-
           var c0 = Math.min(d0.c, d1.c);
           var r0 = Math.min(d0.r, d1.r);
-
           if (pos0.x < 0) {
             d0.c = that.dimensions.cols - 1;
           }
-
           if (pos0.y < 0) {
             d0.r = that.dimensions.rows - 1;
           }
-
           var c1 = Math.max(d0.c, d1.c);
           var r1 = Math.max(d0.r, d1.r);
           var indices = [];
-
           for (var r = r0; r <= r1; r++) {
             for (var c = c0; c <= c1; c++) {
               var index = that.locToIndex({
@@ -3702,7 +3120,6 @@ var plateMapWidget = plateMapWidget || {};
               indices.push(index);
             }
           }
-
           if (secondary) {
             if (extending) {
               that.selectedIndices.forEach(function (index) {
@@ -3716,23 +3133,18 @@ var plateMapWidget = plateMapWidget || {};
               });
             }
           }
-
           that.setSelectedIndices(indices.sort());
         }
-
         var selectionBox;
-
         function startDrag(evt) {
           if (selectionBox) {
             selectionBox.remove();
           }
-
           var pos = getMousePosition(evt);
           var attrs = selectionBoxPosition(pos, pos);
           selectionBox = that.svg.rect().attr(attrs).fill('rgba(0, 0, 1, 0.2)');
           selectionBox.data('origin', pos);
         }
-
         function drag(evt) {
           if (selectionBox) {
             var pos = getMousePosition(evt);
@@ -3740,7 +3152,6 @@ var plateMapWidget = plateMapWidget || {};
             selectionBox.attr(attrs);
           }
         }
-
         function endDrag(evt) {
           if (selectionBox) {
             var startPos = selectionBox.data('origin');
@@ -3750,7 +3161,6 @@ var plateMapWidget = plateMapWidget || {};
             selectionBox = null;
           }
         }
-
         this.svg.node.addEventListener('mousedown', startDrag);
         this.svg.node.addEventListener('mousemove', drag);
         this.svg.node.addEventListener('mouseleave', endDrag);
@@ -3762,9 +3172,7 @@ var plateMapWidget = plateMapWidget || {};
       },
       setSelection: function setSelection(selectedIndices) {
         this.selectedIndices = selectedIndices;
-
         this._setSelectedTiles();
-
         document.activeElement.blur();
       },
       _setSelectedTiles: function _setSelectedTiles() {
@@ -3772,7 +3180,6 @@ var plateMapWidget = plateMapWidget || {};
         var selectedIndices = this.selectedIndices;
         this.allTiles.forEach(function (tile) {
           var selected = selectedIndices.indexOf(tile.index) >= 0;
-
           if (selected) {
             tile.tile.addClass('selected');
           } else {
@@ -3783,11 +3190,9 @@ var plateMapWidget = plateMapWidget || {};
       _getSelectedWells: function _getSelectedWells() {
         return this.selectedIndices.map(function (index) {
           var well = this.engine.derivative[index];
-
           if (!well) {
             well = this.defaultWell;
           }
-
           return well;
         }, this);
       },
@@ -3799,7 +3204,6 @@ var plateMapWidget = plateMapWidget || {};
             if (Object.keys(x).length !== Object.keys(y).length) {
               return false;
             }
-
             for (var prop in x) {
               if (x.hasOwnProperty(prop)) {
                 if (y.hasOwnProperty(prop)) {
@@ -3811,13 +3215,11 @@ var plateMapWidget = plateMapWidget || {};
                 }
               }
             }
-
             return true;
           } else {
             return false;
           }
         }
-
         if (list) {
           for (var i = 0; i < list.length; i++) {
             if (deepEqual(obj, list[i])) {
@@ -3825,52 +3227,42 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
         }
-
         return false;
       },
       _buildCommonData: function _buildCommonData(commonData, obj, field) {
         var commonVal = commonData[field];
-
         if (commonVal === undefined) {
           commonVal = null;
         }
-
         var objVal = obj[field];
-
         if (objVal === undefined) {
           objVal = null;
         }
-
         if (Array.isArray(commonVal)) {
           var commonArr = [];
-
           for (var i = 0; i < commonVal.length; i++) {
-            var v = commonVal[i]; // for multiplex field
-
+            var v = commonVal[i];
+            // for multiplex field
             if (v && _typeof(v) === "object") {
               for (var j = 0; j < objVal.length; j++) {
                 var v2 = objVal[j];
-
                 if (v[field] == v2[field]) {
                   v = $.extend(true, {}, v);
-
                   for (var oField in v) {
                     this._buildCommonData(v, v2, oField);
                   }
-
                   commonArr.push(v);
                 }
-              } // if (this.containsObject(v, objVal)) {
+              }
+              // if (this.containsObject(v, objVal)) {
               //   commonArr.push(v);
               // }
-
             } else {
               if ($.inArray(v, objVal) >= 0) {
                 commonArr.push(v);
               }
             }
           }
-
           commonData[field] = commonArr;
         } else {
           if (objVal && _typeof(objVal) === "object" && commonVal && _typeof(commonVal) === "object") {
@@ -3884,33 +3276,26 @@ var plateMapWidget = plateMapWidget || {};
       },
       _getCommonData: function _getCommonData(wells) {
         var commonData = null;
-
         for (var i = 0; i < wells.length; i++) {
           var well = wells[i];
-
           if (well == null) {
             continue;
           }
-
           if (commonData == null) {
             commonData = $.extend(true, {}, wells[0]);
             continue;
           }
-
           for (var field in commonData) {
             if (!commonData.hasOwnProperty(field)) {
               continue;
             }
-
             this._buildCommonData(commonData, well, field);
           }
         }
-
         return commonData || this.defaultWell;
       },
       _getCommonWell: function _getCommonWell(wells) {
         var commonData = this._getCommonData(wells);
-
         return this.sanitizeWell(commonData);
       },
       _getAllMultipleVal: function _getAllMultipleVal(wells) {
@@ -3924,10 +3309,8 @@ var plateMapWidget = plateMapWidget || {};
               if (well == null) {
                 return;
               }
-
               var id = multiplexField.id;
               var wellFieldVals = well[id];
-
               if (wellFieldVals && wellFieldVals.length) {
                 wellFieldVals.forEach(function (multipleVal) {
                   if (_typeof(multipleVal) === 'object') {
@@ -3938,7 +3321,6 @@ var plateMapWidget = plateMapWidget || {};
                         that._buildCommonData(multiData, multipleVal, oField);
                       }
                     }
-
                     if (multipleVal[id] in curMultipleVal) {
                       curMultipleVal[multipleVal[id]]++;
                     } else {
@@ -3964,13 +3346,9 @@ var plateMapWidget = plateMapWidget || {};
       },
       decideSelectedFields: function decideSelectedFields() {
         var wells = this._getSelectedWells();
-
         this._getAllMultipleVal(wells);
-
         this.applyFieldWarning(wells);
-
         var well = this._getCommonWell(wells);
-
         this._addDataToTabFields(well);
       },
       // get all wells that have data
@@ -3981,9 +3359,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.tabs = function () {
     // Tabs create and manage tabs at the right side of widget.
@@ -3994,6 +3370,7 @@ var plateMapWidget = plateMapWidget || {};
       // To hold all the tab contents. this contains all the tabs and its elements and elements
       // Settings as a whole. its very useful, when we have units for a specific field.
       // it goes like tabs-> individual field-> units and checkbox
+
       _createTabAtRight: function _createTabAtRight() {
         this.tabContainer = this._createElement("<div></div>").addClass("plate-setup-tab-container");
         $(this.topRight).append(this.tabContainer);
@@ -4017,11 +3394,8 @@ var plateMapWidget = plateMapWidget || {};
         });
         this.tabDataContainer = this._createElement("<div></div>").addClass("plate-setup-tab-data-container");
         $(this.tabContainer).append(this.tabDataContainer);
-
         this._addDataTabs(tabData);
-
         $(this.allTabs[0]).click();
-
         this._addTabData();
       },
       _tabClickHandler: function _tabClickHandler(clickedTab) {
@@ -4031,7 +3405,6 @@ var plateMapWidget = plateMapWidget || {};
           $(this.allDataTabs[previouslyClickedTabIndex]).css("z-index", 0);
           this.readOnlyHandler();
         }
-
         $(clickedTab).addClass("plate-setup-tab-selected");
         this.selectedTab = clickedTab;
         var clickedTabIndex = $(clickedTab).data("index");
@@ -4046,9 +3419,7 @@ var plateMapWidget = plateMapWidget || {};
     };
   };
 })(jQuery);
-
 var plateMapWidget = plateMapWidget || {};
-
 (function ($) {
   plateMapWidget.undoRedoManager = function () {
     return {
@@ -4056,15 +3427,12 @@ var plateMapWidget = plateMapWidget || {};
       actionPointer: null,
       addToUndoRedo: function addToUndoRedo() {
         var state = this.createState();
-
         if (this.actionPointer != null) {
           var i = this.actionPointer + 1;
-
           if (i < this.undoRedoArray.length) {
             this.undoRedoArray.splice(i, this.undoRedoArray.length - i);
           }
         }
-
         this.actionPointer = null;
         this.undoRedoArray.push(state);
       },
@@ -4092,11 +3460,9 @@ var plateMapWidget = plateMapWidget || {};
       },
       shiftUndoRedo: function shiftUndoRedo(pointerDiff) {
         var pointer = this.actionPointer;
-
         if (pointer == null) {
           pointer = this.undoRedoArray.length - 1;
         }
-
         pointer += pointerDiff;
         return this.setUndoRedo(pointer);
       },
@@ -4104,11 +3470,9 @@ var plateMapWidget = plateMapWidget || {};
         if (pointer < 0) {
           return false;
         }
-
         if (pointer >= this.undoRedoArray.length) {
           return false;
         }
-
         this.actionPointer = pointer;
         this.setData(this.undoRedoArray[pointer], true);
         return true;

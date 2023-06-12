@@ -24,7 +24,7 @@ var plateMapWidget = plateMapWidget || {};
 
         let singleField = this._createElement("<th></th>")
           .text("Group");
-        row.prepend(singleField);
+        row.html(singleField);
 
         this.rowCounter = 1;
 
@@ -264,7 +264,7 @@ var plateMapWidget = plateMapWidget || {};
         });
 
         overlayContainer.append(buttonContainer);
-        this.bottomContainer.prepend(overlayContainer);
+        this.bottomContainer.html(overlayContainer);
       }
     };
   }
