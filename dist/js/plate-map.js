@@ -713,7 +713,7 @@ var plateMapWidget = plateMapWidget || {};
           setTimeout(resetClipboardText, 3000);
         });
         overlayContainer.append(buttonContainer);
-        this.bottomContainer.prepend(overlayContainer);
+        this.bottomContainer.html(overlayContainer);
       }
     };
   };

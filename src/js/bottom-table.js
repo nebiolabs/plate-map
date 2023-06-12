@@ -264,7 +264,7 @@ var plateMapWidget = plateMapWidget || {};
         });
 
         overlayContainer.append(buttonContainer);
-        this.bottomContainer.prepend(overlayContainer);
+        this.bottomContainer.html(overlayContainer);
       }
     };
   }
