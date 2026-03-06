@@ -1,6 +1,6 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 var plateMapWidget = plateMapWidget || {};
 (function ($) {
   plateMapWidget.addDataOnChange = function () {
@@ -631,16 +631,16 @@ var plateMapWidget = plateMapWidget || {};
             if (i === 0 && j === 0) {
               if (format === "csv") {
                 row.push('"Location"');
-              } else if (format === 'clipboard') {
+              } else if (format === "clipboard") {
                 row.push("Location");
               }
             }
             if (i !== 0 && j === 0) {
-              var loc = '';
+              var loc = "";
               if (colorLocMap[parseInt(cols[j].innerText)]) {
                 if (format === "csv") {
                   loc = '"' + colorLocMap[parseInt(cols[j].innerText)].join(",") + '"';
-                } else if (format === 'clipboard') {
+                } else if (format === "clipboard") {
                   loc = colorLocMap[parseInt(cols[j].innerText)].join(",");
                 }
               }
@@ -649,16 +649,15 @@ var plateMapWidget = plateMapWidget || {};
           }
           if (format === "csv") {
             data.push(row.join(","));
-          } else if (format === 'clipboard') {
+          } else if (format === "clipboard") {
             data.push(row.join("\t"));
             //data.push(row);   // for text type
           }
         }
-
         if (format === "csv") {
           // Download CSV file
-          this.downloadCSV(data.join("\n"), 'table.csv');
-        } else if (format === 'clipboard') {
+          this.downloadCSV(data.join("\n"), "table.csv");
+        } else if (format === "clipboard") {
           //return formatTableToString(data);   // for text type
           return data.join("\n");
         }
@@ -676,7 +675,7 @@ var plateMapWidget = plateMapWidget || {};
         exportButton.text("Export CSV");
         buttonContainer.append(exportButton);
         exportButton.click(function () {
-          that.exportData('csv');
+          that.exportData("csv");
           exportButton.text("Exported");
           exportButton[0].classList.remove("plate-setup-button");
           exportButton.addClass("plate-setup-clicked-button");
@@ -697,7 +696,7 @@ var plateMapWidget = plateMapWidget || {};
             return that.exportData("clipboard");
           }
         });
-        clipboard.on('success', function () {
+        clipboard.on("success", function () {
           clipboardButton.text("Copied as tab-delimited format");
           clipboardButton[0].classList.remove("plate-setup-button");
           clipboardButton.addClass("plate-setup-clicked-button");
@@ -708,12 +707,12 @@ var plateMapWidget = plateMapWidget || {};
           clipboardButton[0].classList.remove("plate-setup-clicked-button");
           clipboardButton.addClass("plate-setup-button");
         }
-        clipboard.on('error', function () {
+        clipboard.on("error", function () {
           clipboardButton.text("Failed to copy table to clipboard: browser may be incompatible");
           setTimeout(resetClipboardText, 3000);
         });
         overlayContainer.append(buttonContainer);
-        this.bottomContainer.html(overlayContainer);
+        this.bottomContainer.prepend(overlayContainer);
       }
     };
   };
@@ -1024,7 +1023,7 @@ var plateMapWidget = plateMapWidget || {};
               var unitMap = field.data.unitMap;
               var _loop2 = function _loop2(unitTypeKey) {
                 if (!unitMap.hasOwnProperty(unitTypeKey)) {
-                  return "continue";
+                  return 1; // continue
                 }
                 var unitTypeUnits = unitMap[unitTypeKey];
                 unitTypeUnits.forEach(function (unit) {
@@ -1035,8 +1034,7 @@ var plateMapWidget = plateMapWidget || {};
                 });
               };
               for (var unitTypeKey in unitMap) {
-                var _ret = _loop2(unitTypeKey);
-                if (_ret === "continue") continue;
+                if (_loop2(unitTypeKey)) continue;
               }
             }
             return returnVal;
@@ -1780,7 +1778,7 @@ var plateMapWidget = plateMapWidget || {};
             var returnVal = [];
             var _loop4 = function _loop4() {
               if (!v.hasOwnProperty(valIdx)) {
-                return "continue";
+                return 1; // continue
               }
               var subV = v[valIdx];
               var subText = [];
@@ -1801,8 +1799,7 @@ var plateMapWidget = plateMapWidget || {};
               returnVal.push("{" + subText.join(", ") + "}");
             };
             for (var valIdx in v) {
-              var _ret2 = _loop4();
-              if (_ret2 === "continue") continue;
+              if (_loop4()) continue;
             }
             return returnVal.join(";");
           }
@@ -1814,7 +1811,7 @@ var plateMapWidget = plateMapWidget || {};
             var returnVal = [];
             var _loop5 = function _loop5() {
               if (!v.hasOwnProperty(valIdx)) {
-                return "continue";
+                return 1; // continue
               }
               var subV = v[valIdx];
               var subText = [];
@@ -1835,8 +1832,7 @@ var plateMapWidget = plateMapWidget || {};
               returnVal.push(subText);
             };
             for (var valIdx in v) {
-              var _ret3 = _loop5();
-              if (_ret3 === "continue") continue;
+              if (_loop5()) continue;
             }
             return returnVal;
           }
@@ -2133,7 +2129,7 @@ var plateMapWidget = plateMapWidget || {};
                 var newMultiplexVal = [];
                 var _loop6 = function _loop6() {
                   if (!data[attr].hasOwnProperty(multiplexIdx)) {
-                    return "continue";
+                    return 1; // continue
                   }
                   var curMultiplexVals = data[attr][multiplexIdx];
                   var newVal = {};
@@ -2144,8 +2140,7 @@ var plateMapWidget = plateMapWidget || {};
                   newMultiplexVal.push(newVal);
                 };
                 for (var multiplexIdx in data[attr]) {
-                  var _ret4 = _loop6();
-                  if (_ret4 === "continue") continue;
+                  if (_loop6()) continue;
                 }
                 wellData[attr] = newMultiplexVal;
               } else {
