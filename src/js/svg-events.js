@@ -226,6 +226,10 @@ var plateMapWidget = plateMapWidget || {};
 
         if (Array.isArray(commonVal)) {
           let commonArr = [];
+          if (!objVal) {
+            commonData[field] = commonArr;
+            return;
+          }
           for (let i = 0; i < commonVal.length; i++) {
             let v = commonVal[i];
             // for multiplex field
