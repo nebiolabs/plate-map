@@ -5,6 +5,7 @@ module.exports = {
     url: 'http://localhost/'
   },
   setupFiles: ['<rootDir>/test/unit/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/unit/setupAfterEnv.js'],
   testMatch: ['<rootDir>/test/unit/**/*.test.js'],
   verbose: true
 };
