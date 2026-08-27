@@ -31,8 +31,8 @@
     "svgjs": "^2.6.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
-    "@babel/preset-env": "^7.10.3",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "babel-polyfill": "^6.26.0",
     "browser-sync": "^3.0.4",
     "del": "^5.0.0",
