@@ -7,3 +7,8 @@ node_modules
 
 *.DS_Store
 build
+
+# Playwright (test/e2e)
+/test-results/
+/playwright-report/
+/playwright/.cache/

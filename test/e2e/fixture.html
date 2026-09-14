@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--
+  Playwright e2e fixture page. Loads real dependencies + src/js/*.js as
+  plain <script> tags (see test/e2e/server.js for how the two placeholder
+  slots in <head> below get filled in, and why), mirroring how a real consumer
+  (e.g. ebase's Rails-importmap vendoring, or gulpfile.js's own dev build)
+  loads this package -- NOT a bundled/transpiled dist build, since no
+  build-tool work has happened yet on this branch.
+
+  Exposes a small `window.PM` helper (below) that tests drive via
+  page.evaluate() to create/inspect widget instances, so individual spec
+  files don't each reinvent widget setup/teardown.
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>plate-map e2e fixture</title>
+  {{CSS_TAGS}}
+  {{JS_TAGS}}
+</head>
+<body>
+  <div id="widgets-container"></div>
+
+  <script>
+    // Test-only helper surface. Deliberately thin: real interaction
+    // (drag-select, clicking select2 dropdowns, keyboard shortcuts) happens
+    // through Playwright driving the real DOM, not through these helpers --
+    // these just handle the repetitive plumbing (creating a container,
+    // instantiating the widget, tearing it down between tests).
+    window.PM = {
+      // Creates a new widget in its own container div, returns the
+      // container's id. `options` is passed straight through to
+      // .plateMap(options) (numRows/numCols/attributes/callbacks/etc).
+      create: function (options, containerId) {
+        var id = containerId || ('pm-' + Math.random().toString(36).slice(2));
+        var el = document.createElement('div');
+        el.id = id;
+        el.className = 'plate-setup-container';
+        document.getElementById('widgets-container').appendChild(el);
+        jQuery('#' + id).plateMap(options);
+        return id;
+      },
+
+      // Removes one widget's container from the DOM. There is no
+      // `_destroy` override in src/js/ (see AGENTS.md/REFACTOR_NOTES.md),
+      // so this does NOT claim to fully tear down listeners -- it only
+      // removes the container element, for tests that want a clean visual
+      // slate between assertions within the same page.
+      remove: function (containerId) {
+        var el = document.getElementById(containerId);
+        if (el) { el.remove(); }
+      },
+
+      // Removes every widget container, for full-page reset between tests.
+      removeAll: function () {
+        document.getElementById('widgets-container').innerHTML = '';
+      },
+
+      instance: function (containerId) {
+        return jQuery('#' + containerId).plateMap('instance');
+      }
+    };
+  </script>
+</body>
+</html>

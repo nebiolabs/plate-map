@@ -8,7 +8,10 @@
     "serve.dev": "gulp serve.dev",
     "build.prod": "gulp build.prod",
     "serve.prod": "gulp serve.prod",
-    "start": "gulp serve.dev"
+    "start": "gulp serve.dev",
+    "test": "jest --config jest.config.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "repository": {
     "type": "git",
