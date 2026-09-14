@@ -41,8 +41,15 @@ plateMapWidget.loadPlate = function() {
 
     sanitizeAddresses: function(selectedAddresses) {
       selectedAddresses = selectedAddresses || [];
-      let indices = selectedAddresses.map(this.addressToIndex, this);
-      indices.sort();
+      // Wrap in an arrow rather than passing addressToIndex directly to
+      // .map(): Array#map invokes its callback as (element, index, array),
+      // so a bare method reference would receive the array index as
+      // addressToIndex's `dimensions` parameter for every element past the
+      // first. See REFACTOR_NOTES.md §6 #1.
+      let indices = selectedAddresses.map(address => this.addressToIndex(address));
+      // Explicit numeric comparator: default Array#sort() stringifies
+      // elements, which sorts index 10 before index 2.
+      indices.sort((a, b) => a - b);
       indices = indices.filter((index, i) => indices.indexOf(index) === i);
       return indices;
     },

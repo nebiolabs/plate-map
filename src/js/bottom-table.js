@@ -65,7 +65,12 @@ var plateMapWidget = plateMapWidget || {};
         plateIdDiv.append(numberText);
 
         numberText.click(function (evt) {
-          let addressToSelect = singleStack.map(that.indexToAddress, that);
+          // Arrow wrapper, not a bare `that.indexToAddress` reference: .map()
+          // invokes its callback as (element, index, array), so a bare
+          // method reference would receive the array index as
+          // indexToAddress's `dimensions` parameter for every element past
+          // the first. See REFACTOR_NOTES.md §6 #1 / #10.
+          let addressToSelect = singleStack.map(index => that.indexToAddress(index));
           if (evt.ctrlKey) {
             that.getSelectedAddresses().forEach(function (val) {
               if (addressToSelect.indexOf(val) < 0) {
@@ -165,9 +170,10 @@ var plateMapWidget = plateMapWidget || {};
         let colorLocIdxMap = this.engine.stackUpWithColor;
         for (let colorIdx in colorLocIdxMap) {
           if (colorLocIdxMap.hasOwnProperty(colorIdx)) {
+            // Arrow wrapper, not a bare `this.indexToAddress` reference --
+            // see the identical fix/comment in addBottomTableRow above.
             colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(
-              this.indexToAddress,
-              this,
+              index => this.indexToAddress(index),
             );
           }
         }

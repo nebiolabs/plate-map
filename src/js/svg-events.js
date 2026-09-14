@@ -106,7 +106,9 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
 
-          that.setSelectedIndices(indices.sort());
+          // Explicit numeric comparator: default Array#sort() stringifies
+          // elements, which sorts index 10 before index 2.
+          that.setSelectedIndices(indices.sort((a, b) => a - b));
         }
 
         let selectionBox;
@@ -349,8 +351,12 @@ var plateMapWidget = plateMapWidget || {};
 
       // get all wells that have data
       getWellSetAddressWithData: function() {
-        let indices = Object.keys(this.engine.derivative).map(Number).sort();
-        return indices.map(this.indexToAddress, this)
+        // Explicit numeric comparator on .sort(), and an arrow wrapper
+        // (not a bare `this.indexToAddress` reference) on .map() -- see
+        // the identical fixes/comments in load-plate.js's
+        // sanitizeAddresses and bottom-table.js's addBottomTableRow.
+        let indices = Object.keys(this.engine.derivative).map(Number).sort((a, b) => a - b);
+        return indices.map(index => this.indexToAddress(index));
       }
 
     };

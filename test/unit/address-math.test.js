@@ -283,49 +283,42 @@ describe('setSelectedAddresses / getSelectedAddresses', () => {
     expect(widget.plateMap('getSelectedAddresses')).toEqual(['C5']);
   });
 
-  describe('2+ addresses: a second, independent, severe bug', () => {
-    // sanitizeAddresses (load-plate.js) does:
+  describe('2+ addresses (formerly a severe bug, fixed -- see REFACTOR_NOTES.md §6 #1)', () => {
+    // sanitizeAddresses (load-plate.js) used to do:
     //   let indices = selectedAddresses.map(this.addressToIndex, this);
     // Array#map invokes its callback as (element, index, array). Passed
     // directly as a bare method reference, addressToIndex's second
-    // parameter (`dimensions`) receives the ARRAY INDEX instead of a real
-    // dimensions object. For array index 0 that's falsy (0), so it happens
-    // to fall back to `this.dimensions` correctly -- but for index 1+ it's
-    // a truthy Number, so `dimensions.rows`/`dimensions.cols` are
-    // `undefined`, and locToIndex's bounds check (`loc.r < dimensions.rows`,
-    // and `< undefined` is always false) fails and throws "Row index N
-    // invalid" for a perfectly valid, in-range address. This means the
-    // documented public API method setSelectedAddresses(addresses) --
-    // listed in README's "Major Functions" -- is CURRENTLY BROKEN for any
-    // call with 2 or more addresses, regardless of validity/order/duplicates.
-    test('BUG: throws for entirely in-range, in-order addresses', () => {
+    // parameter (`dimensions`) received the ARRAY INDEX instead of a real
+    // dimensions object, which threw "Row index N invalid" for any
+    // perfectly valid address past the first. Fixed by wrapping the call
+    // in an arrow so only the address is forwarded.
+    test('FIXED: no longer throws for entirely in-range, in-order addresses', () => {
       const widget = makeWidget({ numRows: 8, numCols: 12 });
       loadMinimalData(widget);
-      expect(() => widget.plateMap('setSelectedAddresses', ['A1', 'A2', 'A3']))
-        .toThrow('Row index 1 invalid');
+      widget.plateMap('setSelectedAddresses', ['A1', 'A2', 'A3']);
+      expect(widget.plateMap('getSelectedAddresses')).toEqual(['A1', 'A2', 'A3']);
     });
 
-    test('BUG: throws even when one address is a duplicate', () => {
+    test('FIXED: no longer throws when one address is a duplicate, and dedupes', () => {
       const widget = makeWidget({ numRows: 8, numCols: 12 });
       loadMinimalData(widget);
-      expect(() => widget.plateMap('setSelectedAddresses', ['B2', 'B2', 'A1']))
-        .toThrow();
+      widget.plateMap('setSelectedAddresses', ['B2', 'B2', 'A1']);
+      expect(widget.plateMap('getSelectedAddresses')).toEqual(['A1', 'B2']);
     });
 
-    test('the lexicographic Array#sort() bug in the same function is real but ' +
-         'currently unreachable through the public API', () => {
-      // sanitizeAddresses also does `indices.sort()` with no comparator
-      // (default Array#sort stringifies elements, so e.g. index 10 sorts
-      // before index 2) -- a second, independent bug in the same function.
-      // In practice it can never be observed through setSelectedAddresses
-      // today: the map() bug above always throws first for any 2+-address
-      // call, before execution ever reaches .sort(). Documenting that
-      // precisely rather than asserting ordering behavior that isn't
-      // actually reachable from the public API today.
+    test('FIXED: also sorts numerically, not lexicographically, once the ' +
+         'array is long enough for sort() to matter', () => {
+      // sanitizeAddresses also used to do `indices.sort()` with no
+      // comparator (default Array#sort stringifies elements, so e.g. index
+      // 10 sorted before index 2) -- a second, independent bug in the same
+      // function that the map() bug had always masked (it threw first for
+      // any 2+-address call, before execution ever reached .sort()). Now
+      // fixed with an explicit numeric comparator.
       const widget = makeWidget({ numRows: 8, numCols: 12 });
       loadMinimalData(widget);
-      expect(() => widget.plateMap('setSelectedAddresses', ['B8', 'A11', 'A10', 'A3', 'A2']))
-        .toThrow(/Row index \d+ invalid/);
+      widget.plateMap('setSelectedAddresses', ['B8', 'A11', 'A10', 'A3', 'A2']);
+      // indices for A2(1), A3(2), A10(9), A11(10), B8(19) on a 12-col plate
+      expect(widget.plateMap('getSelectedAddresses')).toEqual(['A2', 'A3', 'A10', 'A11', 'B8']);
     });
   });
 });

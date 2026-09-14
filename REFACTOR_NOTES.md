@@ -243,28 +243,87 @@ was actually being tested. This was discovered the hard way (see git history
 of `address-math.test.js` if you want the debugging trail) — do not remove
 this cleanup.
 
-## 6. Real bugs found and characterized — **none fixed**
+## 6. Real bugs found and characterized
 
 These are pinned down as tests asserting *actual current behavior*
 (including where that behavior throws), with comments explaining each is a
-known/possible bug, not a spec. Ranked roughly by severity:
+known/possible bug, not a spec, except where marked FIXED below. Ranked
+roughly by severity:
 
-1. **`setSelectedAddresses(addresses)` throws for ANY call with 2+
-   addresses.** `load-plate.js`'s `sanitizeAddresses`:
-   `selectedAddresses.map(this.addressToIndex, this)`. `Array#map` invokes
-   its callback as `(element, index, array)`; passed as a bare method
-   reference, `addressToIndex`'s second parameter (`dimensions`) receives
-   the **array index** instead of a real dimensions object. Index 0 is
-   falsy so it happens to fall back to `this.dimensions` correctly — index
-   1+ is a truthy `Number`, so `dimensions.rows`/`dimensions.cols` are
-   `undefined`, and the bounds check in `locToIndex` (`loc.r < dimensions.rows`,
-   and `< undefined` is always `false`) fails and throws `"Row index N
-   invalid"` for a perfectly valid, in-range address. **This means a
-   documented "Major Function" is currently broken for its stated use case**
-   — any embedder calling it with 2+ addresses gets an exception. This is
-   the one bug severe enough that the user was asked directly whether to
-   patch it now, separately from the refactor — **that question was
-   interrupted and never answered; see "Open questions" below.**
+1. **FIXED** (this session). **`setSelectedAddresses(addresses)` used to
+   throw for ANY call with 2+ addresses.** `load-plate.js`'s
+   `sanitizeAddresses`: `selectedAddresses.map(this.addressToIndex, this)`.
+   `Array#map` invokes its callback as `(element, index, array)`; passed as
+   a bare method reference, `addressToIndex`'s second parameter
+   (`dimensions`) received the **array index** instead of a real dimensions
+   object. Index 0 is falsy so it happened to fall back to `this.dimensions`
+   correctly — index 1+ is a truthy `Number`, so `dimensions.rows`/
+   `dimensions.cols` were `undefined`, and the bounds check in `locToIndex`
+   (`loc.r < dimensions.rows`, and `< undefined` is always `false`) failed
+   and threw `"Row index N invalid"` for a perfectly valid, in-range
+   address — a documented "Major Function" broken for its stated use case.
+   **Fixed** by wrapping the call in an arrow (`selectedAddresses.map(address
+   => this.addressToIndex(address))`) so `.map()`'s implicit index argument
+   is never forwarded. The user was asked directly and chose to fix it now,
+   as an isolated concern from the refactor. See `test/unit/
+   address-math.test.js`'s "2+ addresses" describe block (tests rewritten
+   from BUG-asserting to FIXED-asserting).
+
+   **Fixing it surfaced a second, previously-masked bug in the same
+   function** (also fixed in the same commit, at the user's direction):
+   `sanitizeAddresses` also did `indices.sort()` with no comparator —
+   default `Array#sort` stringifies elements, so index `10` sorted before
+   index `2`. This could never fire before: the `.map()` bug above always
+   threw first for any 2+-address call, so execution never reached
+   `.sort()`. Fixed with an explicit numeric comparator
+   (`indices.sort((a, b) => a - b)`).
+
+   **Follow-up audit** (`/challenge`, same session) found the identical two
+   bug shapes recurring in 3 more places, all now also fixed:
+   - `bottom-table.js`'s `addBottomTableRow` click handler —
+     `singleStack.map(that.indexToAddress, that)` (bare-reference `.map()`
+     bug). Clicking a bottom-table color-group swatch with 2+ wells in the
+     group threw. Live, everyday UI action. **Fixed** (arrow-wrapped).
+   - `bottom-table.js`'s `exportData` — `colorLocIdxMap[colorIdx].map(
+     this.indexToAddress, this)` (same bare-reference bug). CSV/clipboard
+     export **silently wrote corrupted addresses** (no throw) into the
+     "Location" column for any color group of 2+ wells — worse than the
+     others because it's silent, wrong data in an exported file rather than
+     a visible crash. **Fixed** (arrow-wrapped). Regression-tested in
+     `test/unit/audit-bugfixes.test.js` (required a scoped `innerText`
+     polyfill in that test file — jsdom does not implement `innerText` at
+     all, since it depends on real layout; `exportData` reads
+     `cols[j].innerText` to build export rows).
+   - `svg-events.js`'s `getWellSetAddressWithData` — had **both** bug
+     shapes in the same two lines: `Object.keys(this.engine.derivative)
+     .map(Number).sort()` (comparator-less sort) feeding directly into
+     `indices.map(this.indexToAddress, this)` (bare-reference map). Feeds
+     `this.addressAllowToEdit` (`plate-map.js`), which nothing in `src/js/`
+     currently reads back — inert internally today, but reachable by an
+     external consumer reading the raw instance off the `created(instance)`
+     callback. **Fixed** (explicit comparator + arrow-wrapped). Regression-
+     tested in `test/unit/audit-bugfixes.test.js`.
+   - `svg-events.js`'s `selectTiles` (the **drag-select** handler,
+     `that.setSelectedIndices(indices.sort())`) — same comparator-less
+     sort bug, on the single hottest interaction path in the widget: any
+     mouse-drag selection spanning index ≥10 (any plate with ≥10 columns)
+     got reordered lexicographically, feeding wrong order into
+     `getSelectedAddresses()`, the `selectedWells` callback payload, and
+     undo/redo history. **Fixed** (explicit comparator). **Not
+     regression-tested** — `selectTiles` is a private closure inside
+     `_svgEvents` that depends on `getMousePosition()`'s `getScreenCTM()`,
+     which jsdom does not implement (per `AGENTS.md`'s testing section:
+     drag-select needs Playwright, not Jest). Verified by code inspection
+     only; add real-browser coverage when the Playwright layer is built.
+
+   **Root cause, not yet addressed**: no wrapper convention anywhere in the
+   codebase for passing a `this`-bound method into an array iterator — this
+   exact bug shape is one `.map(this.x, this)` away from recurring anywhere
+   else it's written the same way. A lint rule (or at minimum re-auditing
+   after any future `src/js/` edit) would retire the risk class; this
+   session's audit covered every `.map/.forEach/.filter/.reduce/.some/
+   .every/.find/.sort()` call site as of the commit(s) above, not future
+   ones.
 2. **Selecting wells before any real data/checkbox has ever been loaded
    throws a `TypeError`.** `bottomForFirstTime()` (`bottom-table.js`) seeds
    one placeholder `<tr>` with no `<button>` in it. `selectObjectInBottomTab`
@@ -377,15 +436,20 @@ select2 UI, before touching any `src/` code.**
 
 ## 8. What is NOT done yet
 
-- [ ] **Answer the interrupted question**: how to handle bug #1
-      (`setSelectedAddresses` 2+ addresses) — fix now as its own small
-      commit, fix as part of the refactor, or leave it as-is. See "Open
-      questions" below.
+- [x] **The interrupted question, answered**: bug #1 (`setSelectedAddresses`
+      2+ addresses) — user chose to fix now, as an isolated concern from the
+      refactor. Fixed, along with the sibling `.sort()` bug it exposed, plus
+      3 more recurrences of the same two bug shapes found via a follow-up
+      `/challenge` audit (bottom-table click handler, `exportData`,
+      `getWellSetAddressWithData`, and the drag-select handler). See §6 #1
+      for the full detail. **Not yet committed** — pending user review of
+      this session's diff.
 - [ ] Playwright real-browser test layer: drag-select mechanics (including
-      the row/column-gutter special case), tab switching, checkbox → bottom
-      table, multiplex add/remove dialogs, undo/redo via actual UI/keyboard
-      shortcuts, a **dedicated two-instances-on-one-page test**, CSV/
-      clipboard export, and some visual/DOM snapshot coverage.
+      the row/column-gutter special case **and regression coverage for the
+      §6 #1 drag-select sort fix, unverified by Jest**), tab switching,
+      checkbox → bottom table, multiplex add/remove dialogs, undo/redo via
+      actual UI/keyboard shortcuts, a **dedicated two-instances-on-one-page
+      test**, CSV/clipboard export, and some visual/DOM snapshot coverage.
 - [ ] The actual `src/js/` refactor: breaking the global-mixin
       (`plateMapWidget` + `$.extend`) pattern into real ES modules with
       explicit dependencies, while keeping the public API byte-identical.
@@ -406,9 +470,7 @@ select2 UI, before touching any `src/` code.**
 
 ## 9. Open questions to resume with
 
-1. **Bug #1 fix timing** (asked, not yet answered — the user interrupted
-   with `/challenge` instead): fix `setSelectedAddresses` now as an
-   isolated commit, fold the fix into the refactor, or leave it exactly
-   as-is for now? Ask again before proceeding.
-2. Whether to continue straight to the Playwright layer next, or the user
-   wants to review the Jest suite / this documentation first.
+Both prior open questions are now answered: bug #1 (and its audit-found
+siblings) fixed now, per §6 #1 above; next step is the Playwright layer
+(confirmed by the user, not yet started). No open questions remain as of
+this update — pick up with Playwright.
