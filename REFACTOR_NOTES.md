@@ -418,6 +418,44 @@ roughly by severity:
     positive control (numeric *with* units, which works). This one hasn't
     been discussed with the user yet — raise it and ask about fix timing
     the same way bug #1 was handled, rather than assuming.
+11. **NEW, found while writing the dedicated two-instances-on-one-page test
+    §7 point 4 explicitly asked for (not previously known/characterized):
+    two widget instances on one page are currently unsafe together in two
+    separate, concrete ways** — the self-critique's abstract "unscoped
+    `document.querySelectorAll` calls are dangerous for multi-instance
+    embedders" concern, now with real repros and a real stack trace:
+    - **A crash, trivially reachable**: `selectObjectInBottomTab`
+      (`plate-map.js:357`) does
+      `document.querySelectorAll('table.plate-setup-bottom-table tr')` —
+      page-wide, not scoped to `this` widget's own container — then
+      `for (let i = 1; i < trs.length; i++)`, skipping exactly **one** row
+      (meant to skip "the" header row). With two widgets on the page this
+      combines both tables' `<tr>`s into one list; only the *first*
+      widget's header is skipped, so the *second* widget's own header row
+      (a `<th>`, no `<button>` inside it) is walked into as if it were a
+      data row, and `td.querySelector('button').innerHTML` throws on the
+      `null`. **This fires on the very first `loadPlate`/checkbox call on
+      ANY widget as soon as a second widget instance merely exists
+      anywhere on the page — the second widget never has to be touched at
+      all.** Confirmed via a real stack trace: `selectObjectInBottomTab` →
+      `applyColors` (`engine.js:153`) → `_colorMixer` →
+      `setCheckboxes`/`changeCheckboxes` → `setData` → `loadPlate`. This is
+      about as severe as anything in this list: it means the widget is not
+      merely "risky" with 2+ instances on a page, it is **currently
+      guaranteed-broken** the moment a second instance exists and either
+      one ever calls `loadPlate`/changes a checkbox.
+    - **Silent cross-instance data leakage, no crash**: `exportData`
+      (`bottom-table.js`) does `document.querySelectorAll("table tr")` —
+      even more unscoped than the above (every `<table>` on the whole
+      page, not even limited to `.plate-setup-bottom-table`). Confirmed
+      (in the cold-start state specifically, so this doesn't depend on the
+      crash above): calling `exportData('clipboard')` on ONE freshly-
+      created widget while a second, completely untouched widget exists
+      elsewhere on the page returns a clipboard string containing **both**
+      widgets' `"Group"` header rows concatenated together.
+
+    Both characterized (not fixed) in `test/e2e/multi-instance.spec.js`.
+    Not yet discussed with the user — raise alongside bug #10 above.
 
 ## 7. Self-critique (`/challenge`) — read before trusting this suite
 
@@ -463,6 +501,9 @@ next agent to know that I've challenged you."* Full critique, condensed:
    makes `exportData`, `selectObjectInBottomTab`, and `readOnlyHandler`'s
    unscoped `document.querySelectorAll` calls dangerous for a real embedder
    running more than one widget per page.
+   **UPDATE**: this gap has since been closed (`test/e2e/
+   multi-instance.spec.js`), and this concern turned out to be worse than
+   "dangerous" — it's a guaranteed crash. See §6 #11.
 5. **Minor**: no test covers widget teardown/recreate. There is no
    `_destroy` override anywhere in `src/js/`, so the `window`/
    `document.body` `cut`/`copy`/`paste`/`keyup` listeners registered in
@@ -482,14 +523,20 @@ select2 UI, before touching any `src/` code.**
       3 more recurrences of the same two bug shapes found via a follow-up
       `/challenge` audit (bottom-table click handler, `exportData`,
       `getWellSetAddressWithData`, and the drag-select handler). See §6 #1
-      for the full detail. **Not yet committed** — pending user review of
-      this session's diff.
-- [ ] Playwright real-browser test layer: drag-select mechanics (including
-      the row/column-gutter special case **and regression coverage for the
-      §6 #1 drag-select sort fix, unverified by Jest**), tab switching,
-      checkbox → bottom table, multiplex add/remove dialogs, undo/redo via
-      actual UI/keyboard shortcuts, a **dedicated two-instances-on-one-page
-      test**, CSV/clipboard export, and some visual/DOM snapshot coverage.
+      for the full detail. Committed (`df58276`); not yet pushed to origin
+      as of this writing — pending user review.
+- [x] Playwright real-browser test layer, mostly: drag-select mechanics
+      (including the row/column-gutter special case and regression coverage
+      for the §6 #1 drag-select sort fix), real select2 UI (including the
+      select2fix workaround), tab switching, checkbox → bottom table,
+      multiplex add/remove dialogs, undo/redo via actual keyboard shortcuts,
+      and a **dedicated two-instances-on-one-page test** (which surfaced §6
+      #11, a real crash). Found one more new bug along the way (§6 #10,
+      numeric fields without units). **Still missing**: CSV/clipboard
+      *download* specifically (clipboard export via `exportData('clipboard')`
+      is exercised as a side effect of the multi-instance test, but no
+      dedicated export-correctness test exists yet), and any visual/DOM
+      snapshot coverage. Also not committed to origin yet — same as above.
 - [ ] The actual `src/js/` refactor: breaking the global-mixin
       (`plateMapWidget` + `$.extend`) pattern into real ES modules with
       explicit dependencies, while keeping the public API byte-identical.
