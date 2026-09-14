@@ -378,6 +378,46 @@ roughly by severity:
    `field.data = data` keeps that mutated object live for the field's
    entire lifetime) — not a user-facing bug, but see the self-critique
    below for why this matters to the test suite's own validity.
+10. **NEW, found while building the Playwright layer (not previously
+    known/characterized): a numeric field configured with NEITHER `units`
+    NOR `defaultUnit` throws on every single edit and NEVER saves the typed
+    value, silently, for the field's entire lifetime.** `create-field.js`'s
+    `_createNumericField` wires its own `"input"` handler
+    (`create-field.js:618`) as:
+    ```js
+    input.on("input", function() {
+      let v = field.getRegularValue();   // <-- throws here
+      ...
+      field.onChange();                  // <-- never reached
+    });
+    ```
+    `field.getRegularValue` is defined **only** by `_makeFieldUnits`
+    (`create-field.js:100`), which `_handleFieldUnits` calls **only** when
+    `units.length` ends up non-zero — true when *either* `units` or
+    `defaultUnit` is configured (`defaultUnit` alone makes
+    `units = [defaultUnit]`, see `_handleFieldUnits`, `create-field.js:62`–
+    `89`). With **neither** configured, `getRegularValue` is never defined
+    at all, so every keystroke throws `TypeError: field.getRegularValue is
+    not a function` before `field.onChange()` runs — the value is silently
+    lost, with no exception surfaced to the embedder (it's an in-page
+    uncaught error inside a jQuery event handler, not a thrown/returned
+    error from any public method).
+
+    **Precisely scoped to numeric fields**: confirmed by reading
+    `_createTextField`/`_createSelectField`/`_createBooleanField`/
+    `_createMultiSelectField`'s own change handlers — none of them call
+    `getRegularValue`.
+
+    **Notably**: `example/example.js`'s own bundled demo has a multiplex
+    subfield (`dilution_factor`) with its `defaultUnit` commented out —
+    i.e. the shipped example already contains a field shaped exactly like
+    this. Nothing in the repo currently proves anyone has typed into that
+    particular demo field and noticed the silent failure.
+
+    Characterized (not fixed) in `test/e2e/field-editing.spec.js`, plus a
+    positive control (numeric *with* units, which works). This one hasn't
+    been discussed with the user yet — raise it and ask about fix timing
+    the same way bug #1 was handled, rather than assuming.
 
 ## 7. Self-critique (`/challenge`) — read before trusting this suite
 
