@@ -1,0 +1,32 @@
+[
+  {
+    "address": "A1",
+    "colorGroup": 1,
+    "complete": true
+  },
+  {
+    "address": "A2",
+    "colorGroup": 1,
+    "complete": true
+  },
+  {
+    "address": "A3",
+    "colorGroup": 2,
+    "complete": true
+  },
+  {
+    "address": "B1",
+    "colorGroup": null,
+    "complete": true
+  },
+  {
+    "address": "B2",
+    "colorGroup": null,
+    "complete": true
+  },
+  {
+    "address": "B3",
+    "colorGroup": null,
+    "complete": true
+  }
+]

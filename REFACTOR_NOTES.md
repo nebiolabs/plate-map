@@ -8,15 +8,19 @@ self-critique of the test suite's own limits that the user deliberately
 pushed for. Do not assume the Jest suite is a sufficient "before" baseline
 for the refactor until you've read the "Self-critique" section below.
 
-- Branch: `refactor/#119-cleanup_and_reorganize`, pushed to `origin`.
+- Branch: `refactor/#119-cleanup_and_reorganize`. Committed locally as of
+  this writing; **not yet pushed to origin** — pending user review (they
+  stepped away mid-session and this work continued autonomously; confirm
+  they're comfortable with everything below before pushing).
 - Base: `master` at `a0439cf` (post dependency-bump merges, pre-refactor).
-- **No `src/js/` file has been modified. No bug has been fixed. No build
-  tooling has changed. The refactor itself has not started.** Everything so
-  far is: git/issue cleanup (done), a Jest characterization-test layer
-  (done), and this documentation (in progress).
-- **One question to the user was left unanswered** when they interrupted to
-  run `/challenge` instead — see "Open questions to resume with" at the
-  bottom. Ask it again before proceeding past this point.
+- **Status**: git/issue cleanup done; a 100+-test Jest characterization
+  layer done; a 31-test Playwright real-browser layer done (`test/e2e/`);
+  bug #1 (`setSelectedAddresses` 2+ addresses) and 3 audit-found siblings
+  fixed (§6 #1); 2 more new bugs found while building the Playwright layer,
+  **not yet fixed** (§6 #10, #11 — #11 is a crash). **The actual `src/js/`
+  module refactor and build-tool modernization have NOT started.**
+- **Three questions to the user are open** — see "Open questions to resume
+  with" at the bottom. Ask before proceeding past this point.
 
 ## 1. Original request (paraphrased, three parts)
 
@@ -525,18 +529,40 @@ select2 UI, before touching any `src/` code.**
       `getWellSetAddressWithData`, and the drag-select handler). See §6 #1
       for the full detail. Committed (`df58276`); not yet pushed to origin
       as of this writing — pending user review.
-- [x] Playwright real-browser test layer, mostly: drag-select mechanics
-      (including the row/column-gutter special case and regression coverage
-      for the §6 #1 drag-select sort fix), real select2 UI (including the
-      select2fix workaround), tab switching, checkbox → bottom table,
-      multiplex add/remove dialogs, undo/redo via actual keyboard shortcuts,
-      and a **dedicated two-instances-on-one-page test** (which surfaced §6
-      #11, a real crash). Found one more new bug along the way (§6 #10,
-      numeric fields without units). **Still missing**: CSV/clipboard
-      *download* specifically (clipboard export via `exportData('clipboard')`
-      is exercised as a side effect of the multi-instance test, but no
-      dedicated export-correctness test exists yet), and any visual/DOM
-      snapshot coverage. Also not committed to origin yet — same as above.
+- [x] **Playwright real-browser test layer — done.** `test/e2e/`: a
+      dependency-free static-file harness (`server.js` + `fixture.html`,
+      loading real `src/js/*.js` as `<script>` tags in gulpfile.js's own
+      dependency order — not a dist build), `playwright.config.js`
+      (chromium only), and 31 tests across 9 spec files: `smoke.spec.js`
+      (harness sanity), `drag-select.spec.js` (mouse drag-select, the
+      row/column-gutter special case, §6 #1's sort-order regression),
+      `select2-ui.spec.js` (real select2 dropdowns, the select2fix
+      workaround), `tabs-and-bottom-table.spec.js` (tab switching, checkbox
+      → grouping, §6 #1's click-to-select regression), `multiplex.spec.js`
+      (add/switch/remove entries via the real UI), `field-editing.spec.js`
+      (basic field edits + found §6 #10), `undo-redo-ui.spec.js` (real
+      Ctrl+Z/Shift+Z/Y shortcuts, focus-gated), `multi-instance.spec.js`
+      (the dedicated two-widget test — surfaced §6 #11, a real crash),
+      `export.spec.js` (CSV download + clipboard content correctness).
+      Plus `visual-snapshot.spec.js`: a portable structured-DOM snapshot
+      (tile color/completion state) and one small pixel screenshot (2x2
+      plate, tightly clipped, `maxDiffPixelRatio: 0.05`) — the pixel one is
+      tied to this machine's rendering (filename suffix
+      `-chromium-darwin`); regenerate its baseline with
+      `--update-snapshots` on a different machine/CI rather than assuming
+      a real regression from a cosmetic diff.
+
+      **Net result of building this layer**: 2 new, previously-
+      uncharacterized bugs found (§6 #10 numeric-fields-without-units, §6
+      #11 the two-instance crash + export leak) — neither fixed yet, not
+      yet discussed with the user; both need the same fix-timing
+      conversation bug #1 got. All 31 e2e tests + all 103 Jest tests pass
+      as of this writing. Not yet committed to origin — same as above.
+      **Still not covered** (lower priority, didn't block calling this
+      "done"): `.select2-container--open` edge cases beyond the basics,
+      the `select2fix` workaround under multiselect specifically (only
+      tested under single-select), and widget teardown/recreate (self-
+      critique point 5 — still open, no `_destroy` exists to test against).
 - [ ] The actual `src/js/` refactor: breaking the global-mixin
       (`plateMapWidget` + `$.extend`) pattern into real ES modules with
       explicit dependencies, while keeping the public API byte-identical.
@@ -557,7 +583,17 @@ select2 UI, before touching any `src/` code.**
 
 ## 9. Open questions to resume with
 
-Both prior open questions are now answered: bug #1 (and its audit-found
-siblings) fixed now, per §6 #1 above; next step is the Playwright layer
-(confirmed by the user, not yet started). No open questions remain as of
-this update — pick up with Playwright.
+1. **Bug #10 fix timing** (`create-field.js`'s numeric-field-without-units
+   bug, §6 #10) — not yet asked. Fix now (isolated commit, same treatment
+   as bug #1), fold into the refactor, or leave as-is for now?
+2. **Bug #11 fix timing** (the two-instance crash + export data leak, §6
+   #11) — not yet asked. Same three options. Given this is a crash (not
+   just wrong output), worth flagging as probably the highest-priority of
+   the two.
+3. Whether to continue straight to the actual `src/js/` refactor next (the
+   Playwright layer this question-list previously called the prerequisite
+   is now done), or something else first.
+
+(Bug #1 and its audit-found siblings, and the original Playwright-layer
+question, were resolved in the session that built §6 #1 and the `test/e2e/`
+layer — see the checklist in §8 above for what that covered.)
