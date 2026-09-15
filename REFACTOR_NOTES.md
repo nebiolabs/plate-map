@@ -1112,3 +1112,24 @@ resumable in a future session):
   serving both need reworking for real ES modules), Vite production
   config (3e), and a final manual smoke-test + dist-diff gate before
   retiring the old pipeline (3f).
+
+### 10.9 RESUME HERE (session paused at end of this day, nothing further
+### done past this point)
+
+Working tree is clean; everything through Stage 0 is committed on
+`refactor/#119-cleanup_and_reorganize` and pushed to origin (commits
+`ab5fb40`, `a374a6c`, `23efce0`, plus this doc-update commit). Nothing
+merged to `master`; no PR opened (standing constraint: don't, without
+explicit approval).
+
+**Next action, not yet started**: begin Stage 2, sub-step (1), dead code
+removal — the 4 candidates cleared in §10.6 (`colorToIndex`,
+`field.parseMainFieldVal` + stray `unitInput`, `removeWarningMsg`, dead
+`plateMapWidget: {}`). Straightforward and low-risk; a reasonable
+opening move for a fresh session. After that, sub-steps (2)-(6) in the
+order listed above — (3), the `create-field.js` split, is the biggest
+and most judgment-heavy piece and deserves its own focused session
+rather than being rushed alongside the others.
+
+Nothing else is pending or half-finished — no open questions, no
+uncommitted edits, no partially-applied fixes.
