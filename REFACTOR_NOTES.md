@@ -1049,21 +1049,49 @@ matching `ebase`'s real setup. Pulled forward to run *before* Stage 2's
 cleanup investment, since it's the load-bearing assumption behind the
 whole Vite decision.
 
-### 10.7 Approved execution plan (staged) — Stage 1 starts now
+### 10.7 Stage 0 — DONE: Vite/UMD feasibility spike + CI
+
+**Vite/UMD spike: confirmed working, exactly as needed.** Built a
+throwaway library in an isolated scratch project (not committed to this
+repo — Vite was never added as a dependency here): one entry file
+`import $ from 'jquery'`, using it for a side effect (a jQuery plugin
+registration, same shape as `$.widget(...)`), with `jquery` marked
+`external` and `output.globals: {jquery: 'jQuery'}`, built via Vite's
+library mode in `formats: ['umd']`. Inspected the output directly — a
+genuine UMD wrapper with **zero** `import`/`export` syntax anywhere:
+```
+(function(e,i){typeof exports=="object"&&typeof module<"u"?i(require("jquery")):typeof define=="function"&&define.amd?define(["jquery"],i):(e=typeof globalThis<"u"?globalThis:e||self,i(e.jQuery))})(this,function(e){...});
+```
+Then executed it in a sandbox deliberately reproducing `ebase`'s exact
+real setup (§10.6 #4): `jQuery` pre-set as a bare global, **zero**
+importmap/module-resolution entries for it, `require()` wired to throw
+if called (to catch an accidental wrong-branch execution), no
+AMD `define`. Result: the browser-global branch ran correctly, read
+`globalThis.jQuery` (which is `window.jQuery` in any real browser),
+attached the plugin to the *same* external `jQuery` instance rather than
+a separately bundled copy (`sameJQueryInstance: true`), no errors. This
+directly de-risks the Vite decision before any Stage 2 cleanup investment
+— confirmed the mechanism Stage 3 depends on actually works, not just
+"should work in theory."
+
+**CI: added.** `.github/workflows/test.yml` — `npm test` (Jest) +
+`npm run test:e2e` (Playwright, Chromium) on push to `master` and on
+every PR, with a report artifact uploaded on failure. Closes the gap
+found in §10.6 #5 (no CI existed at all; every stage's "run the suite"
+was pure manual discipline until now).
+
+### 10.8 Approved execution plan (staged) — Stage 1 done, Stage 0 done
 
 Full detail lives in the plan-mode file
 `/Users/jmiller/.claude/plans/polished-cuddling-hippo.md` (approved by
 the user; kept here as the durable summary in case that file isn't
 resumable in a future session):
 
-- **Stage 1 (next, this session)**: the 5-bug commit above, each with a
-  regression test.
-- **Stage 0**: Vite/UMD feasibility spike (prove externals-as-globals
-  works with zero importmap entries, matching `ebase`'s real
-  consumption) + add a minimal CI workflow. Runs before Stage 2's
-  cleanup investment, specifically because it can invalidate the Vite
-  decision cheaply if it doesn't check out.
-- **Stage 2** (in-place cleanup, still plain global-mixin scripts, zero
+- **Stage 1 — DONE**: the 5-bug commit (`a374a6c`), each with a
+  regression test. Full suite green (108 Jest + 31 Playwright).
+- **Stage 0 — DONE**: Vite/UMD feasibility spike (confirmed — see 10.7)
+  + minimal CI workflow added.
+- **Stage 2 (next)** (in-place cleanup, still plain global-mixin scripts, zero
   test-harness rework needed since files stay non-ES-module — the mixin
   merge has no real load-order dependency, confirmed in §10.3): (1) dead
   code removal — cleared per §10.6; (2) mechanical intra-file

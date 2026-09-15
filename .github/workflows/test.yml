@@ -1,0 +1,43 @@
+name: test
+
+# Added per REFACTOR_NOTES.md §10.6 #5 -- before this workflow existed, every
+# stage of the refactor relied on manually remembering to run the suite.
+# Runs both layers (Jest/jsdom characterization tests + Playwright
+# real-browser tests) on every push/PR so the project's one mechanism for
+# proving "behaves identically" is enforced automatically, not by habit.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jest unit/characterization tests
+        run: npm test
+
+      - name: Install Playwright's Chromium browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright e2e tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
