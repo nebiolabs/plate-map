@@ -54,34 +54,36 @@ test('numeric field WITH units configured: typing a value lands in getPlate() (p
   expect(plate.wells.A1.volume).toEqual({ value: '42', unit: 'uL' });
 });
 
-test('BUG (new, found while building this suite): a numeric field configured with ' +
-     'NEITHER `units` NOR `defaultUnit` throws on every edit and NEVER saves the typed value', async ({ page }) => {
+test('FIXED (REFACTOR_NOTES.md §6 #10): a numeric field configured with ' +
+     'NEITHER `units` NOR `defaultUnit` now saves edits instead of throwing', async ({ page }) => {
   // create-field.js's _createNumericField wires its own "input" handler as:
   //   input.on("input", function() {
-  //     let v = field.getRegularValue();   // create-field.js:618
+  //     let v = field.getRegularValue();   // create-field.js:625ish
   //     ...
   //     field.onChange();
   //   });
-  // `field.getRegularValue` is defined ONLY by _makeFieldUnits
-  // (create-field.js:100), which _handleFieldUnits only calls when
-  // `units.length` ends up non-zero -- true when EITHER `units` or
-  // `defaultUnit` is configured (`defaultUnit` alone makes
-  // `units = [defaultUnit]` -- see _handleFieldUnits, create-field.js:62-89).
-  // With neither configured, `getRegularValue` is never defined at all, so
-  // every keystroke's "input" handler throws a TypeError BEFORE reaching
-  // `field.onChange()` on the next line -- so the typed value is silently
-  // never written to well data, for the field's entire lifetime.
+  // `field.getRegularValue` used to be defined ONLY by _makeFieldUnits,
+  // which _handleFieldUnits only calls when `units.length` ends up
+  // non-zero -- true when EITHER `units` or `defaultUnit` is configured.
+  // With neither configured, `getRegularValue` was never defined at all,
+  // so every keystroke's "input" handler threw a TypeError BEFORE reaching
+  // `field.onChange()` -- silently losing the typed value, forever.
+  //
+  // Fixed by having _createNumericField pre-set field.getRegularValue to
+  // its own plain field.getValue right after defining it -- a no-op when
+  // units ARE configured (_makeFieldUnits overwrites it with the same
+  // value anyway, before it later overrides field.getValue itself), and a
+  // working fallback when they aren't.
   //
   // Notably, example/example.js's own bundled demo has a multiplex
   // subfield ("dilution_factor") with its `defaultUnit` commented out --
-  // i.e. the shipped example already contains a field shaped exactly like
-  // this, though nothing in the repo currently proves anyone tried typing
-  // into it.
+  // i.e. the shipped example already contained a field shaped exactly
+  // like this.
   //
   // Scoped precisely to numeric fields: _createTextField/_createSelectField/
   // _createBooleanField/_createMultiSelectField's own change handlers do
-  // NOT call getRegularValue (confirmed by reading each), so this does not
-  // affect those field types.
+  // NOT call getRegularValue (confirmed by reading each), so this never
+  // affected those field types.
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
 
@@ -93,7 +95,7 @@ test('BUG (new, found while building this suite): a numeric field configured wit
   await page.locator(`#${containerId} #plainNum`).fill('42');
   await page.locator(`#${containerId} #plainNum`).blur();
 
-  expect(errors).toEqual(['field.getRegularValue is not a function']);
+  expect(errors).toEqual([]);
   const plate = await page.evaluate((id) => window.PM.instance(id).getPlate(), containerId);
-  expect(plate.wells.A1.plainNum).toBeNull(); // the typed "42" is silently lost
+  expect(plate.wells.A1.plainNum).toBe('42');
 });

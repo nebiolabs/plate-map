@@ -597,6 +597,17 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
+        // _makeFieldUnits (below) only ever assigns field.getRegularValue
+        // when the field has units/defaultUnit configured -- but this
+        // field's own "input" handler (below) calls it unconditionally.
+        // Pre-set it here to the plain getter so a numeric field with
+        // NEITHER units NOR defaultUnit still has a working
+        // getRegularValue instead of throwing on every edit. If units ARE
+        // configured, _makeFieldUnits overwrites this with the same value
+        // anyway (it runs before overriding field.getValue itself), so
+        // this is a no-op in that case.
+        field.getRegularValue = field.getValue;
+
         field.setValue = function(value) {
           input.val(value);
         };

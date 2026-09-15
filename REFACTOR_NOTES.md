@@ -9,17 +9,19 @@ pushed for. Do not assume the Jest suite is a sufficient "before" baseline
 for the refactor until you've read the "Self-critique" section below.
 
 - Branch: `refactor/#119-cleanup_and_reorganize`. Committed locally as of
-  this writing; **not yet pushed to origin** — pending user review (they
-  stepped away mid-session and this work continued autonomously; confirm
-  they're comfortable with everything below before pushing).
+  this writing; **not yet pushed to origin** — pending user review (some
+  of this was built autonomously while the user was away; confirm they're
+  comfortable with everything below before pushing).
 - Base: `master` at `a0439cf` (post dependency-bump merges, pre-refactor).
 - **Status**: git/issue cleanup done; a 100+-test Jest characterization
-  layer done; a 31-test Playwright real-browser layer done (`test/e2e/`);
+  layer done; a 31-test Playwright real-browser layer done (`test/e2e/`).
+  **All 5 real bugs found across both test layers so far are now fixed**:
   bug #1 (`setSelectedAddresses` 2+ addresses) and 3 audit-found siblings
-  fixed (§6 #1); 2 more new bugs found while building the Playwright layer,
-  **not yet fixed** (§6 #10, #11 — #11 is a crash). **The actual `src/js/`
-  module refactor and build-tool modernization have NOT started.**
-- **Three questions to the user are open** — see "Open questions to resume
+  (§6 #1), plus #10 (numeric field without units, §6 #10) and #11 (the
+  two-instance crash + export leak, §6 #11) — both found and fixed in the
+  same session. **The actual `src/js/` module refactor and build-tool
+  modernization have NOT started.**
+- **One question to the user is open** — see "Open questions to resume
   with" at the bottom. Ask before proceeding past this point.
 
 ## 1. Original request (paraphrased, three parts)
@@ -382,12 +384,12 @@ roughly by severity:
    `field.data = data` keeps that mutated object live for the field's
    entire lifetime) — not a user-facing bug, but see the self-critique
    below for why this matters to the test suite's own validity.
-10. **NEW, found while building the Playwright layer (not previously
-    known/characterized): a numeric field configured with NEITHER `units`
-    NOR `defaultUnit` throws on every single edit and NEVER saves the typed
-    value, silently, for the field's entire lifetime.** `create-field.js`'s
-    `_createNumericField` wires its own `"input"` handler
-    (`create-field.js:618`) as:
+10. **FIXED** (found while building the Playwright layer, fixed the same
+    session). A numeric field configured with NEITHER `units` NOR
+    `defaultUnit` used to throw on every single edit and never save the
+    typed value, silently, for the field's entire lifetime.
+    `create-field.js`'s `_createNumericField` wires its own `"input"`
+    handler as:
     ```js
     input.on("input", function() {
       let v = field.getRegularValue();   // <-- throws here
@@ -395,15 +397,15 @@ roughly by severity:
       field.onChange();                  // <-- never reached
     });
     ```
-    `field.getRegularValue` is defined **only** by `_makeFieldUnits`
+    `field.getRegularValue` used to be defined **only** by `_makeFieldUnits`
     (`create-field.js:100`), which `_handleFieldUnits` calls **only** when
     `units.length` ends up non-zero — true when *either* `units` or
     `defaultUnit` is configured (`defaultUnit` alone makes
     `units = [defaultUnit]`, see `_handleFieldUnits`, `create-field.js:62`–
-    `89`). With **neither** configured, `getRegularValue` is never defined
-    at all, so every keystroke throws `TypeError: field.getRegularValue is
-    not a function` before `field.onChange()` runs — the value is silently
-    lost, with no exception surfaced to the embedder (it's an in-page
+    `89`). With **neither** configured, `getRegularValue` was never defined
+    at all, so every keystroke threw `TypeError: field.getRegularValue is
+    not a function` before `field.onChange()` ran — the value was silently
+    lost, with no exception surfaced to the embedder (it was an in-page
     uncaught error inside a jQuery event handler, not a thrown/returned
     error from any public method).
 
@@ -414,52 +416,67 @@ roughly by severity:
 
     **Notably**: `example/example.js`'s own bundled demo has a multiplex
     subfield (`dilution_factor`) with its `defaultUnit` commented out —
-    i.e. the shipped example already contains a field shaped exactly like
-    this. Nothing in the repo currently proves anyone has typed into that
-    particular demo field and noticed the silent failure.
+    i.e. the shipped example already contained a field shaped exactly like
+    this.
 
-    Characterized (not fixed) in `test/e2e/field-editing.spec.js`, plus a
-    positive control (numeric *with* units, which works). This one hasn't
-    been discussed with the user yet — raise it and ask about fix timing
-    the same way bug #1 was handled, rather than assuming.
-11. **NEW, found while writing the dedicated two-instances-on-one-page test
-    §7 point 4 explicitly asked for (not previously known/characterized):
-    two widget instances on one page are currently unsafe together in two
-    separate, concrete ways** — the self-critique's abstract "unscoped
+    **Fix**: `_createNumericField` now pre-sets `field.getRegularValue =
+    field.getValue` right after defining `field.getValue`, giving a working
+    fallback when no units are configured. A no-op when units ARE
+    configured: `_makeFieldUnits` still overwrites `getRegularValue` with
+    the same value anyway (it runs before it later overrides
+    `field.getValue` itself). Characterized as FIXED in
+    `test/e2e/field-editing.spec.js`, alongside the pre-existing positive
+    control (numeric *with* units).
+11. **FIXED** (found while writing the dedicated two-instances-on-one-page
+    test §7 point 4 explicitly asked for, fixed the same session as found).
+    Two widget instances on one page used to be unsafe together in two
+    separate, concrete ways — the self-critique's abstract "unscoped
     `document.querySelectorAll` calls are dangerous for multi-instance
-    embedders" concern, now with real repros and a real stack trace:
+    embedders" concern, confirmed with real repros and a real stack trace:
     - **A crash, trivially reachable**: `selectObjectInBottomTab`
-      (`plate-map.js:357`) does
+      (`plate-map.js:357`) used to do
       `document.querySelectorAll('table.plate-setup-bottom-table tr')` —
       page-wide, not scoped to `this` widget's own container — then
       `for (let i = 1; i < trs.length; i++)`, skipping exactly **one** row
       (meant to skip "the" header row). With two widgets on the page this
-      combines both tables' `<tr>`s into one list; only the *first*
-      widget's header is skipped, so the *second* widget's own header row
-      (a `<th>`, no `<button>` inside it) is walked into as if it were a
-      data row, and `td.querySelector('button').innerHTML` throws on the
-      `null`. **This fires on the very first `loadPlate`/checkbox call on
-      ANY widget as soon as a second widget instance merely exists
-      anywhere on the page — the second widget never has to be touched at
+      combined both tables' `<tr>`s into one list; only the *first*
+      widget's header was skipped, so the *second* widget's own header row
+      (a `<th>`, no `<button>` inside it) was walked into as if it were a
+      data row, and `td.querySelector('button').innerHTML` threw on the
+      `null`. **This fired on the very first `loadPlate`/checkbox call on
+      ANY widget as soon as a second widget instance merely existed
+      anywhere on the page — the second widget never had to be touched at
       all.** Confirmed via a real stack trace: `selectObjectInBottomTab` →
       `applyColors` (`engine.js:153`) → `_colorMixer` →
-      `setCheckboxes`/`changeCheckboxes` → `setData` → `loadPlate`. This is
-      about as severe as anything in this list: it means the widget is not
-      merely "risky" with 2+ instances on a page, it is **currently
-      guaranteed-broken** the moment a second instance exists and either
-      one ever calls `loadPlate`/changes a checkbox.
+      `setCheckboxes`/`changeCheckboxes` → `setData` → `loadPlate`. This
+      was about as severe as anything in this list: it meant the widget
+      wasn't merely "risky" with 2+ instances on a page, it was
+      **guaranteed-broken** the moment a second instance existed and
+      either one ever called `loadPlate`/changed a checkbox.
     - **Silent cross-instance data leakage, no crash**: `exportData`
-      (`bottom-table.js`) does `document.querySelectorAll("table tr")` —
-      even more unscoped than the above (every `<table>` on the whole
-      page, not even limited to `.plate-setup-bottom-table`). Confirmed
-      (in the cold-start state specifically, so this doesn't depend on the
-      crash above): calling `exportData('clipboard')` on ONE freshly-
-      created widget while a second, completely untouched widget exists
-      elsewhere on the page returns a clipboard string containing **both**
-      widgets' `"Group"` header rows concatenated together.
+      (`bottom-table.js`) used to do `document.querySelectorAll("table
+      tr")` — even more unscoped than the above (every `<table>` on the
+      whole page, not even limited to `.plate-setup-bottom-table`).
+      Confirmed (in the cold-start state specifically, so this didn't
+      depend on the crash above): calling `exportData('clipboard')` on ONE
+      freshly-created widget while a second, completely untouched widget
+      existed elsewhere on the page returned a clipboard string containing
+      **both** widgets' `"Group"` header rows concatenated together.
 
-    Both characterized (not fixed) in `test/e2e/multi-instance.spec.js`.
-    Not yet discussed with the user — raise alongside bug #10 above.
+    **Fix**: both scoped to `this.bottomTable[0]` (an instance property
+    already set up in `bottom-table.js`'s `_bottomScreen`, carrying the
+    `plate-setup-bottom-table` class) instead of `document`. Each widget
+    now only ever sees its own bottom-table rows. Characterized as FIXED in
+    `test/e2e/multi-instance.spec.js`.
+
+    **Not fixed, and NOT covered by any test** — a related, still-open
+    concern named in the self-critique alongside these two:
+    `readOnlyHandler`'s `$('.multiple-field-manage-delete-button')`
+    selector (`plate-map.js`) is *also* unscoped (a bare global jQuery
+    selector, not even `document.querySelectorAll` scoped to an element).
+    Left alone this session because, unlike the two above, it was never
+    pinned down with an actual repro/test — worth auditing and fixing the
+    same way if/when someone verifies a concrete failure mode for it.
 
 ## 7. Self-critique (`/challenge`) — read before trusting this suite
 
@@ -554,15 +571,20 @@ select2 UI, before touching any `src/` code.**
 
       **Net result of building this layer**: 2 new, previously-
       uncharacterized bugs found (§6 #10 numeric-fields-without-units, §6
-      #11 the two-instance crash + export leak) — neither fixed yet, not
-      yet discussed with the user; both need the same fix-timing
-      conversation bug #1 got. All 31 e2e tests + all 103 Jest tests pass
-      as of this writing. Not yet committed to origin — same as above.
+      #11 the two-instance crash + export leak) — the user asked to tackle
+      both directly (no separate fix-timing conversation needed for
+      these), and **both are now fixed** in the same session, with their
+      characterization tests flipped from BUG-asserting to
+      FIXED-asserting. All 31 e2e tests + all 103 Jest tests pass as of
+      this writing. Not yet pushed to origin.
       **Still not covered** (lower priority, didn't block calling this
-      "done"): `.select2-container--open` edge cases beyond the basics,
-      the `select2fix` workaround under multiselect specifically (only
-      tested under single-select), and widget teardown/recreate (self-
-      critique point 5 — still open, no `_destroy` exists to test against).
+      "done"): `readOnlyHandler`'s own unscoped
+      `$('.multiple-field-manage-delete-button')` selector (related to §6
+      #11 but never pinned down with a repro, so left alone),
+      `.select2-container--open` edge cases beyond the basics, the
+      `select2fix` workaround under multiselect specifically (only tested
+      under single-select), and widget teardown/recreate (self-critique
+      point 5 — still open, no `_destroy` exists to test against).
 - [ ] The actual `src/js/` refactor: breaking the global-mixin
       (`plateMapWidget` + `$.extend`) pattern into real ES modules with
       explicit dependencies, while keeping the public API byte-identical.
@@ -583,17 +605,14 @@ select2 UI, before touching any `src/` code.**
 
 ## 9. Open questions to resume with
 
-1. **Bug #10 fix timing** (`create-field.js`'s numeric-field-without-units
-   bug, §6 #10) — not yet asked. Fix now (isolated commit, same treatment
-   as bug #1), fold into the refactor, or leave as-is for now?
-2. **Bug #11 fix timing** (the two-instance crash + export data leak, §6
-   #11) — not yet asked. Same three options. Given this is a crash (not
-   just wrong output), worth flagging as probably the highest-priority of
-   the two.
-3. Whether to continue straight to the actual `src/js/` refactor next (the
-   Playwright layer this question-list previously called the prerequisite
-   is now done), or something else first.
+1. Whether to continue straight to the actual `src/js/` refactor next —
+   both the Playwright layer (previously the stated prerequisite) and
+   every bug found by either test layer (§6 #1 + siblings, #10, #11) are
+   now done — or something else first (e.g. `readOnlyHandler`'s related-
+   but-unpinned-down selector from §6 #11's writeup, or the Dependabot
+   alerts).
 
-(Bug #1 and its audit-found siblings, and the original Playwright-layer
-question, were resolved in the session that built §6 #1 and the `test/e2e/`
-layer — see the checklist in §8 above for what that covered.)
+(Bug #1 and its audit-found siblings, the Playwright-layer question, and
+bugs #10/#11 were all resolved across the two sessions that built §6 #1,
+the `test/e2e/` layer, and the #10/#11 fixes — see the checklist in §8
+above for what each covered. Nothing remains from those threads.)

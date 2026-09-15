@@ -164,7 +164,12 @@ var plateMapWidget = plateMapWidget || {};
 
       exportData: function (format) {
         let data = [];
-        let rows = document.querySelectorAll("table tr");
+        // Scoped to this widget's own bottom table -- NOT a page-wide
+        // document.querySelectorAll("table tr"), which picked up every
+        // <table> on the whole page (any other widget instance's bottom
+        // table included) and silently mixed their rows into this export.
+        // See REFACTOR_NOTES.md §6 #11.
+        let rows = this.bottomTable[0].querySelectorAll("tr");
 
         let colorLocMap = {};
         let colorLocIdxMap = this.engine.stackUpWithColor;

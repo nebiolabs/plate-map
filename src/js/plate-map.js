@@ -367,7 +367,15 @@ $.widget("DNA.plateMap", {
         }
       }
     }
-    let trs = document.querySelectorAll('table.plate-setup-bottom-table tr');
+    // Scoped to this widget's own bottom table (this.bottomTable, set up in
+    // bottom-table.js's _bottomScreen) -- NOT a page-wide
+    // document.querySelectorAll. With two widget instances on one page, an
+    // unscoped query combines both tables' <tr>s into one list, but this
+    // loop only skips ONE row (meant to skip "the" header) -- the second
+    // widget's own header row (a <th>, no <button> inside it) would get
+    // walked into as if it were a data row and crash on the null
+    // .querySelector('button') result. See REFACTOR_NOTES.md §6 #11.
+    let trs = this.bottomTable[0].querySelectorAll('tr');
     for (let i = 1; i < trs.length; i++) { // start at 1 to skip the table headers
       let tr = trs[i];
       let td = tr.children[0];
