@@ -603,16 +603,484 @@ select2 UI, before touching any `src/` code.**
 - [x] Claude infrastructure (`AGENTS.md`, this file, and a memory pointer) —
       done in the same commit as this file.
 
-## 9. Open questions to resume with
+## 9. Open questions — resolved; see §10 for what replaced them
 
-1. Whether to continue straight to the actual `src/js/` refactor next —
-   both the Playwright layer (previously the stated prerequisite) and
-   every bug found by either test layer (§6 #1 + siblings, #10, #11) are
-   now done — or something else first (e.g. `readOnlyHandler`'s related-
-   but-unpinned-down selector from §6 #11's writeup, or the Dependabot
-   alerts).
+The single question left here previously ("what to work on next") is
+answered: the actual `src/js/` refactor, scoped per §10 below. This
+section is kept only as a pointer — all currently-live open questions and
+decisions live in §10.
 
-(Bug #1 and its audit-found siblings, the Playwright-layer question, and
-bugs #10/#11 were all resolved across the two sessions that built §6 #1,
-the `test/e2e/` layer, and the #10/#11 fixes — see the checklist in §8
-above for what each covered. Nothing remains from those threads.)
+## 10. Session 3: scoping the actual `src/js/` refactor (in progress — planning, not yet executed)
+
+**This session has not written any code yet.** It is `/plan`-mode
+scoping/research for the refactor itself, done because the user
+deliberately does not want a blind "just start refactoring" — see the
+project's whole test-first posture. Picking this up: no `src/js/` file has
+been touched this session; everything below is decisions + research to
+act on next.
+
+### 10.1 The user's actual goal (clarified this session — read this before assuming "refactor" means "convert to ES modules")
+
+The user was explicit, unprompted, that the earlier framing ("break the
+global-mixin pattern into real ES modules with explicit dependencies,"
+AGENTS.md's own wording) undersells what they actually want. Their words,
+paraphrased faithfully:
+
+- They want this package to work well as **two things at once**: (1) a
+  self-contained, interactable thing *they themselves* can explore/poke at
+  to understand its own features and scope future work (i.e. a good local
+  dev/demo experience matters, not just the shipped artifact), and (2)
+  something that installs cleanly into `ebase` and potentially other apps,
+  **with zero behavior change anywhere it's already installed** — this is
+  their single hardest constraint, stated again independently of the
+  original issue's own "public interface must not change" framing.
+- Their *primary* motivation, stated directly: **the source code itself is
+  a mess** — "redundant, non-DRY, poorly documented" — from multiple
+  people touching it over multiple years, with real "creep and bloat."
+  Converting the file-loading mechanism to ES modules (the minimal
+  version I first proposed) does **not** address this by itself — it only
+  changes *how files find each other*, not the quality of what's inside
+  them. The user confirmed explicitly: the goal is genuine internal
+  cleanup (dead code, duplication, documentation, decomposing oversized
+  files), using the ES-module conversion as the *vehicle/opportunity* to
+  do that cleanup, not as the goal itself.
+- They are explicit that they are **not deeply familiar with this part of
+  JS tooling** — asked me to just propose an answer rather than present a
+  menu, for the bundler choice specifically. Keep explanations concrete
+  and avoid assuming JS-tooling fluency in any future write-ups for them.
+- They are token/cost-conscious about how this gets executed (asked
+  directly whether a full audit would burn a lot of budget up front) —
+  worth continuing to be transparent about relative cost of different
+  approaches rather than defaulting to "spend big" whenever there's a
+  choice.
+
+### 10.2 Decisions made this session
+
+1. **Bundler: Vite** (not webpack, not raw Rollup). Rationale actually
+   given to and accepted by the user: webpack is more powerful but far
+   more config-heavy for someone new to this area, with no real payoff
+   here; raw Rollup handles the "single self-contained file, externals
+   mapped to existing globals" production build well (and is what Vite
+   uses internally for this), but gives you *only* that — no interactive
+   local dev experience out of the box. Vite gives both: a fast
+   zero-config dev server (serves the "explore it myself" goal) and a
+   "library mode" production build (`build.lib`, Rollup-powered
+   underneath) that satisfies the AGENTS.md safeguards directly — single
+   self-contained output file, `jquery`/`jquery-ui-dist`/`select2`/`svgjs`/
+   `clipboard` marked external and read off existing globals exactly as
+   today, configurable browser target. Note found while scoping this: the
+   repo currently has **no explicit Babel/browserslist target anywhere**
+   (`grep` for `.browserslistrc`/`browserslist` field/`.babelrc` all came
+   back empty) — `@babel/preset-env` is invoked in `gulpfile.js` with no
+   `targets`, so it's compiling to the *broadest possible* default target
+   today. Whatever Vite `build.target` gets configured needs to be at
+   least that broad unless a deliberate, separately-flagged decision is
+   made to narrow it.
+2. **Refactor depth: full internal cleanup, not just file-wiring** — per
+   10.1. This is a **bigger scope and bigger risk surface** than the
+   "Phase 1 only" version I originally proposed and REFACTOR_NOTES.md §8's
+   checklist item description still reflects (that description is now
+   stale/superseded — don't take its "explicit file wiring only" framing
+   at face value; this section supersedes it). ES-module conversion is
+   still part of the work (it's the natural container for splitting up
+   oversized files like `create-field.js`), but cleanup — dead code,
+   duplicated logic, documentation, decomposing bloated files — is
+   in scope for this pass, not deferred to a hypothetical later one.
+3. **Audit approach: full upfront audit**, not a rolling/incremental
+   discover-as-you-go approach. Explicitly chosen over the cheaper rolling
+   alternative after the user asked about relative token cost and I laid
+   out the honest tradeoff (upfront = one full prioritized list before
+   committing to anything, costs more up front; rolling = start
+   immediately on the known-worst offender, cheaper up front, no full
+   picture until most of the codebase is already touched). **Next concrete
+   step, not yet started**: run that audit (systematic sweep for
+   redundancy/dead code/non-DRY patterns/undocumented complexity across
+   all 18 `src/js/` files, informed by the dependency map in §10.3 below),
+   come back with a prioritized list, let the user pick what/in what
+   order — mirroring exactly how the bug-hunt `/challenge` audit worked
+   earlier in this project (found real, scoped, prioritized findings; user
+   picked "fix all of them now"; worked well).
+
+### 10.3 Cross-file dependency map (already researched — do not re-derive this from scratch)
+
+A background research pass already read all 18 `src/js/` files in full
+(plus targeted greps of the 1,362-line `create-field.js`) and cross-
+referenced every `this.`/`that.`/`THIS.` reference against every file's
+own definitions. This is exactly the input the cleanup audit and any
+actual module-boundary design need — reuse it rather than re-reading
+everything from zero.
+
+**Headline findings:**
+
+- **No genuine load-order dependencies between the 18 files, verified (not
+  assumed).** The only place `plateMapWidget` (the shared global object)
+  is ever read back is `plate-map.js`'s own mixin loop in `_create()`,
+  which runs at widget-*instantiation* time — always after the entire
+  script has finished loading, regardless of file order. No factory
+  function's immediate return-object-literal computes anything from
+  another file's state at *construction* time either (only `engine.js`
+  uses its `THIS` parameter at all, and only inside method bodies called
+  later, not at construction). **Practical implication**: today's
+  alphabetical gulp-glob load order is incidental, not load-bearing — a
+  real module refactor is free to reorder/reorganize files by logical
+  concern rather than needing to preserve current order.
+- **No true name collisions** across the 18 files' top-level
+  properties/methods, nor between any mixin file and `plate-map.js`'s own
+  widget methods (checked specifically: `readOnlyHandler`,
+  `getSelectedAddresses`, `setSelectedIndices`, `addressToIndex`, etc. —
+  all single-definition).
+- **`plate-map.js` is not one of the 18 mixin files** — it never does
+  `var plateMapWidget = plateMapWidget || {}`. It's the `$.widget(...)`
+  host structure the mixin loop (`for (component in plateMapWidget) {
+  $.extend(this, new plateMapWidget[component](this)); }`) lives inside,
+  as one piece of its own `_create()` method. The loop's `new` is
+  **vestigial**: every one of the 18 factories has the shape
+  `function(THIS) { return {...}; }`, always explicitly returning an
+  object literal — per JS semantics that discards whatever `new` would
+  have allocated, and none of the 18 factories reference `this` (the
+  constructor receiver) anywhere, only the explicit `THIS` parameter
+  (used only by `engine.js`). A real ES-module version can call these as
+  plain functions with zero behavior change.
+- **A real, pre-existing latent ordering bug found while tracing
+  `_create()`, not yet decided whether to fix or preserve**: if a widget
+  is constructed with `options.readOnly: true`, `_create()` calls
+  `this.isReadOnly(true)` **before** the mixin loop runs — so
+  `readOnlyHandler()` (called from inside `isReadOnly`) reads
+  `this.overLayButtonContainer` (from `overlay.js`, not yet mixed in) and
+  calls `this.setFieldsDisabled` → `this.fieldList` (from `add-tab-data.js`
+  via `_createInterface()`, which hasn't run yet either). This doesn't
+  crash today only because `this.readOnly` defaults to `false` and this
+  branch is skipped unless `options.readOnly` is explicitly `true` at
+  construction — worth deciding explicitly (fix vs. faithfully preserve)
+  rather than silently changing during the refactor.
+- **Five specific "looks safe, isn't" coupling/ownership risk zones** to
+  treat carefully in any module-boundary design (none are bugs today, all
+  are implicit-shared-mutable-state patterns that a clean boundary should
+  make explicit rather than silently carry forward):
+  1. `field.onChange` / `field.detailData` / `field.checkMultiplexCompletion`
+     / `field.applyMultiplexSubFieldColor` / `field.multiOnChange` — a
+     shared mutable field-object contract split across exactly two files,
+     `add-tab-data.js` (builds the object, assigns `onChange`) and
+     `create-field.js` (assigns the rest, and *also* mutates
+     `field.detailData` at runtime from inside a closure built in
+     `add-tab-data.js`). Treat these two files as tightly coupled; they
+     likely need to stay adjacent or share an explicit documented
+     contract/type in the refactor, not be split casually.
+  2. `undoRedoArray`/`actionPointer` — initialized in
+     `undo-redo-manager.js`'s own returned object, but directly overwritten
+     later by `plate-map.js`'s `isDisableAddDeleteWell`. Candidate for an
+     explicit exported "reset" method instead of cross-file direct field
+     poking.
+  3. `defaultWell` — container defined in `tabs.js` (`{}`), populated
+     key-by-key by `add-tab-data.js`, read everywhere else. Same "one
+     owner defines the shell, another fills it, many consume it" pattern.
+  4. `emptyWellWithDefaultVal` — set in `plate-map.js`
+     (`isDisableAddDeleteWell`), consumed by `add-data-on-change.js` and
+     `overlay.js`.
+  5. `readOnlyHandler` — defined only in `plate-map.js`, called from
+     `tabs.js` and `create-field.js`. Not a collision, but a cross-file
+     call that must stay reachable however files get split.
+  - Plus one confirmed **dead code** item ready to just delete during
+    cleanup: `svg-events.js`'s `colorToIndex` — assigned `{}` at init,
+    never read anywhere in `src/js/`.
+
+**Full per-file defines/consumes table**: not reproduced here (long) but
+was captured in this session's transcript before compaction — if it's not
+recoverable, a re-run of the same research prompt against the 18 files
+(with this section's headline findings as a starting hypothesis to verify
+rather than rediscover from zero) should reproduce it faster the second
+time.
+
+### 10.4 Full cleanup audit — DONE (3 parallel passes, all 18 files)
+
+Split: (A) `create-field.js` alone, (B) `plate-map.js`+`svg-events.js`+
+`bottom-table.js`, (C) the remaining 14 smaller files.
+
+**New bugs found (same family as §6's #1/#10/#11 — bare method
+references, comparator-less sort, unscoped DOM queries/globals). All 5
+are RESOLVED — user decided fix timing for each:**
+
+1. `plate-map.js:339`, `isDisableAddDeleteWell` — `else` branch logs
+   `"...key: " + key` but the loop var is `field`; `key` undefined in
+   scope → `ReferenceError` whenever a caller's `emptyDefaultWell` names
+   a field not in `this.defaultWell`. **Decision: fix now.**
+2. `plate-map.js:313-320`, `readOnlyHandler` — `if`/`else` branches both
+   execute the identical
+   `$('.multiple-field-manage-delete-button').css("display","none")`.
+   Investigated further: the button is only ever appended to the DOM
+   inside a transient delete-confirmation dialog, and only
+   `if (!that.readOnly)` at creation (`create-field.js:1283`) — removed
+   again on dialog close. So this duplication rarely has a live target
+   to act on; not worth guessing a "correct" rule with no spec/CSS to
+   check against. **Decision: leave alone, just document it** (no
+   behavior change).
+3. `check-box.js:41`, `getCheckboxes()` — multiplex branch does
+   `return subfields.indexOf(field.id)` instead of `...>= 0`. Same
+   indexOf-as-boolean mistake as §6's already-fixed bugs, new location: a
+   subfield at index 0 is wrongly excluded, one not found (-1, truthy) is
+   wrongly included. Feeds undo/redo snapshots + getPlate/loadPlate
+   round-trips. **Decision: fix now.**
+4. `create-field.js:359`, `_createOpts`'s dead `config.ajax` branch —
+   `opts.ajax = ajax` where `ajax` is an undefined free variable (2019
+   select2-v4 migration left the rename unfinished, per git blame at
+   `18781f5`). Throws if any caller ever sets `field.data.ajax` truthy;
+   nothing in-repo does today. **Decision: fix the typo**
+   (`opts.ajax = config.ajax`) rather than delete the branch, per
+   explicit user choice — needs its own dedicated test since this branch
+   has never been exercised by anything in 6+ years (so "suite stays
+   green" alone wouldn't prove the fix correct).
+5. `create-field.js:1307`, `window.onclick = function(event) {...}` —
+   found during a follow-up module-level-mutable-state audit (see below).
+   Assigns (not `addEventListener`s) the single global `window.onclick`
+   slot every time the multiselect manage/delete dialog opens — same bug
+   family as #11 (multi-instance interference), via a global handler slot
+   instead of an unscoped DOM query. With two widget instances on a page,
+   whichever one's dialog opened most recently silently steals the
+   outside-click-to-close behavior from the other's open dialog.
+   **Decision: fix now** (switch to `addEventListener`/
+   `removeEventListener`, added on dialog open, removed on `killDialog()`).
+
+All 5 land in **one commit** (mirroring §6's original 5-bug commit),
+each with a regression test.
+
+**Top cleanup findings** (each audit agent's full list is longer; this is
+the priority cut that shaped the execution plan below):
+
+- **`create-field.js` split**: 1,362 lines → proposed 7 modules (core +
+  one per field type: text/numeric/select/multiselect/boolean/multiplex).
+  `_createMultiplexField` alone is 519 lines doing ~10 jobs flattened
+  into one function. `field.disabled` boilerplate duplicated 5-6x across
+  field types. Dead: `field.parseMainFieldVal` (never called anywhere,
+  confirmed via grep incl. built dist bundle), dead local `unitInput` in
+  `_handleFieldUnits`. Cross-file API names that MUST survive any split
+  unchanged (reached by name from other mixin files):
+  `singleSelectValue`, `_changeMultiFieldValue`,
+  `checkMultiplexCompletion`, `applyMultiplexSubFieldColor`.
+- **Cross-file duplication**: `plate-map.js`'s `getWellsDifferences`
+  (~125 lines) and `svg-events.js`'s `_buildCommonData`/`_getCommonData`
+  independently reimplement "diff fields across all wells" — biggest
+  de-dup target outside create-field.js. They're not byte-identical
+  today (deleted-vs-`[]` handling differs between them) so unifying is a
+  conscious decision, not a mechanical merge — needs characterization
+  tests pinning both current behaviors on the disagreement case *before*
+  any unification. Also: the known color-wraparound-formula duplication
+  (`svg-create.js` vs `bottom-table.js`) is confirmed non-identical in
+  its two copies — they divide by different array lengths
+  (`wellColors.length` vs `colorPairs.length`) that only coincidentally
+  match today.
+- `plate-map.js:3` — dead `plateMapWidget: {}` property that also
+  name-collides with the global `plateMapWidget` mixin registry the
+  whole architecture depends on. Real trap for whoever writes the
+  ES-module conversion.
+- `add-tab-data.js` — DOM-skeleton block copy-pasted 3x near-verbatim
+  across `_makeSubField`/`_makeRegularField`/`_makeMultiplexField`, plus
+  a duplicated id/type-autoassignment block.
+- Dead code: `add-warning-msg.js`'s `removeWarningMsg` (unreferenced
+  anywhere, also inconsistent with its own name/behavior vs. the
+  function that IS used, `fieldWarningMsg`).
+- Tiny-file merge candidates: `image_assets.js` + `color-manager.js`
+  (both pure static data, zero logic → could become one `constants.js`);
+  `add-data-to-tabs.js` (19 lines, single method, only called from
+  `svg-events.js` outside its own file group).
+- A 6th coupling zone (supplementing §10.3's 5): `preset.js` ↔
+  `check-box.js` call each other's `_`-prefixed "private" methods
+  directly, undocumented.
+- Documentation gaps: no method across ~30+ functions in these files
+  carries a docblock; create-field.js's implicit 6-method "field"
+  contract (`disabled`/`parseValue`/`getValue`/`setValue`/`getText`/
+  `parseText`, re-established independently by every field-type
+  constructor) is never written down anywhere.
+
+### 10.5 `/challenge` on the initial staged plan — 5 real gaps found and closed
+
+Ran `/challenge` against the first draft of the execution plan. All 5
+findings were addressed (see the plan file, or the summary below):
+
+1. **New shared-namespace risk**: the `create-field.js` split promotes
+   module-scope-private helpers (`select2close`/`select2fix`/
+   `select2setData`) to instance methods — this creates brand-new shared
+   namespace surface never covered by §10.3's "zero collisions" finding
+   (which only checked names that already existed). *Response*: any new
+   method name the split introduces must be grepped against all files +
+   jQuery UI's own `$.Widget` internals before being locked in.
+2. **Dead-code deletions verified only via local-repo grep, not against
+   real consumers** — directly contradicts the "will not break in any
+   capacity whatsoever" hard constraint. *Response*: gate every deletion
+   on cross-repo verification; downgrade to document-and-defer for
+   anything unverifiable. (Since resolved — see §10.6.)
+3. **Cross-file dedup could silently pick a winner** between
+   `getWellsDifferences`/`_getCommonData`'s already-disagreeing
+   implementations, and the existing suite might not exercise the exact
+   disagreement case. *Response*: characterization tests targeting that
+   case are now a hard prerequisite before any unification.
+4. **The ajax-branch fix ships with zero test coverage** in either
+   direction (branch never exercised in 6+ years) — "suite green" would
+   prove nothing about whether the fix is correct. *Response*: a
+   dedicated test is now required as part of the Stage 1 commit.
+5. **The original Stage 3 was one atomic, non-bisectable step** covering
+   module conversion AND both test-harness reworks at once — the
+   highest-blast-radius part of the project, with a silent assumption
+   that Vite's default transform (esbuild) matches current Babel
+   behavior. *Response*: restructured into checkpointed sub-stages (see
+   §10.7), explicit Babel-vs-esbuild decision grounded in inspecting real
+   current build output, incremental file-by-file conversion, old
+   pipeline kept shippable in parallel until the new one is verified.
+
+### 10.6 Follow-up investigation — 5 more findings, all resolved or
+### precisely scoped (this was NOT hypothetical — verified against real
+### consumers)
+
+After `/challenge`, asked "what else am I missing" and got 5 more
+findings, all folded in. Two were closeable purely by reading code in
+this session; two more turned out to be answerable by reading `ebase`'s
+actual source directly (it's present locally at
+`/Users/jmiller/Documents/NEB/ebase`) instead of staying hypothetical —
+and that changed a **real** Stage 3 requirement, not just added a
+caveat. The fifth genuinely needs a build to run, so it's now Stage 0.
+
+**#1 — Module-level mutable state (same bug class as #11): CONFIRMED
+CLEAN, one adjacent new bug found.** A dedicated audit read all 18 files
+specifically for mutable state declared outside each factory's
+per-instance closure (`new plateMapWidget[component](this)` creates a
+fresh closure per widget instance, so state *inside* a factory is
+instance-safe; state declared as a sibling to the factory, at
+file/IIFE scope, would be shared across every instance on a page today —
+same bug class as #11, but via JS state instead of DOM queries).
+**Verdict: clean across all 18 files.** The only module-scope
+declarations outside a factory anywhere are `create-field.js`'s
+`select2close`/`select2fix`/`select2setData`, confirmed definitively
+**stateless** (no closure variable persists across separate calls) — so
+promoting them to instance methods during the split (per the audit
+above) is a style choice, not a correctness fix, and carries no risk
+either way. This audit is what surfaced bug #5 above
+(`window.onclick`).
+
+**#2 — CSS/asset bundling under Vite: RESOLVED, low-risk.** Checked the
+actual current build: `gulpfile.js`'s `css` task already concatenates
+`src/css/*.css` into a **separate** `dist/css/plate-map.css` + `.min.css`
+(own sourcemap), fully independent of the JS bundle —
+`package.json` even has distinct `"main"` and `"style"` fields. So
+"single self-contained file" was never literally true even today — it's
+"one JS file + one CSS file" — and Vite's default CSS-extraction
+behavior is consistent with current practice, not a deviation. Only real
+requirement: matching filenames/paths, since `ebase`'s own asset
+pipeline (see `#4`) references `plate-map.css`/`plate-map.js` by those
+exact names.
+
+**#4 — Distribution/consumption mechanism: RESOLVED by directly reading
+`ebase`'s source. This is the big one — it changed a concrete Stage 3
+requirement, not just added a caveat:**
+
+- `ebase` does **NOT** consume `plate-map` via npm. It vendors the
+  *built* file directly into git at `vendor/javascript/plate-map.js` (+
+  `plate-map.css`), wired through Rails **importmap**
+  (`config/importmap.rb`: `pin 'plate-map', to: 'plate-map.js'`) and
+  served via the Rails asset pipeline. Updates are **manual**:
+  `importmap.rb`'s own header comment documents the workflow as
+  `bin/importmap pin <package> --download`, review the diff, commit —
+  same as bumping a vendored gem. Rollback path = `git revert` on that
+  vendored file inside `ebase`'s own repo, not an npm version pin.
+- **Sprockets does zero further processing** — per `importmap.rb`'s own
+  comment, "does not compile, transpile, or bundle them." Whatever
+  syntax/format ships in the new `dist/js/plate-map.js` is *exactly* what
+  `ebase`'s users' browsers execute, no downstream safety net. This
+  raises the browserslist/transform-target decision (§10.7, Stage 3a/3b)
+  from "good practice" to "the only thing standing between this and a
+  production breakage for older browsers."
+- **`ebase` loads it via plain `import 'plate-map'`** (real
+  browser-native ESM import, side-effect only — categorized in
+  `importmap.rb` under "Vendor libraries," separately from the section
+  explicitly labeled "ES Module compatible," which only covers
+  `clipboard`/`underscore`/`google-palette`). `ebase`'s importmap has
+  **zero entries** for `jquery`/`jquery-ui-dist`/`select2`/`svgjs`/
+  `clipboard`. **This means Vite's production build must emit UMD or
+  IIFE format (externals read off existing `window` globals) — NOT
+  `format: 'es'`.** An `es`-format bundle would emit bare
+  `import $ from "jquery"` for each externalized dep, and the browser
+  would fail to resolve it (no importmap entry exists) — a hard,
+  immediate breakage. Vite library mode fully supports UMD/IIFE with
+  `output.globals` mapping, so this is achievable, but must be a
+  deliberate config choice, not an accidental default.
+- **A broader "public API" surface than previously scoped**: `ebase`'s
+  own app code (`app/javascript/packs/well_set_wells_create_plate_map.js`,
+  `ce_experiment_show.js`) reaches directly into plate-map-generated
+  **DOM class names**, independent of the documented JS methods — e.g.
+  `.plate-setup-tab-name`, `.plate-setup-tab-default-field`,
+  `.plate-setup-tab-multiselect-field`,
+  `.plate-setup-tab-unit-select-field`,
+  `.plate-setup-tab-multiplex-single-select-field`,
+  `.plate-setup-tab-input`, `.plate-setup-preset-tab`, and
+  `.plate-setup-overlay-button-container` (used to inject a "Save"
+  button), for a click-action-logging feature. **"Zero behavior change"
+  now explicitly includes exact CSS class names/DOM structure, not just
+  JS method signatures** — the `add-tab-data.js` DOM-skeleton
+  de-duplication and the `create-field.js` split must preserve every one
+  of these verbatim.
+- Confirmed concrete JS API surface actually exercised by `ebase`:
+  `.plateMap({numRows, numCols, attributes, updateWells, selectedWells})`
+  constructor options, `.plateMap("loadPlate", data)`,
+  `.plateMap("clearHistory")`.
+- **Dead-code verification — now actually closed, not just policy.**
+  Grepped `ebase`'s own app code (excluding its vendored copy of
+  plate-map, which trivially contains the same symbols as the source
+  being audited) for all 4 dead-code candidates
+  (`parseMainFieldVal`/`removeWarningMsg`/`colorToIndex`/dead
+  `plateMapWidget: {}`) plus the three select2 helpers: **zero
+  references anywhere in `ebase`'s actual application code.** Cleared to
+  delete. `ebase` is the only consumer we have direct access to — "and
+  potentially other apps" isn't 100% closed if another consumer exists
+  we can't see, but this is far stronger evidence than local-repo-only
+  grep, and worth a quick check-in rather than blocking on it.
+
+**#5 — No CI safety net: CONFIRMED.** `find .github -type f` in
+`plate-map` returned nothing — no CI workflows exist. Every stage's "run
+tests after each commit" is currently pure manual discipline. Recommend
+adding a minimal GitHub Actions workflow (`npm test` +
+`npm run test:e2e` on push/PR) — standalone, cheap, no dependencies on
+anything else in this plan.
+
+**#3 — Vite/externals wiring assumption: can't be resolved by reading
+code, needs an actual build.** Turned from a vague "prototype it
+eventually" into a precise, falsifiable test once `#4` was resolved —
+now **Stage 0** (see §10.7): prove a throwaway Vite library-mode build,
+in UMD/IIFE format with externals mapped to `window` globals, loads
+correctly with zero importmap entries for those externals, exactly
+matching `ebase`'s real setup. Pulled forward to run *before* Stage 2's
+cleanup investment, since it's the load-bearing assumption behind the
+whole Vite decision.
+
+### 10.7 Approved execution plan (staged) — Stage 1 starts now
+
+Full detail lives in the plan-mode file
+`/Users/jmiller/.claude/plans/polished-cuddling-hippo.md` (approved by
+the user; kept here as the durable summary in case that file isn't
+resumable in a future session):
+
+- **Stage 1 (next, this session)**: the 5-bug commit above, each with a
+  regression test.
+- **Stage 0**: Vite/UMD feasibility spike (prove externals-as-globals
+  works with zero importmap entries, matching `ebase`'s real
+  consumption) + add a minimal CI workflow. Runs before Stage 2's
+  cleanup investment, specifically because it can invalidate the Vite
+  decision cheaply if it doesn't check out.
+- **Stage 2** (in-place cleanup, still plain global-mixin scripts, zero
+  test-harness rework needed since files stay non-ES-module — the mixin
+  merge has no real load-order dependency, confirmed in §10.3): (1) dead
+  code removal — cleared per §10.6; (2) mechanical intra-file
+  de-duplication, CSS class names must survive byte-for-byte per §10.6's
+  `#4` finding; (3) the `create-field.js` split, gated on the
+  new-method-name collision check per §10.5; (4) cross-file de-dup
+  (`getWellsDifferences`/`_getCommonData`, the color-wraparound formula),
+  gated on characterization tests per §10.5; (5) tiny-file merges; (6)
+  documentation pass. Each sub-step independently committable, full
+  Jest+Playwright suite must pass after each.
+- **Stage 3** (only after Stage 2 lands): ES modules + Vite, restructured
+  into checkpointed sub-stages per §10.5's finding #5 — ground-truth
+  current build output (3a), explicit Babel-vs-esbuild decision (3b),
+  **UMD/IIFE output format required** per §10.6's `#4` finding (3b-2),
+  incremental file-by-file conversion with the old pipeline kept
+  shippable in parallel (3c), test-harness rework (3d — `test/unit/
+  setup.js`'s `global.eval()` and `test/e2e/server.js`'s raw `<script>`
+  serving both need reworking for real ES modules), Vite production
+  config (3e), and a final manual smoke-test + dist-diff gate before
+  retiring the old pipeline (3f).
