@@ -38,7 +38,11 @@ var plateMapWidget = plateMapWidget || {};
           let field = this.fieldMap[fieldId];
           if (field.mainMultiplexField) {
             let subfields = this.globalSelectedMultiplexSubfield[field.mainMultiplexField.id] || [];
-            return subfields.indexOf(field.id);
+            // Was missing ">= 0" -- Array#filter coerces the raw indexOf
+            // result to boolean, so a subfield at index 0 (falsy) was wrongly
+            // excluded, and one not found (-1, truthy) was wrongly included.
+            // See REFACTOR_NOTES.md §10.4 #3.
+            return subfields.indexOf(field.id) >= 0;
           } else {
             return this.globalSelectedAttributes.indexOf(field.id) >= 0;
           }

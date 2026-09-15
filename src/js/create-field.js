@@ -356,7 +356,12 @@ var plateMapWidget = plateMapWidget || {};
           data_specified = true;
         }
         if (config.ajax) {
-          opts.ajax = ajax;
+          // Was "opts.ajax = ajax" -- `ajax` was an undefined free variable
+          // (a leftover from the 2019 select2-v4 migration, git blame
+          // 18781f5, that never finished renaming config.query to
+          // config.ajax), so this threw a ReferenceError the first time any
+          // caller set data.ajax. See REFACTOR_NOTES.md §10.4 #4.
+          opts.ajax = config.ajax;
           data_specified = true;
         }
         if (!data_specified) {
@@ -1264,6 +1269,22 @@ var plateMapWidget = plateMapWidget || {};
         function killDialog() {
           dialogDiv.hide();
           dialogDiv.remove();
+          // Paired with the addEventListener below -- see the comment there
+          // for why this can't just be `window.onclick = ...`.
+          window.removeEventListener("click", outsideDialogClickHandler);
+        }
+
+        // Named (not the old `window.onclick = function(event) {...}`) so it
+        // can be added/removed via addEventListener/removeEventListener
+        // instead of clobbering the single global window.onclick slot. With
+        // two widget instances on a page, whichever one's dialog opened most
+        // recently used to silently steal the outside-click-to-close
+        // behavior from the other's still-open dialog. See
+        // REFACTOR_NOTES.md §10.4 #5.
+        function outsideDialogClickHandler(event) {
+          if (event.target === dialogDiv[0]) {
+            killDialog();
+          }
         }
 
         let dialogContent = $("<div/>").addClass("plate-modal-content").css('width', '550px').appendTo(dialogDiv);
@@ -1304,11 +1325,7 @@ var plateMapWidget = plateMapWidget || {};
 
         dialogDiv.show();
 
-        window.onclick = function(event) {
-          if (event.target === dialogDiv[0]) {
-            killDialog();
-          }
-        }
+        window.addEventListener("click", outsideDialogClickHandler);
       },
 
       _deleteDialogTable: function(field, valMap) {

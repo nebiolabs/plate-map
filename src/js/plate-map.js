@@ -311,6 +311,15 @@ $.widget("DNA.plateMap", {
   },
 
   readOnlyHandler: function() {
+    // NOTE: both branches below hide .multiple-field-manage-delete-button
+    // unconditionally -- looks like it should differ by readOnly state, but
+    // investigated (REFACTOR_NOTES.md §10.4 #2) and left as-is: that button
+    // is only ever appended to the DOM inside the transient multiselect
+    // delete-confirmation dialog, and only `if (!that.readOnly)` at creation
+    // time (create-field.js's _createDeleteButton) -- it's removed again
+    // when the dialog closes. So this duplication rarely has a live target
+    // to act on, and there's no spec/CSS to check a "correct" rule against.
+    // Not touching it; documenting it instead.
     if (this.readOnly) {
       this.overLayButtonContainer.css("display", "none");
       $('.multiple-field-manage-delete-button').css("display", "none");
@@ -336,7 +345,11 @@ $.widget("DNA.plateMap", {
             if (field in emptyWellWithDefaultVal) {
               emptyWellWithDefaultVal[field] = emptyDefaultWell[field]
             } else {
-              console.log("No field for key: " + key + ", please contact support");
+              // Was "+ key" -- `key` was never declared in this scope (the
+              // loop variable is `field`), so this threw a ReferenceError
+              // instead of logging, any time emptyDefaultWell named a field
+              // not in this.defaultWell. See REFACTOR_NOTES.md §10.4 #1.
+              console.log("No field for key: " + field + ", please contact support");
             }
           }
         }
