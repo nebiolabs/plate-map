@@ -65,7 +65,6 @@ var plateMapWidget = plateMapWidget || {};
         // Adding unit
         let units = data.units || [];
         let defaultUnit = data.defaultUnit || null;
-        let unitInput = null;
         if (defaultUnit) {
           if (units.length) {
             if (units.indexOf(defaultUnit) < 0) {
@@ -1238,16 +1237,6 @@ var plateMapWidget = plateMapWidget || {};
             warningText = field.name + " is not a required field, please fix missing required subfield(s) below or remove selected " + field.name;
           }
           that.fieldWarningMsg(field, warningText, mainFieldWarning);
-        };
-
-        field.parseMainFieldVal = function(val) {
-          let optMap = field.data.options;
-          for (let idx = 0; idx < optMap.length; idx++) {
-            let curOpt = optMap[idx];
-            if (curOpt.id === val) {
-              return curOpt.text
-            }
-          }
         };
       },
 

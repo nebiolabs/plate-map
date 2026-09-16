@@ -34,27 +34,6 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
-      removeWarningMsg: function(field, text, include) {
-        let that = this;
-        let imgId = "fieldWarning" + field.full_id;
-        if (include) {
-          let img = $("<span>").html(that._assets.warningImg).attr("id", imgId).addClass("plate-field-warning-image");
-          field.root.find(".plate-setup-tab-name").append(img);
-
-          let popText = $("<div/>").addClass("pop-out-text");
-          popText.text(text);
-          field.root.find(".plate-setup-tab-name").append(popText);
-
-          img.hover(function() {
-            popText[0].style.display = 'inline-block';
-          }, function() {
-            popText.hide();
-          });
-        } else {
-          $("#" + imgId).remove();
-        }
-      },
-
       applyFieldWarning: function(wells) {
         let that = this;
         let fieldData = {};

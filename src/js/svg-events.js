@@ -5,7 +5,6 @@ var plateMapWidget = plateMapWidget || {};
   plateMapWidget.svgEvents = function() {
     // This object contains Menu items and how it works;
     return {
-      colorToIndex: {},
       selectedIndices: [],
 
       _svgEvents: function() {

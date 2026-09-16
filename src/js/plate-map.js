@@ -1,7 +1,5 @@
 $.widget("DNA.plateMap", {
 
-  plateMapWidget: {},
-
   options: {
     value: 0
   },
