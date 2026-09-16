@@ -1122,21 +1122,41 @@ msg.js`'s `removeWarningMsg`, and `plate-map.js`'s dead `plateMapWidget:
 {}` property. Full suite green after removal (108 Jest + 31 Playwright),
 verified before and after the change. Pushed to origin.
 
-### 10.10 RESUME HERE (session paused at end of this day, nothing further
+### 10.10 Stage 2, sub-step (2) — DONE
+
+Mechanical intra-file de-duplication in `add-tab-data.js` completed and
+committed (`f0ff953`): extracted `_autoAssignFieldIdAndType(data)` (the
+id/type-fallback block duplicated between `_addTabData` and
+`_makeSubField`) and `_createFieldWrapper(data, tabPointer)` (the DOM
+skeleton copy-pasted near-verbatim across `_makeSubField`/
+`_makeRegularField`/`_makeMultiplexField`). No CSS class names or DOM
+structure changed — the only literal differences removed were pure
+no-ops (`_makeSubField`'s redundant `$(...)` re-wrapping of already-jQuery
+objects, and a stray trailing space inside one class-literal string that
+jQuery's `addClass` already ignores). Full suite green (108 Jest + 31
+Playwright, incl. the pixel-diff visual-snapshot test) before and after.
+Note: `create-field.js`'s own intra-file duplication (`field.disabled`
+boilerplate repeated 5-6x across field types, per §10.4) was intentionally
+left for Stage 2 sub-step (3)'s `create-field.js` split rather than
+de-duped here, since that file's restructuring is its own dedicated step.
+
+### 10.11 RESUME HERE (session paused at end of this day, nothing further
 ### done past this point)
 
-Working tree is clean; everything through Stage 2 sub-step (1) is
+Working tree is clean; everything through Stage 2 sub-step (2) is
 committed on `refactor/#119-cleanup_and_reorganize` and pushed to origin
-(commits `ab5fb40`, `a374a6c`, `23efce0`, `d21af01`, plus doc-update
-commits). Nothing merged to `master`; no PR opened (standing constraint:
-don't, without explicit approval).
+(commits `ab5fb40`, `a374a6c`, `23efce0`, `d21af01`, `570d3e9`, `f0ff953`,
+plus this doc-update commit). Nothing merged to `master`; no PR opened
+(standing constraint: don't, without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (2), mechanical
-intra-file de-duplication — CSS class names/DOM structure must survive
-byte-for-byte per §10.6's `#4` finding. After that, sub-steps (3)-(6) in
-the order listed in §10.8 — (3), the `create-field.js` split, is the
-biggest and most judgment-heavy piece and deserves its own focused
-session rather than being rushed alongside the others.
+**Next action, not yet started**: Stage 2, sub-step (3), the
+`create-field.js` split (1,362 lines → proposed 7 modules: core + one per
+field type). This is the biggest and most judgment-heavy piece of Stage 2
+— gated on the new-method-name collision check per §10.5, and must
+preserve the cross-file API names listed in §10.4
+(`singleSelectValue`, `_changeMultiFieldValue`, `checkMultiplexCompletion`,
+`applyMultiplexSubFieldColor`) unchanged. Deserves its own focused session
+rather than being rushed alongside sub-steps (4)-(6).
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
