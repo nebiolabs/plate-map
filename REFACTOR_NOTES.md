@@ -1182,22 +1182,58 @@ Key implementation details worth knowing if this needs revisiting:
   confirmed the built bundle contains every relocated method under its
   original name.
 
-### 10.12 RESUME HERE (session paused at end of this day, nothing further
+### 10.12 Stage 2, sub-step (4a) — DONE: getWellsDifferences was dead
+### code, not a live duplicate — re-scoped and resolved
+
+§10.4's original framing of `getWellsDifferences`/`_getCommonData` as
+"two live, disagreeing implementations requiring characterization tests
+before unification" turned out to be wrong once actually investigated
+this session. `getWellsDifferences` (`plate-map.js`) had **zero callers**
+anywhere — not in this repo's `src/js`, not in its tests, not in
+`ebase`'s current app code. Git archaeology (both repos) confirmed why:
+it was real, live functionality from 2018 (`ebase` called it via the
+then-named `plateLayOut` widget to power a "generate sample names from
+well differences" feature), survived the 2019 `plateLayOut`→`plateMap`
+rename, but `ebase`'s own commit `6daccfcf7` ("move javascript back to
+it's original spot, remove some files, and fix imports", Oct 13 2023)
+deliberately deleted that feature's caller. No replacement caller was
+ever added — it's been orphaned in `plate-map` for ~2 years.
+
+Removed in commit `6790c73`, along with `containsObject` (used
+exclusively by the now-gone `getWellsDifferences`; its only other
+reference anywhere was already a dead, commented-out call) and that
+stale comment. `_getCommonWell` was checked and kept — it has a separate
+live caller (`svg-events.js:347`), unrelated to this cleanup. Full suite
+green after removal (108 Jest + 31 Playwright).
+
+**Lesson for future audit-derived work in this repo**: treat "two
+implementations look like they duplicate the same logic" claims from a
+static-read audit as a hypothesis to verify against actual call sites
+(including the real consumer's current code and git history), not a
+given — the actual finding here was much lower-risk (plain dead-code
+deletion) than the audit's original framing (behavior-preserving merge
+of two live, disagreeing paths) suggested.
+
+### 10.13 RESUME HERE (session paused at end of this day, nothing further
 ### done past this point)
 
-Working tree is clean; everything through Stage 2 sub-step (3) is
+Working tree is clean; everything through Stage 2 sub-step (4a) is
 committed on `refactor/#119-cleanup_and_reorganize` and pushed to origin.
 Nothing merged to `master`; no PR opened (standing constraint: don't,
 without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (4), cross-file
-de-duplication (`getWellsDifferences`/`_getCommonData`, the
-color-wraparound formula) — per §10.5's finding #3, this is **gated on
-new characterization tests** targeting the known disagreement cases
-before any unification, not a direct mechanical merge like sub-steps
-(1)-(2). After that: sub-step (5) tiny-file merges
-(`image_assets.js`+`color-manager.js`, `add-data-to-tabs.js`), then
-sub-step (6) documentation pass.
+**Next action, not yet started**: Stage 2, sub-step (4b), the
+**remaining** known cross-file duplication — the color-wraparound
+formula duplicated between `svg-create.js` and `bottom-table.js`,
+confirmed non-identical (they divide by different array lengths,
+`wellColors.length` vs `colorPairs.length`, that only coincidentally
+match today). Given what sub-step (4a) just taught us, **the first move
+should be re-verifying this one is actually live and actually
+duplicated** (both call sites in-repo, not assumed) before deciding
+between "add characterization tests + unify" vs. some other resolution —
+don't restart from the old audit's framing at face value. After that:
+sub-step (5) tiny-file merges (`image_assets.js`+`color-manager.js`,
+`add-data-to-tabs.js`), then sub-step (6) documentation pass.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
