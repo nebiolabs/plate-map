@@ -180,41 +180,6 @@ var plateMapWidget = plateMapWidget || {};
         }, this);
       },
 
-      containsObject: function(obj, list) {
-        function deepEqual (x, y) {
-          if (x === y) {
-            return true;
-          } else if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
-            if (Object.keys(x).length !== Object.keys(y).length) {
-              return false;
-            }
-            for (let prop in x) {
-              if (x.hasOwnProperty(prop)) {
-                if (y.hasOwnProperty(prop)) {
-                  if (!deepEqual(x[prop], y[prop])) {
-                    return false;
-                  }
-                } else {
-                  return false;
-                }
-              }
-            }
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        if (list) {
-          for (let i = 0; i < list.length; i++) {
-            if (deepEqual(obj, list[i])) {
-              return true;
-            }
-          }
-        }
-        return false;
-      },
-
       _buildCommonData: function(commonData, obj, field) {
         let commonVal = commonData[field];
         if (commonVal === undefined) {
@@ -245,9 +210,6 @@ var plateMapWidget = plateMapWidget || {};
                   commonArr.push(v)
                 }
               }
-              // if (this.containsObject(v, objVal)) {
-              //   commonArr.push(v);
-              // }
             } else {
               if ($.inArray(v, objVal) >= 0) {
                 commonArr.push(v);
