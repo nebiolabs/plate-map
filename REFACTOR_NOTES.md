@@ -1140,23 +1140,64 @@ boilerplate repeated 5-6x across field types, per §10.4) was intentionally
 left for Stage 2 sub-step (3)'s `create-field.js` split rather than
 de-duped here, since that file's restructuring is its own dedicated step.
 
-### 10.11 RESUME HERE (session paused at end of this day, nothing further
+### 10.11 Stage 2, sub-step (3) — DONE: the create-field.js split
+
+Split completed and committed as 7 sequential commits (`85b031f` through
+`5f784f8`), matching the original audit's 7-module proposal exactly:
+`create-field-core.js` (dispatcher, units add-on, `_createOpts`, and the
+3 select2 helpers promoted from module-scope functions to instance
+methods), `create-field-text.js`, `create-field-numeric.js`,
+`create-field-select.js`, `create-field-multiselect.js` (plus the
+delete-dialog trio, traced as multiselect-only despite living far from
+`_createMultiSelectField` in the original file), `create-field-boolean.js`,
+`create-field-multiplex.js`. The old `create-field.js` (1,368 lines) is
+retired in the final commit.
+
+Key implementation details worth knowing if this needs revisiting:
+- The collision-check gate from §10.5 was run before locking in the
+  promoted helper names (`select2close`/`select2fix`/`select2setData`):
+  zero collisions anywhere in-repo, `jquery-ui-dist`, or `select2`.
+- `select2close` is still registered as a **raw, unbound** event handler
+  via `input.on('select2:unselecting', this.select2close)` inside
+  `select2fix` — calling it as `this.select2close(...)`/
+  `that.select2close(...)` directly would have rebound its internal
+  `this` from the DOM element to the widget instance and broken it; this
+  was deliberately preserved.
+- All cross-file API names required to stay stable per §10.4
+  (`singleSelectValue`, `_changeMultiFieldValue`,
+  `checkMultiplexCompletion`, `applyMultiplexSubFieldColor`) are
+  unchanged.
+- `create-field.js`'s own intra-file duplication noted in §10.4/§10.10
+  (`field.disabled` boilerplate repeated 5-6x across field types) was
+  **not** de-duped as part of this split — it was explicitly scoped only
+  as a file-boundary reorganization, not a behavior-preserving-refactor
+  of the duplicated logic itself. That boilerplate still exists,
+  duplicated across the new per-field-type files; it remains a candidate
+  for a future pass (not currently scheduled in Stage 2's remaining
+  sub-steps (4)-(6), which target different, already-identified
+  duplication).
+- Full suite verified green (108 Jest + 31 Playwright, incl. pixel-diff
+  visual-snapshot and the select2fix-specific regression test) at the
+  final cutover commit specifically, plus a real `gulp build.dist` run
+  confirmed the built bundle contains every relocated method under its
+  original name.
+
+### 10.12 RESUME HERE (session paused at end of this day, nothing further
 ### done past this point)
 
-Working tree is clean; everything through Stage 2 sub-step (2) is
-committed on `refactor/#119-cleanup_and_reorganize` and pushed to origin
-(commits `ab5fb40`, `a374a6c`, `23efce0`, `d21af01`, `570d3e9`, `f0ff953`,
-plus this doc-update commit). Nothing merged to `master`; no PR opened
-(standing constraint: don't, without explicit approval).
+Working tree is clean; everything through Stage 2 sub-step (3) is
+committed on `refactor/#119-cleanup_and_reorganize` and pushed to origin.
+Nothing merged to `master`; no PR opened (standing constraint: don't,
+without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (3), the
-`create-field.js` split (1,362 lines → proposed 7 modules: core + one per
-field type). This is the biggest and most judgment-heavy piece of Stage 2
-— gated on the new-method-name collision check per §10.5, and must
-preserve the cross-file API names listed in §10.4
-(`singleSelectValue`, `_changeMultiFieldValue`, `checkMultiplexCompletion`,
-`applyMultiplexSubFieldColor`) unchanged. Deserves its own focused session
-rather than being rushed alongside sub-steps (4)-(6).
+**Next action, not yet started**: Stage 2, sub-step (4), cross-file
+de-duplication (`getWellsDifferences`/`_getCommonData`, the
+color-wraparound formula) — per §10.5's finding #3, this is **gated on
+new characterization tests** targeting the known disagreement cases
+before any unification, not a direct mechanical merge like sub-steps
+(1)-(2). After that: sub-step (5) tiny-file merges
+(`image_assets.js`+`color-manager.js`, `add-data-to-tabs.js`), then
+sub-step (6) documentation pass.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
