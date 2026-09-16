@@ -10,6 +10,41 @@ var plateMapWidget = plateMapWidget || {};
       fieldMap: {},
       autoId: 1,
 
+      // Shared by _addTabData (top-level fields) and _makeSubField
+      // (multiplex subfields): assigns an id/type when the field config
+      // omits them, mutating the caller's config object in place.
+      _autoAssignFieldIdAndType: function(data) {
+        if (!data.id) {
+          data.id = "Auto" + this.autoId++;
+          console.log("Field autoassigned id " + data.id);
+        }
+        if (!data.type) {
+          data.type = "text";
+          console.log("Field " + data.id + " autoassigned type " + data.type);
+        }
+      },
+
+      // Shared DOM skeleton used by _makeSubField/_makeRegularField/
+      // _makeMultiplexField: the left/right/name/field-container
+      // wrapper structure every field type is rendered into. Appends
+      // the resulting wrapper to allDataTabs[tabPointer] and returns it.
+      _createFieldWrapper: function(data, tabPointer) {
+        let that = this;
+        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
+        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
+        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
+        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
+        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
+
+        wrapperDivRightSide.append(nameContainer);
+        wrapperDivRightSide.append(fieldContainer);
+        wrapperDiv.append(wrapperDivLeftSide);
+        wrapperDiv.append(wrapperDivRightSide);
+        that.allDataTabs[tabPointer].append(wrapperDiv);
+
+        return wrapperDiv;
+      },
+
       _addTabData: function() {
         // Here we may need more changes because attributes format likely to change
         let tabData = this.options.attributes.tabs;
@@ -24,14 +59,7 @@ var plateMapWidget = plateMapWidget || {};
             for (var i = 0; i < tabFields.length; i++) {
               let data = tabFields[i];
 
-              if (!data.id) {
-                data.id = "Auto" + that.autoId++;
-                console.log("Field autoassigned id " + data.id);
-              }
-              if (!data.type) {
-                data.type = "text";
-                console.log("Field " + data.id + " autoassigned type " + data.type);
-              }
+              that._autoAssignFieldIdAndType(data);
 
               let field;
               if (data.type === "multiplex") {
@@ -59,25 +87,8 @@ var plateMapWidget = plateMapWidget || {};
 
       _makeSubField: function(mainField, data, tabPointer, fieldArray) {
         let that = this;
-        if (!data.id) {
-          data.id = "Auto" + that.autoId++;
-          console.log("Field autoassigned id " + data.id);
-        }
-        if (!data.type) {
-          data.type = "text";
-          console.log("Field " + data.id + " autoassigned type " + data.type);
-        }
-        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side");
-        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
-        $(wrapperDivRightSide).append(nameContainer);
-        $(wrapperDivRightSide).append(fieldContainer);
-        $(wrapperDiv).append(wrapperDivLeftSide);
-        $(wrapperDiv).append(wrapperDivRightSide);
-        $(that.allDataTabs[tabPointer]).append(wrapperDiv);
+        that._autoAssignFieldIdAndType(data);
+        let wrapperDiv = that._createFieldWrapper(data, tabPointer);
 
         let field = {
           id: data.id,
@@ -96,17 +107,7 @@ var plateMapWidget = plateMapWidget || {};
 
       _makeRegularField: function(data, tabPointer, fieldArray, checkbox) {
         let that = this;
-        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
-        wrapperDivRightSide.append(nameContainer);
-        wrapperDivRightSide.append(fieldContainer);
-        wrapperDiv.append(wrapperDivLeftSide);
-        wrapperDiv.append(wrapperDivRightSide);
-        that.allDataTabs[tabPointer].append(wrapperDiv);
+        let wrapperDiv = that._createFieldWrapper(data, tabPointer);
 
         let field = {
           id: data.id,
@@ -142,17 +143,7 @@ var plateMapWidget = plateMapWidget || {};
 
       _makeMultiplexField: function(data, tabPointer, fieldArray) {
         let that = this;
-        let wrapperDiv = that._createElement("<div></div>").addClass("plate-setup-tab-default-field");
-        let wrapperDivLeftSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-left-side");
-        let wrapperDivRightSide = that._createElement("<div></div>").addClass("plate-setup-tab-field-right-side ");
-        let nameContainer = that._createElement("<div></div>").addClass("plate-setup-tab-name").text(data.name);
-        let fieldContainer = that._createElement("<div></div>").addClass("plate-setup-tab-field-container");
-
-        wrapperDivRightSide.append(nameContainer);
-        wrapperDivRightSide.append(fieldContainer);
-        wrapperDiv.append(wrapperDivLeftSide);
-        wrapperDiv.append(wrapperDivRightSide);
-        that.allDataTabs[tabPointer].append(wrapperDiv);
+        let wrapperDiv = that._createFieldWrapper(data, tabPointer);
 
         let field = {
           id: data.id,
