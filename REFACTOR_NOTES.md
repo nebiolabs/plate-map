@@ -1214,26 +1214,54 @@ given — the actual finding here was much lower-risk (plain dead-code
 deletion) than the audit's original framing (behavior-preserving merge
 of two live, disagreeing paths) suggested.
 
-### 10.13 RESUME HERE (session paused at end of this day, nothing further
+### 10.13 Stage 2, sub-step (4b) — DONE: color-wraparound formula unified
+
+Re-verified before touching anything (per §10.12's lesson): unlike
+sub-step (4a), both call sites here ARE live — `svg-create.js`'s
+`setTileColor` (tile fill, keyed off `wellColors.length`) and
+`bottom-table.js`'s `addBottomTableRow` (swatch CSS gradient, keyed off
+`colorPairs.length`). But the original audit's "confirmed
+non-identical... only coincidentally match" framing was itself
+incomplete: `wellColors` is built via `this.colorPairs.map(...)` in
+`svg-create.js`'s `_createSvg`, so `wellColors.length ===
+colorPairs.length` is a structural invariant of the code, not a runtime
+coincidence — safe to unify.
+
+Sequence: (1) added the missing characterization test for
+`bottom-table.js`'s side first (`ec2556a`) — `svg-create.js`'s side
+already had 3 tests in `test/unit/engine-grouping.test.js`, but the
+bottom-table swatch had zero coverage; verified the exact wraparound
+mapping empirically via a throwaway scratch test before writing the
+real one. (2) Extracted `color-manager.js`'s `_wrapColorIndex(color)`
+(that file already owns `colorPairs`, the natural home) and updated
+both call sites to use it (`df095f0`). Pure de-dup, no formula/behavior
+change. Full suite green: 109 Jest (108 + the new test) + 31 Playwright,
+including the pixel-diff visual-snapshot test and the dedicated
+bottom-table color-swatch click regression test.
+
+This closes out all cross-file duplication originally flagged in §10.4
+— both `getWellsDifferences`/`_getCommonData` (§10.12, turned out to be
+dead code, not a live duplicate) and the color-wraparound formula
+(§10.13, now unified) are resolved. Stage 2 sub-step (4) is complete.
+
+### 10.14 RESUME HERE (session paused at end of this day, nothing further
 ### done past this point)
 
-Working tree is clean; everything through Stage 2 sub-step (4a) is
-committed on `refactor/#119-cleanup_and_reorganize` and pushed to origin.
-Nothing merged to `master`; no PR opened (standing constraint: don't,
-without explicit approval).
+Working tree is clean; everything through Stage 2 sub-step (4) is
+committed on `refactor/#119-cleanup_and_reorganize` and pushed to
+origin. Nothing merged to `master`; no PR opened (standing constraint:
+don't, without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (4b), the
-**remaining** known cross-file duplication — the color-wraparound
-formula duplicated between `svg-create.js` and `bottom-table.js`,
-confirmed non-identical (they divide by different array lengths,
-`wellColors.length` vs `colorPairs.length`, that only coincidentally
-match today). Given what sub-step (4a) just taught us, **the first move
-should be re-verifying this one is actually live and actually
-duplicated** (both call sites in-repo, not assumed) before deciding
-between "add characterization tests + unify" vs. some other resolution —
-don't restart from the old audit's framing at face value. After that:
-sub-step (5) tiny-file merges (`image_assets.js`+`color-manager.js`,
-`add-data-to-tabs.js`), then sub-step (6) documentation pass.
+**Next action, not yet started**: Stage 2, sub-step (5), tiny-file
+merges — `image_assets.js` + `color-manager.js` (both pure static data,
+zero logic, proposed to become one `constants.js`; note `color-manager.js`
+now also carries one small piece of logic, `_wrapColorIndex`, added in
+sub-step (4b) — worth a quick re-check of whether "pure static data" is
+still an accurate premise for this merge before doing it), and
+`add-data-to-tabs.js` (19 lines, single method, only called from
+`svg-events.js` outside its own file group). After that: sub-step (6),
+the documentation pass, which per §10.8 is the last item in Stage 2
+before Stage 3 (ES modules + Vite) can begin.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
