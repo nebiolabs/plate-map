@@ -81,9 +81,7 @@ var plateMapWidget = plateMapWidget || {};
           that.setSelectedAddresses(addressToSelect);
         });
 
-        if (color > 0) {
-          color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
-        }
+        color = this._wrapColorIndex(color);
         let colorStops = this.colorPairs[color];
 
         plateIdDiv.css(

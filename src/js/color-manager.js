@@ -54,6 +54,22 @@ plateMapWidget.colorManager = function() {
       ["#ffffcd", "#e9ad67"],
       ["#ffa5a5", "#bf3f3f"],
       ["#ffffa5", "#bfbf3f"]
-    ]
+    ],
+
+    // Shared by svg-create.js's setTileColor (tile fill) and
+    // bottom-table.js's addBottomTableRow (swatch CSS gradient): both
+    // wrap a raw, unbounded group number into a valid colorPairs index,
+    // reserving index 0 for the group-0 "no data" gray swatch and
+    // cycling colors 1..(colorPairs.length - 1) for every other group.
+    // Extracted from two independently-maintained copies of this same
+    // formula -- see REFACTOR_NOTES.md §10.4/§10.12/§10.13. Confirmed
+    // safe to share: wellColors.length === colorPairs.length always,
+    // since wellColors is built via colorPairs.map(...) (svg-create.js).
+    _wrapColorIndex: function(color) {
+      if (color > 0) {
+        color = ((color - 1) % (this.colorPairs.length - 1)) + 1;
+      }
+      return color;
+    }
   }
 };

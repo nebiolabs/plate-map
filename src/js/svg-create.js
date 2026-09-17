@@ -115,9 +115,7 @@ var plateMapWidget = plateMapWidget || {};
         tile.colorIndex = parseInt(color);
         tile.label.plain(String(tile.colorIndex));
 
-        if (color > 0) {
-          color = ((color - 1) % (this.wellColors.length - 1)) + 1;
-        }
+        color = this._wrapColorIndex(color);
 
         tile.circle.fill(this.wellColors[color])
       }
