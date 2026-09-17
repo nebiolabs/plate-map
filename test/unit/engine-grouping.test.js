@@ -317,6 +317,53 @@ describe('color palette size and wraparound', () => {
     expect(fillIdOf(1)).toBe('url(#wellColor2)');
     expect(fillIdOf(49)).toBe('url(#wellColor2)');
   });
+
+  test('bottom-table.js\'s addBottomTableRow applies the SAME wraparound period (independently, via ' +
+       'this.colorPairs.length rather than wellColors.length) to the swatch CSS gradient background -- ' +
+       'REFACTOR_NOTES.md \u00a710.4/\u00a710.12 flagged this as a second, separately-maintained copy of the ' +
+       'setTileColor formula above; this pins its current output before any unification', () => {
+    const widget = makeWidget(sampleField, { numRows: 10, numCols: 10 });
+    const instance = widget.plateMap('instance');
+
+    const wells = {};
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        const addr = instance.locToAddress({ r, c });
+        wells[addr] = { sample: 'val' + (r * 10 + c) };
+      }
+    }
+    widget.plateMap('loadPlate', { wells, checkboxes: ['sample'] });
+
+    function backgroundOfGroup(groupNumber) {
+      // addBottomTableRow's "color" button carries the raw group number as
+      // its text (see bottom-table.js:64, numberText.text(color)); the
+      // swatch <td> immediately preceding it (.plate-setup-bottom-id)
+      // carries the CSS gradient built from the wrapped colorPairs index.
+      let found = null;
+      instance.bottomTableBody.find('tr').each(function () {
+        const row = window.jQuery(this);
+        if (row.find('.plate-setup-color-text').text() === String(groupNumber)) {
+          found = row.find('.plate-setup-bottom-id').css('background');
+        }
+      });
+      return found;
+    }
+
+    // Same wraparound period (48) as setTileColor's wellColors-based
+    // formula above: groups 1, 49, and 97 all wrap to colorPairs[1], and
+    // groups 48 and 96 both wrap to colorPairs[48] -- exactly mirroring
+    // the wellColor1/wellColor48 wraps already pinned for svg-create.js.
+    const colorPairs1 = instance.colorPairs[1];
+    const colorPairs48 = instance.colorPairs[48];
+    const gradient = (pair) => `linear-gradient(to right, ${pair[0]} , ${pair[1]})`;
+
+    expect(backgroundOfGroup(1)).toBe(gradient(colorPairs1));
+    expect(backgroundOfGroup(49)).toBe(gradient(colorPairs1));
+    expect(backgroundOfGroup(97)).toBe(gradient(colorPairs1));
+
+    expect(backgroundOfGroup(48)).toBe(gradient(colorPairs48));
+    expect(backgroundOfGroup(96)).toBe(gradient(colorPairs48));
+  });
 });
 
 describe('completion percentage NaN handling', () => {
