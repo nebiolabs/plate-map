@@ -1244,24 +1244,40 @@ This closes out all cross-file duplication originally flagged in §10.4
 dead code, not a live duplicate) and the color-wraparound formula
 (§10.13, now unified) are resolved. Stage 2 sub-step (4) is complete.
 
-### 10.14 RESUME HERE (session paused at end of this day, nothing further
+### 10.14 Stage 2, sub-step (5) — `image_assets.js`+`color-manager.js`
+### merge REJECTED after recheck; premise no longer holds
+
+Re-checked the "both pure static data, zero logic" premise before
+merging, as flagged in §10.13. It no longer holds: `color-manager.js`
+now carries real logic (`_wrapColorIndex`, added in sub-step (4b)) with
+its own cross-file callers (`svg-create.js`, `bottom-table.js`), while
+`image_assets.js`'s `_assets` data has a completely different,
+unrelated set of callers (`add-warning-msg.js`, `check-box.js` — warning
+icons and checkbox glyphs, nothing to do with color/rendering). The two
+files no longer share a "pure inert data bag" identity; merging them
+into one `constants.js` would bundle unrelated concerns (warning-icon
+HTML snippets + color-wrap logic) under a name that misrepresents both.
+**Decision: skip this merge, leave both files as-is.** No source changes
+made for this item — it's a no-op, correctly recorded here rather than
+silently dropped.
+
+### 10.15 RESUME HERE (session paused at end of this day, nothing further
 ### done past this point)
 
 Working tree is clean; everything through Stage 2 sub-step (4) is
 committed on `refactor/#119-cleanup_and_reorganize` and pushed to
-origin. Nothing merged to `master`; no PR opened (standing constraint:
-don't, without explicit approval).
+origin (the sub-step (5) `image_assets.js`/`color-manager.js` item above
+produced no commit, since it was rejected). Nothing merged to `master`;
+no PR opened (standing constraint: don't, without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (5), tiny-file
-merges — `image_assets.js` + `color-manager.js` (both pure static data,
-zero logic, proposed to become one `constants.js`; note `color-manager.js`
-now also carries one small piece of logic, `_wrapColorIndex`, added in
-sub-step (4b) — worth a quick re-check of whether "pure static data" is
-still an accurate premise for this merge before doing it), and
-`add-data-to-tabs.js` (19 lines, single method, only called from
-`svg-events.js` outside its own file group). After that: sub-step (6),
-the documentation pass, which per §10.8 is the last item in Stage 2
-before Stage 3 (ES modules + Vite) can begin.
+**Next action, not yet started**: Stage 2, sub-step (5)'s remaining
+item — folding `add-data-to-tabs.js` (19 lines, single method) into its
+sole caller's file, since it's only ever called from `svg-events.js`
+outside its own file group. Per §10.13's lesson, **re-verify this
+premise first** (confirm the call site and file size are still accurate,
+and that no other caller has appeared) before doing the merge. After
+that: sub-step (6), the documentation pass, which per §10.8 is the last
+item in Stage 2 before Stage 3 (ES modules + Vite) can begin.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
