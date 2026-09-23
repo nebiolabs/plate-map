@@ -1261,23 +1261,47 @@ HTML snippets + color-wrap logic) under a name that misrepresents both.
 made for this item — it's a no-op, correctly recorded here rather than
 silently dropped.
 
-### 10.15 RESUME HERE (session paused at end of this day, nothing further
-### done past this point)
+### 10.15 Stage 2, sub-step (5) — DONE (both items resolved: one merge
+### rejected, one merge completed)
 
-Working tree is clean; everything through Stage 2 sub-step (4) is
+Re-verified the `add-data-to-tabs.js` premise before merging, per
+§10.13's lesson: still 19 lines, still one method
+(`_addDataToTabFields`), still called exclusively from `svg-events.js`'s
+`decideSelectedFields` (line 310) — unchanged since the original audit.
+Folded the method into `svg-events.js` immediately after its sole call
+site (commit `242ba2b`), deleted the now-empty `add-data-to-tabs.js`.
+Pure relocation, no logic change. Full suite green: 109 Jest + 31
+Playwright, plus a real `gulp build.dist` verified to succeed with the
+bundle containing exactly the expected 2 references (definition + call
+site) to the relocated method.
+
+Combined with §10.14's rejected `image_assets.js`/`color-manager.js`
+merge, this closes out Stage 2 sub-step (5) — both tiny-file-merge
+candidates from the original audit have now been resolved (one
+correctly rejected after its premise changed, one correctly executed
+after its premise was reconfirmed).
+
+### 10.16 RESUME HERE (session paused at end of this day, nothing
+### further done past this point)
+
+Working tree is clean; everything through Stage 2 sub-step (5) is
 committed on `refactor/#119-cleanup_and_reorganize` and pushed to
-origin (the sub-step (5) `image_assets.js`/`color-manager.js` item above
-produced no commit, since it was rejected). Nothing merged to `master`;
-no PR opened (standing constraint: don't, without explicit approval).
+origin. Nothing merged to `master`; no PR opened (standing constraint:
+don't, without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (5)'s remaining
-item — folding `add-data-to-tabs.js` (19 lines, single method) into its
-sole caller's file, since it's only ever called from `svg-events.js`
-outside its own file group. Per §10.13's lesson, **re-verify this
-premise first** (confirm the call site and file size are still accurate,
-and that no other caller has appeared) before doing the merge. After
-that: sub-step (6), the documentation pass, which per §10.8 is the last
-item in Stage 2 before Stage 3 (ES modules + Vite) can begin.
+**Next action, not yet started**: Stage 2, sub-step (6) — the
+**documentation pass**, the last item in Stage 2 before Stage 3 (ES
+modules + Vite) can begin per §10.8. Per §10.4's audit findings: no
+method across the ~18 `src/js/` files carries a docblock, and
+`create-field.js`'s (now `create-field-*.js`'s) implicit 6-method
+"field" contract (`disabled`/`parseValue`/`getValue`/`setValue`/
+`getText`/`parseText`, independently re-established by every field-type
+constructor) has never been written down anywhere. This sub-step is
+lower-risk than (1)-(5) (comments/docs only, not behavior-affecting) but
+should still run the full suite after each file touched, since accidental
+whitespace/syntax slips are still possible. Scope not yet fully defined
+this session — worth deciding upfront whether this covers all 18(+)
+files in one pass or is itself broken into smaller reviewable chunks.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
