@@ -2,8 +2,15 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Renders a boolean field as a 2-option select2 (true/false), rather
+   * than a native checkbox. Internal storage is an actual JS boolean
+   * (or null when cleared) -- setValue also accepts 1/0 as truthy/falsy
+   * shorthand. See create-field-core.js's "THE FIELD CONTRACT" docblock
+   * for what disabled/parseValue/getValue/setValue/getText/parseText
+   * mean.
+   */
   plateMapWidget.createFieldBoolean = function() {
-    // Renders a boolean (true/false select2) field.
     return {
 
       _createBooleanField: function(field) {

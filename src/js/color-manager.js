@@ -1,5 +1,15 @@
 var plateMapWidget = plateMapWidget || {};
 
+/**
+ * The static color palette used to render color-grouped wells (see
+ * svg-create.js's setTileColor and bottom-table.js's addBottomTableRow,
+ * both of which read colorPairs -- or, for svg-create.js, the derived
+ * wellColors gradient objects -- and both wrap group numbers into a
+ * valid palette index via _wrapColorIndex below). colorPairs[0] is
+ * reserved for the "no data on any checked field" group-0 gray swatch;
+ * every other entry is available to groups 1..N, cycling once N exceeds
+ * the palette size.
+ */
 plateMapWidget.colorManager = function() {
 
   return {

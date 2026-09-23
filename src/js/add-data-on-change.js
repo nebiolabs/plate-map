@@ -2,10 +2,30 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Handles field edits flowing back into the data model: _addAllData is
+   * the central write path every field's onChange (add-tab-data.js) and
+   * paste-criteria (overlay.js) funnel through. Also owns getPlate/
+   * createState (the two "export the whole widget's data" methods used
+   * by the public getPlate() API and by undo-redo-manager.js's history
+   * snapshots, respectively) and derivativeChange (the "updateWells"
+   * external callback trigger).
+   */
   plateMapWidget.addDataOnChange = function() {
     // This object is invoked when something in the tab fields change
     return {
 
+      // Applies a partial field-value update (data: {fieldId: newValue})
+      // to every currently-selected well. For array/multiplex fields,
+      // `newVal.multi` shaped updates are threaded through
+      // _getMultiData first to add/remove individual entries rather than
+      // replacing the whole array. A well that becomes fully empty
+      // afterward (engine.wellEmpty) is deleted from this.engine.derivative
+      // entirely -- UNLESS this.disableAddDeleteWell is set, in which
+      // case it's reset to this.emptyWellWithDefaultVal instead (see
+      // plate-map.js's isDisableAddDeleteWell). Always refreshes the tab
+      // fields, re-runs color grouping, fires the "updateWells" callback,
+      // and records undo/redo history.
       _addAllData: function(data) {
         if (this.selectedIndices) {
           let noOfSelectedObjects = this.selectedIndices.length;
@@ -39,6 +59,11 @@ var plateMapWidget = plateMapWidget || {};
         this.addToUndoRedo();
       },
 
+      // Merges a partial field-value update (newData) into a single
+      // well object, returning the updated well. Deep-clones every new
+      // value via JSON round-trip (so no shared references leak back
+      // into the caller's data). See _getMultiData for the `multi`
+      // (array add/remove) update shape.
       processWellData: function(newData, curWell, noOfSelectedObjects) {
         for (let id in newData) {
           if (!newData.hasOwnProperty(id)) {
@@ -60,6 +85,16 @@ var plateMapWidget = plateMapWidget || {};
         return curWell
       },
 
+      // Applies an add/remove pair to an array-valued (multiselect or
+      // multiplex) field's previous value list. `curData.added`/
+      // `curData.removed` may each be either a plain option id (plain
+      // multiselect) or a {id, value} pair (multiplex, where `value` is
+      // the full entry object) -- see create-field-multiselect.js's
+      // multiOnChange and create-field-multiplex.js's own multiOnChange
+      // for the two shapes this is called with. `[ALL]` as an id is a
+      // special sentinel meaning "apply to every currently-matching
+      // entry" (the multiplex "combined" option, see
+      // create-field-multiplex.js's setSingleSelectOptions).
       _getMultiData: function(preData, curData, fieldId, noOfSelectedObjects) {
         let addNew = curData.added;
         let removed = curData.removed;
@@ -129,15 +164,25 @@ var plateMapWidget = plateMapWidget || {};
         return preData
       },
 
+      // Re-runs color grouping (engine.js's searchAndStack + applyColors)
+      // -- call after any change to which wells have what data, or to
+      // which fields are checked.
       _colorMixer: function() {
         this.engine.searchAndStack();
         this.engine.applyColors();
       },
 
+      // Fires the public "updateWells" callback (options.updateWells).
       derivativeChange: function() {
         this._trigger("updateWells", null, this);
       },
 
+      // Snapshots enough state to fully restore the widget later:
+      // internal (index-keyed) derivative, checked fields, selection,
+      // and required-field config. Used both by undo-redo-manager.js
+      // (each entry in this.undoRedoArray is one of these) and
+      // indirectly by getPlate below (via the address-keyed public
+      // shape).
       createState: function() {
         let derivative = $.extend(true, {}, this.engine.derivative);
         let checkboxes = this.getCheckboxes();
@@ -151,6 +196,11 @@ var plateMapWidget = plateMapWidget || {};
         };
       },
 
+      // Public API: exports the whole plate's data in the documented
+      // consumer-facing shape -- wells keyed by ADDRESS string (not
+      // internal numeric index, unlike this.engine.derivative itself),
+      // plus checked fields and selected addresses. See load-plate.js's
+      // loadPlate for the inverse operation.
       getPlate: function() {
         let wells = {};
         let derivative = this.engine.derivative;

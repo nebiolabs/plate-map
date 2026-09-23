@@ -2,6 +2,17 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * The color-grouping engine: groups wells by their checked-field
+   * values (this.stackUpWithColor), assigns each group a color/tile
+   * appearance, and computes overall completion percentage. `THIS`
+   * (capitalized) is the enclosing plateMapWidget instance -- the
+   * convention this file uses to distinguish it from `this`, which
+   * inside engine's own methods refers to `this.engine` itself (see
+   * plate-map.js's _create: `new plateMapWidget[component](this)`, so
+   * `THIS` is bound once via closure, while `this.engine` is a plain
+   * object literal whose methods get the usual dynamic `this`).
+   */
   plateMapWidget.engine = function(THIS) {
     // Methods which look after data changes and stack up accordingly
     // Remember THIS points to plateMapWidget and 'this' points to engine
@@ -9,11 +20,19 @@ var plateMapWidget = plateMapWidget || {};
     return {
       engine: {
 
+        // Keyed by numeric well index (NOT address) -- see plate-map.js's
+        // header comment for the index/address/loc coordinate systems.
         derivative: {},
+        // index -> assigned color/group number (raw, unwrapped -- see
+        // svg-create.js's setTileColor for the color-palette wraparound
+        // applied only at render time).
         colorMap: new Map(),
+        // color/group number -> array of well indices sharing that group.
         stackUpWithColor: {},
         stackPointer: 2,
 
+        // A well is "empty" if every field is null/undefined, or (for
+        // array-valued fields like multiselect/multiplex) an empty array.
         wellEmpty: function(well) {
           for (let prop in well) {
             if (!well.hasOwnProperty(prop)) {
@@ -33,6 +52,13 @@ var plateMapWidget = plateMapWidget || {};
           return true;
         },
 
+        // Groups every well in this.derivative by the JSON-serialized
+        // values of only the CHECKED fields (THIS.globalSelectedAttributes
+        // -- see check-box.js), populating this.stackUpWithColor. Wells
+        // with no value on any checked field (or with no field checked at
+        // all) always land in group 0. See test/unit/engine-grouping.test.js
+        // for characterized edge cases (multiplex subfield handling,
+        // group-0 bucketing rules).
         searchAndStack: function() {
           // This method search and stack the change we made.
           this.stackUpWithColor = {};
@@ -111,6 +137,12 @@ var plateMapWidget = plateMapWidget || {};
           }
         },
 
+        // Rebuilds the bottom table and re-colors every tile from the
+        // current this.stackUpWithColor groups (call searchAndStack
+        // first if grouping itself may have changed). Also recomputes
+        // and displays the overall completion percentage; falls back to
+        // "0%" if wholeNoTiles is 0 (i.e. this.derivative is completely
+        // empty when this runs -- 100 * 0 / 0 is NaN).
         applyColors: function() {
 
           let wholeNoTiles = 0;
@@ -153,6 +185,15 @@ var plateMapWidget = plateMapWidget || {};
           THIS.selectObjectInBottomTab();
         },
 
+        // Returns a single well's completion fraction (0..1): the ratio
+        // of required fields that are filled, over all required fields.
+        // Multiplex fields delegate to their own checkMultiplexCompletion
+        // (create-field-multiplex.js) since a single multiplex field can
+        // itself have multiple required subfields across multiple
+        // entries. SURPRISING (see test/unit/engine-grouping.test.js):
+        // with zero required fields, req === fill === 0 trivially, so
+        // completion is reported as 1 (100%) regardless of whether the
+        // well has any data at all.
         checkCompletion: function(wellData) {
           let req = 0;
           let fill = 0;

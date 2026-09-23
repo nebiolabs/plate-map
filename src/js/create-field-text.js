@@ -2,8 +2,13 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Renders a plain text field: a single <input>, internal storage is a
+   * plain string (or null when empty). See create-field-core.js's
+   * "THE FIELD CONTRACT" docblock for what disabled/parseValue/
+   * getValue/setValue/getText/parseText mean.
+   */
   plateMapWidget.createFieldText = function() {
-    // Renders a plain text field.
     return {
 
       _createTextField: function(field) {

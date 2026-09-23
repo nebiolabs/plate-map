@@ -2,8 +2,15 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Renders a numeric input field: a single <input>, internal storage is
+   * a trimmed numeric STRING (or null when empty) -- NOT converted to an
+   * actual JS number; validity ("invalid" CSS class) is checked via
+   * isNaN on the string value at edit time. See create-field-core.js's
+   * "THE FIELD CONTRACT" docblock for what disabled/parseValue/
+   * getValue/setValue/getText/parseText mean.
+   */
   plateMapWidget.createFieldNumeric = function() {
-    // Renders a numeric input field.
     return {
 
       _createNumericField: function(field) {

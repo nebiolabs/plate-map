@@ -2,11 +2,34 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Two distinct responsibilities bundled in one file:
+   * (1) Mouse-drag well selection (_svgEvents, wired up at the end of
+   *     svg-create.js's _createSvg) -- converts pixel mouse positions to
+   *     well locations/indices and updates this.selectedIndices.
+   * (2) "Common data" computation across a set of selected wells
+   *     (_getCommonData/_buildCommonData/_getCommonWell) -- used both to
+   *     populate the tab fields with the selection's shared values
+   *     (decideSelectedFields) and to power copy/paste-criteria
+   *     (overlay.js). _buildCommonData's rule: a field survives in the
+   *     common result only if every well being compared agrees on it
+   *     (recursively, for multiplex entries matched by option id);
+   *     otherwise it's deleted from the result outright -- see
+   *     test/unit/common-data.test.js for the full, sometimes-surprising
+   *     characterized behavior (e.g. array fields use set intersection,
+   *     not "all-or-nothing" deletion).
+   */
   plateMapWidget.svgEvents = function() {
     // This object contains Menu items and how it works;
     return {
       selectedIndices: [],
 
+      // Sets up mouse-drag well selection on the SVG canvas: click-drag
+      // draws a selection rectangle (rendered live during drag), and
+      // shift-drag extends/toggles the existing selection depending on
+      // whether the drag's starting well was already selected. Also
+      // wires the "loadPlate" custom DOM event (used by undo/redo replay)
+      // to this.loadPlate.
       _svgEvents: function() {
         // Set up event handling.
         let that = this;
@@ -151,12 +174,20 @@ var plateMapWidget = plateMapWidget || {};
         });
       },
 
+      // Sets this.selectedIndices directly (assumed already sanitized --
+      // called from setSelectedIndices in plate-map.js) and refreshes
+      // the tile "selected" visuals; blurs any focused element so
+      // keyboard shortcuts (interface.js's _handleShortcuts) keep
+      // working right after a selection change.
       setSelection: function(selectedIndices) {
         this.selectedIndices = selectedIndices;
         this._setSelectedTiles();
         document.activeElement.blur();
       },
 
+      // Adds/removes the "selected" CSS class on every tile to match
+      // this.selectedIndices -- display only, does not change selection
+      // state itself.
       _setSelectedTiles: function() {
         // Update selected tile display only
         let selectedIndices = this.selectedIndices;
@@ -170,6 +201,12 @@ var plateMapWidget = plateMapWidget || {};
         })
       },
 
+      // Returns the actual well data objects for the current selection,
+      // in selection order. A selected well with no data yet
+      // (this.engine.derivative has no entry for its index) is
+      // represented by this.defaultWell (tabs.js) rather than null/
+      // undefined, so downstream common-data logic can treat every
+      // selected well uniformly.
       _getSelectedWells: function() {
         return this.selectedIndices.map(function(index) {
           let well = this.engine.derivative[index];
@@ -180,6 +217,21 @@ var plateMapWidget = plateMapWidget || {};
         }, this);
       },
 
+      // Reconciles one field's value between the accumulated commonData
+      // (starts as a deep copy of the first well) and a new well being
+      // folded in, mutating commonData in place. Scalar/units fields:
+      // deletes the field entirely on any disagreement (SUBTLE: for
+      // {value, unit} fields, differing on EITHER sub-part deletes the
+      // whole entry, not just the differing sub-part). Array fields
+      // (multiselect/multiplex): computes a SET INTERSECTION instead of
+      // an all-or-nothing deletion -- multiplex array entries are
+      // matched by option id (field[field] == v2[field]) and then
+      // recursed into per-subfield, so a differing subfield can survive
+      // as an absent key on an otherwise-matching entry, while the whole
+      // entry is still kept (unlike the scalar-field behavior). See
+      // test/unit/common-data.test.js for the exhaustive characterized
+      // cases -- this is genuinely subtle and easy to get wrong when
+      // touching it.
       _buildCommonData: function(commonData, obj, field) {
         let commonVal = commonData[field];
         if (commonVal === undefined) {
@@ -228,6 +280,10 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Folds a set of wells down to their common data via repeated
+      // _buildCommonData calls, starting from a deep copy of the first
+      // well. Falls back to this.defaultWell if given no non-null wells
+      // at all (an all-empty selection).
       _getCommonData: function(wells) {
         let commonData = null;
         for (let i = 0; i < wells.length; i++) {
@@ -249,11 +305,23 @@ var plateMapWidget = plateMapWidget || {};
         return commonData || this.defaultWell;
       },
 
+      // _getCommonData followed by sanitizeWell (load-plate.js), so the
+      // result has every field's value run through the field's own
+      // parseValue -- used wherever the common value needs to be a
+      // "real", field-contract-conformant well rather than raw diffed
+      // data (e.g. populating the tab fields via _addDataToTabFields).
       _getCommonWell: function (wells) {
         let commonData = this._getCommonData(wells);
         return this.sanitizeWell(commonData);
       },
 
+      // Computes, per multiplex field, the tally of how many selected
+      // wells have each option selected (allSelectedMultipleVal) and the
+      // common subfield data across matching entries
+      // (allSelectedMultipleData, via _buildCommonData) -- powers the
+      // multiplex field's "[N well X]" combined option in its
+      // "Select to edit" single-select (see create-field-multiplex.js's
+      // setSingleSelectOptions).
       _getAllMultipleVal: function(wells) {
         let multipleFieldList = this.multipleFieldList;
         let that = this;
@@ -302,6 +370,13 @@ var plateMapWidget = plateMapWidget || {};
         });
       },
 
+      // Top-level "refresh the tab fields for the current selection"
+      // entry point: recomputes multiplex tallies, applies required-
+      // field warnings, computes the selection's common well, and
+      // pushes those values into the visible field inputs. Called
+      // whenever the selection or the underlying data changes (see
+      // plate-map.js's setSelectedIndices and add-data-on-change.js's
+      // _addAllData).
       decideSelectedFields: function() {
         let wells = this._getSelectedWells();
         this._getAllMultipleVal(wells);

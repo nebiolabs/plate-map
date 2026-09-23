@@ -2,18 +2,53 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Core field machinery shared across all field types: the
+   * _createField dispatcher, the units add-on (_handleFieldUnits/
+   * _makeFieldUnits), the select2-options helper (_createOpts), and
+   * the select2 v4.0.8 workaround helpers used by every field type
+   * that renders a select2 widget (select2close/select2fix/
+   * select2setData -- promoted here from module-scope plain functions
+   * to instance methods so the other create-field-<type>.js files can
+   * reach them; confirmed stateless before the promotion, see
+   * REFACTOR_NOTES.md §10.6 #1). Each concrete field type (text/
+   * numeric/select/multiselect/boolean/multiplex) lives in its own
+   * create-field-<type>.js file.
+   *
+   * THE FIELD CONTRACT (documented here, per REFACTOR_NOTES.md §10.4's
+   * finding that this was never written down anywhere): every field
+   * type constructor (_createTextField, _createNumericField,
+   * _createSelectField, _createMultiSelectField, _createBooleanField,
+   * _createMultiplexField -- one per create-field-<type>.js file)
+   * independently attaches this same set of 6 methods directly onto its
+   * `field` object, closing over that field's own private state (its
+   * `input` element, option maps, etc.):
+   *
+   *   - disabled(bool): enables/disables the field's input control.
+   *     Returns the effective disabled state (bool || field.isDisabled).
+   *   - parseValue(rawValue): validates + normalizes a raw external
+   *     value (e.g. from loadPlate) into this field's internal storage
+   *     shape. Throws on genuinely invalid values (e.g. an option id
+   *     that doesn't exist for a select field).
+   *   - getValue(): reads the field's CURRENT value from its rendered
+   *     input control, in the same internal storage shape parseValue
+   *     produces.
+   *   - setValue(value): writes a value (in that same internal storage
+   *     shape) into the field's rendered input control.
+   *   - getText(value): renders a value (in that internal storage
+   *     shape) as human-readable display text.
+   *   - parseText(rawText): inverse-ish of getText -- used by
+   *     getTextDerivative (plate-map.js).
+   *
+   * _handleFieldUnits/_makeFieldUnits (below) is a decorator over this
+   * contract: for text/numeric/select fields configured with units, it
+   * wraps the field-type's own 6 methods (saved as disabledRegular/
+   * parseRegularValue/setRegularValue/getRegularValue/getRegularText)
+   * with unit-aware versions that store/display {value, unit} objects
+   * instead of bare values -- see its own inline comments for the
+   * exact wrapping.
+   */
   plateMapWidget.createFieldCore = function() {
-    // Core field machinery shared across all field types: the
-    // _createField dispatcher, the units add-on (_handleFieldUnits/
-    // _makeFieldUnits), the select2-options helper (_createOpts), and
-    // the select2 v4.0.8 workaround helpers used by every field type
-    // that renders a select2 widget (select2close/select2fix/
-    // select2setData -- promoted here from module-scope plain functions
-    // to instance methods so the other create-field-<type>.js files can
-    // reach them; confirmed stateless before the promotion, see
-    // REFACTOR_NOTES.md §10.6 #1). Each concrete field type (text/
-    // numeric/select/multiselect/boolean/multiplex) lives in its own
-    // create-field-<type>.js file.
     return {
 
       // Registered via select2fix as a raw (unbound) event handler --
@@ -31,11 +66,21 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Workaround for a real select2 v4.0.8 bug: without this, clicking
+      // a single-select's clear (x) button reopens the dropdown
+      // immediately after clearing. Called once per select2 widget, right
+      // after its own .select2(opts) call, by every field type that uses
+      // select2 (select/multiselect/boolean/multiplex's singleSelect).
       select2fix: function(input) {
         // prevents select2 open on clear as of v4.0.8
         input.on('select2:unselecting', this.select2close);
       },
 
+      // Replaces a select2 widget's option list in place (used when a
+      // field's available options change dynamically -- e.g. a
+      // multiplex subfield's per-option unit list, or the multiplex
+      // "Select to edit" single-select's option list as entries are
+      // added/removed).
       select2setData: function(input, data, selected) {
         input.empty();
         let dataAdapter = input.data('select2').dataAdapter;
@@ -43,6 +88,12 @@ var plateMapWidget = plateMapWidget || {};
         input.val(selected);
       },
 
+      // Dispatches to the correct field-type constructor based on
+      // field.data.type, then applies the units decorator
+      // (_handleFieldUnits) for the 3 field types that support it
+      // (text/numeric/select -- NOT multiselect/boolean/multiplex).
+      // Called once per field/subfield, from add-tab-data.js's
+      // _makeRegularField/_makeMultiplexField.
       _createField: function(field) {
         switch (field.data.type) {
           case "text":
@@ -74,6 +125,11 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // No-ops if the field config has no units/defaultUnit configured.
+      // Otherwise normalizes the units list + resolves the actual
+      // defaultUnit (falling back to the first configured unit if the
+      // configured default isn't itself in the units list), then calls
+      // _makeFieldUnits to actually apply the units decorator.
       _handleFieldUnits: function (field) {
         let data = field.data;
 
@@ -102,6 +158,15 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // The units decorator itself: wraps the field's already-attached
+      // 6-method contract (disabled/parseValue/getValue/setValue/
+      // getText/parseText -- saved first as disabledRegular/
+      // parseRegularValue/setRegularValue/getRegularValue/getRegularText)
+      // with unit-aware replacements that read/write {value, unit}
+      // objects. Renders either a static unit label (single configured
+      // unit) or a unit-picker select2 (multiple configured units).
+      // Also attaches unit-specific methods not part of the base
+      // contract: getUnit/setUnit/parseUnit/setUnitOpts.
       _makeFieldUnits: function(field) {
         let that = this;
         let full_id = field.full_id;
@@ -314,6 +379,12 @@ var plateMapWidget = plateMapWidget || {};
         field.unitInput = unitInput;
       },
 
+      // Builds the select2 options object shared by select/multiselect
+      // field types: static `options` data or an `ajax` config (at least
+      // one is required -- throws otherwise). See the inline comment
+      // below on the config.ajax branch for a real bug this code
+      // silently carried for years before REFACTOR_NOTES.md §10.4 #4
+      // caught and fixed it.
       _createOpts: function(config) {
         let opts = {
           allowClear: true,

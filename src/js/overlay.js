@@ -2,6 +2,13 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * The overlay bar above the canvas: the "Completion Percentage" text
+   * (updated by engine.js's applyColors) and the Clear/Copy/Paste/Undo/
+   * Redo buttons. Also owns the copy/paste-criteria clipboard-like
+   * feature (this.commonData) that lets a user copy the selection's
+   * common values and paste them onto a different selection.
+   */
   plateMapWidget.overlay = function() {
     // overlay holds all the methods to put the part just above the canvas which contains all those
     // 'completion percentage' annd 'copy Criteria' button etc ...
@@ -58,6 +65,11 @@ var plateMapWidget = plateMapWidget || {};
 
       },
 
+      // The "Clear" button/Delete-key action: empties every currently-
+      // selected well's data. Respects this.disableAddDeleteWell the
+      // same way _addAllData does (resets to emptyWellWithDefaultVal
+      // instead of deleting the well outright when that restricted mode
+      // is active).
       clearCriteria: function() {
         if (this.selectedIndices && this.selectedIndices.length) {
           let hasWellUpdate = false;
@@ -90,6 +102,10 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // The "Copy" button/Ctrl+C action: computes the current
+      // selection's common data (svg-events.js's _getCommonData) and
+      // stashes it on this.commonData -- an in-memory "clipboard" that
+      // pasteCriteria below reads from later.
       copyCriteria: function() {
         if (this.selectedIndices && this.selectedIndices.length) {
           let wells = this._getSelectedWells();
@@ -99,6 +115,10 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // The "Paste" button/Ctrl+V action: applies the last-copied
+      // commonData onto the current selection via _addAllData
+      // (add-data-on-change.js) -- a no-op if nothing has been copied
+      // this session yet.
       pasteCriteria: function() {
         if (this.commonData) {
           this._addAllData(this.commonData);

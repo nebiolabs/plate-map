@@ -7,6 +7,23 @@ var plateMapWidget = plateMapWidget || {};
     // (this._createMultiSelectField(field), from create-field-multiselect.js)
     // plus a single-select "select to edit" sub-panel for per-entry
     // subfield values.
+    //
+    // Internal storage (field.detailData / getValue's return shape) is
+    // an array of entries: [{[field.id]: optionId, subFieldId1: val1,
+    // subFieldId2: val2, ...}, ...] -- one entry per selected option,
+    // each carrying its own independent subfield values. The
+    // multiselect widget underneath tracks which OPTIONS are selected;
+    // this file layers per-entry subfield editing on top via the
+    // "Select to edit" single-select (only one entry's subfields are
+    // visible/editable at a time) plus a "[N well <field>]" combined
+    // pseudo-option (id '[ALL]') for editing a subfield across every
+    // selected well's shared entries at once.
+    //
+    // Cross-file API names that MUST stay stable (reached by name from
+    // add-tab-data.js's per-subfield onChange handlers and engine.js's
+    // checkCompletion -- see REFACTOR_NOTES.md §10.4): singleSelectValue,
+    // _changeMultiFieldValue, checkMultiplexCompletion,
+    // applyMultiplexSubFieldColor.
     return {
 
       _createMultiplexField: function(field) {
@@ -34,6 +51,11 @@ var plateMapWidget = plateMapWidget || {};
 
         let multiselectSetValue = field.setValue;
 
+        // Returns the currently-selected entry's option id from the
+        // "Select to edit" single-select -- or the '[ALL]' sentinel if
+        // the combined pseudo-option is selected. Reached by name from
+        // add-tab-data.js's per-subfield onChange handler; must keep
+        // this exact name.
         field.singleSelectValue = function() {
           let v = field.singleSelect.val();
           if (v === "") {
@@ -110,6 +132,11 @@ var plateMapWidget = plateMapWidget || {};
         setSingleSelectOptions([]);
         field.singleSelect.on("change.select2", singleSelectChange);
 
+        // Normalizes a subfield-originated add/remove event (`added`/
+        // `removed`: either a bare option id or {id, value}) into the
+        // full-entry {id, value} shape expected by field.multiOnChange
+        // below, then delegates to it. Called from add-tab-data.js's
+        // per-subfield onChange handler -- must keep this exact name.
         field._changeMultiFieldValue = function(added, removed) {
           let newSubFieldValue = {};
           for (let i = 0; i < field.subFieldList.length; i++) {
@@ -153,6 +180,12 @@ var plateMapWidget = plateMapWidget || {};
           that._addAllData(data);
         };
 
+        // Overrides the plain multiselect setValue (saved above as
+        // multiselectSetValue) to also populate the "Select to edit"
+        // panel: stores the full entry array (field.detailData),
+        // updates the underlying multiselect's selected options from
+        // just the entries' own field.id values, then refreshes the
+        // single-select's own options/subfield display.
         field.setValue = function(v) {
           // used to keep track of initially loaded multiplex data
           field.detailData = v;
@@ -167,6 +200,9 @@ var plateMapWidget = plateMapWidget || {};
           singleSelectChange();
         };
 
+        // Overrides multiselect's plain disabled to also disable every
+        // subfield and swap the "Select to edit"/"Select to inspect"
+        // label depending on state.
         field.disabled = function(bool) {
           bool = field.isDisabled || bool;
           field.input.prop("disabled", bool);
@@ -181,6 +217,10 @@ var plateMapWidget = plateMapWidget || {};
           return bool;
         };
 
+        // Recursively parses every entry's subfield values through each
+        // subfield's own parseValue -- the field-contract entry point
+        // for validating/normalizing external multiplex data (e.g. from
+        // loadPlate).
         field.parseValue = function(value) {
           let v = value;
           if (v && v.length) {
@@ -204,6 +244,11 @@ var plateMapWidget = plateMapWidget || {};
           return v;
         };
 
+        // Re-applies the per-OPTION unit configuration (data.options[].
+        // unitOptions) to every subfield that has hasMultiplexUnit set --
+        // called whenever the selected entry's option changes, since
+        // different options can offer different unit choices for the
+        // same subfield.
         field.updateSubFieldUnitOpts = function(val) {
           let curOpts;
           field.data.options.forEach(function(opt) {
@@ -222,6 +267,13 @@ var plateMapWidget = plateMapWidget || {};
           })
         };
 
+        // Overrides multiselect's plain multiOnChange: after the
+        // underlying multiselect updates, rebuilds field.detailData's
+        // full entry array to match (creating a fresh entry with
+        // default/blank subfield values for a newly-added option,
+        // preserving existing entries otherwise) and refreshes the
+        // "Select to edit" panel to show the just-added/most-relevant
+        // entry.
         field.multiOnChange = function(added, removed) {
           field._changeMultiFieldValue(added, removed);
           let v = field.getValue();
@@ -311,6 +363,11 @@ var plateMapWidget = plateMapWidget || {};
           singleSelectChange();
         };
 
+        // Renders each entry as "{option text, checked-subfield: value,
+        // ...}", joined by ";" -- only includes subfields that are
+        // themselves currently checked (that.globalSelectedMultiplexSubfield,
+        // check-box.js), so the display text reflects exactly the
+        // grouping criteria in use, not every subfield unconditionally.
         field.getText = function(v) {
           if (v === null) {
             return "";
@@ -345,6 +402,10 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
+        // Similar to getText above, but includes EVERY subfield with a
+        // non-empty value (not gated on the checked/grouping state), and
+        // returns an array-of-arrays rather than a joined string --
+        // used by plate-map.js's getTextDerivative.
         field.parseText = function(v) {
           if (v === null) {
             return "";
@@ -376,6 +437,12 @@ var plateMapWidget = plateMapWidget || {};
           }
         };
 
+        // Called from engine.js's checkCompletion instead of the base
+        // required/filled check, since a multiplex field's completion
+        // is an average across every entry's required-subfield fill
+        // rate, not a single required/filled boolean. Reached by name
+        // from engine.js (field.checkMultiplexCompletion truthy check)
+        // -- must keep this exact name.
         field.checkMultiplexCompletion = function(valList) {
           let valCount = 0;
           let completionPct = 0;
@@ -430,6 +497,15 @@ var plateMapWidget = plateMapWidget || {};
           };
         };
 
+        // Called from add-warning-msg.js's applyFieldWarning INSTEAD OF
+        // fieldWarningMsg directly (multiplex fields are detected there
+        // via `if (field.applyMultiplexSubFieldColor)`), since a
+        // multiplex field's warning state is per-subfield across
+        // potentially many entries, not a single scalar required-field
+        // check. Reached by name -- must keep this exact name. Despite
+        // the name, this sets WARNING state (via fieldWarningMsg), not
+        // color -- name is historical/stale but load-bearing, not worth
+        // renaming without also updating every reference.
         // valList contains all of the vals for selected val
         field.applyMultiplexSubFieldColor = function(valList) {
           function updateSubFieldWarningMap(vals) {

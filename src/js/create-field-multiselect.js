@@ -6,6 +6,14 @@ var plateMapWidget = plateMapWidget || {};
     // Renders a multiselect (select2) field, plus its "manage/delete
     // selected values" dialog -- the delete-dialog trio below is only
     // ever invoked from this field type, never from multiplex.
+    //
+    // Internal storage is an array of selected option ids (or null when
+    // empty). See create-field-core.js's "THE FIELD CONTRACT" docblock
+    // for what disabled/parseValue/getValue/setValue/getText/parseText
+    // mean; this field type also attaches _parseOne/_parseMany (single-
+    // value/array validation helpers) and multiOnChange (the add/remove
+    // event shape consumed by add-data-on-change.js's _getMultiData) as
+    // extensions beyond the base contract.
     return {
 
       _createMultiSelectField: function(field) {
@@ -124,6 +132,15 @@ var plateMapWidget = plateMapWidget || {};
         that._createDeleteButton(field);
       },
 
+      // Opens the "manage/delete selected values" dialog: a table
+      // listing every currently-selected option across the selection
+      // (with per-option well counts, via field.allSelectedMultipleVal
+      // -- see svg-events.js's _getAllMultipleVal) and checkboxes to
+      // bulk-remove options from every selected well at once. Outside-
+      // click-to-close is wired via addEventListener/removeEventListener
+      // (not the single global window.onclick slot -- see the inline
+      // comment on outsideDialogClickHandler for why that distinction
+      // matters with multiple widget instances on one page).
       _deleteDialog: function(field) {
         let that = this;
 
@@ -201,6 +218,9 @@ var plateMapWidget = plateMapWidget || {};
         window.addEventListener("click", outsideDialogClickHandler);
       },
 
+      // Builds the table shown inside _deleteDialog above: one row per
+      // currently-selected option, with its display text, well count,
+      // and (unless read-only) a checkbox to mark it for deletion.
       _deleteDialogTable: function(field, valMap) {
         let that = this;
         let colName = [field.name, "Counts"]; //Added because it was missing... no idea what the original should have been
@@ -232,6 +252,7 @@ var plateMapWidget = plateMapWidget || {};
         return table;
       },
 
+      // Adds the "Manage <field name>..." button that opens _deleteDialog.
       _createDeleteButton: function(field) {
         let that = this;
         let deleteButton = $("<button/>").addClass("plate-setup-remove-all-button");

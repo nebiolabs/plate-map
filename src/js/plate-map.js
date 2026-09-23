@@ -1,9 +1,30 @@
+/**
+ * DNA.plateMap -- the jQuery UI widget definition itself (see the jQuery
+ * UI widget factory, `$.widget`). This file owns the widget's public
+ * lifecycle (`_create`/`_init`) and the plate coordinate-system math
+ * (address <-> {row, col} location <-> flat numeric index) that every
+ * other src/js/*.js mixin file relies on. See AGENTS.md for how those
+ * other files get merged onto this widget instance at creation time.
+ *
+ * Coordinate systems in play throughout the codebase:
+ *   - "address": a human-readable well label, e.g. "A1", "H12", "AA3"
+ *     for plates with >26 columns of rows.
+ *   - "loc": {r, c} -- zero-based row/column pair.
+ *   - "index": a single flat integer (r * numCols + c) -- this is the key
+ *     used everywhere internally (this.engine.derivative, this.allTiles,
+ *     etc.) instead of the address string, for performance and because
+ *     Array/Map keys are simpler than parsing "A1"-style strings.
+ */
 $.widget("DNA.plateMap", {
 
   options: {
     value: 0
   },
 
+  // Parses a well address string ("A1", "AA12", ...) into a zero-based
+  // {r, c} location. Row letters follow spreadsheet-style base-26
+  // encoding (A-Z, then AA-AZ, ...), NOT zero-padded base-26 -- see
+  // _rowKey below for the encode side of this same scheme.
   addressToLoc: function(address) {
     let m = /^([A-Z]+)(\d+)$/.exec(address.trim().toUpperCase());
     if (m) {
@@ -29,6 +50,8 @@ $.widget("DNA.plateMap", {
     }
   },
 
+  // {r, c} location -> flat numeric index (r * numCols + c). Throws if
+  // the location is out of bounds for the given (or current) dimensions.
   locToIndex: function(loc, dimensions) {
     if (!dimensions) {
       dimensions = this.dimensions;
@@ -42,11 +65,14 @@ $.widget("DNA.plateMap", {
     return loc.r * dimensions.cols + loc.c;
   },
 
+  // Well address string -> flat numeric index, in one step.
   addressToIndex: function(address, dimensions) {
     let loc = this.addressToLoc(address);
     return this.locToIndex(loc, dimensions);
   },
 
+  // Zero-based row number -> spreadsheet-style row letter(s) (0->"A",
+  // 25->"Z", 26->"AA", ...). Encode side of addressToLoc's decode.
   _rowKey: function(i) {
     let c1 = i % 26;
     let c2 = (i - c1) / 26;
@@ -57,10 +83,13 @@ $.widget("DNA.plateMap", {
     return code;
   },
 
+  // Zero-based column number -> 1-based column label (plain digits).
   _colKey: function (i) {
     return (i+1).toString(10);
   },
 
+  // Flat numeric index -> {r, c} location. Throws if index is out of
+  // bounds for the given (or current) dimensions.
   indexToLoc: function(index, dimensions) {
     if (!dimensions) {
       dimensions = this.dimensions;
@@ -76,19 +105,29 @@ $.widget("DNA.plateMap", {
     return loc;
   },
 
+  // {r, c} location -> well address string (row letters + column digits).
   locToAddress: function(loc) {
     return this._rowKey(loc.r) + this._colKey(loc.c);
   },
 
+  // Flat numeric index -> well address string, in one step.
   indexToAddress: function(index, dimensions) {
     let loc = this.indexToLoc(index, dimensions);
     return this.locToAddress(loc);
   },
 
+  // Returns a defensive deep copy of {rows, cols} -- callers must not be
+  // able to mutate the widget's own this.dimensions via the return value.
   getDimensions: function() {
     return $.extend(true, {}, this.dimensions);
   },
 
+  // jQuery UI widget factory lifecycle hook: runs exactly once, the first
+  // time .plateMap(options) is called on an element. Sets up dimensions,
+  // then merges every plateMapWidget.* mixin factory (one per src/js/*.js
+  // file) onto this instance -- see AGENTS.md for why this is a flat,
+  // shared-namespace merge rather than encapsulated modules -- before
+  // building the actual DOM interface.
   _create: function() {
     let rows = parseInt(this.options.numRows || 8);
     let cols = parseInt(this.options.numCols || 12);
@@ -134,6 +173,12 @@ $.widget("DNA.plateMap", {
   },
 
   // wellsData follows syntax: {A1:{field1: val1, field2: val2}, A2:{field1: val1, field2: val2}}
+  // Converts a wells hash (address -> {fieldId: rawValue}) into its
+  // display-text form, via each field's own parseText -- used for
+  // anything that needs human-readable values (e.g. the "differences"
+  // UI flow) rather than the raw stored value shapes ({value, unit}
+  // objects, multiplex arrays, etc.). Fields not found in fieldMap pass
+  // their raw value through unconverted.
   getTextDerivative: function(wellsData) {
     let textDerivative = {};
     let fieldMap = this.fieldMap;
@@ -168,12 +213,19 @@ $.widget("DNA.plateMap", {
     return textDerivative;
   },
 
+  // Enables/disables every rendered field's input control (the field's
+  // own `disabled` method, established independently by each field type
+  // in create-field-*.js -- see that file group's shared "field
+  // contract" docblock).
   setFieldsDisabled: function(flag) {
     this.fieldList.forEach(function(field) {
       field.disabled(flag);
     });
   },
 
+  // Sets the widget-wide read-only flag and immediately re-applies its
+  // UI consequences via readOnlyHandler (hides/shows overlay buttons,
+  // enables/disables field inputs).
   isReadOnly: function(flag) {
     this.readOnly = !!flag;
     this.readOnlyHandler();
@@ -204,6 +256,12 @@ $.widget("DNA.plateMap", {
 
   disableAddDeleteWell: null,
 
+  // Enables/disables "restricted editing" mode: when flag is true,
+  // wells can no longer be emptied out of existence by clearing all
+  // their fields (they instead reset to emptyWellWithDefaultVal) and no
+  // new wells can be added beyond the initially-loaded set
+  // (this.addressAllowToEdit). emptyDefaultWell optionally overrides
+  // individual field defaults used for that "reset" value.
   // column_with_default_val will be used to determine empty wells, format: {field_name: default_val}
   isDisableAddDeleteWell: function(flag, emptyDefaultWell) {
     if (flag) {
@@ -236,6 +294,8 @@ $.widget("DNA.plateMap", {
     this.readOnlyHandler();
   },
 
+  // Highlights the bottom-table rows whose group/color matches the
+  // currently selected wells (adds/removes the "selected" CSS class).
   selectObjectInBottomTab: function() {
     let colors = [];
     let selectedIndices = this.selectedIndices;
@@ -266,21 +326,36 @@ $.widget("DNA.plateMap", {
     }
   },
 
+  // Returns a defensive copy of the currently-selected well indices.
   getSelectedIndices: function() {
     return this.selectedIndices.slice();
   },
 
+  // Public API: returns the currently-selected wells as address strings
+  // (e.g. ["A1", "A2"]) rather than internal numeric indices.
   getSelectedAddresses: function() {
     return this.selectedIndices.map(function(index) {
       return this.allTiles[index].address;
     }, this);
   },
 
+  // Public API: selects wells by address string. Addresses are
+  // sanitized (deduped, sorted, converted to indices) via
+  // sanitizeAddresses (load-plate.js) before delegating to
+  // setSelectedIndices.
   setSelectedAddresses: function(addresses, noUndoRedo) {
     let indices = this.sanitizeAddresses(addresses);
     this.setSelectedIndices(indices, noUndoRedo);
   },
 
+  // Public API: selects wells by numeric index (assumed already
+  // sanitized by the caller -- see the "Indices should be sanitized"
+  // comment below). Falls back to selecting index 0 if given an empty/
+  // null selection (a plate always has at least one selected well).
+  // Updates the tile-selection visuals, refreshes the tab fields to
+  // reflect the new selection's common data, fires the "selectedWells"
+  // callback, updates the bottom-table highlight, and records undo/redo
+  // history unless noUndoRedo is set (used for history-replay itself).
   setSelectedIndices: function (indices, noUndoRedo) {
     if (!indices || indices.length === 0) {
       indices = [0];

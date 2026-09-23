@@ -2,9 +2,19 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Shows/hides the small warning-triangle icon (image_assets.js's
+   * warningImg) next to a field's name when a required field is missing
+   * a value across the current selection. applyFieldWarning is called
+   * once per selection-change (from svg-events.js's decideSelectedFields)
+   * and re-derives every required field's warning state from scratch.
+   */
   plateMapWidget.addWarningMsg = function() {
     // For those check boxes associated with every field in the tab
     return {
+      // Adds (include=true) or removes (include=false) the warning icon
+      // + hover tooltip on a single field. Idempotent -- checks for the
+      // icon's existing presence before adding/removing again.
       fieldWarningMsg: function(field, text, include) {
         let that = this;
         let imgId = "fieldWarning" + field.full_id;
@@ -34,6 +44,12 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Re-evaluates every required field's warning state for the given
+      // set of selected wells. Multiplex fields delegate entirely to
+      // their own applyMultiplexSubFieldColor (create-field-multiplex.js)
+      // instead of using fieldWarningMsg directly, since a multiplex
+      // field's warning state depends on its subfields across potentially
+      // many entries, not a single scalar value.
       applyFieldWarning: function(wells) {
         let that = this;
         let fieldData = {};

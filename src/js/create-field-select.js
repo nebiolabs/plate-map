@@ -2,8 +2,17 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Renders a single-select (select2) field: internal storage is the
+   * selected option's `id` (or null when empty). Option ids/text come
+   * from field.data.options (or an ajax config -- see create-field-
+   * core.js's _createOpts). Throws on parseValue/parseText for any
+   * value not matching a known option id -- there is no "graceful"
+   * handling of stale/removed option ids. See create-field-core.js's
+   * "THE FIELD CONTRACT" docblock for what disabled/parseValue/
+   * getValue/setValue/getText/parseText mean.
+   */
   plateMapWidget.createFieldSelect = function() {
-    // Renders a single-select (select2) field.
     return {
 
       _createSelectField: function(field) {

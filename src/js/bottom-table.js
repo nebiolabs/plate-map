@@ -1,9 +1,19 @@
 var plateMapWidget = plateMapWidget || {};
 
 (function ($) {
+  /**
+   * The bottom table: one row per color/group (built by engine.js's
+   * applyColors, one addBottomTableRow call per group), showing the
+   * group's swatch color, the checked fields' shared values, and a
+   * clickable group-number button that selects every well in that
+   * group. Also owns the CSV/clipboard export feature at the bottom of
+   * the table.
+   */
   plateMapWidget.bottomTable = function () {
     // for bottom table
     return {
+      // Builds the bottom table's static DOM skeleton (container/table/
+      // thead/tbody) -- called once from interface.js's _createInterface.
       _bottomScreen: function () {
         this.bottomContainer = this._createElement("<div></div>").addClass(
           "plate-setup-bottom-container",
@@ -23,6 +33,10 @@ var plateMapWidget = plateMapWidget || {};
         this.container.append(this.bottomContainer);
       },
 
+      // Rebuilds the table header row (one column per checked field,
+      // plus "Group"), and clears the table body -- called at the start
+      // of every applyColors run (engine.js) since the checked-field set
+      // may have changed since the last render.
       addBottomTableHeadings: function () {
         let row = this._createElement("<tr></tr>");
 
@@ -46,12 +60,21 @@ var plateMapWidget = plateMapWidget || {};
         this.adjustFieldWidth(row);
       },
 
+      // Returns one well's display text for a given checked field --
+      // used to fill in each bottom-table row's data columns.
       tileAttrText: function (tile, attr) {
         let well = this.engine.derivative[tile.index];
         let field = this.fieldMap[attr];
         return field.getText(well[attr]);
       },
 
+      // Renders one bottom-table row for a single color/group: the
+      // swatch (color-manager.js's _wrapColorIndex-wrapped gradient --
+      // same wraparound period as svg-create.js's setTileColor, kept in
+      // sync via that shared helper), the clickable group-number button
+      // (click selects every well in singleStack; Ctrl-click extends
+      // the current selection instead of replacing it), and one data
+      // column per checked field showing that group's shared value.
       addBottomTableRow: function (color, singleStack) {
         let that = this;
         let modelTile = this.allTiles[singleStack[0]];
@@ -105,6 +128,11 @@ var plateMapWidget = plateMapWidget || {};
         this.adjustFieldWidth(row);
       },
 
+      // Renders the initial placeholder bottom-table row (the group-0
+      // "no data" gray swatch, colorPairs[0]) before any real data/
+      // grouping has happened -- called once from interface.js's
+      // _createInterface, before the first real applyColors run. Also
+      // appends the export-buttons row (createExportButton).
       bottomForFirstTime: function () {
         this.addBottomTableHeadings();
         // This is executed for the very first time.. !
@@ -125,6 +153,9 @@ var plateMapWidget = plateMapWidget || {};
         this.createExportButton();
       },
 
+      // Widens a row if there are enough checked-field columns to
+      // overflow the table's default width (a simple horizontal-scroll
+      // accommodation, not a full responsive layout).
       adjustFieldWidth: function (row) {
         let length = this.rowCounter;
         if (length * 150 > 1024) {
@@ -132,6 +163,9 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Triggers a browser file download of `csv` content as `filename`
+      // via a throwaway <a> element -- the actual mechanics behind the
+      // "Export CSV" button (createExportButton/exportData below).
       downloadCSV: function (csv, filename) {
         let csvFile;
         let downloadLink;
@@ -160,6 +194,12 @@ var plateMapWidget = plateMapWidget || {};
         downloadLink.click();
       },
 
+      // Scrapes the currently-rendered bottom table's DOM into either a
+      // CSV string (triggers a download via downloadCSV) or a
+      // tab-delimited string (returned, for the clipboard button to
+      // copy). Adds a synthesized "Location" column (the well addresses
+      // for each group, from this.engine.stackUpWithColor) not present
+      // in the rendered table itself.
       exportData: function (format) {
         let data = [];
         // Scoped to this widget's own bottom table -- NOT a page-wide
@@ -236,6 +276,10 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Builds the "Color groups" / "Export CSV" / "Copy To Clipboard"
+      // control row shown just above the bottom table (ClipboardJS is
+      // the external vendored clipboard library -- see README's "Include
+      // dependencies").
       createExportButton: function () {
         let that = this;
         let overlayContainer = $("<div>").addClass(

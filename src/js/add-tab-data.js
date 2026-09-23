@@ -2,6 +2,17 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Processes options.attributes.tabs into the actual fieldList/fieldMap
+   * this.fieldList/this.fieldMap objects used throughout the widget:
+   * builds each field's shared DOM skeleton, dispatches to _createField
+   * (create-field-core.js) to render the actual input control, wires up
+   * checkboxes (check-box.js), and (for multiplex fields) recursively
+   * builds each subfield the same way. Also owns the required-field
+   * bookkeeping (this.requiredField) and the field-type-specific
+   * defaultWell seeding (null for scalars, [] for multiselect/multiplex
+   * -- see tabs.js for defaultWell itself).
+   */
   plateMapWidget.addTabData = function() {
 
     return {
@@ -45,6 +56,11 @@ var plateMapWidget = plateMapWidget || {};
         return wrapperDiv;
       },
 
+      // Entry point called once per widget, from tabs.js's _createTabs.
+      // Walks every tab's field configs, auto-assigns missing id/type,
+      // dispatches each to _makeMultiplexField or _makeRegularField, and
+      // seeds this.defaultWell/this.multipleFieldList/this.requiredField
+      // accordingly.
       _addTabData: function() {
         // Here we may need more changes because attributes format likely to change
         let tabData = this.options.attributes.tabs;
@@ -85,6 +101,11 @@ var plateMapWidget = plateMapWidget || {};
         that.multipleFieldList = multiplexFieldArray;
       },
 
+      // Builds one multiplex SUBFIELD's shell object (not rendered via
+      // _createField itself -- that happens later, in
+      // _makeMultiplexField's loop). full_id is namespaced under the
+      // parent multiplex field's id so subfields with the same short id
+      // across different multiplex fields don't collide in fieldMap.
       _makeSubField: function(mainField, data, tabPointer, fieldArray) {
         let that = this;
         that._autoAssignFieldIdAndType(data);
@@ -105,6 +126,11 @@ var plateMapWidget = plateMapWidget || {};
         return field;
       },
 
+      // Builds and renders one non-multiplex field (any type handled by
+      // _createField's dispatcher): text/numeric/select/multiselect/
+      // boolean. Adds a checkbox (check-box.js) when requested,
+      // registers the field's own onChange handler which feeds edits
+      // back through _addAllData (add-data-on-change.js).
       _makeRegularField: function(data, tabPointer, fieldArray, checkbox) {
         let that = this;
         let wrapperDiv = that._createFieldWrapper(data, tabPointer);
@@ -141,6 +167,13 @@ var plateMapWidget = plateMapWidget || {};
         return field;
       },
 
+      // Builds and renders a multiplex field: the main field itself
+      // (create-field-multiplex.js's _createMultiplexField), plus one
+      // subfield per data.multiplexFields entry (via _makeSubField),
+      // each with its own onChange that threads its edit back through
+      // the main field's _changeMultiFieldValue (create-field-
+      // multiselect.js) so a subfield edit updates the right entry in
+      // the multiplex field's detailData array.
       _makeMultiplexField: function(data, tabPointer, fieldArray) {
         let that = this;
         let wrapperDiv = that._createFieldWrapper(data, tabPointer);

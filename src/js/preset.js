@@ -2,6 +2,12 @@ var plateMapWidget = plateMapWidget || {};
 
 (function($) {
 
+  /**
+   * Renders the optional "Checkbox presets" tab strip (options.
+   * attributes.presets) -- one clickable tab per preset, each of which
+   * replaces the entire checked-field set via check-box.js's
+   * setCheckboxes. Only rendered at all if presets are configured.
+   */
   plateMapWidget.preset = function() {
     // All the preset action goes here
     return {
@@ -38,6 +44,10 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Deselects every preset tab's visual "selected" state -- called
+      // whenever the checked-field set changes manually (check-box.js's
+      // changeCheckboxes), since a manual edit means no preset is an
+      // exact match for the current state anymore.
       _clearPresetSelection: function() {
         for (let j = 0; j < this.presets.length; j++) {
           let p = this.presets[j];
@@ -46,6 +56,9 @@ var plateMapWidget = plateMapWidget || {};
         }
       },
 
+      // Applies one preset tab's field list via setCheckboxes
+      // (check-box.js), replacing the entire checked set, and marks
+      // that tab visually selected.
       _selectPreset: function(preset) {
         this.setCheckboxes(preset.data("preset"));
         preset.removeClass("plate-setup-preset-tab")
