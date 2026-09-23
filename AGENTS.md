@@ -24,7 +24,7 @@ decision — treat this as a hard constraint, not a guideline.
 
 ## Architecture: read this before touching `src/js/`
 
-This is **not** 18 independent modules — it's one shared mutable object
+This is **not** 24 independent modules — it's one shared mutable object
 assembled at runtime. Every file in `src/js/` does:
 ```js
 var plateMapWidget = plateMapWidget || {};

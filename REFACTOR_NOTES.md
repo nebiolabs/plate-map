@@ -1281,27 +1281,76 @@ candidates from the original audit have now been resolved (one
 correctly rejected after its premise changed, one correctly executed
 after its premise was reconfirmed).
 
-### 10.16 RESUME HERE (session paused at end of this day, nothing
+### 10.16 Stage 2, sub-step (6) — DONE: documentation pass complete;
+### Stage 2 is now fully complete
+
+Added file-level and method-level docblocks/comments across all 24
+`src/js/` files in one pass (single commit, per user decision), docs-
+only with zero logic changes (commit `f0da41b`). Full suite verified
+green both before starting and after finishing (109 Jest + 31
+Playwright), plus a real `gulp build.dist` run confirmed the build
+pipeline still succeeds cleanly with the new comments in place.
+
+Key content added, worth knowing if extending this further:
+- `create-field-core.js` now documents **THE FIELD CONTRACT** in full —
+  the implicit 6-method contract (`disabled`/`parseValue`/`getValue`/
+  `setValue`/`getText`/`parseText`) every field-type constructor
+  independently re-establishes, flagged as missing documentation in
+  §10.4. Also documents the units decorator
+  (`_handleFieldUnits`/`_makeFieldUnits`) that wraps those 6 methods for
+  units-configured fields.
+- Every `create-field-*.js` file's header now states that field type's
+  internal storage shape (e.g. numeric fields store a trimmed STRING,
+  not an actual JS number; multiplex fields store an array of per-option
+  entries with independent subfield values).
+- `create-field-multiplex.js`'s 4 cross-file API names required to stay
+  stable (`singleSelectValue`, `_changeMultiFieldValue`,
+  `checkMultiplexCompletion`, `applyMultiplexSubFieldColor` — §10.4) are
+  each individually annotated at their definition site explaining why
+  the exact name matters, not just listed once in a header comment.
+- `plate-map.js`'s header explains the address/loc/index coordinate
+  systems used throughout the codebase (a genuinely load-bearing but
+  previously-undocumented convention every other file relies on).
+- `engine.js`'s header clarifies its specific `THIS` (capitalized, outer
+  widget instance) vs `this` (the engine object itself) convention.
+- `image_assets.js`/`color-manager.js` each cross-reference §10.14's
+  rejected merge decision directly in their own file, so a future reader
+  doesn't have to rediscover REFACTOR_NOTES.md to learn that merge was
+  already considered and rejected.
+- Every existing REFACTOR_NOTES.md-linked inline comment (bug
+  explanations, characterization-test cross-references, etc.) was left
+  untouched — this pass only ADDED documentation, never edited or
+  removed an existing comment.
+
+**This completes Stage 2 in full** (sub-steps (1) through (6), per the
+staged plan in §10.8): dead code removal, intra-file de-dup, the
+`create-field.js` split, cross-file de-dup, tiny-file merges, and now
+documentation. The codebase is still plain global-mixin scripts (no
+ES-module conversion has happened) but is meaningfully cleaner,
+better-documented, and has zero known dead code or duplicated logic
+left over from the original audit.
+
+### 10.17 RESUME HERE (session paused at end of this day, nothing
 ### further done past this point)
 
-Working tree is clean; everything through Stage 2 sub-step (5) is
+Working tree is clean; everything through Stage 2 (all 6 sub-steps) is
 committed on `refactor/#119-cleanup_and_reorganize` and pushed to
 origin. Nothing merged to `master`; no PR opened (standing constraint:
 don't, without explicit approval).
 
-**Next action, not yet started**: Stage 2, sub-step (6) — the
-**documentation pass**, the last item in Stage 2 before Stage 3 (ES
-modules + Vite) can begin per §10.8. Per §10.4's audit findings: no
-method across the ~18 `src/js/` files carries a docblock, and
-`create-field.js`'s (now `create-field-*.js`'s) implicit 6-method
-"field" contract (`disabled`/`parseValue`/`getValue`/`setValue`/
-`getText`/`parseText`, independently re-established by every field-type
-constructor) has never been written down anywhere. This sub-step is
-lower-risk than (1)-(5) (comments/docs only, not behavior-affecting) but
-should still run the full suite after each file touched, since accidental
-whitespace/syntax slips are still possible. Scope not yet fully defined
-this session — worth deciding upfront whether this covers all 18(+)
-files in one pass or is itself broken into smaller reviewable chunks.
+**Next action, not yet started**: Stage 3 — the actual ES-module + Vite
+conversion, restructured into checkpointed sub-stages per §10.5's
+finding #5 (see §10.8 for the full sub-stage breakdown): 3a (ground-truth
+current build output), 3b (explicit Babel-vs-esbuild decision, **UMD/
+IIFE output format required** per §10.6's `#4` finding), 3c (incremental
+file-by-file conversion, old pipeline kept shippable in parallel), 3d
+(test-harness rework — `test/unit/setup.js`'s `global.eval()` and
+`test/e2e/server.js`'s raw `<script>` serving both need reworking for
+real ES modules), 3e (Vite production config), 3f (final manual
+smoke-test + dist-diff gate before retiring the old pipeline). This is
+the highest-blast-radius part of the whole project (per §10.5's original
+challenge finding) and deserves careful, deliberate planning at the
+start of a fresh session rather than diving straight into 3a.
 
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
