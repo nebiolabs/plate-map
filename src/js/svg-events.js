@@ -310,6 +310,20 @@ var plateMapWidget = plateMapWidget || {};
         this._addDataToTabFields(well);
       },
 
+      // Configure how data is added to tab fields. Formerly its own file,
+      // add-data-to-tabs.js -- folded in here since this is its sole
+      // caller (REFACTOR_NOTES.md §10.14/§10.15, Stage 2 sub-step (5)).
+      _addDataToTabFields: function(well) {
+        for (let i = 0; i < this.fieldList.length; i++) {
+          let field = this.fieldList[i];
+          let v = well[field.id];
+          if (v === undefined) {
+            v = null;
+          }
+          field.setValue(v);
+        }
+      },
+
       // get all wells that have data
       getWellSetAddressWithData: function() {
         // Explicit numeric comparator on .sort(), and an arrow wrapper
