@@ -1330,27 +1330,73 @@ ES-module conversion has happened) but is meaningfully cleaner,
 better-documented, and has zero known dead code or duplicated logic
 left over from the original audit.
 
-### 10.17 RESUME HERE (session paused at end of this day, nothing
-### further done past this point)
+### 10.17 Stage 3a — DONE: ground-truthed the current build output
 
-Working tree is clean; everything through Stage 2 (all 6 sub-steps) is
-committed on `refactor/#119-cleanup_and_reorganize` and pushed to
-origin. Nothing merged to `master`; no PR opened (standing constraint:
-don't, without explicit approval).
+No files changed this session — pure investigation, confirming/extending
+what was already known rather than assuming it. Findings:
 
-**Next action, not yet started**: Stage 3 — the actual ES-module + Vite
-conversion, restructured into checkpointed sub-stages per §10.5's
-finding #5 (see §10.8 for the full sub-stage breakdown): 3a (ground-truth
-current build output), 3b (explicit Babel-vs-esbuild decision, **UMD/
-IIFE output format required** per §10.6's `#4` finding), 3c (incremental
-file-by-file conversion, old pipeline kept shippable in parallel), 3d
-(test-harness rework — `test/unit/setup.js`'s `global.eval()` and
-`test/e2e/server.js`'s raw `<script>` serving both need reworking for
-real ES modules), 3e (Vite production config), 3f (final manual
-smoke-test + dist-diff gate before retiring the old pipeline). This is
-the highest-blast-radius part of the whole project (per §10.5's original
-challenge finding) and deserves careful, deliberate planning at the
-start of a fresh session rather than diving straight into 3a.
+- Inspected `dist/js/plate-map.js` directly (not just gulpfile.js):
+  confirmed it's a plain concatenation of every `src/js/*.js` file's own
+  per-file `(function($) {...})(jQuery)` IIFE, in alphabetical glob
+  order, Babel-transpiled, with **zero** `import`/`export`/`require`
+  anywhere in the output — matches the "single self-contained script,
+  bare globals" consumption model already documented in §3/§10.6 #4.
+- Re-confirmed (by reading the actual bundle, not just the gulpfile)
+  that `@babel/preset-env` runs with **zero explicit targets** anywhere
+  (`.browserslistrc` absent, no `browserslist` field in `package.json`,
+  `gulpfile.js`'s own `babel({presets: ['@babel/env']})` call passes no
+  `targets`) — this transpiles to the BROADEST possible compatibility
+  target. Visible directly in the output: arrow functions and `typeof`
+  checks are converted to old-style `function` expressions with an
+  inlined `_typeof` helper, not left as modern syntax.
+  §10.2 already flagged this from reading the gulpfile; this session
+  confirmed it's real by reading the actual transpiled output too.
+- Re-read `test/unit/setup.js` and `test/e2e/server.js`/`fixture.html`
+  (the two harnesses Stage 3d must rework): both already document their
+  own plain-`<script>`-tag-equivalent loading mechanism in their own
+  header comments (indirect `eval` for Jest/jsdom; real `<script src=...>`
+  tags served from a live directory listing for Playwright) — reconfirmed
+  accurate, no drift since they were written.
 
+### 10.18 PAUSED MID-DECISION (Stage 3b) — resume by re-asking this
+### exact question, nothing else pending
+
+Working tree is clean (`git status` shows nothing — this session made
+zero file edits); already up to date with origin (nothing new to push
+from this session, since 10.17 above required no commit — it's recorded
+here for the next session's benefit, not because anything changed on
+disk). Nothing merged to `master`; no PR opened.
+
+**Left off mid-decision, needs to be re-asked verbatim at the start of
+the next session, before any Stage 3 code/config changes happen:**
+
+> Vite's default JS transform is esbuild, which (unlike Babel with no
+> targets) assumes modern/evergreen browsers by default — using it as-is
+> would silently narrow browser support compared to today's build,
+> without any deliberate decision behind it. How do you want to handle
+> the JS transform in the new Vite build?
+>
+> Options presented: (1) keep using Babel (via a Vite/Rollup Babel
+> plugin) with the exact same zero-targets config — recommended, zero
+> compat-risk; (2) switch to Vite's default esbuild transform — a
+> deliberate compatibility regression, needs explicit sign-off; (3)
+> switch to esbuild but with an explicit target string configured to
+> match today's broad support.
+
+No answer was given yet — the user had to step away right as this was
+asked. **Do not assume an answer or default to option (1)** just because
+it's marked "Recommended" above; re-ask and wait for a real response,
+per this project's established decisions-one-at-a-time discipline.
+
+**After that decision is made**, the remaining Stage 3 sub-stages are
+unchanged from §10.8's original breakdown: 3c (incremental file-by-file
+conversion, old pipeline kept shippable in parallel), 3d (test-harness
+rework for both `test/unit/setup.js` and `test/e2e/server.js`/
+`fixture.html`), 3e (Vite production config), 3f (final manual
+smoke-test + dist-diff gate before retiring the old pipeline).
+
+Nothing else is pending or half-finished — no uncommitted edits, no
+partially-applied fixes, no dependency additions (Vite has not been
+added to `package.json` yet).
 Nothing else is pending or half-finished — no open questions, no
 uncommitted edits, no partially-applied fixes.
