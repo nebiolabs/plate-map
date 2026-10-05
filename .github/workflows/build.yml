@@ -1,0 +1,33 @@
+name: build
+
+# Fails when the committed dist/ doesn't match a fresh build of src/, so
+# a source change can't be merged (or released) without its build.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  dist-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build dist/
+        run: npm run build.dist
+
+      - name: Check committed dist/ matches the build
+        run: |
+          if ! git diff --exit-code --stat -- dist; then
+            echo "::error::dist/ is out of date. Run 'npm run build.dist' and commit the result."
+            exit 1
+          fi

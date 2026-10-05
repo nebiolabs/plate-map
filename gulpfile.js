@@ -7,9 +7,7 @@ const minifyCSS = require('gulp-clean-css');
 const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 const connect = require('gulp-connect');
-const mergeStream = require('merge-stream');
 
-const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 
 
@@ -57,19 +55,16 @@ const PATH = {
 let config = {destination: {css: '', js: '', root: ''}};
 
 function concat_minify_css(name, source, destination) {
-    return gulp.src(source)
-        .pipe(sourcemaps.init())
+    return gulp.src(source, {sourcemaps: true})
         .pipe(concat(name + '.css'))
         .pipe(gulp.dest(destination))
         .pipe(minifyCSS())
         .pipe(rename(name + '.min.css'))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, {sourcemaps: '.'}));
 }
 
 function concat_uglify_js(name, source, destination) {
-    return gulp.src(source)
-        .pipe(sourcemaps.init())
+    return gulp.src(source, {sourcemaps: true})
         .pipe(concat(name + '.js'))
         .pipe(babel({
             presets: ['@babel/env']
@@ -77,8 +72,7 @@ function concat_uglify_js(name, source, destination) {
         .pipe(gulp.dest(destination))
         .pipe(uglify())
         .pipe(rename(name + '.min.js'))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, {sourcemaps: '.'}));
 }
 
 function config_env(env) {
@@ -111,23 +105,24 @@ gulp.task('js', () => {
     return concat_uglify_js(packageName, PATH.source.js, config.destination.js);
 });
 
-gulp.task('copy.other', () => {
-    const css = gulp.src(PATH.dependencies.css)
-        .pipe(gulp.dest(config.destination.css));
-    const js = gulp.src(PATH.dependencies.js)
-        .pipe(gulp.dest(config.destination.js));
-    const ex_js = gulp.src(PATH.example.js)
-        .pipe(gulp.dest(config.destination.js));
-    return mergeStream(css, js, ex_js);
-});
+// One task per copy, run with gulp.parallel: merge-stream doesn't work
+// with gulp 5's streamx streams ("Writable stream closed prematurely")
+function copy(source, destinationKey) {
+    const task = () => gulp.src(source).pipe(gulp.dest(config.destination[destinationKey]));
+    task.displayName = 'copy ' + source;
+    return task;
+}
 
-gulp.task('copy.src', () => {
-    const css = gulp.src(PATH.source.css)
-        .pipe(gulp.dest(config.destination.css));
-    const js = gulp.src(PATH.source.js)
-        .pipe(gulp.dest(config.destination.js));
-    return mergeStream(css, js);
-});
+gulp.task('copy.other', gulp.parallel(
+    copy(PATH.dependencies.css, 'css'),
+    copy(PATH.dependencies.js, 'js'),
+    copy(PATH.example.js, 'js')
+));
+
+gulp.task('copy.src', gulp.parallel(
+    copy(PATH.source.css, 'css'),
+    copy(PATH.source.js, 'js')
+));
 
 function jsLink (filePath) {
     const fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length);

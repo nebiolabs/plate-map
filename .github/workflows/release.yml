@@ -1,0 +1,51 @@
+name: release
+
+# Publishes to npm when a version tag (vX.Y.Z) is pushed, using npm trusted
+# publishing (OIDC): no npm token is stored in the repo. The package's
+# trusted publisher on npmjs.com must name this repo and this file.
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+  id-token: write   # lets npm verify this workflow (trusted publishing + provenance)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or newer
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check the tag matches package.json
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::Tag v$tag doesn't match package.json version $version."
+            exit 1
+          fi
+
+      - name: Build dist/ and check it matches the tagged commit
+        run: |
+          npm run build.dist
+          if ! git diff --exit-code --stat -- dist; then
+            echo "::error::dist/ at this tag is out of date. Rebuild and commit before tagging."
+            exit 1
+          fi
+
+      - name: Publish
+        run: npm publish --provenance --access public
