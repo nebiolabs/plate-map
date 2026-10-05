@@ -637,10 +637,11 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         // Only allow an optional leading "-", digits and one "."; any other
-        // keystroke or paste is undone
+        // keystroke or paste is undone. Surrounding whitespace (common when
+        // pasting from a spreadsheet) is allowed; getValue trims it
         input.on("input", function() {
           let text = input.val();
-          if (!allowedText.test(text)) {
+          if (!allowedText.test(text.trim())) {
             input.val(lastValidText);
             return;
           }
