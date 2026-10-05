@@ -571,7 +571,12 @@ var plateMapWidget = plateMapWidget || {};
         let full_id = field.full_id;
         let data = field.data;
         let input = this._createElement("<input>").addClass("plate-setup-tab-input")
-          .attr("placeholder", data.placeholder || "").attr("id", full_id);
+          .attr("placeholder", data.placeholder || "").attr("id", full_id)
+          .attr("inputmode", "decimal");
+        // Last text in the box that matched allowedText; restored when an
+        // edit would make it invalid
+        let lastValidText = "";
+        let allowedText = /^-?\d*\.?\d*$/;
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
@@ -615,6 +620,7 @@ var plateMapWidget = plateMapWidget || {};
             return;
           }
           input.val(value);
+          lastValidText = input.val();
         };
 
         let getText = function(v) {
@@ -630,14 +636,15 @@ var plateMapWidget = plateMapWidget || {};
           return getText(parseValue(v));
         };
 
+        // Only allow an optional leading "-", digits and one "."; any other
+        // keystroke or paste is undone
         input.on("input", function() {
-          let v = field.getRegularValue();
-          if (isNaN(v)) {
-            //flag field as invalid
-            input.addClass("invalid");
-          } else {
-            input.removeClass("invalid");
+          let text = input.val();
+          if (!allowedText.test(text)) {
+            input.val(lastValidText);
+            return;
           }
+          lastValidText = text;
           field.onChange();
         });
 
