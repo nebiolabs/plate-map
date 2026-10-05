@@ -1,10 +1,7 @@
 # Introduction
-<!-- remember to update badges [version, licence] when needed because they are static -->
-![version](https://img.shields.io/badge/version-2.0.1-brightgreen.svg?style=flat-square&v=1.0)
+[![npm](https://img.shields.io/npm/v/plate-map.svg?style=flat-square)](https://www.npmjs.com/package/plate-map)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![GitHub issues](https://img.shields.io/github/issues/nebiolabs/plate-map.svg?style=flat-square&v=1.0)](https://github.com/nebiolabs/plate-map/issues)
-[![dependencies Status](https://david-dm.org/nebiolabs/plate-map/status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map)
-[![devDependencies Status](https://david-dm.org/nebiolabs/plate-map/dev-status.svg?style=flat-square&v=1.0)](https://david-dm.org/nebiolabs/plate-map?type=dev)
 
 **JavaScript Plate Layout** is an open source tool developed collaboratively by [Chai Biotechnologies](www.chaibio.com) 
 and [New England Biolabs](www.neb.com) for visualizing and editing the layout of scientific assay plates.
@@ -45,8 +42,8 @@ utilized in the context of a larger scientific software application.
 # Usage
 
 ## Install
-<!-- todo : This package is available on [NPM_Link] -->
-The standard way to integrate this library in your project is to use `npm`.
+This package is available on [npm](https://www.npmjs.com/package/plate-map); see [CHANGELOG.md](CHANGELOG.md) for
+what changed between versions. The standard way to integrate this library in your project is to use `npm`.
 
 > If you are new to _NPM_, you can get to know it better here 
 [What-Is-NPM?](https://docs.npmjs.com/getting-started/what-is-npm).
@@ -62,23 +59,31 @@ contains all the required dependencies to make use of our package. You need ther
 in your project to use this package.
 
 You need to include the following dependencies: 
-<!-- todo: change plate-map paths to correspond to the real npm package when released plate-map/dist/css, ... -->
 - Stylesheets: 
     ```
     'node_modules/bootstrap/dist/css/bootstrap.min.css'
-    'node_modules/select2/select2.css'
-    'node_modules/plate-map/dist/package/css/plate-map.min.css'
+    'node_modules/select2/dist/css/select2.css'
+    'node_modules/plate-map/dist/css/plate-map.min.css'
     ```
 - Javascript:
     ```
     'node_modules/jquery/dist/jquery.min.js'
     'node_modules/bootstrap/dist/js/bootstrap.min.js'
-    'node_modules/select2/select2.js'
+    'node_modules/select2/dist/js/select2.js'
     'node_modules/jquery-ui-dist/jquery-ui.min.js'
     'node_modules/svgjs/dist/svg.js'
     'node_modules/clipboard/dist/clipboard.min.js'
-    'node_modules/plate-map/dist/package/js/plate-map.min.js'
-    ``` 
+    'node_modules/plate-map/dist/js/plate-map.min.js'
+    ```
+
+### Rails importmap
+In a Rails app using importmap, pin and vendor a specific version (this records the version in `config/importmap.rb`):
+```bash
+bin/importmap pin plate-map@<version> --download
+```
+plate-map is a jQuery plugin, not an ES module: load jQuery, jQuery UI, select2, SVG.js and ClipboardJS as globals
+first, then `import 'plate-map'`. `importmap pin` doesn't download CSS, so copy `dist/css/plate-map.css` from the
+same version into your stylesheets and note the version next to it.
 
 ## Quick start
 Embed code similar to the below to add the plate layout tool to your project: 
@@ -482,11 +487,9 @@ options for subfield id `raw_value` will be `["unit1", "unit2"]` , which is used
 # How to contribute
 
 ## Requirements
-**Note** that this project was tested with _Node_ v9.10.1 and _NPM_ v5.6.0.
+Building requires _Node_ 24.11 or newer. `.nvmrc` names the version CI uses (`nvm use` picks it up).
 
-If this is your first time:
-1. install the (os) dependencies of the `canvas` library: https://www.npmjs.com/package/canvas/v/1.6.11
-2. run `npm install` in this directory
+If this is your first time, run `npm ci` in this directory.
 
    
 ## Project Structure
@@ -545,20 +548,20 @@ More examples about how to use _Gulp_ are available here [Gulp For Beginners](ht
 Please have a look at `gulpfile.js` for more details on the available tasks of this projects.
 
 ## Dev Environment
-The development build task outputs the application files in `dist/dev/`. These files are served by _BrowserSync_,
+The development build task outputs the application files in `build/dev/`. These files are served by _BrowserSync_,
 a development server which offers features like:
-- live reload: automatically rebuild `src` into `dist/dev` and refresh the browser(s) after each change in code
+- live reload: automatically rebuild `src` into `build/dev` and refresh the browser(s) after each change in code
 - interactions synchronization: user actions can be mirrored across multiple browsers open simultaneously
 
 > For more details about _BrowserSync_, see [BrowserSync Website](https://browsersync.io/). 
 
-To serve the application in dev mode : 
+To serve the application in dev mode (this opens the example page in your browser): 
 ```bash
 npm start # or npm run serve.dev
 ```
 
 ## Prod Environment
-The production build task outputs the minified application files in `dist/prod/`. These files contain both the project 
+The production build task outputs the minified application files in `build/prod/`. These files contain both the project 
 source code and the production dependencies. This directory is therefore ready to be served as a standalone application by
 a production server (eg. nginx). This project is configured to use a `connect` server.
 
@@ -570,23 +573,32 @@ To serve the application in production mode:
 npm run serve.prod
 ```
 
-## Release
-The 'package' build task outputs the minified application files in `dist/pack/`. These files only contain the minified
-source code of the app, and therefore cannot be served as such. Their purpose it to be released as an `npm` package,
-that can then be integrated in dependent projects. It is up to each dependent project to build its own production bundle(s),
-with a proper handling of the transitive dependencies.
+## Build
+`npm run build.dist` builds the files published to npm into `dist/`:
+- `dist/js/plate-map.js` and `plate-map.min.js` (source files concatenated, transpiled for the browsers in
+  `.browserslistrc`, and minified), with a source map
+- `dist/css/plate-map.css` and `plate-map.min.css`, with a source map
 
-The `plate-map` _NPM_ package contains:
-- `plate-map.min.css` (app CSS source files concatenated and minified)
-- `plate-map.min.js`  (app JS source files concatenated and uglified)
-- `package.json` (dependencies and tasks of the package)
+`dist/` is committed. CI (`.github/workflows/build.yml`) fails a pull request if the committed `dist/` doesn't match a
+fresh build, so run `npm run build.dist` and commit `dist/` together with any change to `src/`.
 
-To build this package on your machine: 
-```bash
-npm run build.package
-# test
-# release to npm
-```
+## Releasing
+Releases are published to npm by GitHub Actions (`.github/workflows/release.yml`) when a version tag is pushed. No npm
+login is needed: the package trusts this repository's workflow (npm trusted publishing), and each release carries a
+provenance record linking it to the commit it was built from.
+
+1. Start from an up-to-date `master` and create a branch, e.g. `git switch -c release/v3.1.0`.
+2. In `CHANGELOG.md`, rename the `Unreleased` section to the new version and date, and commit.
+3. Bump the version: `npm version patch|minor|major -m "Release %s"`. This updates `package.json`, rebuilds and stages
+   `dist/` (the `version` script), commits, and creates the tag `vX.Y.Z` locally.
+4. Push the branch only (`git push -u origin <branch>`), open a pull request, and **merge it with a merge commit**.
+   Don't squash or rebase: the tag must stay on a commit that ends up in `master`.
+5. Push the tag: `git push origin vX.Y.Z`. The release workflow checks that the tag matches `package.json` and that
+   `dist/` is up to date, then publishes.
+6. Check the new version on [npm](https://www.npmjs.com/package/plate-map).
+
+Choose the version with [semantic versioning](https://semver.org/): patch for fixes, minor for backwards-compatible
+features, major for breaking changes, including dropping supported browsers.
 
 ## Add External Dependencies
 If you want to external dependencies to the PlateMap tool, you can follow the next steps: 
