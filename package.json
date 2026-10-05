@@ -8,7 +8,9 @@
     "serve.dev": "gulp serve.dev",
     "build.prod": "gulp build.prod",
     "serve.prod": "gulp serve.prod",
-    "start": "gulp serve.dev"
+    "start": "gulp serve.dev",
+    "version": "npm run build.dist && git add dist",
+    "prepublishOnly": "npm run build.dist && git diff --exit-code --stat -- dist"
   },
   "repository": {
     "type": "git",
