@@ -4,7 +4,7 @@ All notable changes to plate-map are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased] - 3.0.0
+## [3.0.0] - 2026-10-06
 
 > **Why 3.0.0?** The major version bump is driven by browser support. This
 > release states its supported browsers explicitly (Chrome/Edge 80+, Firefox
