@@ -319,6 +319,11 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.setValue = function(v) {
+          // Leave the box alone while the user is typing in it; otherwise
+          // the refresh after each keystroke replaces their text
+          if (document.activeElement === input[0]) {
+            return;
+          }
           input.val(v);
         };
 
@@ -566,7 +571,12 @@ var plateMapWidget = plateMapWidget || {};
         let full_id = field.full_id;
         let data = field.data;
         let input = this._createElement("<input>").addClass("plate-setup-tab-input")
-          .attr("placeholder", data.placeholder || "").attr("id", full_id);
+          .attr("placeholder", data.placeholder || "").attr("id", full_id)
+          .attr("inputmode", "decimal");
+        // Last text in the box that matched allowedText; restored when an
+        // edit would make it invalid
+        let lastValidText = "";
+        let allowedText = /^-?\d*\.?\d*$/;
 
         field.root.find(".plate-setup-tab-field-container").append(input);
 
@@ -584,7 +594,10 @@ var plateMapWidget = plateMapWidget || {};
           if (v === "") {
             return null;
           }
-          
+          v = Number(v);
+          if (isNaN(v)) {
+            throw "Invalid value " + value + " for numeric field " + full_id;
+          }
           return v;
         };
         field.parseValue = parseValue;
@@ -592,13 +605,22 @@ var plateMapWidget = plateMapWidget || {};
         field.getValue = function() {
           let v = input.val().trim();
           if (v === "") {
-            v = null;
+            return null;
+          }
+          v = Number(v);
+          if (isNaN(v)) {
+            return null;
           }
           return v;
         };
 
         field.setValue = function(value) {
+          // See _createTextField's setValue
+          if (document.activeElement === input[0]) {
+            return;
+          }
           input.val(value);
+          lastValidText = input.val();
         };
 
         let getText = function(v) {
@@ -614,14 +636,15 @@ var plateMapWidget = plateMapWidget || {};
           return getText(parseValue(v));
         };
 
+        // Only allow an optional leading "-", digits and one "."; any other
+        // keystroke or paste is undone
         input.on("input", function() {
-          let v = field.getRegularValue();
-          if (isNaN(v)) {
-            //flag field as invalid
-            input.addClass("invalid");
-          } else {
-            input.removeClass("invalid");
+          let text = input.val();
+          if (!allowedText.test(text)) {
+            input.val(lastValidText);
+            return;
           }
+          lastValidText = text;
           field.onChange();
         });
 
