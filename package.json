@@ -47,5 +47,12 @@
     "gulp-uglify-es": "^2.0.0",
     "merge-stream": "^2.0.0",
     "run-sequence": "^2.2.1"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=24.11",
+      "onFail": "error"
+    }
   }
 }
