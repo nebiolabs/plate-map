@@ -65,7 +65,9 @@ var plateMapWidget = plateMapWidget || {};
         plateIdDiv.append(numberText);
 
         numberText.click(function (evt) {
-          let addressToSelect = singleStack.map(that.indexToAddress, that);
+          // Arrow, not a bare method reference: .map() would pass the array
+          // position as indexToAddress's `dimensions` argument
+          let addressToSelect = singleStack.map(index => that.indexToAddress(index));
           if (evt.ctrlKey) {
             that.getSelectedAddresses().forEach(function (val) {
               if (addressToSelect.indexOf(val) < 0) {
@@ -165,9 +167,9 @@ var plateMapWidget = plateMapWidget || {};
         let colorLocIdxMap = this.engine.stackUpWithColor;
         for (let colorIdx in colorLocIdxMap) {
           if (colorLocIdxMap.hasOwnProperty(colorIdx)) {
+            // Arrow, not a bare method reference (see addBottomTableRow)
             colorLocMap[colorIdx] = colorLocIdxMap[colorIdx].map(
-              this.indexToAddress,
-              this,
+              index => this.indexToAddress(index),
             );
           }
         }

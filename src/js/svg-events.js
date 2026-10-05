@@ -106,7 +106,8 @@ var plateMapWidget = plateMapWidget || {};
             }
           }
 
-          that.setSelectedIndices(indices.sort());
+          // Numeric comparator: the default sort compares as strings (10 < 2)
+          that.setSelectedIndices(indices.sort((a, b) => a - b));
         }
 
         let selectionBox;
@@ -349,8 +350,9 @@ var plateMapWidget = plateMapWidget || {};
 
       // get all wells that have data
       getWellSetAddressWithData: function() {
-        let indices = Object.keys(this.engine.derivative).map(Number).sort();
-        return indices.map(this.indexToAddress, this)
+        // Numeric sort and arrow map, as in load-plate.js's sanitizeAddresses
+        let indices = Object.keys(this.engine.derivative).map(Number).sort((a, b) => a - b);
+        return indices.map(index => this.indexToAddress(index));
       }
 
     };
