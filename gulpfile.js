@@ -9,7 +9,6 @@ const browserSync = require('browser-sync').create();
 const connect = require('gulp-connect');
 const mergeStream = require('merge-stream');
 
-const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 
 
@@ -57,19 +56,16 @@ const PATH = {
 let config = {destination: {css: '', js: '', root: ''}};
 
 function concat_minify_css(name, source, destination) {
-    return gulp.src(source)
-        .pipe(sourcemaps.init())
+    return gulp.src(source, {sourcemaps: true})
         .pipe(concat(name + '.css'))
         .pipe(gulp.dest(destination))
         .pipe(minifyCSS())
         .pipe(rename(name + '.min.css'))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, {sourcemaps: '.'}));
 }
 
 function concat_uglify_js(name, source, destination) {
-    return gulp.src(source)
-        .pipe(sourcemaps.init())
+    return gulp.src(source, {sourcemaps: true})
         .pipe(concat(name + '.js'))
         .pipe(babel({
             presets: ['@babel/env']
@@ -77,8 +73,7 @@ function concat_uglify_js(name, source, destination) {
         .pipe(gulp.dest(destination))
         .pipe(uglify())
         .pipe(rename(name + '.min.js'))
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(destination));
+        .pipe(gulp.dest(destination, {sourcemaps: '.'}));
 }
 
 function config_env(env) {
