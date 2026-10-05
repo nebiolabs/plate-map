@@ -319,6 +319,11 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.setValue = function(v) {
+          // Leave the box alone while the user is typing in it; otherwise
+          // the refresh after each keystroke replaces their text
+          if (document.activeElement === input[0]) {
+            return;
+          }
           input.val(v);
         };
 
@@ -598,6 +603,10 @@ var plateMapWidget = plateMapWidget || {};
         };
 
         field.setValue = function(value) {
+          // See _createTextField's setValue
+          if (document.activeElement === input[0]) {
+            return;
+          }
           input.val(value);
         };
 
