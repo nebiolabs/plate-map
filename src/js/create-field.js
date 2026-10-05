@@ -589,7 +589,10 @@ var plateMapWidget = plateMapWidget || {};
           if (v === "") {
             return null;
           }
-          
+          v = Number(v);
+          if (isNaN(v)) {
+            throw "Invalid value " + value + " for numeric field " + full_id;
+          }
           return v;
         };
         field.parseValue = parseValue;
@@ -597,7 +600,11 @@ var plateMapWidget = plateMapWidget || {};
         field.getValue = function() {
           let v = input.val().trim();
           if (v === "") {
-            v = null;
+            return null;
+          }
+          v = Number(v);
+          if (isNaN(v)) {
+            return null;
           }
           return v;
         };
