@@ -41,8 +41,11 @@ plateMapWidget.loadPlate = function() {
 
     sanitizeAddresses: function(selectedAddresses) {
       selectedAddresses = selectedAddresses || [];
-      let indices = selectedAddresses.map(this.addressToIndex, this);
-      indices.sort();
+      // Arrow, not a bare method reference: .map() would pass the array
+      // position as addressToIndex's `dimensions` argument
+      let indices = selectedAddresses.map(address => this.addressToIndex(address));
+      // Numeric comparator: the default sort compares as strings (10 < 2)
+      indices.sort((a, b) => a - b);
       indices = indices.filter((index, i) => indices.indexOf(index) === i);
       return indices;
     },
