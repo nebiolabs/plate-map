@@ -638,9 +638,15 @@ var plateMapWidget = plateMapWidget || {};
 
         // Only allow an optional leading "-", digits and one "."; any other
         // keystroke or paste is undone. Surrounding whitespace (common when
-        // pasting from a spreadsheet) is allowed; getValue trims it
+        // pasting from a spreadsheet) is allowed; getValue trims it. A
+        // typographic minus ("−", common when copying from Word or a
+        // PDF) is replaced with "-"
         input.on("input", function() {
           let text = input.val();
+          if (text.indexOf("−") >= 0) {
+            text = text.replace(/−/g, "-");
+            input.val(text);
+          }
           if (!allowedText.test(text.trim())) {
             input.val(lastValidText);
             return;
