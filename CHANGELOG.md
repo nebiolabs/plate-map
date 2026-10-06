@@ -4,6 +4,14 @@ All notable changes to plate-map are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [3.0.1] - 2026-10-06
+
+### Fixed
+- The jspm CDN (ga.jspm.io) failed to build 3.0.0 ("build failed"), so it
+  couldn't be pinned from jspm. The Node version check in `devEngines` (Node
+  24.11 or newer) now warns instead of failing `npm install` in the package's
+  own folder, which is the likely cause. No code changes.
+
 ## [3.0.0] - 2026-10-06
 
 > **Why 3.0.0?** The major version bump is driven by browser support. This

@@ -487,7 +487,7 @@ options for subfield id `raw_value` will be `["unit1", "unit2"]` , which is used
 # How to contribute
 
 ## Requirements
-Building requires _Node_ 24.11 or newer. `.nvmrc` names the version CI uses (`nvm use` picks it up).
+Building requires _Node_ 24.11 or newer (npm warns on older versions). `.nvmrc` names the version CI uses (`nvm use` picks it up).
 
 If this is your first time, run `npm ci` in this directory.
 

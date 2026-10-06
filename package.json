@@ -50,7 +50,7 @@
     "runtime": {
       "name": "node",
       "version": ">=24.11",
-      "onFail": "error"
+      "onFail": "warn"
     }
   },
   "files": [
