@@ -3,13 +3,14 @@ name: release
 # Publishes to npm when a version tag (vX.Y.Z) is pushed, using npm trusted
 # publishing (OIDC): no npm token is stored in the repo. The package's
 # trusted publisher on npmjs.com must name this repo and this file.
+# Then creates the GitHub Release for the tag, with notes from CHANGELOG.md.
 
 on:
   push:
     tags: ['v*.*.*']
 
 permissions:
-  contents: read
+  contents: write   # create the GitHub Release
   id-token: write   # lets npm verify this workflow (trusted publishing + provenance)
 
 jobs:
@@ -49,3 +50,16 @@ jobs:
 
       - name: Publish
         run: npm publish --provenance --access public
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" 'index($0, "## [" v "]") == 1 {f=1; next} /^## /{f=0} f' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "::error::No '## [$version]' section in CHANGELOG.md for the release notes."
+            exit 1
+          fi
+          printf '\n---\nnpm: https://www.npmjs.com/package/plate-map/v/%s\n' "$version" >> notes.md
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes.md --latest
