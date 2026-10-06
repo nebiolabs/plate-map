@@ -594,8 +594,10 @@ provenance record linking it to the commit it was built from.
 4. Push the branch only (`git push -u origin <branch>`), open a pull request, and **merge it with a merge commit**.
    Don't squash or rebase: the tag must stay on a commit that ends up in `master`.
 5. Push the tag: `git push origin vX.Y.Z`. The release workflow checks that the tag matches `package.json` and that
-   `dist/` is up to date, then publishes.
-6. Check the new version on [npm](https://www.npmjs.com/package/plate-map).
+   `dist/` is up to date, publishes, and creates the GitHub Release with that version's `CHANGELOG.md` section as
+   its notes.
+6. Check the new version on [npm](https://www.npmjs.com/package/plate-map) and under
+   [Releases](https://github.com/nebiolabs/plate-map/releases).
 
 Choose the version with [semantic versioning](https://semver.org/): patch for fixes, minor for backwards-compatible
 features, major for breaking changes, including dropping supported browsers.
