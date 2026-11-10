@@ -7,3 +7,7 @@ node_modules
 
 *.DS_Store
 build
+
+# Claude Code per-user local files (approved commands can embed credentials)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
